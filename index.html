@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Turgut Özal Aydın | Turizm ve Teknoloji</title>
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+        rel="stylesheet"
+    />
+
+    <style>
+        /* THEME TOKENS */
+        :root {
+            --brand: #ff8c00;
+            --brand-hover: #e67a00;
+
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 8px;
+
+            --transition-fast: .18s ease;
+            --transition-normal: .28s ease;
+            --shadow-card: 0 20px 40px rgba(0,0,0,.08);
+            --shadow-card-hover: 0 30px 60px rgba(255,140,0,.25);
+        }
+
+        /* LIGHT THEME */
+        [data-theme="light"] {
+            --bg-page: #f9f9f9;
+            --bg-card: #ffffff;
+            --bg-header: rgba(255,255,255,0.8);
+            --bg-header-solid: #ffffff;
+            --bg-overlay: rgba(0,0,0,.55);
+
+            --text-main: #1f1f1f;
+            --text-dim: #656565;
+            --text-invert: #ffffff;
+
+            --border-soft: rgba(0,0,0,.07);
+        }
+
+        /* DARK THEME */
+        [data-theme="dark"] {
+            --bg-page: #0f0f10;
+            --bg-card: #1a1a1d;
+            --bg-header: rgba(20,20,22,0.7);
+            --bg-header-solid: #1a1a1d;
+            --bg-overlay: rgba(0,0,0,.6);
+
+            --text-main: #f5f5f7;
+            --text-dim: #8a8a93;
+            --text-invert: #ffffff;
+
+            --border-soft: rgba(255,255,255,.07);
+            --shadow-card: 0 20px 40px rgba(0,0,0,.9);
+            --shadow-card-hover: 0 30px 60px rgba(255,140,0,.3);
+        }
+
+        /* RESET */
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+        }
+
+        /* LAYOUT HELPERS */
+        .container {
+            width: 100%;
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        section {
+            padding: clamp(3rem, 4vw, 5rem) 0;
+        }
+
+        .section-head {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-eyebrow {
+            font-size: .8rem;
+            font-weight: 500;
+            color: var(--brand);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .section-title {
+            font-size: clamp(1.6rem, 1vw + 1.2rem, 2rem);
+            font-weight: 600;
+            color: var(--text-main);
+            margin-top: .4rem;
+            margin-bottom: .75rem;
+        }
+
+        .section-desc {
+            max-width: 640px;
+            margin: 0 auto;
+            font-size: .95rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        /* HEADER / NAV */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 900;
+            backdrop-filter: blur(12px);
+            background-color: var(--bg-header);
+            border-bottom: 1px solid var(--border-soft);
+            transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        header.scrolled {
+            background-color: var(--bg-header-solid);
+            box-shadow: 0 10px 30px rgba(0,0,0,.08);
+        }
+
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 64px;
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .brand-name {
+            color: var(--brand);
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: .03em;
+        }
+
+        .brand-role {
+            font-size: .7rem;
+            color: var(--text-dim);
+            font-weight: 400;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            font-size: .9rem;
+            color: var(--text-main);
+            font-weight: 500;
+            transition: color var(--transition-fast);
+        }
+
+        .nav-links a:hover {
+            color: var(--brand);
+        }
+
+        .theme-toggle {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .9rem;
+            color: var(--text-main);
+            background-color: var(--bg-card);
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition-fast);
+        }
+        .theme-toggle:hover {
+            color: var(--brand);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        /* MOBILE NAV BUTTON */
+        .mobile-menu-btn {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-soft);
+            background-color: var(--bg-card);
+            box-shadow: var(--shadow-card);
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+        }
+
+        /* OFFCANVAS NAV */
+        .offcanvas-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: var(--bg-overlay);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-normal);
+            z-index: 998;
+        }
+
+        .offcanvas-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .offcanvas {
+            position: fixed;
+            right: -320px;
+            top: 0;
+            width: 320px;
+            height: 100vh;
+            background-color: var(--bg-card);
+            box-shadow: -20px 0 60px rgba(0,0,0,.4);
+            border-left: 1px solid var(--border-soft);
+            border-radius: 0;
+            padding: 1.5rem;
+            transition: right var(--transition-normal);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .offcanvas.active {
+            right: 0;
+        }
+
+        .offcanvas-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .offcanvas-close {
+            color: var(--text-main);
+            font-size: 1.2rem;
+            line-height: 1;
+            padding: .4rem .6rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-soft);
+            background-color: var(--bg-page);
+        }
+
+        .offcanvas-nav a {
+            display: block;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-soft);
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .offcanvas-nav a:hover {
+            color: var(--brand);
+        }
+
+        /* HERO SECTION */
+        .hero {
+            position: relative;
+            padding-top: clamp(4rem, 5vw, 6rem);
+            padding-bottom: clamp(3rem, 4vw, 4rem);
+        }
+
+        .hero-inner {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 992px) {
+            .hero-inner {
+                grid-template-columns: 1.15fr 0.85fr;
+                align-items: center;
+            }
+        }
+
+        .hero-content h1 {
+            font-size: clamp(1.9rem, 1vw + 1.4rem, 2.4rem);
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--text-main);
+        }
+
+        .hero-content .subtitle {
+            margin-top: 1rem;
+            font-size: 1rem;
+            color: var(--text-dim);
+            max-width: 600px;
+        }
+
+        .hero-highlights {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .75rem 1rem;
+            margin-top: 1.5rem;
+            font-size: .8rem;
+        }
+
+        .chip {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-md);
+            padding: .5rem .75rem;
+            line-height: 1.2;
+            color: var(--text-main);
+            font-weight: 500;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .chip i {
+            color: var(--brand);
+            font-size: .9rem;
+        }
+
+        .hero-cta {
+            margin-top: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--brand);
+            color: var(--text-invert);
+            border-radius: var(--radius-md);
+            padding: .8rem 1.1rem;
+            font-size: .9rem;
+            font-weight: 600;
+            line-height: 1.2;
+            border: none;
+            box-shadow: 0 15px 30px rgba(255,140,0,.4);
+            transition: all var(--transition-fast);
+        }
+        .btn-primary:hover {
+            background-color: var(--brand-hover);
+            box-shadow: var(--shadow-card-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-ghost {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            border-radius: var(--radius-md);
+            padding: .8rem 1.1rem;
+            font-size: .9rem;
+            font-weight: 500;
+            line-height: 1.2;
+            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition-fast);
+        }
+        .btn-ghost:hover {
+            color: var(--brand);
+            box-shadow: var(--shadow-card-hover);
+            transform: translateY(-2px);
+        }
+
+        .hero-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border-soft);
+            padding: 1.5rem 1.5rem 1.25rem;
+            max-width: 420px;
+            margin-left: auto;
+        }
+
+        .hero-card-title {
+            font-size: .8rem;
+            color: var(--brand);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            margin-bottom: .75rem;
+        }
+
+        .hero-card-block + .hero-card-block {
+            margin-top: 1rem;
+            border-top: 1px solid var(--border-soft);
+            padding-top: 1rem;
+        }
+
+        .hero-card-block h3 {
+            font-size: 1rem;
+            color: var(--text-main);
+            font-weight: 600;
+            margin-bottom: .4rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .hero-card-block p {
+            font-size: .8rem;
+            color: var(--text-dim);
+            line-height: 1.4;
+        }
+
+        .hero-card-block i {
+            color: var(--brand);
+            font-size: .9rem;
+        }
+
+        /* PROJECTS GRID */
+        .projects-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .projects-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .project-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border-soft);
+            padding: 1.5rem 1.25rem 1.25rem;
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-normal);
+        }
+
+        .project-card:hover {
+            box-shadow: var(--shadow-card-hover);
+            transform: translateY(-4px);
+        }
+
+        .project-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-md);
+            background-color: rgba(255,140,0,.1);
+            color: var(--brand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-title-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: .5rem;
+        }
+
+        .project-title {
+            color: var(--text-main);
+            font-size: 1rem;
+            line-height: 1.3;
+            font-weight: 600;
+        }
+
+        .project-label {
+            font-size: .7rem;
+            font-weight: 500;
+            color: var(--brand);
+            background-color: rgba(255,140,0,.08);
+            border: 1px solid rgba(255,140,0,.3);
+            padding: .3rem .6rem;
+            border-radius: var(--radius-md);
+            line-height: 1.2;
+        }
+
+        .project-desc {
+            margin-top: .75rem;
+            font-size: .85rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        .project-cta {
+            margin-top: 1rem;
+            font-size: .8rem;
+            font-weight: 500;
+            color: var(--brand);
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+        }
+
+        .project-cta i {
+            font-size: .8rem;
+        }
+
+        /* CONTACT SECTION */
+        .contact-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-card);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            display: grid;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .contact-card {
+                grid-template-columns: 1fr 1fr;
+                padding: 2.5rem 2rem;
+            }
+        }
+
+        .contact-block-title {
+            font-size: .8rem;
+            font-weight: 600;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            margin-bottom: 1rem;
+        }
+
+        .contact-line {
+            display: flex;
+            align-items: flex-start;
+            gap: .9rem;
+            font-size: .9rem;
+            color: var(--text-main);
+        }
+
+        .contact-line + .contact-line {
+            margin-top: 1rem;
+        }
+
+        .contact-icon {
+            min-width: 42px;
+            min-height: 42px;
+            background-color: var(--brand);
+            color: #fff;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            box-shadow: 0 15px 30px rgba(255,140,0,.5);
+        }
+
+        .contact-line small {
+            color: var(--text-dim);
+            display: block;
+            font-size: .7rem;
+            line-height: 1.2;
+        }
+
+        .whatsapp-btn {
+            margin-top: .75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            background-color: #25D366;
+            color: #fff;
+            border-radius: var(--radius-md);
+            padding: .6rem .8rem;
+            font-size: .8rem;
+            font-weight: 600;
+            line-height: 1.2;
+            box-shadow: 0 15px 30px rgba(37,211,102,.4);
+            transition: all var(--transition-fast);
+        }
+
+        .whatsapp-btn:hover {
+            background-color: #128C7E;
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(18,140,126,.5);
+        }
+
+        .social-row {
+            margin-top: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: .75rem;
+        }
+
+        .social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-soft);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .9rem;
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition-fast);
+        }
+
+        .social-btn:hover {
+            color: var(--brand);
+            box-shadow: var(--shadow-card-hover);
+            transform: translateY(-2px);
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 2.5rem 0 3rem;
+            text-align: center;
+            font-size: .8rem;
+            line-height: 1.4;
+            color: var(--text-dim);
+        }
+
+        footer .name {
+            color: var(--brand);
+            font-weight: 600;
+        }
+
+        /* REVEAL ANIMATION (scroll-in) */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: all .6s cubic-bezier(.16,1,.3,1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* RESPONSIVE NAV BREAKPOINTS */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .mobile-menu-btn {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header id="site-header">
+        <div class="container nav-bar">
+            <div class="brand">
+                <span class="brand-name">Turgut Özal Aydın</span>
+                <span class="brand-role">Turizm & Teknoloji</span>
+            </div>
+
+            <nav class="nav-links">
+                <a href="#projects">Projelerim</a>
+                <a href="#vision">Vizyon</a>
+                <a href="#contact">İletişim</a>
+
+                <button class="theme-toggle" id="themeToggle" aria-label="Tema Değiştir">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </nav>
+
+            <button class="mobile-menu-btn" id="openMenu" aria-label="Menü Aç">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- OFFCANVAS MENU -->
+    <div class="offcanvas-overlay" id="offcanvasOverlay"></div>
+    <aside class="offcanvas" id="offcanvasMenu">
+        <div class="offcanvas-head">
+            <div class="brand">
+                <span class="brand-name">Turgut Özal Aydın</span>
+                <span class="brand-role">Turizm & Teknoloji</span>
+            </div>
+            <button class="offcanvas-close" id="closeMenu">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <nav class="offcanvas-nav">
+            <a href="#projects" class="off-link">Projelerim</a>
+            <a href="#vision" class="off-link">Vizyon</a>
+            <a href="#contact" class="off-link">İletişim</a>
+            <a href="#" class="off-link" data-modal-open="hotel-modal">Hotel Euphrat Nemrut</a>
+            <a href="#" class="off-link" data-modal-open="capulcu-modal">Çapulcu Macerası</a>
+            <a href="#" class="off-link" data-modal-open="etourgood-modal">etourgood</a>
+        </nav>
+
+        <div style="margin-top:auto; font-size:.75rem; color:var(--text-dim); line-height:1.4;">
+            © 2025 Turgut Özal Aydın
+        </div>
+    </aside>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container hero-inner">
+            <div class="hero-content reveal">
+                <h1>Türkiye’de olmayanı Türkiye’ye entegre ediyorum.</h1>
+                <p class="subtitle">
+                    Ben Turgut Özal Aydın. Nemrut Dağı'ndaki Hotel Euphrat Nemrut, belgesel ruhlu Çapulcu Macerası ve küresel turizm platformum etourgood ile;
+                    turizm, kültür ve teknolojiyi tek vizyonda birleştiriyorum.
+                </p>
+
+                <div class="hero-highlights">
+                    <div class="chip"><i class="fa-solid fa-mountain-sun"></i> Nemrut Dağı Deneyimi</div>
+                    <div class="chip"><i class="fa-solid fa-film"></i> Gezi / Belgesel Turları</div>
+                    <div class="chip"><i class="fa-solid fa-globe"></i> Global Turizm Ağı</div>
+                    <div class="chip"><i class="fa-solid fa-microchip"></i> Teknoloji Odaklı Yaklaşım</div>
+                </div>
+
+                <div class="hero-cta">
+                    <a href="#contact" class="btn-primary"><i class="fa-solid fa-phone"></i> İletişime Geç</a>
+                    <button class="btn-ghost" data-modal-open="etourgood-modal">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        etourgood Nedir?
+                    </button>
+                </div>
+            </div>
+
+            <div class="hero-card reveal">
+                <div class="hero-card-title">AKTİF GİRİŞİMLER</div>
+
+                <div class="hero-card-block">
+                    <h3><i class="fa-solid fa-hotel"></i> Hotel Euphrat Nemrut</h3>
+                    <p>Nemrut Dağı'nın eteğinde; gün doğumu, tarih ve konaklama deneyimini tek noktada birleştiriyoruz.</p>
+                </div>
+
+                <div class="hero-card-block">
+                    <h3><i class="fa-solid fa-person-hiking"></i> Çapulcu Macerası</h3>
+                    <p>Her tur bir film sahnesi gibi. Klasik tur değil; hikâye anlatan yolculuk. Biz turu sadece sattırmıyoruz, yaşatıyoruz.</p>
+                </div>
+
+                <div class="hero-card-block">
+                    <h3><i class="fa-solid fa-earth-europe"></i> etourgood</h3>
+                    <p>Küresel turizm ağı. Gezginler, yerel sağlayıcılar ve deneyim üreticilerini aynı platformda buluşturuyoruz.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECTS / PROJELERİM -->
+    <section id="projects">
+        <div class="container">
+            <div class="section-head reveal">
+                <div class="section-eyebrow">Projelerim</div>
+                <h2 class="section-title">Turizm ve teknolojiyi aynı masaya getiriyorum</h2>
+                <p class="section-desc">
+                    Aşağıdaki işler sadece ticari değil. Her biri; kültürü koruma, deneyimi yükseltme ve turizmi daha zeki hale getirme denemesi.
+                </p>
+            </div>
+
+            <div class="projects-grid">
+                <!-- Hotel Euphrat Nemrut -->
+                <div class="project-card reveal" data-modal-open="hotel-modal">
+                    <div class="project-icon"><i class="fa-solid fa-hotel"></i></div>
+
+                    <div class="project-title-row">
+                        <div class="project-title">Hotel Euphrat Nemrut</div>
+                        <div class="project-label">Nemrut Dağı</div>
+                    </div>
+
+                    <div class="project-desc">
+                        Nemrut Dağı bölgesinde konaklama, tarih ve doğayı aynı çatı altında sunuyoruz. Gün doğumunu izlemek için dünyanın her yerinden insanlar buraya gelir. Biz bu anı sadece izletmiyoruz; küratörlüğünü yapıyoruz.
+                    </div>
+
+                    <div class="project-cta">
+                        Daha fazla bilgi <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+
+                <!-- Çapulcu Macerası -->
+                <div class="project-card reveal" data-modal-open="capulcu-modal">
+                    <div class="project-icon"><i class="fa-solid fa-person-hiking"></i></div>
+
+                    <div class="project-title-row">
+                        <div class="project-title">Çapulcu Macerası</div>
+                        <div class="project-label">Belgesel Tur</div>
+                    </div>
+
+                    <div class="project-desc">
+                        Bu klasik tur değil. Bu gezi-belgesel. Katılımcı aynı zamanda hikâyenin parçası. Her rota özel, ticari katalog turu değil. Biz “seyahat ettiriyoruz” değil, “hikâyeye sokuyoruz.”
+                    </div>
+
+                    <div class="project-cta">
+                        Turları gör <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+
+                <!-- etourgood -->
+                <div class="project-card reveal" data-modal-open="etourgood-modal">
+                    <div class="project-icon"><i class="fa-solid fa-earth-europe"></i></div>
+
+                    <div class="project-title-row">
+                        <div class="project-title">etourgood</div>
+                        <div class="project-label">Global Platform</div>
+                    </div>
+
+                    <div class="project-desc">
+                        etourgood, global turizm girişimim. Amaç: gezginleri, yerel sağlayıcıları ve bağımsız rehberleri doğrudan bağlamak. Aracı değil, ekosistem kuruyoruz. Türkiye ile sınırlı değil.
+                    </div>
+
+                    <div class="project-cta">
+                        Platformu incele <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VISION / VİZYON -->
+    <section id="vision">
+        <div class="container">
+            <div class="section-head reveal">
+                <div class="section-eyebrow">Vizyon</div>
+                <h2 class="section-title">Türkiye’ye olmayanı getirmek. Dünyayı buraya taşımak.</h2>
+                <p class="section-desc">
+                    Hedefim sadece tur satmak değil. Bölgesel kültürü, doğayı, insanları, hikâyeyi; teknoloji ile birleştirip dünyaya açmak.
+                    Her proje bir test: Turizm, belgesel, konaklama, topluluk, teknoloji... hepsi aynı masada olabilir mi?
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT / İLETİŞİM -->
+    <section id="contact">
+        <div class="container">
+            <div class="section-head reveal">
+                <div class="section-eyebrow">İletişim</div>
+                <h2 class="section-title">Beraber bir şey yapalım mı?</h2>
+                <p class="section-desc">
+                    Tur fikri, iş birliği, medya, yatırım, ortak proje... Direkt bana ulaş.
+                </p>
+            </div>
+
+            <div class="contact-card reveal">
+
+                <!-- LEFT -->
+                <div>
+                    <div class="contact-block-title">İletişim Bilgileri</div>
+
+                    <div class="contact-line">
+                        <div class="contact-icon"><i class="fa-solid fa-location-dot"></i></div>
+                        <div>
+                            <div>İstanbul / Türkiye</div>
+                            <small>Operasyon & koordinasyon</small>
+                        </div>
+                    </div>
+
+                    <div class="contact-line">
+                        <div class="contact-icon"><i class="fa-solid fa-phone"></i></div>
+                        <div>
+                            <div>+90 533 612 4402</div>
+                            <div>+90 532 260 4402</div>
+                            <a class="whatsapp-btn" href="https://wa.me/905336124402" target="_blank" rel="noopener">
+                                <i class="fab fa-whatsapp"></i> WhatsApp
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="contact-line">
+                        <div class="contact-icon"><i class="fa-solid fa-envelope"></i></div>
+                        <div>
+                            <div>turgutoaydin@gmail.com</div>
+                            <small>E-posta ile randevu iste</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT -->
+                <div>
+                    <div class="contact-block-title">Sosyal & Ağ</div>
+
+                    <div class="social-row">
+                        <a class="social-btn" href="https://instagram.com/turgutoaydin" target="_blank" rel="noopener" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a class="social-btn" href="#" aria-label="Twitter / X">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a class="social-btn" href="#" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a class="social-btn" href="#" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                    </div>
+
+                    <div style="font-size:.8rem; color:var(--text-dim); line-height:1.4; margin-top:1.5rem;">
+                        Basın / medya için: lütfen Çapulcu Macerası veya etourgood içeriği kullanırken beni etiketleyin.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="name">Turgut Özal Aydın</div>
+            <div>Turizm Girişimcisi · Teknoloji Odaklı Üreten</div>
+            <div style="margin-top:.5rem;">© 2025 Tüm hakları saklıdır.</div>
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+    <div class="offcanvas-overlay" id="modalOverlay"></div>
+
+    <!-- Hotel Euphrat Nemrut Modal -->
+    <div class="offcanvas hero-card" id="hotel-modal" style="max-width:400px;right:-420px;border-radius:var(--radius-lg);">
+        <div class="offcanvas-head" style="margin-bottom:1rem;">
+            <div class="hero-card-title">Hotel Euphrat Nemrut</div>
+            <button class="offcanvas-close modal-close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div style="font-size:.9rem;color:var(--text-main);line-height:1.5;">
+            Nemrut Dağı bölgesinde konumlanmış tesisim. Gün doğumunu izlemek için dünyanın dört bir yanından insanlar gelir. Biz sadece oda vermiyoruz; bölgenin tarihini, ritüelini ve duygusunu kuratörlüyoruz.
+            <br><br>
+            <strong>Konum:</strong> Nemrut Dağı, Adıyaman bölgesi<br>
+            <strong>Oda & Deneyim:</strong> Manzara, tarih, doğa<br>
+            <strong>Odak:</strong> Doğru insanı doğru ana götürmek
+        </div>
+    </div>
+
+    <!-- Çapulcu Macerası Modal -->
+    <div class="offcanvas hero-card" id="capulcu-modal" style="max-width:400px;right:-420px;border-radius:var(--radius-lg);">
+        <div class="offcanvas-head" style="margin-bottom:1rem;">
+            <div class="hero-card-title">Çapulcu Macerası</div>
+            <button class="offcanvas-close modal-close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div style="font-size:.9rem;color:var(--text-main);line-height:1.5;">
+            Çapulcu Macerası klasik tur değil. Bu; belgesel tadında rota. Katılımcı sadece gezen kişi değil, hikâyenin canlı karakteri. Rotalar sıradan katalog rotası değil; özel, seçilmiş, vurucu.
+            <br><br>
+            <strong>Stil:</strong> Gezi filmi gibi kurgu<br>
+            <strong>İçerik:</strong> Kültür / doğa / yerel hayat<br>
+            <strong>Rolüm:</strong> Seyahati organize eden, yöneten ve anlatıya dönüştüren sağlayıcı
+        </div>
+    </div>
+
+    <!-- etourgood Modal -->
+    <div class="offcanvas hero-card" id="etourgood-modal" style="max-width:400px;right:-420px;border-radius:var(--radius-lg);">
+        <div class="offcanvas-head" style="margin-bottom:1rem;">
+            <div class="hero-card-title">etourgood</div>
+            <button class="offcanvas-close modal-close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div style="font-size:.9rem;color:var(--text-main);line-height:1.5;">
+            etourgood küresel bir turizm girişimidir. Seyahat profesyonellerini, bağımsız rehberleri, araç sağlayıcıları ve gezginleri aynı yerde topluyor. Aracı gibi değil; ekosistem gibi.
+            <br><br>
+            <strong>Alan:</strong> Global turizm ağı<br>
+            <strong>Hedef:</strong> Yerelden küresele görünürlük<br>
+            <strong>Felsefe:</strong> “İyi tur iyi insanla başlar.”
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script>
+        // Sticky header shadow change
+        const siteHeader = document.getElementById("site-header");
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > 10) {
+                siteHeader.classList.add("scrolled");
+            } else {
+                siteHeader.classList.remove("scrolled");
+            }
+        });
+
+        // Theme toggle
+        const themeToggle = document.getElementById("themeToggle");
+        const rootHtml = document.documentElement;
+        themeToggle.addEventListener("click", () => {
+            const current = rootHtml.getAttribute("data-theme");
+            const next = current === "light" ? "dark" : "light";
+            rootHtml.setAttribute("data-theme", next);
+            themeToggle.innerHTML = next === "light"
+                ? '<i class="fa-solid fa-moon"></i>'
+                : '<i class="fa-solid fa-sun"></i>';
+        });
+
+        // Offcanvas menu (mobile)
+        const offcanvasMenu = document.getElementById("offcanvasMenu");
+        const offcanvasOverlay = document.getElementById("offcanvasOverlay");
+        const openMenuBtn = document.getElementById("openMenu");
+        const closeMenuBtn = document.getElementById("closeMenu");
+
+        function openMenu() {
+            offcanvasMenu.classList.add("active");
+            offcanvasOverlay.classList.add("active");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeMenu() {
+            offcanvasMenu.classList.remove("active");
+            offcanvasOverlay.classList.remove("active");
+            document.body.style.overflow = "";
+        }
+
+        openMenuBtn.addEventListener("click", openMenu);
+        closeMenuBtn.addEventListener("click", closeMenu);
+        offcanvasOverlay.addEventListener("click", closeMenu);
+
+        document.querySelectorAll(".off-link").forEach(link => {
+            link.addEventListener("click", () => {
+                closeMenu();
+            });
+        });
+
+        // Scroll reveal
+        const reveals = document.querySelectorAll(".reveal");
+        function handleReveal() {
+            const triggerPoint = window.innerHeight * 0.9;
+            reveals.forEach(el => {
+                const box = el.getBoundingClientRect();
+                if (box.top < triggerPoint) {
+                    el.classList.add("visible");
+                }
+            });
+        }
+        handleReveal();
+        window.addEventListener("scroll", handleReveal);
+
+        // MODALS (use offcanvas style slide-in from right on desktop/mobile)
+        const modalOverlay = document.getElementById("modalOverlay");
+
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            modal.classList.add("active");
+            modalOverlay.classList.add("active");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeModal(modalEl) {
+            modalEl.classList.remove("active");
+            modalOverlay.classList.remove("active");
+            document.body.style.overflow = "";
+        }
+
+        // open triggers
+        document.querySelectorAll("[data-modal-open]").forEach(btn => {
+            btn.addEventListener("click", e => {
+                e.preventDefault();
+                openModal(btn.getAttribute("data-modal-open"));
+                // close mobile nav if open
+                closeMenu();
+            });
+        });
+
+        // close triggers
+        modalOverlay.addEventListener("click", () => {
+            document.querySelectorAll("#hotel-modal,#capulcu-modal,#etourgood-modal").forEach(m => {
+                m.classList.remove("active");
+            });
+            modalOverlay.classList.remove("active");
+            document.body.style.overflow = "";
+        });
+
+        document.querySelectorAll(".modal-close").forEach(btn => {
+            btn.addEventListener("click", e => {
+                const modalEl = e.target.closest(".offcanvas.hero-card");
+                if (modalEl) {
+                    closeModal(modalEl);
+                }
+            });
+        });
+
+        // smooth scroll for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener("click", e => {
+                const targetId = anchor.getAttribute("href");
+                if (!targetId || targetId === "#") return;
+                const targetEl = document.querySelector(targetId);
+                if (!targetEl) return;
+                e.preventDefault();
+                window.scrollTo({
+                    top: targetEl.offsetTop - 70,
+                    behavior: "smooth"
+                });
+            });
+        });
+    </script>
+</body>
+</html>
