@@ -1,1067 +1,182 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <title>etourgood | Smart Sign Up</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    :root {
-      --eg-bg: #050608;
-      --eg-card: rgba(18, 18, 22, 0.98);
-      --eg-card-soft: rgba(16, 16, 20, 0.96);
-      --eg-primary: #ff7a2f; /* turuncu */
-      --eg-primary-soft: rgba(255, 122, 47, 0.18);
-      --eg-accent: #f2f2f7;
-      --eg-muted: #a0a4ad;
-      --eg-border: rgba(255, 255, 255, 0.06);
-      --eg-radius-xl: 28px;
-      --eg-radius-md: 18px;
-      --eg-radius-full: 999px;
-      --eg-shadow-strong: 0 26px 80px rgba(0,0,0,0.55);
-      --eg-shadow-soft: 0 10px 35px rgba(0,0,0,0.35);
-      --eg-font-main: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", Roboto, sans-serif;
-      --transition-fast: 0.22s ease-out;
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      font-family: var(--eg-font-main);
-      color: #fff;
-      background:
-        radial-gradient(circle at top left, rgba(255,122,47,0.08), transparent 60%),
-        radial-gradient(circle at top right, rgba(120,120,140,0.18), transparent 65%),
-        radial-gradient(circle at bottom, rgba(255,122,47,0.05), transparent 55%),
-        var(--eg-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .eg-wrapper {
-      width: 100%;
-      max-width: 430px;
-      padding: 18px 14px 24px;
-    }
-
-    .eg-brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-      padding: 4px 4px 4px 2px;
-    }
-
-    .eg-logo-orb {
-      width: 26px;
-      height: 26px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 25% 0, #fff, #ff7a2f);
-      box-shadow: 0 0 16px rgba(255,122,47,0.8);
-    }
-
-    .eg-brand-text {
-      display: flex;
-      flex-direction: column;
-      line-height: 1.1;
-    }
-
-    .eg-brand-text span:first-child {
-      font-size: 14px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--eg-muted);
-    }
-
-    .eg-brand-text span:last-child {
-      font-size: 18px;
-      font-weight: 580;
-      color: #ffffff;
-    }
-
-    .eg-card {
-      position: relative;
-      background: linear-gradient(
-        145deg,
-        var(--eg-card),
-        var(--eg-card-soft)
-      );
-      border-radius: var(--eg-radius-xl);
-      box-shadow: var(--eg-shadow-strong);
-      padding: 16px 16px 14px;
-      border: 1px solid rgba(255,255,255,0.04);
-      backdrop-filter: blur(26px);
-      overflow: hidden;
-    }
-
-    .eg-card::before {
-      content: "";
-      position: absolute;
-      right: -40px;
-      top: -40px;
-      width: 110px;
-      height: 110px;
-      background: radial-gradient(circle, rgba(255,122,47,0.16), transparent 70%);
-      filter: blur(0.3px);
-      pointer-events: none;
-    }
-
-    .eg-header-line {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-
-    .eg-title-block {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .eg-title {
-      font-size: 17px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .eg-ai-pill {
-      font-size: 9px;
-      padding: 3px 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,122,47,0.55);
-      background: rgba(255,122,47,0.08);
-      color: var(--eg-primary);
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-    }
-
-    .eg-subtitle {
-      font-size: 10px;
-      color: var(--eg-muted);
-    }
-
-    .eg-avatar-ghost {
-      width: 26px;
-      height: 26px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.09);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      color: var(--eg-primary);
-      box-shadow: var(--eg-shadow-soft);
-      background: rgba(4,4,7,0.96);
-    }
-
-    .eg-step-indicator {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      margin-bottom: 12px;
-    }
-
-    .eg-step-dot-wrap {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex: 1;
-    }
-
-    .eg-step-dot {
-      flex: 1;
-      height: 4px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .eg-step-dot span {
-      display: block;
-      height: 100%;
-      width: 0;
-      background: linear-gradient(90deg, var(--eg-primary), #ffc58b);
-      border-radius: inherit;
-      transition: width var(--transition-fast);
-    }
-
-    .eg-step-label {
-      font-size: 9px;
-      color: var(--eg-muted);
-      text-align: right;
-      min-width: 90px;
-    }
-
-    .eg-step-label strong {
-      color: var(--eg-primary);
-      font-weight: 500;
-    }
-
-    form {
-      margin: 0;
-    }
-
-    .step {
-      display: none;
-      animation: fadeIn 0.22s ease-out;
-    }
-
-    .step.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .eg-field {
-      margin-bottom: 10px;
-    }
-
-    .eg-label {
-      font-size: 9px;
-      color: var(--eg-muted);
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .eg-label span.icon {
-      font-size: 10px;
-    }
-
-    .eg-input-wrap {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 9px;
-      border-radius: var(--eg-radius-md);
-      background: rgba(10,10,14,0.98);
-      border: 1px solid var(--eg-border);
-      box-shadow: 0 10px 28px rgba(0,0,0,0.55);
-      transition: all var(--transition-fast);
-    }
-
-    .eg-input-wrap.focused {
-      border-color: rgba(255,122,47,0.9);
-      box-shadow: 0 12px 40px rgba(255,122,47,0.11);
-      transform: translateY(-1px);
-    }
-
-    .eg-input-wrap input,
-    .eg-input-wrap select {
-      background: transparent;
-      border: none;
-      outline: none;
-      color: #fff;
-      font-size: 11px;
-      width: 100%;
-      font-family: inherit;
-    }
-
-    .eg-input-prefix {
-      font-size: 10px;
-      color: var(--eg-muted);
-      white-space: nowrap;
-    }
-
-    .eg-tag {
-      font-size: 8px;
-      padding: 2px 6px;
-      border-radius: 999px;
-      background: rgba(255,122,47,0.14);
-      color: var(--eg-primary);
-      border: 1px solid rgba(255,122,47,0.5);
-    }
-
-    .eg-helper {
-      font-size: 8px;
-      color: var(--eg-muted);
-      margin-top: 2px;
-      display: flex;
-      align-items: center;
-      gap: 3px;
-    }
-
-    .eg-helper span.dot {
-      width: 4px;
-      height: 4px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.16);
-    }
-
-    .eg-username-status {
-      font-size: 8px;
-      margin-top: 2px;
-    }
-
-    .eg-username-status.ok {
-      color: #4cd964;
-    }
-
-    .eg-username-status.bad {
-      color: #ff3b30;
-    }
-
-    .eg-gender-wrap {
-      display: flex;
-      gap: 6px;
-    }
-
-    .eg-gender-btn {
-      flex: 1;
-      padding: 5px 6px;
-      border-radius: 13px;
-      border: 1px solid var(--eg-border);
-      background: rgba(8,8,12,0.98);
-      font-size: 9px;
-      color: var(--eg-muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      cursor: pointer;
-      transition: all var(--transition-fast);
-      box-shadow: var(--eg-shadow-soft);
-    }
-
-    .eg-gender-btn span.icon {
-      font-size: 11px;
-    }
-
-    .eg-gender-btn.active {
-      border-color: var(--eg-primary);
-      color: var(--eg-primary);
-      box-shadow: 0 6px 18px rgba(255,122,47,0.28);
-      transform: translateY(-1px);
-      background: rgba(16,16,22,1);
-    }
-
-    .eg-birth-row {
-      display: flex;
-      gap: 6px;
-    }
-
-    .eg-birth-row select {
-      font-size: 10px;
-    }
-
-    .eg-email-row {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .eg-email-local {
-      flex: 1;
-    }
-
-    .eg-email-domain {
-      width: 90px;
-      font-size: 9px;
-      color: var(--eg-muted);
-    }
-
-    .eg-phone-row {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-    }
-
-    .eg-phone-code {
-      width: 54px;
-      font-size: 9px;
-      color: var(--eg-muted);
-    }
-
-    .eg-profile-wrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .eg-avatar-preview {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      color: var(--eg-primary);
-      background:
-        radial-gradient(circle at 20% 0, rgba(255,255,255,0.22), transparent 70%),
-        radial-gradient(circle at 80% 100%, rgba(255,122,47,0.35), transparent 75%),
-        #050608;
-      box-shadow: var(--eg-shadow-soft);
-      overflow: hidden;
-    }
-
-    .eg-avatar-preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .eg-avatar-text {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .eg-avatar-text small {
-      font-size: 8px;
-      color: var(--eg-muted);
-    }
-
-    .eg-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .eg-btn {
-      border: none;
-      outline: none;
-      cursor: pointer;
-      padding: 7px 14px;
-      border-radius: var(--eg-radius-full);
-      font-size: 10px;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: all var(--transition-fast);
-      font-family: inherit;
-      white-space: nowrap;
-    }
-
-    .eg-btn span.icon {
-      font-size: 13px;
-    }
-
-    .eg-btn.secondary {
-      background: transparent;
-      color: var(--eg-muted);
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .eg-btn.secondary:hover {
-      color: #ffffff;
-      border-color: rgba(255,255,255,0.18);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.55);
-    }
-
-    .eg-btn.primary {
-      flex: 1;
-      justify-content: center;
-      background: linear-gradient(135deg, var(--eg-primary), #ff9b54);
-      color: #050608;
-      box-shadow: 0 14px 40px rgba(255,122,47,0.4);
-    }
-
-    .eg-btn.primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 16px 50px rgba(255,122,47,0.6);
-    }
-
-    .eg-btn.primary:active {
-      transform: translateY(1px) scale(0.98);
-      box-shadow: 0 8px 26px rgba(0,0,0,0.85);
-    }
-
-    .eg-fake-ai {
-      font-size: 8px;
-      color: var(--eg-muted);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      margin-top: 3px;
-    }
-
-    .eg-fake-ai span.loader {
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,122,47,0.5);
-      border-top-color: transparent;
-      animation: spin 0.9s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .eg-summary {
-      font-size: 8px;
-      color: var(--eg-muted);
-      margin-top: 4px;
-      line-height: 1.5;
-    }
-
-    .eg-summary strong {
-      color: var(--eg-primary);
-      font-weight: 500;
-    }
-
-    .eg-error {
-      font-size: 8px;
-      color: #ff453a;
-      margin-top: 2px;
-    }
-
-    @media (max-height: 640px) {
-      .eg-card {
-        padding: 12px 12px 10px;
-      }
-      .eg-title {
-        font-size: 16px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex - Telegram Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(180deg, #f0f8ff 0%, #e0f2f1 100%);
+            color: #333;
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .header {
+            background: #ff6b35;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .search {
+            padding: 15px;
+            background: white;
+            border-bottom: 1px solid #ddd;
+        }
+        .search input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+        .pokemon-list {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .pokemon-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .pokemon-card:hover {
+            transform: scale(1.02);
+        }
+        .pokemon-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            overflow: hidden;
+        }
+        .pokemon-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .pokemon-info h3 {
+            font-size: 18px;
+            color: #ff6b35;
+            margin-bottom: 5px;
+        }
+        .pokemon-info p {
+            font-size: 14px;
+            color: #666;
+            margin: 0;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
-<div class="eg-wrapper">
-  <div class="eg-brand">
-    <div class="eg-logo-orb"></div>
-    <div class="eg-brand-text">
-      <span>ETOURGOOD USER</span>
-      <span>Sign up like a pro.</span>
+    <div class="header">
+        <h1>🗂️ Pokédex</h1>
+        <p>Toplam 1.025 Pokémon | Dikey Mobil Görünüm</p>
     </div>
-  </div>
-
-  <div class="eg-card">
-    <div class="eg-header-line">
-      <div class="eg-title-block">
-        <div class="eg-title">
-          Create your etourgood ID
-          <div class="eg-ai-pill">
-            <span>⚡</span><span>Smart Flow</span>
-          </div>
-        </div>
-        <div class="eg-subtitle">
-          We guide you in 4 ultra-light steps.
-        </div>
-      </div>
-      <div class="eg-avatar-ghost">✨</div>
+    
+    <div class="search">
+        <input type="text" id="searchInput" placeholder="Pokémon ara (örn: Pikachu)...">
+    </div>
+    
+    <div class="pokemon-list" id="pokemonList">
+        <div class="loading">Pokémon'lar yükleniyor...</div>
     </div>
 
-    <div class="eg-step-indicator">
-      <div class="eg-step-dot-wrap">
-        <div class="eg-step-dot"><span id="bar1"></span></div>
-        <div class="eg-step-dot"><span id="bar2"></span></div>
-        <div class="eg-step-dot"><span id="bar3"></span></div>
-        <div class="eg-step-dot"><span id="bar4"></span></div>
-      </div>
-      <div class="eg-step-label">
-        Step <strong id="stepLabel">1</strong> / 4
-      </div>
-    </div>
+    <script>
+        // Telegram Mini App Başlatma
+        Telegram.WebApp.ready();
+        Telegram.WebApp.expand(); // Tam ekran
 
-    <form id="signupForm" novalidate>
-      <!-- STEP 1: USERNAME -->
-      <div class="step active" data-step="1">
-        <div class="eg-field">
-          <div class="eg-label">
-            <span class="icon">@</span>
-            Kullanıcı Adı
-            <span class="eg-tag">zorunlu</span>
-          </div>
-          <div class="eg-input-wrap">
-            <div class="eg-input-prefix">@</div>
-            <input type="text" id="username" minlength="4" maxlength="20"
-                   placeholder="ornekgezgin" autocomplete="off" required />
-          </div>
-          <div id="usernameStatus" class="eg-username-status"></div>
-          <div class="eg-helper">
-            <span class="dot"></span>
-            Global benzersiz olmalı. Harf & rakam, nokta ve alt tire kullanabilirsin.
-          </div>
-        </div>
-      </div>
+        const searchInput = document.getElementById('searchInput');
+        const pokemonList = document.getElementById('pokemonList');
 
-      <!-- STEP 2: NAME & BIRTH & GENDER -->
-      <div class="step" data-step="2">
-        <div class="eg-field">
-          <div class="eg-label">
-            <span class="icon">👤</span> Adınız
-          </div>
-          <div class="eg-input-wrap">
-            <input type="text" id="firstName" placeholder="Ad" required />
-          </div>
-        </div>
+        let allPokemon = [];
 
-        <div class="eg-field">
-          <div class="eg-label">
-            İkinci Ad
-            <span class="eg-tag" id="middleToggle">ekle</span>
-          </div>
-          <div class="eg-input-wrap" id="middleWrap" style="display:none;">
-            <input type="text" id="middleName" placeholder="İkinci ad (opsiyonel)" />
-          </div>
-        </div>
+        // Tüm Pokémon'ları PokeAPI'den yükle
+        async function loadPokemon() {
+            try {
+                const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025');
+                const data = await response.json();
+                allPokemon = data.results;
+                renderPokemon(allPokemon);
+            } catch (error) {
+                pokemonList.innerHTML = '<div class="no-results">Yükleme hatası! Lütfen tekrar dene.</div>';
+            }
+        }
 
-        <div class="eg-field">
-          <div class="eg-label">
-            Soyadınız
-          </div>
-          <div class="eg-input-wrap">
-            <input type="text" id="lastName" placeholder="Soyad" required />
-          </div>
-        </div>
+        // Pokémon'ları render et
+        function renderPokemon(pokemonArray) {
+            pokemonList.innerHTML = pokemonArray.map((pokemon, index) => {
+                const id = index + 1;
+                const spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+                return `
+                    <div class="pokemon-card" onclick="showDetails('${pokemon.name}')">
+                        <div class="pokemon-image">
+                            <img src="${spriteUrl}" alt="${pokemon.name}" onerror="this.src='https://via.placeholder.com/80?text=?';">
+                        </div>
+                        <div class="pokemon-info">
+                            <h3>#${id.toString().padStart(3, '0')} ${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</h3>
+                            <p>Tür: Bilinmiyor (Detay için tıkla)</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
 
-        <div class="eg-field">
-          <div class="eg-label">
-            <span class="icon">📅</span> Doğum Tarihi
-          </div>
-          <div class="eg-input-wrap">
-            <div class="eg-birth-row">
-              <select id="birthDay" required></select>
-              <select id="birthMonth" required></select>
-              <select id="birthYear" required></select>
-            </div>
-          </div>
-          <div class="eg-helper">
-            <span class="dot"></span>
-            Güçlü ama basit: yalnızca gerçek tarihler seçilebilir.
-          </div>
-        </div>
+        // Arama filtrele
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = allPokemon.filter(p => p.name.toLowerCase().includes(query));
+            renderPokemon(filtered);
+        });
 
-        <div class="eg-field">
-          <div class="eg-label">
-            <span class="icon">⚧</span> Cinsiyet
-          </div>
-          <div class="eg-gender-wrap">
-            <div class="eg-gender-btn" data-gender="man">
-              <span class="icon">♂</span>Man
-            </div>
-            <div class="eg-gender-btn" data-gender="woman">
-              <span class="icon">♀</span>Woman
-            </div>
-            <div class="eg-gender-btn" data-gender="other">
-              <span class="icon">⋯</span>Other
-            </div>
-          </div>
-          <input type="hidden" id="gender" required />
-          <div class="eg-helper">
-            <span class="dot"></span>
-            <span>Other seçilirse detaylar profil ayarlarında.</span>
-          </div>
-        </div>
-      </div>
+        // Detay göster (basit alert, gerçek app'te modal)
+        function showDetails(name) {
+            Telegram.WebApp.showAlert(`#${name.toUpperCase()} hakkında detaylar! (Gerçek app'te tam info gelecek.)`);
+        }
 
-      <!-- STEP 3: CONTACT -->
-      <div class="step" data-step="3">
-        <div class="eg-field">
-          <div class="eg-label">
-            <span class="icon">✉️</span> E-posta
-          </div>
-          <div class="eg-input-wrap">
-            <div class="eg-email-row">
-              <input class="eg-email-local" type="text" id="emailLocal"
-                     placeholder="kullanici" required />
-              <select id="emailDomain" class="eg-email-domain">
-                <option value="@gmail.com">@gmail.com</option>
-                <option value="@outlook.com">@outlook.com</option>
-                <option value="@hotmail.com">@hotmail.com</option>
-                <option value="@yahoo.com">@yahoo.com</option>
-                <option value="@proton.me">@proton.me</option>
-              </select>
-            </div>
-          </div>
-          <div class="eg-helper">
-            <span class="dot"></span>
-            Tam adres: <strong id="emailPreview">-</strong>
-          </div>
-        </div>
-
-        <div class="eg-field">
-          <div class="eg-label">
-            <span class="icon">📱</span> Telefon
-          </div>
-          <div class="eg-input-wrap">
-            <div class="eg-phone-row">
-              <select id="phoneCode" class="eg-phone-code">
-                <option value="+90">+90 TR</option>
-                <!-- ileride diğer ülkeler eklenebilir -->
-              </select>
-              <input type="tel" id="phoneNumber"
-                     placeholder="5xx xxx xx xx"
-                     pattern="5[0-9]{2}[0-9]{3}[0-9]{2}[0-9]{2}"
-                     maxlength="10"
-                     required />
-            </div>
-          </div>
-          <div class="eg-helper">
-            <span class="dot"></span>
-            Türkiye örneği: +90 533 333 33 33 formatında.
-          </div>
-        </div>
-
-        <div class="eg-fake-ai">
-          <span class="loader"></span>
-          Akıllı doğrulama: Bilgilerin tur rezervasyonları için uygun mu kontrol ediliyor.
-        </div>
-      </div>
-
-      <!-- STEP 4: AVATAR + SUMMARY -->
-      <div class="step" data-step="4">
-        <div class="eg-field">
-          <div class="eg-label">
-            <span class="icon">🖼️</span> Profil Resmi
-          </div>
-          <div class="eg-profile-wrap">
-            <div class="eg-avatar-preview" id="avatarPreview">
-              <span>👤</span>
-            </div>
-            <div class="eg-avatar-text">
-              <label class="eg-btn secondary" for="avatarInput">
-                <span class="icon">⬆️</span> Yükle
-              </label>
-              <input type="file" id="avatarInput" accept="image/*" style="display:none" />
-              <small>Yuvarlak önizleme. Hafif kırpma efekti uygulanır.</small>
-            </div>
-          </div>
-        </div>
-
-        <div class="eg-summary" id="summaryBox">
-          Bilgilerin özetleniyor...
-        </div>
-
-        <div id="formError" class="eg-error" style="display:none;"></div>
-      </div>
-
-      <!-- CONTROLS -->
-      <div class="eg-controls">
-        <button type="button" class="eg-btn secondary" id="backBtn">
-          <span class="icon">←</span> Geri
-        </button>
-        <button type="button" class="eg-btn primary" id="nextBtn">
-          Devam <span class="icon">→</span>
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<script>
-  const steps = document.querySelectorAll('.step');
-  const stepLabel = document.getElementById('stepLabel');
-  const bars = [document.getElementById('bar1'), document.getElementById('bar2'),
-                document.getElementById('bar3'), document.getElementById('bar4')];
-  const nextBtn = document.getElementById('nextBtn');
-  const backBtn = document.getElementById('backBtn');
-  const form = document.getElementById('signupForm');
-
-  let currentStep = 1;
-
-  // Focus style
-  document.querySelectorAll('.eg-input-wrap input, .eg-input-wrap select')
-    .forEach(el => {
-      el.addEventListener('focus', () => el.parentElement.classList.add('focused'));
-      el.addEventListener('blur', () => el.parentElement.classList.remove('focused'));
-    });
-
-  // Username check (fake AI)
-  const usernameInput = document.getElementById('username');
-  const usernameStatus = document.getElementById('usernameStatus');
-  const takenUsernames = ['admin', 'root', 'test', 'etourgood', 'support']; // demo
-  let usernameTimeout;
-
-  usernameInput.addEventListener('input', () => {
-    const val = usernameInput.value.trim();
-    usernameStatus.textContent = '';
-    usernameStatus.className = 'eg-username-status';
-    if (!val) return;
-
-    usernameStatus.textContent = 'Uygunluk kontrol ediliyor...';
-    usernameStatus.classList.add('ok');
-    clearTimeout(usernameTimeout);
-    usernameTimeout = setTimeout(() => {
-      if (takenUsernames.includes(val.toLowerCase())) {
-        usernameStatus.textContent = '@' + val + ' kullanılamaz.';
-        usernameStatus.className = 'eg-username-status bad';
-      } else if (val.length < 4) {
-        usernameStatus.textContent = 'En az 4 karakter olmalı.';
-        usernameStatus.className = 'eg-username-status bad';
-      } else {
-        usernameStatus.textContent = '@' + val + ' kullanılabilir.';
-        usernameStatus.className = 'eg-username-status ok';
-      }
-    }, 320);
-  });
-
-  // Middle name toggle
-  const middleToggle = document.getElementById('middleToggle');
-  const middleWrap = document.getElementById('middleWrap');
-  middleToggle.addEventListener('click', () => {
-    const visible = middleWrap.style.display !== 'none';
-    middleWrap.style.display = visible ? 'none' : 'block';
-    middleToggle.textContent = visible ? 'ekle' : 'kaldır';
-  });
-
-  // Birthdate selects
-  const birthDay = document.getElementById('birthDay');
-  const birthMonth = document.getElementById('birthMonth');
-  const birthYear = document.getElementById('birthYear');
-
-  function populateBirth() {
-    birthDay.innerHTML = '<option value="">Gün</option>';
-    for (let d = 1; d <= 31; d++) {
-      const op = document.createElement('option');
-      op.value = d;
-      op.textContent = d.toString().padStart(2, '0');
-      birthDay.appendChild(op);
-    }
-    const months = ['01','02','03','04','05','06','07','08','09','10','11','12'];
-    birthMonth.innerHTML = '<option value="">Ay</option>';
-    months.forEach((m, i) => {
-      const op = document.createElement('option');
-      op.value = i+1;
-      op.textContent = m;
-      birthMonth.appendChild(op);
-    });
-    const thisYear = new Date().getFullYear();
-    birthYear.innerHTML = '<option value="">Yıl</option>';
-    for (let y = thisYear - 10; y >= thisYear - 90; y--) {
-      const op = document.createElement('option');
-      op.value = y;
-      op.textContent = y;
-      birthYear.appendChild(op);
-    }
-  }
-  populateBirth();
-
-  // Gender select
-  const genderButtons = document.querySelectorAll('.eg-gender-btn');
-  const genderInput = document.getElementById('gender');
-
-  genderButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      genderButtons.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      genderInput.value = btn.dataset.gender;
-    });
-  });
-
-  // Email preview
-  const emailLocal = document.getElementById('emailLocal');
-  const emailDomain = document.getElementById('emailDomain');
-  const emailPreview = document.getElementById('emailPreview');
-
-  function updateEmailPreview() {
-    const local = emailLocal.value.trim();
-    emailPreview.textContent = local ? local + emailDomain.value : '-';
-  }
-  emailLocal.addEventListener('input', updateEmailPreview);
-  emailDomain.addEventListener('change', updateEmailPreview);
-
-  // Phone auto numeric
-  const phoneNumber = document.getElementById('phoneNumber');
-  phoneNumber.addEventListener('input', () => {
-    phoneNumber.value = phoneNumber.value.replace(/\D/g, '').slice(0,10);
-  });
-
-  // Avatar upload + circular crop-ish preview
-  const avatarInput = document.getElementById('avatarInput');
-  const avatarPreview = document.getElementById('avatarPreview');
-
-  avatarInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const img = new Image();
-      img.onload = () => {
-        const size = 260;
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = size;
-        canvas.height = size;
-
-        const s = Math.min(img.width, img.height);
-        const sx = (img.width - s) / 2;
-        const sy = (img.height - s) / 2;
-
-        ctx.beginPath();
-        ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2);
-        ctx.closePath();
-        ctx.clip();
-        ctx.drawImage(img, sx, sy, s, s, 0, 0, size, size);
-
-        avatarPreview.innerHTML = '';
-        const avatarImg = document.createElement('img');
-        avatarImg.src = canvas.toDataURL('image/png');
-        avatarPreview.appendChild(avatarImg);
-      };
-      img.src = ev.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-
-  // Step navigation
-  function updateStepUI() {
-    steps.forEach(step => {
-      step.classList.toggle('active', Number(step.dataset.step) === currentStep);
-    });
-    stepLabel.textContent = currentStep.toString();
-
-    bars.forEach((bar, index) => {
-      const stepIndex = index + 1;
-      if (stepIndex < currentStep) {
-        bar.style.width = '100%';
-      } else if (stepIndex === currentStep) {
-        bar.style.width = '60%';
-      } else {
-        bar.style.width = '0%';
-      }
-    });
-
-    backBtn.style.visibility = currentStep === 1 ? 'hidden' : 'visible';
-    if (currentStep === 4) {
-      nextBtn.textContent = 'Kaydı Tamamla';
-      nextBtn.innerHTML = 'Kaydı Tamamla <span class="icon">✔︎</span>';
-      buildSummary();
-    } else {
-      nextBtn.innerHTML = 'Devam <span class="icon">→</span>';
-    }
-  }
-
-  function validateStep(step) {
-    const errorEl = document.getElementById('formError');
-    if (errorEl) {
-      errorEl.style.display = 'none';
-      errorEl.textContent = '';
-    }
-
-    if (step === 1) {
-      const v = usernameInput.value.trim();
-      if (!v || v.length < 4 || usernameStatus.classList.contains('bad')) {
-        showStepError('Lütfen uygun ve benzersiz bir kullanıcı adı seçin.');
-        return false;
-      }
-    }
-
-    if (step === 2) {
-      if (!document.getElementById('firstName').value.trim()) {
-        showStepError('Ad boş bırakılamaz.');
-        return false;
-      }
-      if (!document.getElementById('lastName').value.trim()) {
-        showStepError('Soyad boş bırakılamaz.');
-        return false;
-      }
-      const d = birthDay.value, m = birthMonth.value, y = birthYear.value;
-      if (!d || !m || !y) {
-        showStepError('Lütfen geçerli doğum tarihi seçin.');
-        return false;
-      }
-      if (!genderInput.value) {
-        showStepError('Lütfen cinsiyet seçin.');
-        return false;
-      }
-    }
-
-    if (step === 3) {
-      const local = emailLocal.value.trim();
-      if (!local) {
-        showStepError('Lütfen e-posta adresinizi girin.');
-        return false;
-      }
-      const email = local + emailDomain.value;
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        showStepError('Lütfen geçerli bir e-posta adresi girin.');
-        return false;
-      }
-      const phone = phoneNumber.value.trim();
-      if (phone.length !== 10 || !/^5[0-9]{9}$/.test(phone)) {
-        showStepError('Telefon numarasını 5xx xxx xx xx şeklinde girin.');
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  function showStepError(msg) {
-    let errorEl = document.getElementById('formError');
-    if (!errorEl) {
-      errorEl = document.createElement('div');
-      errorEl.id = 'formError';
-      errorEl.className = 'eg-error';
-      form.appendChild(errorEl);
-    }
-    errorEl.style.display = 'block';
-    errorEl.textContent = msg;
-  }
-
-  function buildSummary() {
-    const u = usernameInput.value.trim();
-    const fn = document.getElementById('firstName').value.trim();
-    const mn = (document.getElementById('middleName').value || '').trim();
-    const ln = document.getElementById('lastName').value.trim();
-    const d = birthDay.value;
-    const m = birthMonth.value;
-    const y = birthYear.value;
-    const g = genderInput.value || '-';
-    const email = (emailLocal.value.trim() || '-') + (emailLocal.value.trim() ? emailDomain.value : '');
-    const phone = document.getElementById('phoneCode').value + ' ' + phoneNumber.value;
-    const summary = document.getElementById('summaryBox');
-
-    summary.innerHTML = `
-      <strong>@${u}</strong> için etourgood hesabı hazırlanıyor.<br/>
-      İsim: <strong>${fn} ${mn ? mn + ' ' : ''}${ln}</strong><br/>
-      Doğum Tarihi: <strong>${d}.${m.toString().padStart(2,'0')}.${y}</strong> | Cinsiyet: <strong>${g}</strong><br/>
-      E-posta: <strong>${email}</strong><br/>
-      Telefon: <strong>${phone}</strong><br/>
-      Profil fotoğrafını şimdi yükleyebilir veya sonra güncelleyebilirsin.
-    `;
-  }
-
-  backBtn.addEventListener('click', () => {
-    if (currentStep > 1) {
-      currentStep--;
-      updateStepUI();
-    }
-  });
-
-  nextBtn.addEventListener('click', () => {
-    if (currentStep < 4) {
-      if (!validateStep(currentStep)) return;
-      currentStep++;
-      updateStepUI();
-    } else {
-      if (!validateStep(3)) {
-        currentStep = 3;
-        updateStepUI();
-        return;
-      }
-      alert('🚀 etourgood hesabın başarıyla oluşturuldu (demo). Backend entegrasyonu ile gerçek kayda hazır.');
-    }
-  });
-
-  updateStepUI();
-</script>
+        // Yükle
+        loadPokemon();
+    </script>
 </body>
 </html>
