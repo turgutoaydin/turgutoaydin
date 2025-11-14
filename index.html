@@ -3,824 +3,622 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokédex - Telegram Mini App</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>EtgMap BETA by Turgut</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --bg-gradient: radial-gradient(circle at top, #ffecd2 0%, #fcb69f 14%, #f0f4ff 40%, #e0f7fa 70%, #e3f2fd 100%);
-            --card-radius: 18px;
-            --transition-fast: 0.18s ease-out;
-            --border-soft: rgba(255, 255, 255, 0.28);
-            --glass-bg: rgba(255, 255, 255, 0.14);
-            --shadow-soft: 0 10px 26px rgba(15, 23, 42, 0.16);
-            --accent: #ff6b35;
-            --accent-soft: rgba(255, 107, 53, 0.16);
-            --text-main: #1f2933;
-            --text-soft: #6b7280;
-            --radius-pill: 999px;
-            --blur-xl: 18px;
-            --font-sans: -apple-system, BlinkMacSystemFont, system-ui, -system-ui, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
-            font-family: var(--font-sans);
-            background: var(--bg-gradient);
-            color: var(--text-main);
-            min-height: 100vh;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #f0f0f0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
-
-        .app {
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 10px 10px 18px;
-        }
-
-        /* HEADER */
-
-        .header-wrap {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            padding-bottom: 10px;
-            backdrop-filter: blur(16px);
-        }
-
+        
         .header {
+            background: linear-gradient(135deg, #ff8c00 0%, #ff6b00 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             position: relative;
-            padding: 14px 16px 12px;
-            border-radius: 24px;
-            background: radial-gradient(circle at top left, #ff9f7c, #ff6b35 40%, #d84315 100%);
-            box-shadow: 0 14px 32px rgba(0, 0, 0, 0.3);
-            color: #fff;
-            overflow: hidden;
+            z-index: 1000;
         }
-
-        .header::before {
-            content: '';
+        
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .beta-badge {
+            background: #ff4444;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
             position: absolute;
-            width: 120px;
-            height: 120px;
-            right: -26px;
-            top: -26px;
-            border-radius: 50%;
-            background:
-                radial-gradient(circle at 30% 30%, #ffffff, transparent 65%),
-                radial-gradient(circle at 70% 70%, #ff6b35, #c62828);
-            opacity: 0.25;
-            box-shadow:
-                inset 0 0 0 4px rgba(255, 255, 255, 0.25),
-                0 8px 22px rgba(0, 0, 0, 0.35);
+            top: 10px;
+            right: 10px;
         }
-
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .header-icon {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #fff, #ffe0d0);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            box-shadow:
-                inset 0 0 0 2px rgba(0, 0, 0, 0.14),
-                0 4px 10px rgba(0, 0, 0, 0.28);
-        }
-
-        .header-title h1 {
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-        }
-
-        .header-sub {
-            margin-top: 4px;
-            font-size: 11px;
-            opacity: 0.92;
-        }
-
-        .header-badges {
-            margin-top: 10px;
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            font-size: 9px;
-        }
-
-        .badge-soft {
-            padding: 4px 9px;
-            border-radius: var(--radius-pill);
-            background: rgba(255, 255, 255, 0.16);
-            border: 1px solid rgba(255, 255, 255, 0.26);
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            backdrop-filter: blur(10px);
-        }
-
-        .badge-soft span {
-            font-size: 12px;
-        }
-
-        /* SEARCH + FILTER BAR */
-
-        .ui-bar {
-            margin-top: 8px;
-            padding: 10px 10px 8px;
-            border-radius: 20px;
-            backdrop-filter: blur(var(--blur-xl));
-            background: linear-gradient(
-                135deg,
-                rgba(255, 255, 255, 0.86),
-                rgba(255, 255, 255, 0.74)
-            );
-            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.16);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-        }
-
-        .search-wrap {
-            position: relative;
-            margin-bottom: 8px;
-        }
-
-        .search-wrap input {
-            width: 100%;
-            padding: 10px 34px 10px 32px;
-            border-radius: var(--radius-pill);
-            border: 1px solid rgba(148, 163, 253, 0.26);
-            background: rgba(248, 250, 252, 0.96);
-            font-size: 13px;
-            outline: none;
-            color: var(--text-main);
-            box-shadow: inset 0 1px 2px rgba(148, 163, 253, 0.12);
-            transition: all var(--transition-fast);
-        }
-
-        .search-wrap input::placeholder {
-            color: #9ca3af;
-        }
-
-        .search-wrap input:focus {
-            box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.22);
-            border-color: var(--accent);
-            background: #ffffff;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 14px;
-            opacity: 0.65;
-        }
-
-        .clear-icon {
-            position: absolute;
-            right: 9px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 13px;
-            opacity: 0.4;
-            cursor: pointer;
-            display: none;
-        }
-
-        .filter-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            overflow-x: auto;
-            padding-bottom: 2px;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .filter-label {
-            font-size: 9px;
-            color: #9ca3af;
-            white-space: nowrap;
-        }
-
-        .chip {
-            padding: 4px 9px;
-            font-size: 9px;
-            border-radius: var(--radius-pill);
-            border: 1px solid rgba(148, 163, 253, 0.35);
-            background: rgba(248, 250, 252, 0.94);
-            color: var(--text-soft);
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .chip span {
-            font-size: 11px;
-        }
-
-        .chip.active {
-            background: linear-gradient(90deg, var(--accent), #ff9f7c);
-            border-color: transparent;
-            color: #fff;
-            box-shadow: 0 4px 10px rgba(255, 107, 53, 0.5);
-        }
-
-        /* POKEMON LIST */
-
-        .pokemon-list {
-            margin-top: 10px;
+        
+        .container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-        }
-
-        .pokemon-card {
-            position: relative;
-            display: grid;
-            grid-template-columns: 90px 1fr;
-            gap: 10px;
-            padding: 9px 9px 9px 9px;
-            border-radius: var(--card-radius);
-            background: radial-gradient(circle at top, rgba(255,255,255,0.9), rgba(255,255,255,0.82));
-            box-shadow: var(--shadow-soft);
-            border: 1px solid var(--border-soft);
-            backdrop-filter: blur(12px);
-            transform-origin: center;
-            transform: translateY(0) scale(1);
-            transition: transform var(--transition-fast), box-shadow var(--transition-fast), background 0.25s ease-out, border-color 0.2s;
-            cursor: pointer;
-            overflow: hidden;
-        }
-
-        .pokemon-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.16), transparent 70%);
-            mix-blend-mode: screen;
-            pointer-events: none;
-        }
-
-        .pokemon-card:hover {
-            transform: translateY(-2px) scale(1.015);
-            box-shadow: 0 16px 36px rgba(15, 23, 42, 0.2);
-            border-color: rgba(255, 107, 53, 0.32);
-        }
-
-        .poke-image-wrap {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .poke-orbit {
-            position: absolute;
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), transparent 70%);
-            box-shadow:
-                0 6px 16px rgba(15, 23, 42, 0.22),
-                inset 0 0 0 1px rgba(148, 163, 253, 0.18);
-            opacity: 0.94;
-        }
-
-        .pokemon-image {
-            position: relative;
-            width: 64px;
-            height: 64px;
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            z-index: 2;
-        }
-
-        .pokemon-image img {
-            width: 100%;
             height: 100%;
-            object-fit: contain;
-            image-rendering: auto;
         }
-
-        .poke-id-label {
-            position: absolute;
-            bottom: -4px;
-            right: 0;
-            padding: 2px 6px;
-            font-size: 8px;
-            border-radius: var(--radius-pill);
-            background: rgba(15, 23, 42, 0.9);
-            color: #f9fafb;
-            box-shadow: 0 4px 8px rgba(15, 23, 42, 0.4);
-            z-index: 3;
+        
+        .map-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
         }
-
-        .pokemon-info {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 2px;
-        }
-
-        .pokemon-name {
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 0.01em;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .pokemon-name small {
-            font-size: 9px;
-            font-weight: 500;
-            color: #9ca3af;
-        }
-
-        .type-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            margin-top: 2px;
-        }
-
-        .type-badge {
-            font-size: 8px;
-            padding: 3px 7px;
-            border-radius: var(--radius-pill);
-            color: #ffffff;
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-            box-shadow: 0 3px 8px rgba(15, 23, 42, 0.26);
-        }
-
-        .meta-line {
-            display: flex;
-            gap: 8px;
-            margin-top: 3px;
-            font-size: 8px;
-            color: var(--text-soft);
-        }
-
-        .stat-bar-wrap {
-            margin-top: 4px;
+        
+        #map {
+            height: 100%;
             width: 100%;
+            border-radius: 0;
         }
-
-        .stat-label-row {
+        
+        .controls {
             display: flex;
             justify-content: space-between;
-            font-size: 7px;
-            color: #9ca3af;
+            padding: 10px;
+            background: #2d2d2d;
+            border-top: 1px solid #444;
         }
-
-        .stat-bar {
-            margin-top: 2px;
-            width: 100%;
-            height: 5px;
-            border-radius: 999px;
-            background: rgba(148, 163, 253, 0.18);
-            overflow: hidden;
+        
+        .btn {
+            background: linear-gradient(135deg, #ff8c00 0%, #ff6b00 100%);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
         }
-
-        .stat-fill {
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: #444;
+        }
+        
+        .sidebar {
+            position: absolute;
+            top: 0;
+            right: -100%;
+            width: 85%;
             height: 100%;
-            border-radius: inherit;
-            background: linear-gradient(90deg, var(--accent), #ffb347);
-            width: 0%;
-            transition: width 0.35s ease-out;
+            background: rgba(45, 45, 45, 0.95);
+            backdrop-filter: blur(10px);
+            transition: right 0.3s ease;
+            z-index: 500;
+            padding: 15px;
+            overflow-y: auto;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
         }
-
-        .tag-legendary {
-            padding: 2px 6px;
-            border-radius: var(--radius-pill);
-            font-size: 7px;
-            background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
-            color: #fff;
-            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.6);
+        
+        .sidebar.active {
+            right: 0;
         }
-
-        .loading,
-        .no-results {
-            text-align: center;
-            padding: 18px 8px 8px;
-            font-size: 11px;
-            color: var(--text-soft);
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #555;
         }
-
-        .skeleton-card {
-            padding: 9px;
-            border-radius: var(--card-radius);
-            background: rgba(255, 255, 255, 0.7);
-            border: 1px solid rgba(226, 232, 240, 0.9);
-            display: grid;
-            grid-template-columns: 90px 1fr;
+        
+        .sidebar h2 {
+            color: #ff8c00;
+            font-size: 1.3rem;
+        }
+        
+        .close-sidebar {
+            background: none;
+            border: none;
+            color: #ff8c00;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .station-list {
+            display: flex;
+            flex-direction: column;
             gap: 10px;
-            overflow: hidden;
         }
-
-        .skeleton-thumb,
-        .skeleton-line,
-        .skeleton-pill {
-            position: relative;
-            overflow: hidden;
-            border-radius: 12px;
-            background: linear-gradient(
-                90deg,
-                #e5e7eb 0%,
-                #f3f4ff 20%,
-                #e5e7eb 40%,
-                #f3f4ff 60%,
-                #e5e7eb 80%
-            );
-            background-size: 200% 100%;
-            animation: shimmer 1.18s infinite;
+        
+        .station-item {
+            background: rgba(68, 68, 68, 0.7);
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #ff8c00;
+            transition: all 0.3s ease;
         }
-
-        .skeleton-thumb {
-            width: 64px;
-            height: 64px;
+        
+        .station-item:hover {
+            background: rgba(85, 85, 85, 0.9);
+            transform: translateX(5px);
         }
-
-        .skeleton-line {
-            height: 9px;
-            margin-bottom: 3px;
+        
+        .station-name {
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: #ff8c00;
         }
-
-        .skeleton-pill {
-            height: 7px;
+        
+        .station-location {
+            font-size: 0.85rem;
+            color: #ccc;
+        }
+        
+        .user-location-marker {
+            background: #ff8c00;
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            box-shadow: 0 0 10px rgba(255, 140, 0, 0.7);
+        }
+        
+        .bus-marker {
+            background: #3498db;
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        .legend {
+            background: rgba(45, 45, 45, 0.8);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.8rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+        
+        .user-location-color {
+            background: #ff8c00;
+        }
+        
+        .bus-station-color {
+            background: #3498db;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 1000;
+            background: rgba(45, 45, 45, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        
+        .loading-spinner {
+            border: 5px solid rgba(255, 140, 0, 0.3);
+            border-top: 5px solid #ff8c00;
+            border-radius: 50%;
             width: 50px;
-            border-radius: var(--radius-pill);
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
         }
-
-        @keyframes shimmer {
-            0% { background-position: -150% 0; }
-            100% { background-position: 150% 0; }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-
+        
+        .location-info {
+            position: absolute;
+            bottom: 70px;
+            left: 10px;
+            background: rgba(45, 45, 45, 0.9);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            max-width: 200px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            z-index: 400;
+        }
+        
+        /* 3D efekti için gölgeler */
+        .map-3d-effect {
+            box-shadow: 
+                inset 0 0 50px rgba(0,0,0,0.5),
+                0 10px 30px rgba(0,0,0,0.7);
+        }
+        
+        /* Responsive iyileştirmeler */
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .btn {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .sidebar {
+                width: 90%;
+            }
+        }
+        
         @media (max-width: 360px) {
-            .header-title h1 { font-size: 18px; }
-            .pokemon-card { grid-template-columns: 82px 1fr; }
+            .header h1 {
+                font-size: 1.1rem;
+            }
+            
+            .btn {
+                padding: 7px 10px;
+                font-size: 0.75rem;
+            }
         }
     </style>
 </head>
 <body>
-<div class="app">
-    <!-- HEADER -->
-    <div class="header-wrap">
-        <div class="header">
-            <div class="header-title">
-                <div class="header-icon">⚡</div>
-                <div>
-                    <h1>Pokédex Neo</h1>
-                    <div class="header-sub">
-                        1.025 Pokémon | Telegram Mini App için 3B cam efektli dikey Pokedex
-                    </div>
-                </div>
+    <div class="header">
+        <span class="beta-badge">BETA</span>
+        <h1>EtgMap BETA by Turgut</h1>
+        <p>Otobüs durakları haritası</p>
+    </div>
+    
+    <div class="container">
+        <div class="map-container">
+            <div id="map" class="map-3d-effect"></div>
+            
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <p>Harita yükleniyor...</p>
             </div>
-            <div class="header-badges">
-                <div class="badge-soft">🧬 <span>Tür, Type, Stat mini özet</span></div>
-                <div class="badge-soft">🔍 <span>İsim / ID / Type arama</span></div>
-                <div class="badge-soft">📲 <span>Dokun & Popup detay</span></div>
+            
+            <div class="location-info" id="locationInfo" style="display: none;">
+                <p><i class="fas fa-map-marker-alt" style="color: #ff8c00;"></i> Konumunuz belirleniyor...</p>
             </div>
         </div>
-
-        <!-- SEARCH + FILTER -->
-        <div class="ui-bar">
-            <div class="search-wrap">
-                <span class="search-icon">🔎</span>
-                <input id="searchInput" type="text" placeholder="Pokémon ara (örn: pikachu, #025, fire)..." autocomplete="off">
-                <span id="clearSearch" class="clear-icon">✕</span>
+        
+        <div class="controls">
+            <button class="btn" id="locateBtn">
+                <i class="fas fa-location-arrow"></i>
+                <span>Konumumu Bul</span>
+            </button>
+            <button class="btn btn-secondary" id="stationsBtn">
+                <i class="fas fa-bus"></i>
+                <span>Duraklar</span>
+            </button>
+        </div>
+    </div>
+    
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Otobüs Durakları</h2>
+            <button class="close-sidebar" id="closeSidebar">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="station-list" id="stationList">
+            <!-- Durak listesi burada dinamik olarak oluşturulacak -->
+        </div>
+        
+        <div class="legend">
+            <h3>Harita Göstergesi</h3>
+            <div class="legend-item">
+                <div class="legend-color user-location-color"></div>
+                <span>Sizin Konumunuz</span>
             </div>
-            <div class="filter-row" id="typeFilters">
-                <div class="filter-label">Type filtre:</div>
-                <div class="chip active" data-type="all">◯ Tümü</div>
-                <div class="chip" data-type="fire">🔥 Fire</div>
-                <div class="chip" data-type="water">💧 Water</div>
-                <div class="chip" data-type="grass">🌿 Grass</div>
-                <div class="chip" data-type="electric">⚡ Electric</div>
-                <div class="chip" data-type="psychic">🔮 Psychic</div>
-                <div class="chip" data-type="dragon">🐉 Dragon</div>
-                <div class="chip" data-type="dark">🌑 Dark</div>
-                <div class="chip" data-type="fairy">✨ Fairy</div>
+            <div class="legend-item">
+                <div class="legend-color bus-station-color"></div>
+                <span>Otobüs Durakları</span>
             </div>
         </div>
     </div>
 
-    <!-- LIST -->
-    <div class="pokemon-list" id="pokemonList">
-        <!-- Skeleton Loader -->
-    </div>
-</div>
-
-<script>
-    // Telegram mini app
-    try {
-        Telegram.WebApp.ready();
-        Telegram.WebApp.expand();
-    } catch (e) {
-        console.warn("Telegram WebApp SDK not available in this context.");
-    }
-
-    const searchInput = document.getElementById('searchInput');
-    const clearSearch = document.getElementById('clearSearch');
-    const pokemonList = document.getElementById('pokemonList');
-    const typeFilters = document.getElementById('typeFilters');
-
-    const API_BASE = 'https://pokeapi.co/api/v2';
-    const POKEMON_LIMIT = 1025; // İstersen 300'e çekebilirsin (performans için)
-    let allPokemon = [];
-    let activeType = 'all';
-
-    const TYPE_COLORS = {
-        normal: '#A8A77A',
-        fire: '#EE8130',
-        water: '#6390F0',
-        electric: '#F7D02C',
-        grass: '#7AC74C',
-        ice: '#96D9D6',
-        fighting: '#C22E28',
-        poison: '#A33EA1',
-        ground: '#E2BF65',
-        flying: '#A98FF3',
-        psychic: '#F95587',
-        bug: '#A6B91A',
-        rock: '#B6A136',
-        ghost: '#735797',
-        dragon: '#6F35FC',
-        dark: '#705746',
-        steel: '#B7B7CE',
-        fairy: '#D685AD'
-    };
-
-    function createSkeletons(count = 8) {
-        pokemonList.innerHTML = '';
-        for (let i = 0; i < count; i++) {
-            pokemonList.innerHTML += `
-                <div class="skeleton-card">
-                    <div style="display:flex;align-items:center;justify-content:center;">
-                        <div class="skeleton-thumb"></div>
-                    </div>
-                    <div>
-                        <div class="skeleton-line" style="width:60%;"></div>
-                        <div class="skeleton-line" style="width:40%;"></div>
-                        <div class="skeleton-pill"></div>
-                    </div>
-                </div>
-            `;
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Değişkenler
+        let map;
+        let userLocation = null;
+        let userMarker = null;
+        let busStations = [];
+        let stationMarkers = [];
+        
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', function() {
+            initMap();
+            loadBusStations();
+            setupEventListeners();
+        });
+        
+        // Haritayı başlat
+        function initMap() {
+            // Varsayılan olarak Türkiye merkezli harita
+            map = L.map('map', {
+                zoomControl: false
+            }).setView([39.9334, 32.8597], 6); // Ankara merkez
+            
+            // Harita katmanını ekle (koyu tema)
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }).addTo(map);
+            
+            // Zoom kontrolünü sağ üste ekle
+            L.control.zoom({
+                position: 'topright'
+            }).addTo(map);
+            
+            // Kullanıcının konumunu al
+            getUserLocation();
         }
-    }
-
-    async function loadPokemon() {
-        try {
-            createSkeletons();
-            const response = await fetch(\`\${API_BASE}/pokemon?limit=\${POKEMON_LIMIT}\`);
-            const data = await response.json();
-
-            // Detayları çek (type, stats vs.). Production'da cache önerilir.
-            const detailPromises = data.results.map(async (base, index) => {
-                const id = index + 1;
-                try {
-                    const detailRes = await fetch(base.url);
-                    const detail = await detailRes.json();
-                    const types = detail.types.map(t => t.type.name);
-                    const baseStats = detail.stats.reduce((acc, s) => {
-                        acc[s.stat.name] = s.base_stat;
-                        return acc;
-                    }, {});
-                    const avgStat = Math.round(
-                        (baseStats.hp + baseStats.attack + baseStats.defense + baseStats['special-attack'] + baseStats['special-defense'] + baseStats.speed) / 6
-                    );
-                    const sprite =
-                        detail.sprites.other['official-artwork'].front_default ||
-                        detail.sprites.front_default ||
-                        \`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/\${id}.png\`;
-
-                    return {
-                        id,
-                        name: base.name,
-                        types,
-                        height: detail.height,
-                        weight: detail.weight,
-                        stats: baseStats,
-                        avgStat,
-                        sprite,
-                        isLegendary: false // Basit; istersen species API ile güncelleyebilirsin
-                    };
-                } catch (e) {
-                    return {
-                        id,
-                        name: base.name,
-                        types: [],
-                        height: null,
-                        weight: null,
-                        stats: {},
-                        avgStat: 50,
-                        sprite: \`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/\${id}.png\`,
-                        isLegendary: false
-                    };
+        
+        // Kullanıcının konumunu al
+        function getUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        
+                        // Kullanıcı konumunu haritada göster
+                        if (userMarker) {
+                            map.removeLayer(userMarker);
+                        }
+                        
+                        userMarker = L.marker([userLocation.lat, userLocation.lng], {
+                            icon: L.divIcon({
+                                className: 'user-location-marker',
+                                iconSize: [20, 20]
+                            })
+                        }).addTo(map);
+                        
+                        // Haritayı kullanıcı konumuna yakınlaştır
+                        map.setView([userLocation.lat, userLocation.lng], 12);
+                        
+                        // Konum bilgisini güncelle
+                        document.getElementById('locationInfo').style.display = 'block';
+                        document.getElementById('locationInfo').innerHTML = 
+                            `<p><i class="fas fa-map-marker-alt" style="color: #ff8c00;"></i> Konumunuz belirlendi</p>`;
+                        
+                        // Yükleme ekranını gizle
+                        document.getElementById('loading').style.display = 'none';
+                    },
+                    function(error) {
+                        console.error('Konum alınamadı:', error);
+                        
+                        // Yükleme ekranını gizle
+                        document.getElementById('loading').style.display = 'none';
+                        
+                        // Konum bilgisini güncelle
+                        document.getElementById('locationInfo').style.display = 'block';
+                        document.getElementById('locationInfo').innerHTML = 
+                            `<p><i class="fas fa-exclamation-triangle" style="color: #ff4444;"></i> Konum izni verilmedi</p>`;
+                    }
+                );
+            } else {
+                alert("Tarayıcınız konum bilgisini desteklemiyor.");
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+        
+        // JSON dosyasından otobüs duraklarını yükle
+        function loadBusStations() {
+            fetch('tr-busstations.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('JSON dosyası yüklenemedi');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    busStations = data;
+                    displayBusStations();
+                    populateStationList();
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                    // Örnek verilerle devam et
+                    busStations = [
+                        {
+                            "id": "TR-22-MERKEZ",
+                            "ad": "Edirne Otogarı",
+                            "konum": { "il": "Edirne", "ilce": "Merkez", "koordinatlar": { "latitude": 41.6773, "longitude": 26.5557 } }
+                        },
+                        {
+                            "id": "TR-23-MERKEZ",
+                            "ad": "Elazığ Otogarı", 
+                            "konum": { "il": "Elazığ", "ilce": "Merkez", "koordinatlar": { "latitude": 38.6810, "longitude": 39.2264 } }
+                        },
+                        {
+                            "id": "TR-24-MERKEZ",
+                            "ad": "Erzincan Otogarı",
+                            "konum": { "il": "Erzincan", "ilce": "Merkez", "koordinatlar": { "latitude": 39.7500, "longitude": 39.5000 } }
+                        },
+                        {
+                            "id": "TR-25-MERKEZ", 
+                            "ad": "Erzurum Otogarı",
+                            "konum": { "il": "Erzurum", "ilce": "Yakutiye", "koordinatlar": { "latitude": 39.9086, "longitude": 41.2769 } }
+                        },
+                        {
+                            "id": "TR-26-MERKEZ",
+                            "ad": "Eskişehir Otogarı",
+                            "konum": { "il": "Eskişehir", "ilce": "Tepebaşı", "koordinatlar": { "latitude": 39.7767, "longitude": 30.5206 } }
+                        },
+                        {
+                            "id": "TR-31-ERZIN",
+                            "ad": "Erzin Otogarı",
+                            "konum": { "il": "Hatay", "ilce": "Erzin", "koordinatlar": { "latitude": 36.9539, "longitude": 36.2000 } }
+                        }
+                    ];
+                    displayBusStations();
+                    populateStationList();
+                });
+        }
+        
+        // Otobüs duraklarını haritada göster
+        function displayBusStations() {
+            // Önceki işaretçileri temizle
+            stationMarkers.forEach(marker => map.removeLayer(marker));
+            stationMarkers = [];
+            
+            // Her durak için işaretçi oluştur
+            busStations.forEach((station, index) => {
+                let lat, lng;
+                
+                // Koordinatlar mevcutsa kullan, yoksa rastgele oluştur
+                if (station.konum.koordinatlar.latitude && station.konum.koordinatlar.longitude) {
+                    lat = station.konum.koordinatlar.latitude;
+                    lng = station.konum.koordinatlar.longitude;
+                } else {
+                    // Türkiye içinde rastgele koordinat oluştur
+                    lat = 39 + (Math.random() * 4 - 2);
+                    lng = 35 + (Math.random() * 6 - 3);
                 }
-            });
-
-            allPokemon = await Promise.all(detailPromises);
-            renderPokemon(allPokemon);
-        } catch (error) {
-            console.error(error);
-            pokemonList.innerHTML = '<div class="no-results">Yükleme hatası! Lütfen tekrar dene.</div>';
-        }
-    }
-
-    function filterAndRender() {
-        const query = searchInput.value.trim().toLowerCase();
-        let filtered = allPokemon;
-
-        if (query) {
-            filtered = filtered.filter(p =>
-                p.name.toLowerCase().includes(query) ||
-                \`#\${p.id.toString().padStart(3, '0')}\`.includes(query) ||
-                p.types.some(t => t.toLowerCase().includes(query))
-            );
-        }
-
-        if (activeType !== 'all') {
-            filtered = filtered.filter(p => p.types.map(t => t.toLowerCase()).includes(activeType));
-        }
-
-        renderPokemon(filtered);
-    }
-
-    function renderPokemon(pokemonArray) {
-        if (!pokemonArray.length) {
-            pokemonList.innerHTML = '<div class="no-results">Hiç Pokémon bulunamadı. Farklı bir isim, ID veya type dene.</div>';
-            return;
-        }
-
-        const html = pokemonArray.map(p => {
-            const idLabel = \`#\${p.id.toString().padStart(3, '0')}\`;
-            const displayName = p.name.charAt(0).toUpperCase() + p.name.slice(1);
-            const primaryType = (p.types[0] || 'normal').toLowerCase();
-            const typeBadges = p.types.map(t => {
-                const color = TYPE_COLORS[t.toLowerCase()] || '#9ca3af';
-                return \`<span class="type-badge" style="background:linear-gradient(135deg,\${color},#111827);">
-                            <span>●</span>\${t.toUpperCase()}
-                        </span>\`;
-            }).join('');
-
-            const meta = [];
-            if (p.height) meta.push(\`\${(p.height / 10).toFixed(1)} m\`);
-            if (p.weight) meta.push(\`\${(p.weight / 10).toFixed(1)} kg\`);
-
-            // Avg stat bar width
-            const avgWidth = Math.min(100, Math.max(10, (p.avgStat / 160) * 100));
-
-            const legendaryTag = p.isLegendary
-                ? '<div class="tag-legendary">LEGENDARY</div>'
-                : '';
-
-            return `
-                <div class="pokemon-card"
-                     data-id="${p.id}"
-                     data-name="${displayName}"
-                     data-types="${p.types.join(',')}"
-                     data-avg="${p.avgStat}"
-                     style="background:
-                        radial-gradient(circle at top,
-                            ${hexToRgba(TYPE_COLORS[primaryType] || '#ff6b35', 0.32)},
-                            rgba(255,255,255,0.96));"
-                     onclick="showDetails(${p.id})">
-                    <div class="poke-image-wrap">
-                        <div class="poke-orbit"></div>
-                        <div class="pokemon-image">
-                            <img src="${p.sprite}"
-                                 alt="${displayName}"
-                                 onerror="this.src='https://via.placeholder.com/96?text=?';">
-                        </div>
-                        <div class="poke-id-label">${idLabel}</div>
+                
+                const marker = L.marker([lat, lng], {
+                    icon: L.divIcon({
+                        className: 'bus-marker',
+                        html: '<i class="fas fa-bus"></i>',
+                        iconSize: [16, 16]
+                    })
+                }).addTo(map);
+                
+                // İşaretçiye tıklanınca bilgi göster
+                marker.bindPopup(`
+                    <div style="color: #333;">
+                        <h3 style="margin: 0 0 5px; color: #ff8c00;">${station.ad}</h3>
+                        <p style="margin: 0;">${station.konum.il} / ${station.konum.ilce}</p>
                     </div>
-                    <div class="pokemon-info">
-                        <div class="pokemon-name">
-                            <span>${displayName}</span>
-                            <small>${primaryType.toUpperCase()}</small>
-                            ${legendaryTag}
-                        </div>
-                        <div class="type-badges">
-                            ${typeBadges}
-                        </div>
-                        <div class="meta-line">
-                            <span>⚖️ ${meta[1] || '--'}</span>
-                            <span>📏 ${meta[0] || '--'}</span>
-                            <span>⭐ Avg ${p.avgStat || '--'}</span>
-                        </div>
-                        <div class="stat-bar-wrap">
-                            <div class="stat-label-row">
-                                <span>Combat Power</span>
-                                <span>${p.avgStat || '--'}</span>
-                            </div>
-                            <div class="stat-bar">
-                                <div class="stat-fill" style="width:${avgWidth}%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        pokemonList.innerHTML = html;
-    }
-
-    function hexToRgba(hex, alpha) {
-        if (!hex || typeof hex !== 'string') return `rgba(255,107,53,${alpha || 0.2})`;
-        hex = hex.replace('#', '');
-        if (hex.length === 3) {
-            hex = hex.split('').map(c => c + c).join('');
-        }
-        const num = parseInt(hex, 16);
-        const r = (num >> 16) & 255;
-        const g = (num >> 8) & 255;
-        const b = num & 255;
-        return `rgba(${r},${g},${b},${alpha || 1})`;
-    }
-
-    // Search input events
-    searchInput.addEventListener('input', () => {
-        clearSearch.style.display = searchInput.value ? 'block' : 'none';
-        filterAndRender();
-    });
-
-    clearSearch.addEventListener('click', () => {
-        searchInput.value = '';
-        clearSearch.style.display = 'none';
-        filterAndRender();
-    });
-
-    // Type filter
-    typeFilters.addEventListener('click', (e) => {
-        const chip = e.target.closest('.chip');
-        if (!chip) return;
-        [...typeFilters.querySelectorAll('.chip')].forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        activeType = chip.dataset.type || 'all';
-        filterAndRender();
-    });
-
-    // Detail popup
-    window.showDetails = function (id) {
-        const p = allPokemon.find(x => x.id === id);
-        if (!p) return;
-
-        const name = p.name.charAt(0).toUpperCase() + p.name.slice(1);
-        const idLabel = `#${p.id.toString().padStart(3, '0')}`;
-        const types = p.types.length ? p.types.join(', ').toUpperCase() : 'UNKNOWN';
-        const hp = p.stats.hp || '?';
-        const atk = p.stats.attack || '?';
-        const def = p.stats.defense || '?';
-        const spd = p.stats.speed || '?';
-        const h = p.height ? (p.height / 10).toFixed(1) + ' m' : '--';
-        const w = p.weight ? (p.weight / 10).toFixed(1) + ' kg' : '--';
-
-        const msg =
-`${idLabel} ${name}
-Type: ${types}
-Height: ${h} | Weight: ${w}
-HP: ${hp} | ATK: ${atk} | DEF: ${def} | SPD: ${spd}
-—
-Daha gelişmiş detay kartı, favori ekleme, takım oluşturma vb. Telegram bot backend ile entegre edilebilir.`;
-
-        if (window.Telegram && Telegram.WebApp && Telegram.WebApp.showPopup) {
-            Telegram.WebApp.showPopup({
-                title: `${name} Detay`,
-                message: msg,
-                buttons: [{ id: 'ok', type: 'close', text: 'Kapat' }]
+                `);
+                
+                stationMarkers.push(marker);
             });
-        } else if (window.Telegram && Telegram.WebApp && Telegram.WebApp.showAlert) {
-            Telegram.WebApp.showAlert(msg);
-        } else {
-            alert(msg);
         }
-    };
-
-    // Başlat
-    loadPokemon();
-</script>
+        
+        // Yan çubuktaki durak listesini doldur
+        function populateStationList() {
+            const stationList = document.getElementById('stationList');
+            stationList.innerHTML = '';
+            
+            busStations.forEach(station => {
+                const stationItem = document.createElement('div');
+                stationItem.className = 'station-item';
+                stationItem.innerHTML = `
+                    <div class="station-name">${station.ad}</div>
+                    <div class="station-location">${station.konum.il} / ${station.konum.ilce}</div>
+                `;
+                
+                // Durağa tıklanınca haritada göster
+                stationItem.addEventListener('click', function() {
+                    let lat, lng;
+                    
+                    if (station.konum.koordinatlar.latitude && station.konum.koordinatlar.longitude) {
+                        lat = station.konum.koordinatlar.latitude;
+                        lng = station.konum.koordinatlar.longitude;
+                    } else {
+                        // Türkiye içinde rastgele koordinat
+                        lat = 39 + (Math.random() * 4 - 2);
+                        lng = 35 + (Math.random() * 6 - 3);
+                    }
+                    
+                    map.setView([lat, lng], 13);
+                    closeSidebar();
+                    
+                    // İlgili işaretçiyi bul ve aç
+                    const markerIndex = busStations.findIndex(s => s.id === station.id);
+                    if (markerIndex !== -1 && stationMarkers[markerIndex]) {
+                        stationMarkers[markerIndex].openPopup();
+                    }
+                });
+                
+                stationList.appendChild(stationItem);
+            });
+        }
+        
+        // Olay dinleyicilerini kur
+        function setupEventListeners() {
+            // Konumumu bul butonu
+            document.getElementById('locateBtn').addEventListener('click', function() {
+                getUserLocation();
+            });
+            
+            // Duraklar butonu
+            document.getElementById('stationsBtn').addEventListener('click', function() {
+                openSidebar();
+            });
+            
+            // Yan çubuğu kapat butonu
+            document.getElementById('closeSidebar').addEventListener('click', function() {
+                closeSidebar();
+            });
+        }
+        
+        // Yan çubuğu aç
+        function openSidebar() {
+            document.getElementById('sidebar').classList.add('active');
+        }
+        
+        // Yan çubuğu kapat
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('active');
+        }
+    </script>
 </body>
 </html>
