@@ -1,0 +1,971 @@
+[
+  {
+    "id": "TR-01-MERKEZ",
+    "ad": "Adana Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Adana",
+      "ilce": "Yüreğir",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": 36.984012,
+        "longitude": 35.313023
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-02-MERKEZ",
+    "ad": "Adıyaman Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Adıyaman",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-03-MERKEZ",
+    "ad": "Afyon Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Afyonkarahisar",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-04-MERKEZ",
+    "ad": "Ağrı Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Ağrı",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-05-MERKEZ",
+    "ad": "Amasya Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Amasya",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-06-ASTI",
+    "ad": "Ankara (Aşti) Otogarı",
+    "resmi_ad": "Ankara Şehirlerarası Terminal İşletmesi",
+    "konum": {
+      "il": "Ankara",
+      "ilce": "Yenimahalle",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": 39.917030,
+        "longitude": 32.814610
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-07-MERKEZ",
+    "ad": "Antalya Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Antalya",
+      "ilce": "Kepez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-08-MERKEZ",
+    "ad": "Artvin Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Artvin",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-09-MERKEZ",
+    "ad": "Aydın Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Aydın",
+      "ilce": "Efeler",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-68-MERKEZ",
+    "ad": "Aksaray Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Aksaray",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-75-MERKEZ",
+    "ad": "Ardahan Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Ardahan",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-20-ACIPAYAM",
+    "ad": "Acıpayam Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Denizli",
+      "ilce": "Acıpayam",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-13-ADILCEVAZ",
+    "ad": "Adilcevaz Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Bitlis",
+      "ilce": "Adilcevaz",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-46-AFSIN",
+    "ad": "Afşin Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Kahramanmaraş",
+      "ilce": "Afşin",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-13-AHLAT",
+    "ad": "Ahlat Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Bitlis",
+      "ilce": "Ahlat",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-61-AKCAABAT",
+    "ad": "Akçaabat Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Trabzon",
+      "ilce": "Akçaabat",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-81-AKCAKOCA",
+    "ad": "Akçakoca Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Düzce",
+      "ilce": "Akçakoca",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-10-AKCAY",
+    "ad": "Akçay Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Balıkesir",
+      "ilce": "Edremit",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-66-AKDAGMADENI",
+    "ad": "Akdağmadeni Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Yozgat",
+      "ilce": "Akdağmadeni",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-45-AKHISAR",
+    "ad": "Akhisar Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Manisa",
+      "ilce": "Akhisar",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-38-AKKISLA",
+    "ad": "Akkışla Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Kayseri",
+      "ilce": "Akkışla",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-42-AKSEHIR",
+    "ad": "Akşehir Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Konya",
+      "ilce": "Akşehir",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-06-AKYURT",
+    "ad": "Akyurt Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Ankara",
+      "ilce": "Akyurt",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-19-ALACA",
+    "ad": "Alaca Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Çorum",
+      "ilce": "Alaca",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-07-ALANYA",
+    "ad": "Alanya Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Antalya",
+      "ilce": "Alanya",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-45-ALASEHIR",
+    "ad": "Alaşehir Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Manisa",
+      "ilce": "Alaşehir",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-26-ALPU",
+    "ad": "Alpu Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Eskişehir",
+      "ilce": "Alpu",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-51-ALTUNHISAR",
+    "ad": "Altunhisar Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Niğde",
+      "ilce": "Altunhisar",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-33-ANAMUR",
+    "ad": "Anamur Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Mersin",
+      "ilce": "Anamur",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-37-ARAC",
+    "ad": "Araç Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Kastamonu",
+      "ilce": "Araç",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-61-ARAKLI",
+    "ad": "Araklı Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Trabzon",
+      "ilce": "Araklı",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-44-ARAPGIR",
+    "ad": "Arapgir Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Malatya",
+      "ilce": "Arapgir",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-08-ARDANUC",
+    "ad": "Ardanuç Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Artvin",
+      "ilce": "Ardanuç",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-53-ARDESEN",
+    "ad": "Ardeşen Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Rize",
+      "ilce": "Ardeşen",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-08-ARHAVI",
+    "ad": "Arhavi Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Artvin",
+      "ilce": "Arhavi",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-60-ARTOVA",
+    "ad": "Artova Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Tokat",
+      "ilce": "Artova",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-50-AVANOS",
+    "ad": "Avanos Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Nevşehir",
+      "ilce": "Avanos",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-57-AYANCIK",
+    "ad": "Ayancık Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Sinop",
+      "ilce": "Ayancık",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-52-AYBASTI",
+    "ad": "Aybastı Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Ordu",
+      "ilce": "Aybastı",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-70-AYRANCI",
+    "ad": "Ayrancı Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Karaman",
+      "ilce": "Ayrancı",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-17-AYVACIK",
+    "ad": "Ayvacık (Çanakkale) Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Çanakkale",
+      "ilce": "Ayvacık",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-10-AYVALIK",
+    "ad": "Ayvalık Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Balıkesir",
+      "ilce": "Ayvalık",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-52-AKKUS",
+    "ad": "Akkuş Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Ordu",
+      "ilce": "Akkuş",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-54-ADAPAZARI",
+    "ad": "Adapazarı Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Sakarya",
+      "ilce": "Adapazarı",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-31-ANTAKYA",
+    "ad": "Antakya Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Hatay",
+      "ilce": "Antakya",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-07-ALANYA-2",
+    "ad": "Alanya Otogar",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Antalya",
+      "ilce": "Alanya",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-05-MERKEZ-YENI",
+    "ad": "Amasya Yeni Otogar",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Amasya",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-68-EMNIYET",
+    "ad": "Aksaray Emniyet Terminali",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Aksaray",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-34-ATASEHIR-DUDULLU",
+    "ad": "Ataşehir Dudullu İsmail Ayaz Tesisleri",
+    "resmi_ad": null,
+    "konum": {
+      "il": "İstanbul",
+      "ilce": "Ataşehir",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id":V: "TR-70-AYRANCI-2",
+    "ad": "Ayrancı Otogar",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Karaman",
+      "ilce": "Ayrancı",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-33-ANAMUR-2",
+    "ad": "Anamur Otogar",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Mersin",
+      "ilce": "Anamur",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  }
+]
