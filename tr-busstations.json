@@ -968,4 +968,840 @@
       "website": null
     }
   }
+  {
+    "id": "TR-34-BASIN-EKSPRES",
+    "ad": "Basın Ekspress Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "İstanbul",
+      "ilce": "Bağcılar",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": 41.025780,
+        "longitude": 28.804190
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-10-MERKEZ",
+    "ad": "Balıkesir Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Balıkesir",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-11-MERKEZ",
+    "ad": "Bilecik Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Bilecik",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-12-MERKEZ",
+    "ad": "Bingöl Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Bingöl",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-13-MERKEZ",
+    "ad": "Bitlis Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Bitlis",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-14-MERKEZ",
+    "ad": "Bolu Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Bolu",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-15-MERKEZ",
+    "ad": "Burdur Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Burdur",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-16-MERKEZ",
+    "ad": "Bursa Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Bursa",
+      "ilce": "Osmangazi",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-69-MERKEZ",
+    "ad": "Bayburt Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Bayburt",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-72-MERKEZ",
+    "ad": "Batman Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Batman",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-74-MERKEZ",
+    "ad": "Bartın Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Bartın",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-39-BABAESKI",
+    "ad": "Babaeski Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Kırklareli",
+      "ilce": "Babaeski",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-55-BAFRA",
+    "ad": "Bafra Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Samsun",
+      "ilce": "Bafra",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-06-BALA",
+    "ad": "Bala Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Ankara",
+      "ilce": "Bala",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-10-BALYA",
+    "ad": "Balya Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Balıkesir",
+      "ilce": "Balya",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-10-BANDIRMA",
+    "ad": "Bandırma Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Balıkesir",
+      "ilce": "Bandırma",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-19-BAYAT",
+    "ad": "Bayat (Çorum) Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Çorum",
+      "ilce": "Bayat",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-35-BAYINDIR",
+    "ad": "Bayındır Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "İzmir",
+      "ilce": "Bayındır",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-17-BAYRAMIC",
+    "ad": "Bayramiç Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Çanakkale",
+      "ilce": "Bayramiç",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-35-BERGAMA",
+    "ad": "Bergama Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "İzmir",
+      "ilce": "Bergama",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-61-BESIKDUZU",
+    "ad": "Beşikdüzü Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Trabzon",
+      "ilce": "Beşikdüzü",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-26-BEYLIKOVA",
+    "ad": "Beylikova Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Eskişehir",
+      "ilce": "Beylikova",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-06-BEYPAZARI",
+    "ad": "Beypazarı Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Ankara",
+      "ilce": "Beypazarı",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-42-BEYSEHIR",
+    "ad": "Beyşehir Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Konya",
+      "ilce": "Beyşehir",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-17-BIGA",
+    "ad": "Biga Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Çanakkale",
+      "ilce": "Biga",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-10-BIGADIC",
+    "ad": "Bigadiç Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Balıkesir",
+      "ilce": "Bigadiç",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-63-BIRECIK",
+    "ad": "Birecik Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Şanlıurfa",
+      "ilce": "Birecik",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-48-BODRUM-YENI",
+    "ad": "Bodrum Yeni(Torba) Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Muğla",
+      "ilce": "Bodrum",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-66-BOGAZLIYAN",
+    "ad": "Boğazlıyan Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Yozgat",
+      "ilce": "Boğazlıyan",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-03-BOLVADIN",
+    "ad": "Bolvadin Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Afyonkarahisar",
+      "ilce": "Bolvadin",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-51-BOR",
+    "ad": "Bor Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Niğde",
+      "ilce": "Bor",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-57-BOYABAT",
+    "ad": "Boyabat (Sinop) Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Sinop",
+      "ilce": "Boyabat",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-15-BUCAK",
+    "ad": "Bucak Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Burdur",
+      "ilce": "Bucak",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-28-BULANCAK",
+    "ad": "Bulancak Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Giresun",
+      "ilce": "Bulancak",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-10-BURHANIYE",
+    "ad": "Burhaniye Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Balıkesir",
+      "ilce": "Burhaniye",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-37-BOZKURT",
+    "ad": "Bozkurt Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Kastamonu",
+      "ilce": "Bozkurt",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-20-BEKILLI",
+    "ad": "Bekilli Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Denizli",
+      "ilce": "Bekilli",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-02-BESNI",
+    "ad": "Besni Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Adıyaman",
+      "ilce": "Besni",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-35-BEYDAG",
+    "ad": "Beydağ Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "İzmir",
+      "ilce": "Beydağ",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-21-BISMIL",
+    "ad": "Bismil Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Diyarbakır",
+      "ilce": "Bismil",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-35-BORNOVA",
+    "ad": "Bornova Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "İzmir",
+      "ilce": "Bornova",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-49-BULANIK",
+    "ad": "Bulanık Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Muş",
+      "ilce": "Bulanık",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-20-BULDAN",
+    "ad": "Buldan Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Denizli",
+      "ilce": "Buldan",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-16-BUYUKORHAN",
+    "ad": "Büyükorhan Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Bursa",
+      "ilce": "Büyükorhan",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  }
 ]
