@@ -1,0 +1,274 @@
+{
+  "fileName": "etg-categories.json",
+  "description": "A structured JSON representation of ETG categories for tourism services, including main categories, subcategories, and types. This file organizes tours, activities, transportation, accommodations, guides, and museums in a hierarchical manner for easy integration into applications or databases.",
+  "version": "1.0",
+  "categories": [
+    {
+      "id": "tour",
+      "name": "Tour",
+      "description": "Guided or self-paced travel experiences designed for exploration and enjoyment.",
+      "subcategories": [
+        {
+          "id": "daily-tour",
+          "name": "Daily Tour",
+          "description": "Short-duration tours typically lasting one day, ideal for quick excursions."
+        },
+        {
+          "id": "multiday-tour",
+          "name": "Multiday Tour",
+          "description": "Extended tours spanning multiple days, offering in-depth experiences."
+        }
+      ],
+      "types": [
+        {
+          "id": "culture-tour",
+          "name": "Culture Tour",
+          "description": "Focuses on historical, artistic, and cultural heritage sites."
+        },
+        {
+          "id": "family-tour",
+          "name": "Family Tour",
+          "description": "Family-friendly itineraries with activities suitable for all ages."
+        },
+        {
+          "id": "honeymoon",
+          "name": "Honeymoon",
+          "description": "Romantic packages tailored for newlyweds, emphasizing luxury and intimacy."
+        },
+        {
+          "id": "trekking",
+          "name": "Trekking",
+          "description": "Adventure-based walking or hiking tours through natural landscapes."
+        },
+        {
+          "id": "eco-tour",
+          "name": "Eco Tour",
+          "description": "Sustainable travel options that promote environmental conservation."
+        },
+        {
+          "id": "luxury-tour",
+          "name": "Luxury Tour",
+          "description": "High-end experiences with premium services and exclusive access."
+        }
+      ]
+    },
+    {
+      "id": "activity",
+      "name": "Activity",
+      "description": "Engaging experiences and adventures for thrill-seekers and leisure participants.",
+      "subcategories": [
+        {
+          "id": "festival-event",
+          "name": "Festival - Event",
+          "description": "Participation in cultural festivals, concerts, or special events."
+        },
+        {
+          "id": "open-air-activity",
+          "name": "Open Air Activity",
+          "description": "Outdoor pursuits in open spaces, such as parks or natural settings."
+        },
+        {
+          "id": "outdoor-activity",
+          "name": "Outdoor Activity",
+          "description": "Nature-based adventures including hiking, camping, or wildlife viewing."
+        }
+      ],
+      "types": [
+        {
+          "id": "hot-air-balloon",
+          "name": "Hot Air Balloon",
+          "description": "Aerial rides offering panoramic views from a hot air balloon."
+        },
+        {
+          "id": "jeep-safari",
+          "name": "Jeep Safari",
+          "description": "Off-road exploration in jeeps through rugged terrains."
+        },
+        {
+          "id": "atv-safari",
+          "name": "ATV Safari",
+          "description": "All-terrain vehicle adventures for adrenaline-fueled rides."
+        },
+        {
+          "id": "utv-safari",
+          "name": "UTV Safari",
+          "description": "Utility terrain vehicle tours for group or solo off-road experiences."
+        },
+        {
+          "id": "cable-car",
+          "name": "Cable Car",
+          "description": "Scenic rides via cable cars to elevated viewpoints."
+        },
+        {
+          "id": "rafting",
+          "name": "Rafting",
+          "description": "White-water rafting on rivers for excitement and teamwork."
+        },
+        {
+          "id": "paragliding",
+          "name": "Paragliding",
+          "description": "Gliding through the skies with a parachute-like wing."
+        },
+        {
+          "id": "cruise",
+          "name": "Cruise",
+          "description": "Boat-based tours along waterways or coastlines."
+        },
+        {
+          "id": "yacht-boat",
+          "name": "Yacht Boat",
+          "description": "Luxurious sailing or motor yacht experiences on the water."
+        }
+      ]
+    },
+    {
+      "id": "transport",
+      "name": "Transport",
+      "description": "Reliable and comfortable transfer and rental services for seamless travel.",
+      "subcategories": [
+        {
+          "id": "airport-transfer",
+          "name": "Airport Transfer",
+          "description": "Door-to-door pick-up and drop-off services from airports."
+        },
+        {
+          "id": "intercity-transfer",
+          "name": "Intercity Transfer",
+          "description": "Travel between cities via dedicated shuttle or private services."
+        },
+        {
+          "id": "rent-a-vehicle",
+          "name": "Rent a Vehicle",
+          "description": "Flexible vehicle rental options for independent exploration."
+        }
+      ],
+      "types": [
+        {
+          "id": "bus",
+          "name": "Bus",
+          "description": "Large-capacity vehicles for group transportation."
+        },
+        {
+          "id": "midibus",
+          "name": "Midibus",
+          "description": "Medium-sized buses suitable for smaller groups."
+        },
+        {
+          "id": "minibus",
+          "name": "Minibus",
+          "description": "Compact buses for efficient short-distance travel."
+        },
+        {
+          "id": "minivan",
+          "name": "Minivan",
+          "variants": [
+            {
+              "id": "economy",
+              "name": "Economy",
+              "description": "Budget-friendly option with basic amenities."
+            },
+            {
+              "id": "standard",
+              "name": "Standard",
+              "description": "Comfortable mid-range choice with standard features."
+            },
+            {
+              "id": "vip",
+              "name": "VIP",
+              "description": "Premium service with enhanced comfort and privacy."
+            }
+          ]
+        },
+        {
+          "id": "automobile",
+          "name": "Automobile",
+          "variants": [
+            {
+              "id": "economy",
+              "name": "Economy",
+              "description": "Affordable cars for solo or small group travel."
+            },
+            {
+              "id": "standard",
+              "name": "Standard",
+              "description": "Reliable vehicles with moderate comfort levels."
+            },
+            {
+              "id": "luxury",
+              "name": "Luxury",
+              "description": "High-end cars featuring advanced features and elegance."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hotel",
+      "name": "Hotel",
+      "description": "A range of accommodation options from budget to luxury for restful stays.",
+      "subcategories": [],
+      "types": [
+        {
+          "id": "5-stars-hotel",
+          "name": "5 Stars Hotel",
+          "description": "World-class luxury with top-tier amenities and services."
+        },
+        {
+          "id": "4-stars-hotel",
+          "name": "4 Stars Hotel",
+          "description": "High-quality comfort with extensive facilities."
+        },
+        {
+          "id": "3-stars-hotel",
+          "name": "3 Stars Hotel",
+          "description": "Reliable and comfortable stays at accessible prices."
+        },
+        {
+          "id": "boutique-hotel",
+          "name": "Boutique Hotel",
+          "description": "Unique, stylish properties with personalized service."
+        },
+        {
+          "id": "luxury-hotel",
+          "name": "Luxury Hotel",
+          "description": "Exclusive accommodations emphasizing opulence and exclusivity."
+        },
+        {
+          "id": "theme-hotel",
+          "name": "Theme Hotel",
+          "description": "Themed stays inspired by history, culture, or fantasy."
+        }
+      ]
+    },
+    {
+      "id": "guide",
+      "name": "Guide",
+      "description": "Expert local guides to enhance your travel with insights and navigation.",
+      "subcategories": [],
+      "types": []
+    },
+    {
+      "id": "museum",
+      "name": "Museum",
+      "description": "Cultural and historical sites for educational and immersive visits.",
+      "subcategories": [
+        {
+          "id": "open-air-museum",
+          "name": "Open Air Museum",
+          "description": "Outdoor exhibits showcasing architecture, crafts, and daily life."
+        },
+        {
+          "id": "city-museum",
+          "name": "City Museum",
+          "description": "Indoor collections highlighting urban history and artifacts."
+        },
+        {
+          "id": "antique-city",
+          "name": "Antique City",
+          "description": "Preserved ancient settlements functioning as living museums."
+        }
+      ],
+      "types": []
+    }
+  ]
+}
