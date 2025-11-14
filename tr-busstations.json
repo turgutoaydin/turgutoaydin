@@ -1804,4 +1804,992 @@
       "website": null
     }
   }
+  {
+    "id": "TR-17-MERKEZ",
+    "ad": "Çanakkale Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Çanakkale",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-18-MERKEZ",
+    "ad": "Çankırı Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Çankırı",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-19-MERKEZ",
+    "ad": "Çorum Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Çorum",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-01-CEYHAN",
+    "ad": "Ceyhan Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Adana",
+      "ilce": "Ceyhan",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-65-CALDIRAN",
+    "ad": "Çaldıran Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Van",
+      "ilce": "Çaldıran",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-55-CARSAMBA",
+    "ad": "Çarşamba Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Samsun",
+      "ilce": "Çarşamba",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-61-CARSBASI",
+    "ad": "Çarşıbaşı Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Trabzon",
+      "ilce": "Çarşıbaşı",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-52-CATALPINAR",
+    "ad": "Çatalpınar Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Ordu",
+      "ilce": "Çatalpınar",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-03-CAY",
+    "ad": "Çay Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Afyonkarahisar",
+      "ilce": "Çay",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-81-CAYCUMA",
+    "ad": "Çaycuma Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Düzce",
+      "ilce": "Çaycuma",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-53-CAYELI",
+    "ad": "Çayeli Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Rize",
+      "ilce": "Çayeli",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null
+      ,"website": null
+    }
+  },
+  {
+    "id": "TR-66-CAYIRALAN",
+    "ad": "Çayıralan Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Yozgat",
+      "ilce": "Çayıralan",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-59-CERKEZKOY",
+    "ad": "Çerkezköy Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Tekirdağ",
+      "ilce": "Çerkezköy",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-35-CESME",
+    "ad": "Çeşme Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "İzmir",
+      "ilce": "Çeşme",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-09-CINE",
+    "ad": "Çine Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Aydın",
+      "ilce": "Çine",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-20-CIVRIL",
+    "ad": "Çivril Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Denizli",
+      "ilce": "Çivril",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-59-CORLU",
+    "ad": "Çorlu Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Tekirdağ",
+      "ilce": "Çorlu",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-06-CUBUK",
+    "ad": "Çubuk Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Ankara",
+      "ilce": "Çubuk",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-42-CUMRA",
+    "ad": "Çumra Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Konya",
+      "ilce": "Çumra",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-47-DARGECIT",
+    "ad": "Dargeçit Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Mardin",
+      "ilce": "Dargeçit",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-48-DATCA",
+    "ad": "Datça Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Muğla",
+      "ilce": "Datça",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-09-DAVUTLAR",
+    "ad": "Davutlar Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Aydın",
+      "ilce": "Kuşadası",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-03-DAZKIRI",
+    "ad": "Dazkırı Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Afyonkarahisar",
+      "ilce": "Dazkırı",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-50-DERINKUYU",
+    "ad": "Derinkuyu Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Nevşehir",
+      "ilce": "Derinkuyu",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-38-DEVELI",
+    "ad": "Develi Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Kayseri",
+      "ilce": "Develi",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-09-DIDIM",
+    "ad": "Didim Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Aydın",
+      "ilce": "Didim",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-35-DIKILI",
+    "ad": "Dikili Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "İzmir",
+      "ilce": "Dikili",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-03-DINAR",
+    "ad": "Dinar Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Afyonkarahisar",
+      "ilce": "Dinar",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-58-DIVRIGI",
+    "ad": "Divriği Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Sivas",
+      "ilce": "Divriği",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-04-DOGUBEYAZIT",
+    "ad": "Doğubeyazıt Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Ağrı",
+      "ilce": "Doğubeyazıt",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-80-DORTYOL",
+    "ad": "Dörtyol Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Osmaniye",
+      "ilce": "Dörtyol",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-57-DURAGAN",
+    "ad": "Durağan Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Sinop",
+      "ilce": "Durağan",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-10-DURSUNBEY",
+    "ad": "Dursunbey Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Balıkesir",
+      "ilce": "Dursunbey",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-80-DUZICI",
+    "ad": "Düziçi Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Osmaniye",
+      "ilce": "Düziçi",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-20-MERKEZ",
+    "ad": "Denizli Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Denizli",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-21-MERKEZ",
+    "ad": "Diyarbakır Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Diyarbakır",
+      "ilce": "Bağlar",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-81-MERKEZ",
+    "ad": "Düzce Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Düzce",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-34-DUDULLU-PAMUKKALE",
+    "ad": "Dudullu Pamukkale",
+    "resmi_ad": null,
+    "konum": {
+      "il": "İstanbul",
+      "ilce": "Ümraniye",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-34-DUDULLU-TRUVA",
+    "ad": "Dudullu Truva Terminali",
+    "resmi_ad": null,
+    "konum": {
+      "il": "İstanbul",
+      "ilce": "Ümraniye",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-34-DUDULLU-NILUFER",
+    "ad": "Dudullu Nilüfer Terminali",
+    "resmi_ad": null,
+    "konum": {
+      "il": "İstanbul",
+      "ilce": "Ümraniye",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-42-CIHANBEYLI",
+    "ad": "Cihanbeyli Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Konya",
+      "ilce": "Cihanbeyli",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-17-CAN",
+    "ad": "Çan Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Çanakkale",
+      "ilce": "Çan",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-35-CANDARLI",
+    "ad": "Çandarlı Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "İzmir",
+      "ilce": "Dikili",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-20-CAL",
+    "ad": "Çal Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Denizli",
+      "ilce": "Çal",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-21-CINAR",
+    "ad": "Çınar Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Diyarbakır",
+      "ilce": "Çınar",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-77-CINARCIK",
+    "ad": "Çınarcık Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Yalova",
+      "ilce": "Çınarcık",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-26-CIFTELER",
+    "ad": "Çifteler Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Eskişehir",
+      "ilce": "Çifteler",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-37-DOGANYURT",
+    "ad": "Doğanyurt Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Kastamonu",
+      "ilce": "Doğanyurt",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-37-CIDE",
+    "ad": "Cide Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Kastamonu",
+      "ilce": "Cide",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-42-CAYKONYA",
+    "ad": "Çaykonya Otogarı",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Konya",
+      "ilce": "Selçuklu",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-19-ILCE-TERMINAL",
+    "ad": "Çorum İlçe Terminali",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Çorum",
+      "ilce": "Merkez",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  },
+  {
+    "id": "TR-59-CORLU-VARIS",
+    "ad": "Çorlu Otogarı Otobüs Kalkış-Varış Noktası",
+    "resmi_ad": null,
+    "konum": {
+      "il": "Tekirdağ",
+      "ilce": "Çorlu",
+      "acik_adres": null,
+      "koordinatlar": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "iletisim": {
+      "telefon": [],
+      "email": null,
+      "website": null
+    }
+  }
 ]
