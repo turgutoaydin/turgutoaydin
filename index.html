@@ -1,207 +1,446 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Spin Pool USDT</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #1e003a, #2d0063);
-      color: white;
-      min-height: 100vh;
-      overscroll-behavior: none;
-    }
-    .container {
-      padding: 20px;
-      text-align: center;
-    }
-    .balance {
-      background: rgba(255,255,255,0.1);
-      padding: 15px;
-      border-radius: 16px;
-      margin: 20px 0;
-      font-size: 24px;
-      font-weight: bold;
-    }
-    .slot-machine {
-      background: rgba(0,0,0,0.4);
-      padding: 20px;
-      border-radius: 20px;
-      margin: 20px 0;
-      overflow: hidden;
-    }
-    .reels {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 20px 0;
-    }
-    .reel {
-      width: 90px;
-      height: 90px;
-      background: #111;
-      border-radius: 12px;
-      font-size: 60px;
-      line-height: 90px;
-      overflow: hidden;
-    }
-    .spin-btn {
-      background: #ff6b6b;
-      color: white;
-      border: none;
-      padding: 16px 40px;
-      font-size: 20px;
-      border-radius: 50px;
-      margin: 20px 0;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .spin-btn:disabled {
-      background: #666;
-      cursor: not-allowed;
-    }
-    .withdraw-btn {
-      background: #4ecdc4;
-      color: white;
-      border: none;
-      padding: 14px 30px;
-      font-size: 18px;
-      border-radius: 50px;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-    .result {
-      margin: 20px 0;
-      font-size: 22px;
-      font-weight: bold;
-      min-height: 40px;
-    }
-    .symbols { transition: transform 2s cubic-bezier(0.2, 0.8, 0.4, 1); }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"/>
+<title>POOL SPIN • 3D GLASS MINIMAL</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<style>
+  :root{
+    --bg:#060913; --bg2:#0a1226;
+    --glass: rgba(255,255,255,0.06);
+    --border: rgba(173,216,230,0.18);
+    --cyan:#00eaff; --green:#00ff99; --violet:#7b5cff; --pink:#ff46b9;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;overflow:hidden}
+  body{
+    margin:0; color:#eaf6ff;
+    font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Roboto,system-ui,sans-serif;
+    background:
+      radial-gradient(120% 140% at 15% -10%, #101b35 0%, var(--bg) 55%),
+      radial-gradient(80% 90% at 120% -10%, #0c1a3a 0%, var(--bg2) 60%);
+  }
+
+  /* background */
+  canvas.bg, canvas.aur{position:fixed; inset:0; pointer-events:none}
+  canvas.bg{z-index:0; opacity:.55}
+  canvas.aur{z-index:1; mix-blend-mode:screen; opacity:.5; filter:saturate(1.15)}
+
+  /* app */
+  .app{position:relative; z-index:2; height:100dvh; max-width:560px; margin:0 auto; padding:12px;
+       display:flex; flex-direction:column; gap:10px}
+
+  /* header */
+  .header{display:flex; align-items:center; justify-content:space-between}
+  .back{width:44px;height:44px;border-radius:14px; border:1px solid var(--border);
+        background:linear-gradient(135deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+        backdrop-filter: blur(16px); display:grid; place-items:center}
+  .balance{
+    min-width:52%;
+    padding:10px 16px; border-radius:16px; border:1px solid rgba(0,234,255,.35);
+    background:linear-gradient(135deg, rgba(0,234,255,.18), rgba(0,255,153,.18));
+    text-align:center; box-shadow:0 0 26px rgba(0,234,255,.22)
+  }
+  .balance .lbl{font-size:8px; opacity:.8; letter-spacing:.06em}
+  .balance .amt{
+    font-weight:900; font-size:18px; /* %20 küçültüldü */
+    background:linear-gradient(90deg,var(--cyan),var(--green));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent
+  }
+  .balance .cur{font-size:9px; opacity:.8}
+
+  /* stage */
+  .stage{flex:1; display:flex; align-items:center; justify-content:center; perspective:1100px; position:relative}
+  .board-wrap{width:min(94vw,360px); height:min(94vw,360px); transform-style:preserve-3d; animation:float 8s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)}}
+  .board{
+    position:relative; inset:0; height:100%;
+    display:grid; grid-template-columns:repeat(6,1fr); gap:5px; padding:10px;
+    border-radius:22px;
+    background:linear-gradient(180deg, rgba(14,20,43,.78), rgba(10,14,33,.82));
+    border:2px solid rgba(0,234,255,.28);
+    box-shadow: 0 0 60px rgba(0,234,255,.25), inset 0 0 36px rgba(0,234,255,.16);
+    backdrop-filter: blur(22px) saturate(1.2);
+  }
+
+  /* cells */
+  .cell{
+    position:relative; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:12px;
+    background: linear-gradient(145deg, rgba(255,255,255,.16), rgba(255,255,255,.04)); /* daha saydam */
+    border:1px solid rgba(255,255,255,.14);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.18),
+      0 12px 30px rgba(0,0,0,.42),
+      0 0 28px rgba(0,234,255,.24);
+    backdrop-filter: blur(12px) saturate(1.15);
+  }
+
+  /* slot roll structure */
+  .slot{position:absolute; inset:0; display:flex; flex-direction:column}
+  .pane{flex:0 0 100%; display:flex; align-items:center; justify-content:center; font-size:34px; line-height:1}
+  .roll{animation:roll .28s ease-out forwards}
+  @keyframes roll{from{transform:translateY(-100%)} to{transform:translateY(0)}}
+
+  /* win fx */
+  .cell.flash{
+    background:linear-gradient(135deg, rgba(0,255,153,.95), rgba(0,234,255,.95));
+    box-shadow:0 0 50px var(--green), 0 0 30px var(--cyan)
+  }
+  .cell.explode{animation:explode .32s ease forwards}
+  @keyframes explode{to{transform:translateZ(26px) scale(.6) rotate3d(.4,.2,-.3,24deg); opacity:0; filter:blur(2px)}}
+  .cell.drop{animation:drop .22s ease forwards}
+  @keyframes drop{from{transform:translateY(-46px)} to{transform:translateY(0)}}
+
+  /* last win */
+  .lastwin{
+    margin-top:6px; padding:8px 12px; border-radius:12px; transform:translateZ(0);
+    border:1px solid var(--border);
+    background:linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+    backdrop-filter: blur(12px);
+    display:flex; align-items:center; justify-content:center; gap:8px; font-weight:800;
+    font-size:12px; /* %50 küçültüldü */
+  }
+  .lastwin b{color:var(--green); text-shadow:0 0 10px rgba(0,255,153,.7)}
+
+  /* controls */
+  .controls{
+    display:flex; align-items:center; justify-content:center; gap:14px; padding:6px 0 2px;
+  }
+  .auto, .fee{
+    min-width:70px; /* %50 küçültme */
+    border-radius:12px; border:1px solid var(--border);
+    background:linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+    backdrop-filter: blur(10px); display:flex; align-items:center; justify-content:center; gap:8px; padding:8px;
+  }
+  .auto-btn{
+    width:48px; height:48px; border-radius:14px; border:1px solid var(--border);
+    background:linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); font-weight:900; font-size:10px
+  }
+  .auto-btn.on{background:rgba(0,255,153,.24); border-color: var(--green); box-shadow:0 0 16px rgba(0,255,153,.35) inset}
+
+  .spin{
+    width:118px; height:118px; border-radius:50%; border:none; position:relative; cursor:pointer;
+    background: radial-gradient(circle at 30% 30%, #00eaff, #0066ff);
+    box-shadow: 0 0 70px rgba(0,234,255,.55), inset 0 0 30px rgba(255,255,255,.15);
+  }
+  .spin:disabled{opacity:.6; cursor:not-allowed}
+  .ring{position:absolute; inset:-4px; border-radius:50%;
+        background: conic-gradient(from 0deg, var(--cyan), var(--violet), var(--green), var(--pink), var(--cyan));
+        animation: ring 4s linear infinite; filter:saturate(1.2)}
+  .ring.inner{inset:10px; animation-duration: 6s; opacity:.7; filter:blur(.2px)}
+  @keyframes ring{to{transform:rotate(360deg)}}
+  .spin .core{
+    position:absolute; inset:14px; border-radius:50%;
+    background: radial-gradient(120% 120% at 30% 30%, #1ad7ff, #004bff 70%);
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+  }
+  .wave{position:absolute; inset:-18px; border-radius:50%; border:3px solid var(--cyan); opacity:0; animation:wave 2s ease-out infinite}
+  .wave.d{animation-delay:.5s}
+  @keyframes wave{0%{transform:scale(.8); opacity:.85} 100%{transform:scale(2.1); opacity:0}}
+  .spinlabel{position:absolute; bottom:-24px; width:100%; text-align:center; font-weight:900; letter-spacing:2px; color:var(--cyan); text-shadow:0 0 16px var(--cyan); font-size:12px}
+
+  .fee .ix{width:34px;height:34px;border-radius:10px;border:1px solid var(--border);
+           background:linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); font-weight:900; font-size:16px}
+  .fee .val{min-width:74px; padding:6px 8px; border-radius:10px; text-align:center; font-weight:900; font-size:12px;
+           border:1px solid rgba(0,234,255,.28); background:linear-gradient(135deg, rgba(0,234,255,.12), rgba(0,255,153,.12))}
+
+  /* banner */
+  .banner{position:fixed; left:50%; top:50%; transform:translate(-50%,-50%) scale(.7);
+          background:rgba(0,0,0,.88); border:3px solid var(--green); padding:16px 28px; border-radius:16px;
+          font-weight:900; letter-spacing:2px; opacity:0; box-shadow:0 0 80px var(--green); backdrop-filter:blur(16px); z-index:5; font-size:18px}
+  .banner.show{animation:pop 2.2s ease-out forwards}
+  @keyframes pop{0%{opacity:0; transform:translate(-50%,-50%) scale(.7)} 18%{opacity:1; transform:translate(-50%,-50%) scale(1.06)} 100%{opacity:0}}
+
+  @media (max-width:360px){
+    .spin{width:110px; height:110px}
+    .pane{font-size:32px}
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>🍬 Spin Pool USDT</h1>
-    
-    <div class="balance">
-      Bakiye: <span id="balance">100.00</span> USDT
-    </div>
+  <canvas class="bg" id="sky"></canvas>
+  <canvas class="aur" id="aurora"></canvas>
 
-    <div class="slot-machine">
-      <div class="reels">
-        <div class="reel"><div class="symbols" id="r1">🍒</div></div>
-        <div class="reel"><div class="symbols" id="r2">🍒</div></div>
-        <div class="reel"><div class="symbols" id="r3">🍒</div></div>
+  <div class="app">
+    <!-- header -->
+    <div class="header">
+      <button class="back" id="btnBack" title="Geri">⟵</button>
+      <div class="balance">
+        <div class="lbl">BALANCE</div>
+        <div class="amt" id="balance">100.00</div>
+        <div class="cur">USDT</div>
       </div>
-
-      <button class="spin-btn" id="spinBtn">SPIN (1 USDT)</button>
-      <div class="result" id="result"></div>
     </div>
 
-    <button class="withdraw-btn" id="withdrawBtn">Para Çek (min 35 USDT)</button>
-    <div style="margin-top:10px; font-size:14px; opacity:0.8;">
-      Min: 35 USDT + transfer ücreti + 0.20 USDT pool ücreti
+    <!-- game -->
+    <div class="stage" id="stage">
+      <div class="board-wrap" id="board3d">
+        <div class="board" id="board"></div>
+      </div>
     </div>
+
+    <!-- last win -->
+    <div class="lastwin">LAST WIN • <b id="lastWin">0.00</b> USDT</div>
+
+    <!-- controls (auto | spin | fee) -->
+    <div class="controls">
+      <div class="auto"><button class="auto-btn" id="auto">AUTO</button></div>
+
+      <button class="spin" id="spin">
+        <div class="ring"></div><div class="ring inner"></div>
+        <div class="core"><div class="wave"></div><div class="wave d"></div></div>
+        <div class="spinlabel">SPIN</div>
+      </button>
+
+      <div class="fee">
+        <button class="ix" id="minus">−</button>
+        <div class="val"><span id="bet">0.10</span> USDT</div>
+        <button class="ix" id="plus">＋</button>
+      </div>
+    </div>
+
+    <!-- banner -->
+    <div class="banner" id="banner">READY</div>
   </div>
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
+<script>
+/* Telegram guard */
+const tg = (window.Telegram && Telegram.WebApp) ? Telegram.WebApp : {
+  ready:()=>{}, expand:()=>{}, setHeaderColor:()=>{}, setBackgroundColor:()=>{},
+  showAlert: m=>alert(m),
+  showPopup:(o,cb)=>{ if(confirm(`${o.title}\n\n${o.message}`)) cb && cb('ok'); },
+  HapticFeedback:{ notificationOccurred:()=>{}, impactOccurred:()=>{} }
+};
+tg.ready(); tg.expand(); tg.setHeaderColor('#060913'); tg.setBackgroundColor('#060913');
 
-    let balance = 100.00;
-    const betAmount = 1.00;
-    const symbols = ['🍒', '🍋', '🍉', '🍇', '💎', '7️⃣', '🔔', '⭐'];
+/* background (stars + aurora) */
+(function bg(){
+  const sky=document.getElementById('sky'), aur=document.getElementById('aurora');
+  const sctx=sky.getContext('2d'), actx=aur.getContext('2d');
+  let DPR=Math.min(devicePixelRatio||1,2),W=0,H=0,t=0;
 
-    const balanceEl = document.getElementById('balance');
-    const spinBtn = document.getElementById('spinBtn');
-    const resultEl = document.getElementById('result');
-    const reels = [document.getElementById('r1'), document.getElementById('r2'), document.getElementById('r3')];
+  function resize(){ W=sky.width=aur.width=Math.floor(innerWidth*DPR); H=sky.height=aur.height=Math.floor(innerHeight*DPR); }
+  resize(); addEventListener('resize', resize);
 
-    function updateBalance() {
-      balanceEl.textContent = balance.toFixed(2);
-    }
+  const stars=Array.from({length:180},()=>({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*1.6+0.4)*DPR}));
+  const ribbons=Array.from({length:3},()=>({p:Math.random()*Math.PI*2, speed:.0025+Math.random()*.0015, hue: Math.random()<.5? [123,92,255] : [0,234,255]}));
 
-    function randomSymbol() {
-      return symbols[Math.floor(Math.random() * symbols.length)];
-    }
-
-    function spin() {
-      if (balance < betAmount) {
-        tg.showAlert("Yetersiz bakiye!");
-        return;
-      }
-
-      spinBtn.disabled = true;
-      resultEl.textContent = "Dönüyor...";
-      balance -= betAmount;
-      updateBalance();
-
-      let spins = 0;
-      const totalSpins = 20 + Math.floor(Math.random() * 10);
-
-      const interval = setInterval(() => {
-        reels.forEach(r => r.textContent = randomSymbol());
-        spins++;
-        if (spins >= totalSpins) {
-          clearInterval(interval);
-          finalizeSpin();
-        }
-      }, 100);
-    }
-
-    function finalizeSpin() {
-      const final = [randomSymbol(), randomSymbol(), randomSymbol()];
-      let winMultiplier = 0;
-
-      // Basit kazanma kuralları (Sweet Bonanza tarzı)
-      if (final[0] === final[1] && final[1] === final[2]) {
-        winMultiplier = final[0] === '💎' ? 50 : final[0] === '7️⃣' ? 25 : 10;
-      } else if (final.filter(s => s === final[0]).length >= 2) {
-        winMultiplier = 2;
-      }
-
-      reels[0].textContent = final[0];
-      reels[1].textContent = final[1];
-      reels[2].textContent = final[2];
-
-      const winAmount = betAmount * winMultiplier;
-      if (winAmount > 0) {
-        balance += winAmount;
-        resultEl.innerHTML = `🎉 KAZANDIN! +${winAmount.toFixed(2)} USDT`;
-        tg.HapticFeedback.notificationOccurred('success');
-      } else {
-        resultEl.textContent = "Kaybettin, tekrar dene!";
-        tg.HapticFeedback.notificationOccurred('error');
-      }
-
-      updateBalance();
-      spinBtn.disabled = false;
-    }
-
-    document.getElementById('spinBtn').addEventListener('click', spin);
-
-    document.getElementById('withdrawBtn').addEventListener('click', () => {
-      if (balance < 35) {
-        tg.showAlert("Minimum 35 USDT bakiye gerekli!");
-        return;
-      }
-      tg.showPopup({
-        title: "Para Çekme Talebi",
-        message: `Çekilebilir: ${(balance - 0.20).toFixed(2)} USDT\n(0.20 USDT pool ücreti kesilecek)\n\nUSDT (TRC20/BEP20) cüzdan adresinizi yazın:`,
-        buttons: [{ type: 'destructive', text: 'İptal' }, { type: 'ok', text: 'Gönder' }]
-      }, (btn) => {
-        if (btn === 'ok') {
-          tg.showAlert("Talebiniz alındı! En kısa sürede USDT cüzdanınıza gönderilecek.");
-        }
-      });
+  (function loop(){
+    t+=1;
+    sctx.clearRect(0,0,W,H);
+    stars.forEach(st=>{
+      sctx.globalAlpha = 0.55 + 0.45*Math.sin((t*0.01) + st.x*0.001);
+      sctx.fillStyle='#bfe9ff';
+      sctx.beginPath(); sctx.arc(st.x, st.y, st.r, 0, Math.PI*2); sctx.fill();
     });
 
-    // İlk girişte bakiyeyi Telegram user id’ye göre çekmek için backend gerekir
-    // Şimdilik demo olduğu için sabit 100 USDT
-  </script>
+    actx.clearRect(0,0,W,H);
+    ribbons.forEach((rb,i)=>{
+      rb.p += rb.speed;
+      const yBase = H*(0.25 + i*0.18);
+      const amp = H*0.06*(i+1);
+      const grad = actx.createLinearGradient(0,yBase-amp, 0,yBase+amp);
+      const col = `rgba(${rb.hue[0]},${rb.hue[1]},${rb.hue[2]},`;
+      grad.addColorStop(0,   col+'0)');
+      grad.addColorStop(.25, col+'0.18)');
+      grad.addColorStop(.5,  col+'0.32)');
+      grad.addColorStop(.75, col+'0.18)');
+      grad.addColorStop(1,   col+'0)');
+      actx.fillStyle=grad;
+
+      actx.beginPath();
+      actx.moveTo(0, yBase + Math.sin(rb.p)*amp);
+      for(let x=0;x<=W;x+=30){
+        const y = yBase + Math.sin(rb.p + x*0.002 + i)*amp;
+        actx.lineTo(x, y);
+      }
+      actx.lineTo(W, yBase + amp*2); actx.lineTo(0, yBase + amp*2); actx.closePath();
+      actx.fill();
+    });
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* state */
+let balance=100.00, bet=0.10, lastWin=0;
+let spinning=false, auto=false;
+
+const ROWS=5, COLS=6;
+const SYMBOLS=['🍒','🍋','🍊','🍇','💎','⭐','🔔','7️⃣','🍬','💰','🔥','⚡'];
+const boardEl=document.getElementById('board');
+const cells=[]; let board=[];
+
+const $ = id => document.getElementById(id);
+const fmt = x => (+x).toFixed(2);
+function updateUI(){ $('balance').textContent = fmt(balance); $('lastWin').textContent = fmt(lastWin); $('bet').textContent = fmt(bet); }
+
+/* build grid with slot panes */
+function symbolPick(){
+  // 💎 & 7️⃣ biraz daha nadir dursun
+  const pool=['🍒','🍋','🍊','🍇','🍬','⭐','🔔','🔥','⚡','💰','7️⃣','💎'];
+  return pool[Math.random()<0.08?11:(Math.random()<0.12?10:Math.floor(Math.random()*10))];
+}
+function cellHTML(symOld, symNew){
+  return `<div class="slot roll">
+            <div class="pane">${symOld}</div>
+            <div class="pane">${symNew}</div>
+          </div>`;
+}
+function build(){
+  board = Array.from({length:ROWS}, ()=> Array.from({length:COLS}, ()=>symbolPick()));
+  boardEl.innerHTML=''; cells.length=0;
+  boardEl.style.gridTemplateRows = `repeat(${ROWS}, 1fr)`;
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      const d=document.createElement('div');
+      d.className='cell';
+      const s = symbolPick();
+      d.innerHTML = `<div class="slot"><div class="pane">${s}</div></div>`;
+      board[r][c]=s;
+      boardEl.appendChild(d); cells.push(d);
+    }
+  }
+}
+
+/* controls */
+$('minus').addEventListener('click', ()=>{ bet = Math.max(0.10, +(bet - 0.10).toFixed(2)); updateUI(); });
+$('plus').addEventListener('click', ()=>{ bet = +(bet + 0.10).toFixed(2); updateUI(); });
+$('auto').addEventListener('click', ()=>{
+  auto=!auto; $('auto').classList.toggle('on', auto);
+  if(auto && !spinning && balance>=bet) queue();
+});
+$('btnBack').addEventListener('click', ()=> history.back());
+$('spin').addEventListener('click', ()=>{
+  if(spinning) return;
+  if(balance < bet) return tg.showAlert('Insufficient balance!');
+  spin();
+});
+function queue(){
+  if(!auto) return;
+  if(balance<bet){ auto=false; $('auto').classList.remove('on'); return; }
+  setTimeout(()=>{ if(auto) spin(); }, 640 + Math.random()*300);
+}
+
+/* spin flow */
+function spin(){
+  spinning=true; $('spin').disabled=true;
+  document.querySelectorAll('.ring,.core .wave').forEach(e=> e.style.opacity='1');
+  tg.HapticFeedback.impactOccurred('medium');
+
+  gsap.to('#board3d',{ rotationY:'+=360', duration:1.0, ease:'power2.inOut' });
+
+  balance = +(balance - bet).toFixed(2); updateUI();
+
+  // roll animation: her hücre için eski->yeni aşağı kaydır
+  for(let i=0;i<cells.length;i++){
+    const r = Math.floor(i/COLS), c = i%COLS;
+    const oldSym = board[r][c];
+    const newSym = symbolPick();
+    board[r][c] = newSym;
+    const el=cells[i];
+    el.innerHTML = cellHTML(oldSym, newSym);
+  }
+
+  // küçük gecikme, sonra kazanım hesapla
+  setTimeout(()=>{
+    const {win, mask} = evaluate(board, bet);
+    lastWin=win;
+
+    if(win>0){
+      flash(mask).then(()=> cascade(mask).then(()=> onWin(win)));
+    }else{
+      onLose();
+    }
+  }, 300);
+}
+
+function evaluate(b, bet){
+  const counts={};
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) counts[b[r][c]]=(counts[b[r][c]]||0)+1;
+  let best=null, cnt=0;
+  Object.entries(counts).forEach(([s,n])=>{ if(n>cnt){ best=s; cnt=n; }});
+  const mask=Array.from({length:ROWS},()=>Array.from({length:COLS},()=>false));
+  let win=0;
+  if(cnt>=8){
+    const multi = (cnt>=12?15: cnt>=10?6: 2);
+    win = +(bet*multi).toFixed(2);
+    for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) if(b[r][c]===best) mask[r][c]=true;
+  }
+  return {win, mask};
+}
+
+function apply(mask, cls){
+  let i=0; for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){ if(mask[r][c]) cells[i].classList.add(cls); i++; }
+}
+function clear(mask, cls){
+  let i=0; for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){ if(mask[r][c]) cells[i].classList.remove(cls); i++; }
+}
+function flash(mask){
+  return new Promise(res=>{
+    apply(mask,'flash');
+    setTimeout(()=>{ apply(mask,'explode'); setTimeout(()=>{ clear(mask,'flash'); clear(mask,'explode'); res(); }, 320); }, 220);
+  });
+}
+function cascade(mask){
+  return new Promise(res=>{
+    for(let c=0;c<COLS;c++){
+      const keep=[];
+      for(let r=ROWS-1;r>=0;r--) if(!mask[r][c]) keep.push(board[r][c]);
+      while(keep.length<ROWS) keep.push(symbolPick());
+      for(let r=ROWS-1;r>=0;r--) board[r][c]=keep[ROWS-1-r];
+    }
+    // yeni tabloyu slot-anim ile boya
+    for(let i=0;i<cells.length;i++){
+      const r = Math.floor(i/COLS), c = i%COLS;
+      const el=cells[i], symNow = board[r][c];
+      const top = el.querySelector('.pane:last-child')?.textContent || symNow;
+      el.innerHTML = cellHTML(top, symNow);
+    }
+    setTimeout(res, 260);
+  });
+}
+
+function banner(txt){
+  const b=$('banner'); b.textContent=txt; b.classList.remove('show'); void b.offsetWidth; b.classList.add('show');
+}
+
+function onWin(amount){
+  try{ confetti({ particleCount: 240, spread: 100, origin:{y:.68} }); }catch(_){}
+  tg.HapticFeedback.notificationOccurred('success');
+  balance = +(balance + amount).toFixed(2);
+  banner(`MEGA WIN +${fmt(amount)} USDT`);
+  updateUI();
+  spinning=false; $('spin').disabled=false;
+  document.querySelectorAll('.ring,.core .wave').forEach(e=> e.style.opacity='');
+  if(auto) queue();
+}
+function onLose(){
+  tg.HapticFeedback.notificationOccurred('error');
+  banner('TRY AGAIN!');
+  updateUI();
+  spinning=false; $('spin').disabled=false;
+  document.querySelectorAll('.ring,.core .wave').forEach(e=> e.style.opacity='');
+  if(auto) queue();
+}
+
+/* parallax tilt */
+(function(){
+  const stage = document.getElementById('stage');
+  function apply(x,y){ stage.style.transform=`rotateX(${y*5}deg) rotateY(${x*6}deg)`; }
+  window.addEventListener('mousemove', e=>{
+    const r=stage.getBoundingClientRect(); const cx=(e.clientX-r.left)/r.width-.5; const cy=(e.clientY-r.top)/r.height-.5; apply(cx,cy);
+  }, {passive:true});
+})();
+
+/* init */
+build(); updateUI();
+addEventListener('resize', ()=> build());
+</script>
 </body>
 </html>
