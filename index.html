@@ -1,177 +1,207 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ETG Kategoriler ve TR Otobüs İstasyonları</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0; /* Açık gri arka plan */
-            color: #333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-        h1, h2 {
-            color: #FF6600; /* Turuncu başlık */
-            text-align: center;
-            margin: 10px 0;
-        }
-        section {
-            width: 100%;
-            max-width: 400px; /* Mobil için dar genişlik */
-            margin: 20px 0;
-            padding: 20px;
-            background-color: #e0e0e0; /* Gri bölüm arka planı */
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .category-item, .station-item {
-            background-color: white;
-            margin: 10px 0;
-            padding: 15px;
-            border-left: 4px solid #FF6600; /* Turuncu kenar */
-            border-radius: 5px;
-        }
-        .subcategory, .type, .variant {
-            margin-left: 20px;
-            font-size: 0.9em;
-            color: #666;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            margin: 5px 0;
-        }
-        .loading {
-            text-align: center;
-            color: #FF6600;
-        }
-        .error {
-            color: #FF0000;
-            text-align: center;
-        }
-        .note {
-            font-size: 0.8em;
-            color: #666;
-            text-align: center;
-            margin: 10px 0;
-            font-style: italic;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Spin Pool USDT</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1e003a, #2d0063);
+      color: white;
+      min-height: 100vh;
+      overscroll-behavior: none;
+    }
+    .container {
+      padding: 20px;
+      text-align: center;
+    }
+    .balance {
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 16px;
+      margin: 20px 0;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .slot-machine {
+      background: rgba(0,0,0,0.4);
+      padding: 20px;
+      border-radius: 20px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    .reels {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .reel {
+      width: 90px;
+      height: 90px;
+      background: #111;
+      border-radius: 12px;
+      font-size: 60px;
+      line-height: 90px;
+      overflow: hidden;
+    }
+    .spin-btn {
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 16px 40px;
+      font-size: 20px;
+      border-radius: 50px;
+      margin: 20px 0;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .spin-btn:disabled {
+      background: #666;
+      cursor: not-allowed;
+    }
+    .withdraw-btn {
+      background: #4ecdc4;
+      color: white;
+      border: none;
+      padding: 14px 30px;
+      font-size: 18px;
+      border-radius: 50px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    .result {
+      margin: 20px 0;
+      font-size: 22px;
+      font-weight: bold;
+      min-height: 40px;
+    }
+    .symbols { transition: transform 2s cubic-bezier(0.2, 0.8, 0.4, 1); }
+  </style>
 </head>
 <body>
-    <h1>ETG Kategoriler ve TR Otobüs İstasyonları</h1>
+  <div class="container">
+    <h1>🍬 Spin Pool USDT</h1>
     
-    <p class="note">Not: Bu sayfayı çalıştırmak için dosyaları bir yerel sunucu üzerinden açın (örneğin, VS Code Live Server eklentisi veya terminalde 'python -m http.server 8000' komutu ile). File:// protokolü fetch'i engeller.</p>
-    
-    <section id="categories-section">
-        <h2>Kategoriler (etg-categories.json)</h2>
-        <div id="categories-content" class="loading">Yükleniyor...</div>
-    </section>
-    
-    <section id="stations-section">
-        <h2>Otobüs İstasyonları (tr-busstations.json)</h2>
-        <div id="stations-content" class="loading">Yükleniyor...</div>
-    </section>
+    <div class="balance">
+      Bakiye: <span id="balance">100.00</span> USDT
+    </div>
 
-    <script>
-        // ETG Kategoriler yükleme
-        fetch('etg-categories.json')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Dosya bulunamadı: ' + response.statusText);
-                }
-                return response.json();
-            })
-            .then(data => {
-                const content = document.getElementById('categories-content');
-                content.innerHTML = '';
-                
-                if (data.categories) {
-                    data.categories.forEach(cat => {
-                        const catDiv = document.createElement('div');
-                        catDiv.className = 'category-item';
-                        let typesHtml = '';
-                        if (cat.types && cat.types.length > 0) {
-                            typesHtml = '<h4>Türler:</h4><ul>' + cat.types.map(type => {
-                                if (type.variants) {
-                                    return `<li>${type.name}<ul>${type.variants.map(varType => `<li class="variant">${varType.name} - ${varType.description}</li>`).join('')}</ul></li>`;
-                                }
-                                return `<li>${type.name} - ${type.description}</li>`;
-                            }).join('') + '</ul>';
-                        }
-                        let subHtml = '';
-                        if (cat.subcategories && cat.subcategories.length > 0) {
-                            subHtml = '<h4>Alt Kategoriler:</h4><ul>' + cat.subcategories.map(sub => `<li>${sub.name} - ${sub.description}</li>`).join('') + '</ul>';
-                        }
-                        catDiv.innerHTML = `
-                            <h3>${cat.name}</h3>
-                            <p><strong>Açıklama:</strong> ${cat.description}</p>
-                            ${subHtml}
-                            ${typesHtml}
-                        `;
-                        content.appendChild(catDiv);
-                    });
-                } else {
-                    content.innerHTML = '<p class="error">Veri yüklenemedi.</p>';
-                }
-            })
-            .catch(error => {
-                document.getElementById('categories-content').innerHTML = '<p class="error">Hata: ' + error.message + ' (Yerel sunucu kullanın!)</p>';
-            });
+    <div class="slot-machine">
+      <div class="reels">
+        <div class="reel"><div class="symbols" id="r1">🍒</div></div>
+        <div class="reel"><div class="symbols" id="r2">🍒</div></div>
+        <div class="reel"><div class="symbols" id="r3">🍒</div></div>
+      </div>
 
-        // TR Otobüs İstasyonları yükleme
-        fetch('tr-busstations.json')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Dosya bulunamadı: ' + response.statusText);
-                }
-                return response.json();
-            })
-            .then(data => {
-                const content = document.getElementById('stations-content');
-                content.innerHTML = '';
-                
-                if (Array.isArray(data)) {
-                    data.forEach(station => {
-                        const stationDiv = document.createElement('div');
-                        stationDiv.className = 'station-item';
-                        let phoneHtml = '';
-                        if (station.iletisim && station.iletisim.telefon && station.iletisim.telefon.length > 0) {
-                            phoneHtml = `<p><strong>Telefon:</strong> ${station.iletisim.telefon.join(', ')}</p>`;
-                        }
-                        let coordHtml = '';
-                        if (station.konum && station.konum.koordinatlar && station.konum.koordinatlar.latitude) {
-                            coordHtml = `<p><strong>Koordinatlar:</strong> ${station.konum.koordinatlar.latitude.toFixed(6)}, ${station.konum.koordinatlar.longitude.toFixed(6)}</p>`;
-                        }
-                        let adresHtml = '';
-                        if (station.konum && station.konum.acik_adres) {
-                            adresHtml = `<p><strong>Adres:</strong> ${station.konum.acik_adres}</p>`;
-                        }
-                        stationDiv.innerHTML = `
-                            <h3>${station.ad}</h3>
-                            <p><strong>ID:</strong> ${station.id}</p>
-                            <p><strong>İl:</strong> ${station.konum.il}, <strong>İlçe:</strong> ${station.konum.ilce}</p>
-                            ${adresHtml}
-                            ${coordHtml}
-                            ${phoneHtml}
-                        `;
-                        content.appendChild(stationDiv);
-                    });
-                } else {
-                    content.innerHTML = '<p class="error">Veri yüklenemedi.</p>';
-                }
-            })
-            .catch(error => {
-                document.getElementById('stations-content').innerHTML = '<p class="error">Hata: ' + error.message + ' (Yerel sunucu kullanın!)</p>';
-            });
-    </script>
+      <button class="spin-btn" id="spinBtn">SPIN (1 USDT)</button>
+      <div class="result" id="result"></div>
+    </div>
+
+    <button class="withdraw-btn" id="withdrawBtn">Para Çek (min 35 USDT)</button>
+    <div style="margin-top:10px; font-size:14px; opacity:0.8;">
+      Min: 35 USDT + transfer ücreti + 0.20 USDT pool ücreti
+    </div>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+
+    let balance = 100.00;
+    const betAmount = 1.00;
+    const symbols = ['🍒', '🍋', '🍉', '🍇', '💎', '7️⃣', '🔔', '⭐'];
+
+    const balanceEl = document.getElementById('balance');
+    const spinBtn = document.getElementById('spinBtn');
+    const resultEl = document.getElementById('result');
+    const reels = [document.getElementById('r1'), document.getElementById('r2'), document.getElementById('r3')];
+
+    function updateBalance() {
+      balanceEl.textContent = balance.toFixed(2);
+    }
+
+    function randomSymbol() {
+      return symbols[Math.floor(Math.random() * symbols.length)];
+    }
+
+    function spin() {
+      if (balance < betAmount) {
+        tg.showAlert("Yetersiz bakiye!");
+        return;
+      }
+
+      spinBtn.disabled = true;
+      resultEl.textContent = "Dönüyor...";
+      balance -= betAmount;
+      updateBalance();
+
+      let spins = 0;
+      const totalSpins = 20 + Math.floor(Math.random() * 10);
+
+      const interval = setInterval(() => {
+        reels.forEach(r => r.textContent = randomSymbol());
+        spins++;
+        if (spins >= totalSpins) {
+          clearInterval(interval);
+          finalizeSpin();
+        }
+      }, 100);
+    }
+
+    function finalizeSpin() {
+      const final = [randomSymbol(), randomSymbol(), randomSymbol()];
+      let winMultiplier = 0;
+
+      // Basit kazanma kuralları (Sweet Bonanza tarzı)
+      if (final[0] === final[1] && final[1] === final[2]) {
+        winMultiplier = final[0] === '💎' ? 50 : final[0] === '7️⃣' ? 25 : 10;
+      } else if (final.filter(s => s === final[0]).length >= 2) {
+        winMultiplier = 2;
+      }
+
+      reels[0].textContent = final[0];
+      reels[1].textContent = final[1];
+      reels[2].textContent = final[2];
+
+      const winAmount = betAmount * winMultiplier;
+      if (winAmount > 0) {
+        balance += winAmount;
+        resultEl.innerHTML = `🎉 KAZANDIN! +${winAmount.toFixed(2)} USDT`;
+        tg.HapticFeedback.notificationOccurred('success');
+      } else {
+        resultEl.textContent = "Kaybettin, tekrar dene!";
+        tg.HapticFeedback.notificationOccurred('error');
+      }
+
+      updateBalance();
+      spinBtn.disabled = false;
+    }
+
+    document.getElementById('spinBtn').addEventListener('click', spin);
+
+    document.getElementById('withdrawBtn').addEventListener('click', () => {
+      if (balance < 35) {
+        tg.showAlert("Minimum 35 USDT bakiye gerekli!");
+        return;
+      }
+      tg.showPopup({
+        title: "Para Çekme Talebi",
+        message: `Çekilebilir: ${(balance - 0.20).toFixed(2)} USDT\n(0.20 USDT pool ücreti kesilecek)\n\nUSDT (TRC20/BEP20) cüzdan adresinizi yazın:`,
+        buttons: [{ type: 'destructive', text: 'İptal' }, { type: 'ok', text: 'Gönder' }]
+      }, (btn) => {
+        if (btn === 'ok') {
+          tg.showAlert("Talebiniz alındı! En kısa sürede USDT cüzdanınıza gönderilecek.");
+        }
+      });
+    });
+
+    // İlk girişte bakiyeyi Telegram user id’ye göre çekmek için backend gerekir
+    // Şimdilik demo olduğu için sabit 100 USDT
+  </script>
 </body>
 </html>
