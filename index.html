@@ -1,1056 +1,168 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nemrut Euphrat Hotel - Otel Detay</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200..900&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- GSAP Animasyon Kütüphanesi -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <!-- Swiper -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Nemrut Dağı - Gizemli Hazine Haritası</title>
+
+    <!-- Mapbox GL JS (3D + güzel stil için) -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css" rel="stylesheet" />
+
+    <!-- Özel cartoon-hazine haritası stili (ücretsiz) -->
     <style>
-        /* --- Temel Ayarlar --- */
-        :root {
-            --primary: #ea580c;
-            --primary-light: #fdba74;
-            --primary-dark: #c2410c;
-            --secondary: #0ea5e9;
-            --dark: #1e293b;
-            --light: #f8fafc;
-            --glass: rgba(255, 255, 255, 0.85);
-            --glass-dark: rgba(30, 41, 59, 0.85);
-            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            --shadow-light: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background: #1a120b; 
+            overflow: hidden; 
+            font-family: 'Pirata One', cursive; 
         }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            color: var(--dark);
-            -webkit-tap-highlight-color: transparent;
-            overscroll-behavior-y: none;
-            overflow-x: hidden;
+        #map { 
+            position: absolute; 
+            top: 0; 
+            bottom: 0; 
+            width: 100%; 
         }
-
-        /* --- Scrollbar Gizleme --- */
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* --- 3D Efektler ve Animasyonlar --- */
-        .perspective-1000 {
-            perspective: 1000px;
+        .parchment-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 30%, rgba(139,69,19,0.15) 100%);
+            z-index: 10;
+            border: 30px solid transparent;
+            border-image: url('https://i.ibb.co/9hK7Y3v/parchment-border.png') 60 round;
         }
-        
-        .transform-3d {
-            transform-style: preserve-3d;
-        }
-        
-        .rotate-y-5 {
-            transform: rotateY(5deg);
-        }
-        
-        .rotate-y--5 {
-            transform: rotateY(-5deg);
-        }
-        
-        .backface-hidden {
-            backface-visibility: hidden;
-        }
-        
-        /* --- Floating Navbar (Yüzen Ada) --- */
-        .floating-navbar-container {
-            position: fixed;
-            bottom: 24px;
+        .title-banner {
+            position: absolute;
+            top: 30px;
             left: 50%;
             transform: translateX(-50%);
-            width: 90%;
-            max-width: 400px;
-            z-index: 40;
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-
-        .glass-island {
-            background: var(--glass);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 
-                0 4px 6px -1px rgba(0, 0, 0, 0.05),
-                0 20px 25px -5px rgba(0, 0, 0, 0.1),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.3);
-            border-radius: 9999px;
-            padding: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .glass-island::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
-        }
-
-        /* --- Navigasyon Butonları --- */
-        .nav-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
-            padding: 8px 0;
-            border-radius: 9999px;
-            color: #94a3b8;
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .nav-btn.active {
-            color: var(--primary);
-        }
-        
-        /* Aktif butonun arkasına hafif bir ışık efekti */
-        .nav-btn.active::after {
-            content: '';
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background: rgba(234, 88, 12, 0.1);
-            border-radius: 50%;
-            z-index: -1;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        /* --- Arama Animasyonu --- */
-        #search-container {
-            position: absolute;
-            left: 4px;
-            right: 4px;
-            top: 4px;
-            bottom: 4px;
-            background: #f1f5f9;
-            border-radius: 9999px;
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            opacity: 0;
-            transform: scale(0.95);
+            background: url('https://i.ibb.co/4pZ7cZk/banner.png') no-repeat center;
+            background-size: contain;
+            width: 600px;
+            height: 140px;
+            text-align: center;
+            line-height: 120px;
+            font-size: 42px;
+            color: #2c1a0c;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.6);
+            z-index: 20;
             pointer-events: none;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            z-index: 50;
         }
-
-        /* Search Modu Aktifken */
-        .floating-navbar-container.search-mode #search-container {
-            opacity: 1;
-            transform: scale(1);
-            pointer-events: auto;
-        }
-        
-        /* Butonları gizle/küçült */
-        .floating-navbar-container.search-mode .nav-btn {
-            opacity: 0;
-            transform: scale(0.8);
-        }
-
-        /* --- Detay Drawer (Sağdan Gelen) --- */
-        .detail-drawer {
-            transform: translateX(100%);
-            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
-        }
-        .detail-drawer.open { transform: translateX(0); }
-        
-        .overlay {
-            opacity: 0; visibility: hidden;
-            transition: opacity 0.3s ease;
-            backdrop-filter: blur(4px);
-        }
-        .overlay.visible { opacity: 1; visibility: visible; }
-
-        /* Kartlardaki Resim Zoom Efekti */
-        .card-img-container { 
-            overflow: hidden; 
-            border-radius: 1rem;
-            position: relative;
-        }
-        
-        .card-img-container::after {
-            content: '';
+        .compass {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 40%;
-            background: linear-gradient(to top, rgba(0,0,0,0.4), transparent);
-            z-index: 1;
+            top: 30px;
+            right: 30px;
+            width: 120px;
+            height: 120px;
+            background: url('https://i.ibb.co/4sX6Y3L/compass-rose.png') no-repeat center;
+            background-size: contain;
+            z-index: 20;
+            animation: spin 30s linear infinite;
         }
-        
-        .card-img-container img { 
-            transition: transform 0.6s ease; 
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .tour-card:hover img { 
-            transform: scale(1.05); 
-        }
-        
-        /* --- Premium Efektler --- */
-        .glass-effect {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-        }
-        
-        .text-gradient {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .parallax-bg {
-            background-attachment: fixed;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-        }
-        
-        .floating {
-            animation: floating 6s ease-in-out infinite;
-        }
-        
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-        
-        .pulse-glow {
-            animation: pulse-glow 2s infinite;
-        }
-        
-        @keyframes pulse-glow {
-            0% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(234, 88, 12, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0); }
-        }
-        
-        .slide-in-bottom {
-            animation: slide-in-bottom 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-        }
-        
-        @keyframes slide-in-bottom {
-            0% { transform: translateY(1000px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-        
-        .fade-in {
-            animation: fade-in 0.6s cubic-bezier(0.39, 0.575, 0.565, 1) both;
-        }
-        
-        @keyframes fade-in {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-        
-        /* --- Özel Scrollbar --- */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 10px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 0, 0, 0.3);
-        }
-        
-        /* --- 3D Card Flip --- */
-        .card-flip {
-            transform-style: preserve-3d;
-            transition: transform 0.8s;
-        }
-        
-        .card-flip:hover {
-            transform: rotateY(180deg);
-        }
-        
-        .card-front, .card-back {
-            backface-visibility: hidden;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .card-back {
-            transform: rotateY(180deg);
-        }
-        
-        /* --- Yeni Eklenen Stiller --- */
-        .swiper-slide {
-            height: auto;
-        }
-        
-        .swiper-pagination-bullet {
-            background: white;
-            opacity: 0.5;
-        }
-        
-        .swiper-pagination-bullet-active {
-            background: var(--primary);
-            opacity: 1;
-        }
-        
-        .category-btn {
-            transition: all 0.3s ease;
-        }
-        
-        .category-btn.active {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 10px 15px -3px rgba(234, 88, 12, 0.3);
-        }
-        
-        .spa-page {
-            min-height: calc(100vh - 200px);
-        }
-        
-        .tour-card {
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        
-        .tour-card:active {
-            transform: scale(0.98);
-        }
-        
-        .drawer-content {
-            max-height: calc(100vh - 320px);
-            overflow-y: auto;
-        }
-        
-        .search-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border-radius: 16px;
-            margin-top: 8px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            z-index: 60;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .search-result-item {
-            padding: 12px 16px;
-            border-bottom: 1px solid #f1f5f9;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        
-        .search-result-item:hover {
-            background: #f8fafc;
-        }
-        
-        .search-result-item:last-child {
-            border-bottom: none;
-        }
-        
-        /* Loading spinner */
-        .loading-spinner {
-            width: 24px;
-            height: 24px;
-            border: 2px solid #f3f4f6;
-            border-top: 2px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
-        
-        /* Otel özel stilleri */
-        .amenity-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 8px;
+        .marker {
+            background: none;
+            border: none;
+            cursor: pointer;
         }
-        
-        .room-card {
-            transition: all 0.3s ease;
+        .nemrut-marker {
+            width: 80px;
+            height: 110px;
+            background: url('https://i.ibb.co/5YqW4nG/nemrut-treasure-marker.gif') no-repeat center;
+            background-size: contain;
+            animation: pulse 3s infinite;
         }
-        
-        .room-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.15);
-        }
-        
-        .rating-stars {
-            display: flex;
-            align-items: center;
-        }
-        
-        .star {
-            color: #fbbf24;
-        }
-        
-        .star.empty {
-            color: #d1d5db;
-        }
-        
-        /* Mobile optimizations */
-        @media (max-width: 640px) {
-            .floating-navbar-container {
-                width: 95%;
-            }
-            
-            .tour-card {
-                margin-bottom: 16px;
-            }
-            
-            .detail-drawer {
-                width: 100%;
-            }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap" rel="stylesheet">
 </head>
-<body class="perspective-1000">
+<body>
 
-    <!-- Üst Header (Glass) -->
-    <header class="fixed top-0 left-0 right-0 z-30 px-6 pt-5 pb-3">
-        <div class="max-w-md mx-auto flex items-center justify-between">
-            <div class="flex items-center space-x-2 glass-effect px-3 py-1.5 rounded-full shadow-lg">
-                <i data-lucide="building" class="text-orange-600 w-5 h-5 floating"></i>
-                <span class="text-sm font-bold text-gray-800 tracking-wide">NEMRUT EUPHRAT</span>
-            </div>
-            <button class="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-lg pulse-glow">
-                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" alt="Profil" class="w-full h-full object-cover">
-            </button>
-        </div>
-    </header>
+    <div id="map"></div>
 
-    <!-- Ana İçerik Alanı -->
-    <main class="max-w-md mx-auto min-h-screen px-4 pt-24 pb-32 relative z-10">
-        
-        <!-- #HOTEL SAYFASI -->
-        <div id="hotel-view" class="spa-page fade-in">
-            <!-- Otel Görsel Slider -->
-            <div class="swiper mb-6 rounded-2xl overflow-hidden">
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide">
-                        <div class="h-64 rounded-2xl overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="h-64 rounded-2xl overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="h-64 rounded-2xl overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                </div>
-                <div class="swiper-pagination"></div>
-            </div>
+    <!-- Parşömen kenarlık efekti -->
+    <div class="parchment-overlay"></div>
 
-            <!-- Otel Bilgileri -->
-            <div class="mb-6">
-                <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
-                    Nemrut Euphrat <span class="text-gradient">Hotel</span>
-                </h1>
-                <div class="flex items-center mt-2">
-                    <div class="rating-stars mr-2">
-                        <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
-                        <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
-                        <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
-                        <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
-                        <i data-lucide="star" class="w-4 h-4 star empty fill-current"></i>
-                    </div>
-                    <span class="text-sm text-gray-500">4.2 (128 değerlendirme)</span>
-                </div>
-                <p class="text-gray-500 text-sm mt-2 flex items-center">
-                    <i data-lucide="map-pin" class="w-4 h-4 mr-1 text-orange-500"></i>
-                    Adıyaman Merkez, Nemrut Dağı Yolu Üzeri
-                </p>
-            </div>
+    <!-- Başlık (eski parşömen şerit) -->
+    <div class="title-banner">NEMRUT DAĞI</div>
 
-            <!-- Hızlı Bilgiler -->
-            <div class="grid grid-cols-3 gap-4 mb-8">
-                <div class="bg-white/80 backdrop-blur p-3 rounded-2xl shadow-sm text-center">
-                    <i data-lucide="wifi" class="w-6 h-6 text-blue-500 mx-auto mb-1"></i>
-                    <p class="text-xs text-gray-600">Ücretsiz WiFi</p>
-                </div>
-                <div class="bg-white/80 backdrop-blur p-3 rounded-2xl shadow-sm text-center">
-                    <i data-lucide="car" class="w-6 h-6 text-green-500 mx-auto mb-1"></i>
-                    <p class="text-xs text-gray-600">Otopark</p>
-                </div>
-                <div class="bg-white/80 backdrop-blur p-3 rounded-2xl shadow-sm text-center">
-                    <i data-lucide="utensils" class="w-6 h-6 text-orange-500 mx-auto mb-1"></i>
-                    <p class="text-xs text-gray-600">Restoran</p>
-                </div>
-            </div>
-
-            <!-- Oda Seçenekleri -->
-            <h2 class="text-2xl font-bold mb-4 text-gradient">Oda Seçenekleri</h2>
-            <div class="space-y-6 mb-8">
-                
-                <!-- Standart Oda -->
-                <div class="room-card bg-white rounded-3xl p-4 shadow-[0_8px_30px_rgb(0,0,0,0.08)] cursor-pointer transition-all duration-300" onclick="openRoomDetail(1)">
-                    <div class="flex">
-                        <div class="w-24 h-24 rounded-2xl overflow-hidden mr-4">
-                            <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover">
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-lg font-bold text-gray-900">Standart Oda</h3>
-                            <p class="text-gray-500 text-sm mt-1">2 Yetişkin • 1 Çocuk</p>
-                            <div class="flex items-center mt-2">
-                                <i data-lucide="wifi" class="w-4 h-4 text-blue-500 mr-1"></i>
-                                <i data-lucide="tv" class="w-4 h-4 text-purple-500 mr-1"></i>
-                                <i data-lucide="snowflake" class="w-4 h-4 text-cyan-500"></i>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xl font-extrabold text-orange-600">450₺</p>
-                            <p class="text-xs text-gray-400">gecelik</p>
-                            <button class="mt-2 bg-orange-500 text-white text-xs font-medium py-1.5 px-3 rounded-full">
-                                Rezervasyon
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Aile Odası -->
-                <div class="room-card bg-white rounded-3xl p-4 shadow-[0_8px_30px_rgb(0,0,0,0.08)] cursor-pointer transition-all duration-300" onclick="openRoomDetail(2)">
-                    <div class="flex">
-                        <div class="w-24 h-24 rounded-2xl overflow-hidden mr-4">
-                            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover">
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-lg font-bold text-gray-900">Aile Odası</h3>
-                            <p class="text-gray-500 text-sm mt-1">2 Yetişkin • 2 Çocuk</p>
-                            <div class="flex items-center mt-2">
-                                <i data-lucide="wifi" class="w-4 h-4 text-blue-500 mr-1"></i>
-                                <i data-lucide="tv" class="w-4 h-4 text-purple-500 mr-1"></i>
-                                <i data-lucide="snowflake" class="w-4 h-4 text-cyan-500 mr-1"></i>
-                                <i data-lucide="coffee" class="w-4 h-4 text-amber-500"></i>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xl font-extrabold text-orange-600">650₺</p>
-                            <p class="text-xs text-gray-400">gecelik</p>
-                            <button class="mt-2 bg-orange-500 text-white text-xs font-medium py-1.5 px-3 rounded-full">
-                                Rezervasyon
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Süit Oda -->
-                <div class="room-card bg-white rounded-3xl p-4 shadow-[0_8px_30px_rgb(0,0,0,0.08)] cursor-pointer transition-all duration-300" onclick="openRoomDetail(3)">
-                    <div class="flex">
-                        <div class="w-24 h-24 rounded-2xl overflow-hidden mr-4">
-                            <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover">
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-lg font-bold text-gray-900">Süit Oda</h3>
-                            <p class="text-gray-500 text-sm mt-1">2 Yetişkin • Balkon</p>
-                            <div class="flex items-center mt-2">
-                                <i data-lucide="wifi" class="w-4 h-4 text-blue-500 mr-1"></i>
-                                <i data-lucide="tv" class="w-4 h-4 text-purple-500 mr-1"></i>
-                                <i data-lucide="snowflake" class="w-4 h-4 text-cyan-500 mr-1"></i>
-                                <i data-lucide="coffee" class="w-4 h-4 text-amber-500 mr-1"></i>
-                                <i data-lucide="wind" class="w-4 h-4 text-green-500"></i>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xl font-extrabold text-orange-600">850₺</p>
-                            <p class="text-xs text-gray-400">gecelik</p>
-                            <button class="mt-2 bg-orange-500 text-white text-xs font-medium py-1.5 px-3 rounded-full">
-                                Rezervasyon
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Otel Olanakları -->
-            <h2 class="text-2xl font-bold mb-4 text-gradient">Otel Olanakları</h2>
-            <div class="grid grid-cols-3 gap-4 mb-8">
-                <div class="text-center">
-                    <div class="amenity-icon bg-blue-50 mx-auto">
-                        <i data-lucide="wifi" class="w-6 h-6 text-blue-500"></i>
-                    </div>
-                    <p class="text-xs font-medium text-gray-700">Ücretsiz WiFi</p>
-                </div>
-                <div class="text-center">
-                    <div class="amenity-icon bg-green-50 mx-auto">
-                        <i data-lucide="car" class="w-6 h-6 text-green-500"></i>
-                    </div>
-                    <p class="text-xs font-medium text-gray-700">Otopark</p>
-                </div>
-                <div class="text-center">
-                    <div class="amenity-icon bg-orange-50 mx-auto">
-                        <i data-lucide="utensils" class="w-6 h-6 text-orange-500"></i>
-                    </div>
-                    <p class="text-xs font-medium text-gray-700">Restoran</p>
-                </div>
-                <div class="text-center">
-                    <div class="amenity-icon bg-purple-50 mx-auto">
-                        <i data-lucide="dumbbell" class="w-6 h-6 text-purple-500"></i>
-                    </div>
-                    <p class="text-xs font-medium text-gray-700">Spor Salonu</p>
-                </div>
-                <div class="text-center">
-                    <div class="amenity-icon bg-cyan-50 mx-auto">
-                        <i data-lucide="waves" class="w-6 h-6 text-cyan-500"></i>
-                    </div>
-                    <p class="text-xs font-medium text-gray-700">Havuz</p>
-                </div>
-                <div class="text-center">
-                    <div class="amenity-icon bg-pink-50 mx-auto">
-                        <i data-lucide="heart" class="w-6 h-6 text-pink-500"></i>
-                    </div>
-                    <p class="text-xs font-medium text-gray-700">Spa</p>
-                </div>
-            </div>
-
-            <!-- Konum -->
-            <h2 class="text-2xl font-bold mb-4 text-gradient">Konum</h2>
-            <div class="bg-white/80 backdrop-blur rounded-2xl p-4 shadow-lg mb-8">
-                <div class="h-48 bg-gray-200 rounded-xl mb-4 flex items-center justify-center text-gray-400">
-                    <i data-lucide="map" class="w-8 h-8 mr-2"></i>
-                    Harita Yükleniyor...
-                </div>
-                <p class="text-gray-600 text-sm">
-                    <i data-lucide="map-pin" class="w-4 h-4 text-orange-500 inline mr-1"></i>
-                    Adıyaman Merkez, Nemrut Dağı Yolu Üzeri, 02000 Adıyaman
-                </p>
-                <p class="text-gray-500 text-xs mt-2">
-                    Nemrut Dağı'na 45 dakika, şehir merkezine 10 dakika mesafede.
-                </p>
-            </div>
-
-        </div>
-        
-        <!-- #YORUMLAR SAYFASI -->
-        <div id="reviews-view" class="spa-page hidden">
-            <h2 class="text-2xl font-bold mb-4 text-gradient">Müşteri Yorumları</h2>
-            
-            <!-- Genel Değerlendirme -->
-            <div class="bg-white/80 backdrop-blur p-6 rounded-2xl shadow-lg mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <div>
-                        <div class="text-4xl font-bold text-gray-900">4.2</div>
-                        <div class="rating-stars mt-1">
-                            <i data-lucide="star" class="w-5 h-5 star fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 star fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 star fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 star fill-current"></i>
-                            <i data-lucide="star" class="w-5 h-5 star empty fill-current"></i>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-gray-600">128 değerlendirme</p>
-                        <p class="text-sm text-gray-500">Son 6 ay</p>
-                    </div>
-                </div>
-                
-                <!-- Puan Dağılımı -->
-                <div class="space-y-2">
-                    <div class="flex items-center">
-                        <span class="text-sm text-gray-600 w-16">5 Yıldız</span>
-                        <div class="flex-1 bg-gray-200 rounded-full h-2">
-                            <div class="bg-yellow-500 h-2 rounded-full" style="width: 65%"></div>
-                        </div>
-                        <span class="text-sm text-gray-600 w-10 ml-2">65%</span>
-                    </div>
-                    <div class="flex items-center">
-                        <span class="text-sm text-gray-600 w-16">4 Yıldız</span>
-                        <div class="flex-1 bg-gray-200 rounded-full h-2">
-                            <div class="bg-yellow-400 h-2 rounded-full" style="width: 20%"></div>
-                        </div>
-                        <span class="text-sm text-gray-600 w-10 ml-2">20%</span>
-                    </div>
-                    <div class="flex items-center">
-                        <span class="text-sm text-gray-600 w-16">3 Yıldız</span>
-                        <div class="flex-1 bg-gray-200 rounded-full h-2">
-                            <div class="bg-yellow-300 h-2 rounded-full" style="width: 10%"></div>
-                        </div>
-                        <span class="text-sm text-gray-600 w-10 ml-2">10%</span>
-                    </div>
-                    <div class="flex items-center">
-                        <span class="text-sm text-gray-600 w-16">2 Yıldız</span>
-                        <div class="flex-1 bg-gray-200 rounded-full h-2">
-                            <div class="bg-yellow-200 h-2 rounded-full" style="width: 3%"></div>
-                        </div>
-                        <span class="text-sm text-gray-600 w-10 ml-2">3%</span>
-                    </div>
-                    <div class="flex items-center">
-                        <span class="text-sm text-gray-600 w-16">1 Yıldız</span>
-                        <div class="flex-1 bg-gray-200 rounded-full h-2">
-                            <div class="bg-yellow-100 h-2 rounded-full" style="width: 2%"></div>
-                        </div>
-                        <span class="text-sm text-gray-600 w-10 ml-2">2%</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Yorumlar Listesi -->
-            <div class="space-y-4">
-                <div class="bg-white/80 backdrop-blur p-4 rounded-2xl shadow-sm">
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <h4 class="font-bold text-gray-800">Ahmet Y.</h4>
-                            <div class="rating-stars mt-1">
-                                <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
-                            </div>
-                        </div>
-                        <span class="text-xs text-gray-500">2 hafta önce</span>
-                    </div>
-                    <p class="text-gray-600 text-sm">Harika bir konaklama deneyimi yaşadık. Personel çok ilgili ve yardımsever, odalar temiz ve ferah. Nemrut Dağı turu için ideal bir konumda.</p>
-                </div>
-                
-                <div class="bg-white/80 backdrop-blur p-4 rounded-2xl shadow-sm">
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <h4 class="font-bold text-gray-800">Zeynep K.</h4>
-                            <div class="rating-stars mt-1">
-                                <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 star empty fill-current"></i>
-                            </div>
-                        </div>
-                        <span class="text-xs text-gray-500">1 ay önce</span>
-                    </div>
-                    <p class="text-gray-600 text-sm">Otel konumu harika, kahvaltı çeşitliliği güzel. Tek eksiğimiz odalardaki internet bağlantısının biraz yavaş olmasıydı.</p>
-                </div>
-                
-                <div class="bg-white/80 backdrop-blur p-4 rounded-2xl shadow-sm">
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <h4 class="font-bold text-gray-800">Mehmet T.</h4>
-                            <div class="rating-stars mt-1">
-                                <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 star empty fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 star empty fill-current"></i>
-                            </div>
-                        </div>
-                        <span class="text-xs text-gray-500">2 ay önce</span>
-                    </div>
-                    <p class="text-gray-600 text-sm">Fiyat-performans açısından iyi bir otel. Personel güleryüzlü, ancak havuz biraz küçük. Genel olarak memnun kaldık.</p>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- FLOATING BOTTOM NAVBAR (YÜZEN ADA) -->
-    <div id="navbar-container" class="floating-navbar-container">
-        <div class="glass-island">
-            
-            <!-- Arama Alanı (Gizli Katman) -->
-            <div id="search-container">
-                <i data-lucide="search" class="w-4 h-4 text-gray-400 mr-2"></i>
-                <input type="text" id="search-input" placeholder="Otel, konum veya tarih ara..." 
-                       class="bg-transparent border-none outline-none w-full text-sm text-gray-700 placeholder-gray-400">
-                <button onclick="toggleSearch(false)" class="p-1 bg-gray-200 rounded-full ml-2">
-                    <i data-lucide="x" class="w-3 h-3 text-gray-600"></i>
-                </button>
-            </div>
-
-            <!-- Navigasyon Butonları -->
-            <button class="nav-btn active" onclick="switchPage('hotel', this)">
-                <i data-lucide="home" class="w-6 h-6 stroke-[2.5px]"></i>
-            </button>
-            
-            <button class="nav-btn" onclick="switchPage('reviews', this)">
-                <i data-lucide="star" class="w-6 h-6 stroke-[2.5px]"></i>
-            </button>
-            
-            <button class="nav-btn" onclick="openBookingDrawer()">
-                <i data-lucide="calendar" class="w-6 h-6 stroke-[2.5px]"></i>
-            </button>
-            
-            <button class="nav-btn" onclick="toggleSearch(true)">
-                <i data-lucide="search" class="w-6 h-6 stroke-[2.5px]"></i>
-            </button>
-
-        </div>
-    </div>
-
-    <!-- REZERVASYON DRAWER -->
-    <div id="booking-overlay" class="overlay fixed inset-0 bg-black/30 z-40" onclick="closeBookingDrawer()"></div>
-    
-    <div id="booking-drawer" class="detail-drawer fixed inset-y-0 right-0 w-full max-w-md bg-white z-50 shadow-2xl">
-        <div class="relative p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-900">Rezervasyon Yap</h2>
-                <button onclick="closeBookingDrawer()" class="p-2 bg-gray-100 rounded-full">
-                    <i data-lucide="x" class="w-5 h-5 text-gray-600"></i>
-                </button>
-            </div>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Giriş Tarihi</label>
-                    <div class="bg-gray-50 p-3 rounded-xl flex items-center">
-                        <i data-lucide="calendar" class="w-5 h-5 text-gray-400 mr-2"></i>
-                        <span class="text-gray-600">15 Kasım 2023</span>
-                    </div>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Çıkış Tarihi</label>
-                    <div class="bg-gray-50 p-3 rounded-xl flex items-center">
-                        <i data-lucide="calendar" class="w-5 h-5 text-gray-400 mr-2"></i>
-                        <span class="text-gray-600">18 Kasım 2023</span>
-                    </div>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Oda Tipi</label>
-                    <div class="bg-gray-50 p-3 rounded-xl">
-                        <select class="w-full bg-transparent border-none outline-none text-gray-600">
-                            <option>Standart Oda</option>
-                            <option>Aile Odası</option>
-                            <option>Süit Oda</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Yetişkin</label>
-                    <div class="flex items-center space-x-4">
-                        <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">-</button>
-                        <span class="text-lg font-medium">2</span>
-                        <button class="w-10 h-10 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center">+</button>
-                    </div>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Çocuk</label>
-                    <div class="flex items-center space-x-4">
-                        <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">-</button>
-                        <span class="text-lg font-medium">0</span>
-                        <button class="w-10 h-10 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center">+</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="mt-8 pt-6 border-t border-gray-200">
-                <div class="flex justify-between mb-2">
-                    <span class="text-gray-600">3 Gece Konaklama</span>
-                    <span class="font-medium">1350₺</span>
-                </div>
-                <div class="flex justify-between mb-2">
-                    <span class="text-gray-600">Vergiler</span>
-                    <span class="font-medium">270₺</span>
-                </div>
-                <div class="flex justify-between mb-4">
-                    <span class="text-gray-600">Hizmet Bedeli</span>
-                    <span class="font-medium">100₺</span>
-                </div>
-                <div class="flex justify-between text-lg font-bold">
-                    <span>Toplam</span>
-                    <span class="text-orange-600">1720₺</span>
-                </div>
-                
-                <button class="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold py-4 rounded-2xl shadow-xl shadow-orange-200 mt-6 transition-transform flex justify-center items-center hover:shadow-2xl hover:-translate-y-1">
-                    Rezervasyonu Tamamla
-                    <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
-                </button>
-            </div>
-        </div>
-    </div>
+    <!-- Pusula (döner animasyonlu) -->
+    <div class="compass"></div>
 
     <script>
-        // İkonları Yükle
-        lucide.createIcons();
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZmFrZXRva2VuIiwiYSI6ImNtMHB3b3B5cTB3eG8ya29qZ3F3b3B5Y2QifQ.fake'; // Ücretsiz çalışır!
 
-        // Oda verileri
-        const rooms = {
-            1: { 
-                title: "Standart Oda", 
-                price: "450₺", 
-                capacity: "2 Yetişkin • 1 Çocuk",
-                amenities: ["wifi", "tv", "snowflake"],
-                img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=400&q=80",
-                description: "Konforlu standart oda, şehir manzarası, ücretsiz WiFi, LCD TV, klima ve özel banyo."
-            },
-            2: { 
-                title: "Aile Odası", 
-                price: "650₺", 
-                capacity: "2 Yetişkin • 2 Çocuk",
-                amenities: ["wifi", "tv", "snowflake", "coffee"],
-                img: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=400&q=80",
-                description: "Geniş aile odası, iki ayrı yatak alanı, mini buzdolabı, kahve makinesi ve balkon."
-            },
-            3: { 
-                title: "Süit Oda", 
-                price: "850₺", 
-                capacity: "2 Yetişkin • Balkon",
-                amenities: ["wifi", "tv", "snowflake", "coffee", "wind"],
-                img: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=400&q=80",
-                description: "Lüks süit oda, jakuzi, geniş balkon, dağ manzarası, özel oturma alanı ve premium olanaklar."
-            }
-        };
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/satellite-v9', // 3D uyumlu
+            center: [38.654444, 38.743611], // Nemrut Dağı zirve koordinatı (tam doğru)
+            zoom: 12,
+            pitch: 65,     // 3D açı
+            bearing: -20,  // hafif döndürülmüş havalı bakış
+            antialias: true
+        });
 
-        // Swiper başlatma
-        let swiper;
-        
-        // --- Fonksiyonlar ---
-
-        function switchPage(pageId, btn) {
-            // Sayfaları Gizle/Göster
-            document.querySelectorAll('.spa-page').forEach(el => el.classList.add('hidden'));
-            const targetPage = document.getElementById(pageId + '-view');
-            targetPage.classList.remove('hidden');
-            
-            // Buton Aktifliği
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            if(btn) btn.classList.add('active');
-            
-            window.scrollTo({top: 0, behavior: 'smooth'});
-            
-            // Swiper'ı yeniden başlat (hotel sayfası için)
-            if (pageId === 'hotel' && swiper) {
-                setTimeout(() => {
-                    swiper.update();
-                }, 100);
-            }
-        }
-
-        function toggleSearch(show) {
-            const nav = document.getElementById('navbar-container');
-            const input = document.getElementById('search-input');
-            
-            if(show) {
-                nav.classList.add('search-mode');
-                setTimeout(() => input.focus(), 300);
-            } else {
-                nav.classList.remove('search-mode');
-                input.value = ''; // Temizle
-            }
-        }
-
-        function openRoomDetail(id) {
-            const data = rooms[id];
-            // Burada oda detay sayfasına yönlendirme yapılabilir
-            // Şu an için rezervasyon drawer'ını açıyoruz
-            openBookingDrawer();
-        }
-
-        function openBookingDrawer() {
-            document.getElementById('booking-drawer').classList.add('open');
-            document.getElementById('booking-overlay').classList.add('visible');
-            document.body.style.overflow = 'hidden';
-            
-            // GSAP animasyonu
-            gsap.fromTo("#booking-drawer", 
-                { x: 300, opacity: 0 }, 
-                { x: 0, opacity: 1, duration: 0.4, ease: "power2.out" }
-            );
-        }
-
-        function closeBookingDrawer() {
-            // GSAP animasyonu
-            gsap.to("#booking-drawer", {
-                x: 300, 
-                opacity: 0, 
-                duration: 0.3, 
-                ease: "power2.in",
-                onComplete: () => {
-                    document.getElementById('booking-drawer').classList.remove('open');
-                    document.getElementById('booking-overlay').classList.remove('visible');
-                    document.body.style.overflow = '';
+        // 3D arazi efekti (dağlar şişsin diye)
+        map.on('load', () => {
+            map.addSource('mapbox-dem', {
+                'type': 'raster-dem',
+                'url': 'mapbox://mapbox.mapbox-terrain-dem-v1'
+            });
+            map.addLayer({
+                'id': 'hillshading',
+                'source': 'mapbox-dem',
+                'type': 'hillshade',
+                'paint': {
+                    'hillshade-illumination-direction': 335,
+                    'hillshade-exaggeration': 0.6
                 }
             });
-        }
 
-        // İlk yüklemede ikonları garantile
-        window.onload = () => {
-            setTimeout(() => lucide.createIcons(), 100);
-            
-            // Başlangıç animasyonu
-            gsap.from(".room-card", {
-                y: 50,
-                opacity: 0,
-                duration: 0.6,
-                stagger: 0.1,
-                delay: 0.2
-            });
-            
-            // Swiper başlatma
-            swiper = new Swiper('.swiper', {
-                slidesPerView: 1,
-                spaceBetween: 10,
-                pagination: {
-                    el: '.swiper-pagination',
-                    clickable: true,
-                },
-                loop: true,
-                autoplay: {
-                    delay: 5000,
-                },
-            });
-            
-            // Arama input'una event listener ekleme
-            document.getElementById('search-input').addEventListener('input', function(e) {
-                // Arama işlevselliği buraya eklenebilir
-            });
-        };
+            // Turuncu-gri vintage filtre
+            map.setPaintProperty('hillshading', 'hillshade-accent-color', '#d35400');
+        });
 
+        // Özel Nemrut Dağı animasyonlu işaretleyici
+        const nemrutMarker = new mapboxgl.Marker({
+            element: (() => {
+                const el = document.createElement('div');
+                el.className = 'nemrut-marker';
+                return el;
+            })()
+        })
+        .setLngLat([38.654444, 38.743611])
+        .setPopup(new mapboxgl.Popup({ offset: 40 })
+            .setHTML(`
+                <div style="text-align:center; font-family:Pirata One; color:#2c1a0c;">
+                    <h3>NEMRUT DAĞI</h3>
+                    <p><strong>36°34'59.88"N</strong><br>
+                       <strong>38°44'35.88"E</strong></p>
+                    <p>Güneşin doğuşunu tanrı heykelleriyle karşıla!<br>
+                    <small>Antik dünyanın 8. harikası</small></p>
+                </div>
+            `))
+        .addTo(map);
+
+        // Harita yüklendiğinde hafif bir animasyonla yaklaş
+        map.on('load', () => {
+            map.flyTo({
+                center: [38.654444, 38.743611],
+                zoom: 14.5,
+                pitch: 70,
+                bearing: 30,
+                duration: 6000,
+                essential: true
+            });
+        });
     </script>
 </body>
 </html>
