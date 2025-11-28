@@ -3,289 +3,317 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Turizma - Keşfet, Yaşat</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <title>Turizma – Premium Tatil Deneyimi</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #FF6B35;
-      --dark: #121212;
-      --gray: #1e1e1e;
-      --light-gray: #2d2d2d;
-      --text: #e0e0e0;
+      --dark: #0a0a0a;
+      --glass: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --text: #f0f0f0;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Poppins', sans-serif;
       background: var(--dark);
       color: var(--text);
-      min-height: 100vh;
       overflow-x: hidden;
+      padding-bottom: 90px;
     }
-    .container { max-width: 480px; margin: 0 auto; }
 
-    /* Header */
-    header {
-      background: linear-gradient(135deg, rgba(255,107,53,0.95), rgba(255,107,53,0.7));
-      backdrop-filter: blur(10px);
-      padding: 1rem;
+    /* GLASSMORPHISM NAVBAR */
+    .navbar {
       position: fixed;
       top: 0; left: 0; right: 0;
+      height: 80px;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
       z-index: 1000;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    }
-    .header-content {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 0 20px;
     }
     .logo {
-      font-size: 1.8rem;
+      font-size: 28px;
       font-weight: 800;
-      color: white;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+      background: linear-gradient(90deg, #FF6B35, #ff8a65);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    .search-bar {
-      background: rgba(255,255,255,0.2);
-      border-radius: 50px;
-      padding: 0.6rem 1rem;
-      width: 70%;
-      color: white;
-      border: none;
-      backdrop-filter: blur(5px);
-    }
-    .search-bar::placeholder { color: rgba(255,255,255,0.7); }
-
-    /* Hero Section */
-    .hero {
-      height: 100vh;
-      background: linear-gradient(135deg, #1a1a1a, #000),
-                  url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070') center/cover no-repeat;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      position: relative;
-      margin-top: -80px;
-      padding-top: 80px;
-    }
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-    }
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      transform: translateY(20px);
-      animation: float 6s ease-in-out infinite;
-    }
-    .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      text-shadow: 0 4px 20px rgba(0,0,0,0.8);
-    }
-    .hero p {
-      font-size: 1.2rem;
-      margin-bottom: 2rem;
-      opacity: 0.9;
-    }
-    .cta-btn {
-      background: var(--primary);
-      color: white;
-      padding: 1rem 2.5rem;
-      border: none;
-      border-radius: 50px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      box-shadow: 0 10px 30px rgba(255,107,53,0.4);
-      transform: translateY(0);
-      transition: all 0.3s;
-    }
-    .cta-btn:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(255,107,53,0.6); }
-
-    /* Categories */
-    .categories {
-      padding: 4rem 1rem;
-      background: var(--gray);
-    }
-    .section-title {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 3rem;
-      color: var(--primary);
-    }
-    .grid {
+    .profile-btn {
+      width: 44px; height: 44px;
+      background: var(--glass);
+      border-radius: 50%;
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.5rem;
-    }
-    .card {
-      background: var(--light-gray);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      transform: translateY(0);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      position: relative;
-    }
-    .card:hover {
-      transform: translateY(-15px) scale(1.05);
-      box-shadow: 0 20px 50px rgba(255,107,53,0.3);
-    }
-    .card img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-    }
-    .card-content {
-      padding: 1.2rem;
-      text-align: center;
-    }
-    .card-icon {
-      font-size: 2.5rem;
-      color: var(--primary);
-      margin-bottom: 0.8rem;
-    }
-    .card h3 {
-      font-size: 1.3rem;
-      margin-bottom: 0.5rem;
+      place-items: center;
+      font-size: 20px;
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
     }
 
-    /* Bottom Navigation */
-    .bottom-nav {
+    /* BOTTOM SEARCH BAR */
+    .bottom-search {
       position: fixed;
       bottom: 0; left: 0; right: 0;
-      background: rgba(18,18,18,0.95);
-      backdrop-filter: blur(10px);
-      padding: 0.8rem 0;
+      height: 80px;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--glass-border);
+      padding: 15px 20px;
+      z-index: 999;
       display: flex;
-      justify-content: space-around;
-      border-top: 1px solid #333;
-      z-index: 1000;
+      align-items: center;
+      gap: 15px;
     }
-    .nav-item {
-      color: #888;
-      text-align: center;
-      font-size: 0.9rem;
+    .search-input {
+      flex: 1;
+      height: 50px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 30px;
+      border: none;
+      padding: 0 20px;
+      color: white;
+      font-size: 16px;
     }
-    .nav-item.active {
+    .search-input::placeholder { color: rgba(255,255,255,0.6); }
+    .mic-btn {
+      width: 50px; height: 50px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 20px;
+    }
+
+    /* DRAWER MENU */
+    .drawer {
+      position: fixed;
+      top: 0; left: -100%;
+      width: 80%;
+      max-width: 320px;
+      height: 100%;
+      background: rgba(10,10,10,0.98);
+      backdrop-filter: blur(20px);
+      z-index: 2000;
+      transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      padding-top: 100px;
+    }
+    .drawer.open { left: 0; }
+    .drawer-item {
+      padding: 18px 30px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid #222;
+      transition: 0.3s;
+    }
+    .drawer-item.active, .drawer-item:hover {
+      background: rgba(255,107,53,0.15);
+      color: var(--primary);
+      padding-left: 40px;
+    }
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s;
+      z-index: 1500;
+    }
+    .overlay.active { opacity: 1; visibility: visible; }
+
+    /* MAIN CONTENT */
+    .main {
+      padding: 100px 20px 100px;
+    }
+    .hero-title {
+      font-size: 42px;
+      font-weight: 800;
+      margin: 40px 0 10px;
+      line-height: 1.2;
+    }
+    .hero-subtitle {
+      font-size: 18px;
+      opacity: 0.8;
+      margin-bottom: 30px;
+    }
+
+    /* TOUR CARDS */
+    .tours-grid {
+      display: grid;
+      gap: 24px;
+    }
+    .tour-card {
+      background: linear-gradient(145deg, #1a1a1a, #111);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      transform: translateY(30px);
+      opacity: 0;
+      animation: cardUp 0.8s forwards;
+    }
+    .tour-card:nth-child(1) { animation-delay: 0.1s; }
+    .tour-card:nth-child(2) { animation-delay: 0.2s; }
+    .tour-card:nth-child(3) { animation-delay: 0.3s; }
+    .tour-card:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes cardUp {
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .tour-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .tour-card:hover .tour-img {
+      transform: scale(1.12);
+    }
+    .tour-info {
+      padding: 20px;
+    }
+    .tour-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .tour-provider {
+      font-size: 14px;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tour-rating {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+      font-size: 15px;
+    }
+    .tour-price {
+      font-size: 24px;
+      font-weight: 700;
       color: var(--primary);
     }
-    .nav-item i {
-      font-size: 1.5rem;
-      display: block;
-      margin-bottom: 0.3rem;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(20px); }
-      50% { transform: translateY(0); }
-    }
+    .tour-price small { font-size: 14px; opacity: 0.7; font-weight:400; }
 
     @media (min-width: 768px) {
-      .container { max-width: 600px; }
-      .grid { grid-template-columns: repeat(4, 1fr); }
+      .tours-grid { grid-template-columns: 1fr 1fr; }
+      .main { max-width: 800px; margin: 0 auto; }
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="container header-content">
-      <div class="logo">Turizma</div>
-      <input type="text" class="search-bar" placeholder="Nereye gitmek istiyorsun?" />
+  <!-- GLASS NAVBAR -->
+  <div class="navbar">
+    <i class="fas fa-bars" id="menuBtn" style="font-size:24px;cursor:pointer;"></i>
+    <div class="logo">Turizma</div>
+    <div class="profile-btn">
+      <i class="far fa-user"></i>
     </div>
-  </header>
+  </div>
 
-  <section class="hero">
-    <div class="hero-content">
-      <h1>Hayalindeki Tatil</h1>
-      <p>En iyi turlar, oteller ve aktiviteler bir tık uzağında</p>
-      <button class="cta-btn">Hemen Keşfet</button>
-    </div>
-  </section>
+  <!-- DRAWER MENU -->
+  <div class="overlay" id="overlay"></div>
+  <drawer id="drawer">
+    <div class="drawer-item active"><i class="fas fa-home"></i> Ana Sayfa</div>
+    <div class="drawer-item"><i class="fas fa-compass"></i> Keşfet</div>
+    <div class="drawer-item"><i class="fas fa-route"></i> Seyahat Planı</div>
+    <div class="drawer-item"><i class="fas fa-search"></i> Ara</div>
+  </drawer>
 
-  <section class="categories container">
-    <h2 class="section-title">Kategoriler</h2>
-    <div class="grid">
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1528543606781-2f6e6857f318?q=80&w=1965" alt="Turlar"/>
-        <div class="card-content">
-          <i class="fas fa-map-marked-alt card-icon"></i>
-          <h3>Turlar</h3>
-        </div>
-      </div>
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070" alt="Oteller"/>
-        <div class="card-content">
-          <i class="fas fa-hotel card-icon"></i>
-          <h3>Oteller</h3>
-        </div>
-      </div>
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?q=80&w=2070" alt="Aktiviteler"/>
-        <div class="card-content">
-          <i class="fas fa-hiking card-icon"></i>
-          <h3>Aktiviteler</h3>
-        </div>
-      </div>
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2069" alt="Ulaşım"/>
-        <div class="card-content">
-          <i class="fas fa-car-side card-icon"></i>
-          <h3>Transfer & Araç</h3>
-        </div>
-      </div>
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=2070" alt="Yemek"/>
-        <div class="card-content">
-          <i class="fas fa-utensils card-icon"></i>
-          <h3>Yemek Turları</h3>
-        </div>
-      </div>
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?q=80&w=2070" alt="Plaj"/>
-        <div class="card-content">
-          <i class="fas fa-umbrella-beach card-icon"></i>
-          <h3>Plaj & Deniz</h3>
-        </div>
-      </div>
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1540979388269-2ed03f1d7e1d?q=80&w=2070" alt="Kültür"/>
-        <div class="card-content">
-          <i class="fas fa-landmark card-icon"></i>
-          <h3>Kültür & Tarih</h3>
-        </div>
-      </div>
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1519904981063-b0cf448d479e?q=80&w=2070" alt="Macera"/>
-        <div class="card-content">
-          <i class="fas fa-mountain card-icon"></i>
-          <h3>Macera</h3>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- MAIN CONTENT -->
+  <div class="main container">
+    <h1 class="hero-title">Hayalindeki<br>Tatili Bul</h1>
+    <p class="hero-subtitle">En iyi turlar, oteller ve maceralar senin için burada</p>
 
-  <nav class="bottom-nav">
-    <div class="nav-item active">
-      <i class="fas fa-home"></i>
-      <span>Ana Sayfa</span>
-    </div>
-    <div class="nav-item">
-      <i class="fas fa-search"></i>
-      <span>Keşfet</span>
-    </div>
-    <div class="nav-item">
-      <i class="fas fa-heart"></i>
-      <span>Favoriler</span>
-    </div>
-    <div class="nav-item">
-      <i class="fas fa-user"></i>
-      <span>Profil</span>
-    </div>
-  </nav>
+    <div class="tours-grid">
+      <!-- TUR CARD 1 -->
+      <div class="tour-card" onclick="openDetail(this)">
+        <img class="tour-img" src="https://images.unsplash.com/photo-1533929736458-ca588d08c8be?q=80&w=2070&auto=format&fit=crop" alt="Kapadokya">
+        <div class="tour-info">
+          <div class="tour-title">Kapadokya Balon Turu</div>
+          <div class="tour-provider"><i class="fas fa-check-circle"></i> Blue Bosphorus Tours</div>
+          <div class="tour-rating">4.9 <i class="fas fa-star" style="color:#FFD700"></i> (2.341)</div>
+          <div class="tour-price">₺4.799 <small>/ kişi</small></div>
+        </div>
+      </div>
 
+      <!-- TUR CARD 2 -->
+      <div class="tour-card" onclick="openDetail(this)">
+        <img class="tour-img" src="https://images.unsplash.com/photo-1571066811602-716837d681de?q=80&w=2148&auto=format&fit=crop" alt="Efes">
+        <div class="tour-info">
+          <div class="tour-title">Efes & Meryemana Günlük Tur</div>
+          <div class="tour-provider"><i class="fas fa-check-circle"></i> Heritage Travel</div>
+          <div class="tour-rating">4.8 <i class="fas fa-star" style="color:#FFD700"></i> (1.892)</div>
+          <div class="tour-price">₺2.199 <small>/ kişi</small></div>
+        </div>
+      </div>
+
+      <!-- TUR CARD 3 -->
+      <div class="tour-card" onclick="openDetail(this)">
+        <img class="tour-img" src="https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=2070&auto=format&fit=crop" alt="Fethiye">
+        <div class="tour-info">
+          <div class="tour-title">12 Adalar Tekne Turu</div>
+          <div class="tour-provider"><i class="fas fa-check-circle"></i> SeaDream Yachts</div>
+          <div class="tour-rating">4.9 <i class="fas fa-star" style="color:#FFD700"></i> (3.456)</div>
+          <div class="tour-price">₺1.899 <small>/ kişi</small></div>
+        </div>
+      </div>
+
+      <!-- TUR CARD 4 -->
+      <div class="tour-card" onclick="openDetail(this)">
+        <img class="tour-img" src="https://images.unsplash.com/photo-1519904995970-d57e4a9ce1e7?q=80&w=2070&auto=format&fit=crop" alt="Pamukkale">
+        <div class="tour-info">
+          <div class="tour-title">Pamukkale & Hierapolis Turu</div>
+          <div class="tour-provider"><i class="fas fa-check-circle"></i> Anatolia Wonders</div>
+          <div class="tour-rating">4.7 <i class="fas fa-star" style="color:#FFD700"></i> (1.234)</div>
+          <div class="tour-price">₺2.699 <small>/ kişi</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM SEARCH BAR -->
+  <div class="bottom-search">
+    <input type="text" class="search-input" placeholder="Nereye gitmek istiyorsun? Kapadokya, Antalya…">
+    <div class="mic-btn"><i class="fas fa-microphone"></i></div>
+  </div>
+
+  <script>
+    const menuBtn = document.getElementById('menuBtn');
+    const drawer = document.getElementById('drawer');
+    const overlay = document.getElementById('overlay');
+
+    menuBtn.onclick = () => {
+      drawer.classList.toggle('open');
+      overlay.classList.toggle('active');
+    };
+
+    overlay.onclick = () => {
+      drawer.classList.remove('open');
+      overlay.classList.remove('active');
+    };
+
+    // Basit detay sayfası animasyonu (SPA hissi için)
+    function openDetail(card) {
+      // Gerçek uygulamada burada sayfa geçişi olur
+      alert("Detay sayfasına yönlendiriliyorsun: " + card.querySelector('.tour-title').textContent);
+      // Veya window.location = "tour-detail.html?id=123"
+    }
+  </script>
 </body>
 </html>
