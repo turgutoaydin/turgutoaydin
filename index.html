@@ -1,168 +1,265 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Nemrut Dağı - Gizemli Hazine Haritası</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Travel Mesopotamia & Eastern Turkey with etourgood - Göbeklitepe, Nemrut, Mardin, Şanlıurfa, Diyarbakır, Van, Kars, Cappadocia">
+  <title>etourgood - Travel Mesopotamia / Eastern Turkey with us!</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Simple animate on scroll -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --orange: #FF6D00;
+      --dark-orange: #E65100;
+      --gray: #424242;
+      --light-gray: #616161;
+      --bg: #FAFAFA;
+      --white: #FFFFFF;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--gray);
+      line-height: 1.6;
+    }
+    a { text-decoration: none; color: inherit; }
 
-    <!-- Mapbox GL JS (3D + güzel stil için) -->
-    <script src="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js"></script>
-    <link href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css" rel="stylesheet" />
+    /* Header */
+    header {
+      height: 100vh;
+      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1580130718672-db2a47d87a57?ixlib=rb-4.0.3&auto=format&fit=crop&q=80') center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      animation: fadeInDown 1.2s ease;
+    }
+    .hero p {
+      font-size: 1.4rem;
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      animation: fadeInUp 1.5s ease;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: var(--orange);
+      color: white;
+      padding: 14px 36px;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .cta-btn:hover { background: var(--dark-orange); transform: translateY(-3px); }
 
-    <!-- Özel cartoon-hazine haritası stili (ücretsiz) -->
-    <style>
-        body { 
-            margin: 0; 
-            padding: 0; 
-            background: #1a120b; 
-            overflow: hidden; 
-            font-family: 'Pirata One', cursive; 
-        }
-        #map { 
-            position: absolute; 
-            top: 0; 
-            bottom: 0; 
-            width: 100%; 
-        }
-        .parchment-overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            pointer-events: none;
-            background: radial-gradient(ellipse at center, transparent 30%, rgba(139,69,19,0.15) 100%);
-            z-index: 10;
-            border: 30px solid transparent;
-            border-image: url('https://i.ibb.co/9hK7Y3v/parchment-border.png') 60 round;
-        }
-        .title-banner {
-            position: absolute;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: url('https://i.ibb.co/4pZ7cZk/banner.png') no-repeat center;
-            background-size: contain;
-            width: 600px;
-            height: 140px;
-            text-align: center;
-            line-height: 120px;
-            font-size: 42px;
-            color: #2c1a0c;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.6);
-            z-index: 20;
-            pointer-events: none;
-        }
-        .compass {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            width: 120px;
-            height: 120px;
-            background: url('https://i.ibb.co/4sX6Y3L/compass-rose.png') no-repeat center;
-            background-size: contain;
-            z-index: 20;
-            animation: spin 30s linear infinite;
-        }
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .marker {
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-        .nemrut-marker {
-            width: 80px;
-            height: 110px;
-            background: url('https://i.ibb.co/5YqW4nG/nemrut-treasure-marker.gif') no-repeat center;
-            background-size: contain;
-            animation: pulse 3s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.15); }
-            100% { transform: scale(1); }
-        }
-    </style>
-    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap" rel="stylesheet">
+    /* Sections */
+    section { padding: 80px 20px; text-align: center; }
+    h2 { font-size: 2.8rem; color: var(--gray); margin-bottom: 50px; }
+    .destinations, .services {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transition: transform 0.4s;
+    }
+    .card:hover { transform: translateY(-15px); }
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    .card h3 { padding: 20px 15px 10px; font-size: 1.5rem; color: var(--orange); }
+    .card p { padding: 0 20px 25px; color: var(--light-gray); }
+
+    /* Social Links */
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: 50px auto;
+    }
+    .social-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      transition: all 0.3s;
+      font-weight: 500;
+      color: var(--gray);
+    }
+    .social-card:hover {
+      background: var(--orange);
+      color: white;
+      transform: translateY(-5px);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--gray);
+      color: white;
+      text-align: center;
+      padding: 50px 20px;
+    }
+    footer a { color: var(--orange); }
+
+    /* Animations */
+    @keyframes fadeInDown { from { opacity:0; transform:translateY(-50px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(50px); } to { opacity:1; transform:translateY(0); } }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.8rem; }
+      .hero p { font-size: 1.2rem; }
+    }
+  </style>
 </head>
 <body>
 
-    <div id="map"></div>
+  <!-- Header Hero -->
+  <header>
+    <div class="hero">
+      <h1 data-aos="fade-down">Travel Mesopotamia / Eastern Turkey with us!</h1>
+      <p data-aos="fade-up" data-aos-delay="300">
+        Göbeklitepe, Nemrut, Mardin, Şanlıurfa, Diyarbakır, Van, Kars ve Kapadokya'nın büyüsünü yerel uzmanlarla keşfedin
+      </p>
+      <a href="https://wa.me/905336124402" class="cta-btn" data-aos="zoom-in" data-aos-delay="600">Hemen Soru Sor / Rezervasyon</a>
+    </div>
+  </header>
 
-    <!-- Parşömen kenarlık efekti -->
-    <div class="parchment-overlay"></div>
+  <!-- Destinations -->
+  <section>
+    <h2 data-aos="fade-up">Popüler Destinasyonlarımız</h2>
+    <div class="destinations">
+      <div class="card" data-aos="fade-up" data-aos-delay="100">
+        <img src="https://images.unsplash.com/photo-1599645997213-3bf5880c14da?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Nemrut">
+        <h3>Adıyaman - Nemrut</h3>
+        <p>Gün batımında dev heykeller</p>
+      </div>
+      <div class="card" data-aos="fade-up" data-aos-delay="200">
+        <img src="https://images.unsplash.com/photo-1635350732122-45586b30c995?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Mardin">
+        <h3>Mardin</h3>
+        <p>Taş evler ve tarih kokan sokaklar</p>
+      </div>
+      <div class="card" data-aos="fade-up" data-aos-delay="300">
+        <img src="https://images.unsplash.com/photo-1622290448082-c0db0507cc92?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Göbeklitepe">
+        <h3>Şanlıurfa - Göbeklitepe</h3>
+        <p>Dünyanın en eski tapınağı</p>
+      </div>
+      <div class="card" data-aos="fade-up" data-aos-delay="400">
+        <img src="https://images.unsplash.com/photo-1622290448082-c0db0507cc92?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Diyarbakır">
+        <h3>Diyarbakır</h3>
+        <p>Surları ve Hevsel Bahçeleri</p>
+      </div>
+      <div class="card" data-aos="fade-up" data-aos-delay="500">
+        <img src="https://images.unsplash.com/photo-1599645997213-3bf5880c14da?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Van">
+        <h3>Van</h3>
+        <p>Akdamar Adası & Van Gölü</p>
+      </div>
+      <div class="card" data-aos="fade-up" data-aos-delay="600">
+        <img src="https://images.unsplash.com/photo-1635350732122-45586b30c995?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Kars">
+        <h3>Kars & Ani</h3>
+        <p>Doğu Ekspresi ve tarihi harabeler</p>
+      </div>
+      <div class="card" data-aos="fade-up" data-aos-delay="700">
+        <img src="https://images.unsplash.com/photo-1578926368638-d7305f6e9b72?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Doğubeyazıt">
+        <h3>Doğubeyazıt - İshak Paşa</h3>
+        <p>Ağrı Dağı eteklerinde saray</p>
+      </div>
+      <div class="card" data-aos="fade-up" data-aos-delay="800">
+        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fcbf?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Cappadocia">
+        <h3>Kapadokya</h3>
+        <p>Peribacaları ve balon turları</p>
+      </div>
+    </div>
+  </section>
 
-    <!-- Başlık (eski parşömen şerit) -->
-    <div class="title-banner">NEMRUT DAĞI</div>
+  <!-- Services -->
+  <section style="background:#fff;">
+    <h2 data-aos="fade-up">Hizmetlerimiz</h2>
+    <div class="services">
+      <div class="card" data-aos="flip-left">
+        <h3>Paket Tur</h3>
+        <p>Hazır programlı kültür turları</p>
+      </div>
+      <div class="card" data-aos="flip-left" data-aos-delay="100">
+        <h3>Otel Rezervasyon</h3>
+        <p>Butik otel ve özel konaklama</p>
+      </div>
+      <div class="card" data-aos="flip-left" data-aos-delay="200">
+        <h3>Araç & Taşımacılık</h3>
+        <p>VIP transfer ve şoförlü araç</p>
+      </div>
+      <div class="card" data-aos="flip-left" data-aos-delay="300">
+        <h3>Özel Turlar</h3>
+        <p>Sadece size özel rota</p>
+      </div>
+      <div class="card" data-aos="flip-left" data-aos-delay="400">
+        <h3>Grup Turları</h3>
+        <p>Arkadaş grupları ve aileler için</p>
+      </div>
+      <div class="card" data-aos="flip-left" data-aos-delay="500">
+        <h3>Kişiselleştirilmiş Turlar</h3>
+        <p>İlgi alanlarınıza göre tasarım</p>
+      </div>
+    </div>
+  </section>
 
-    <!-- Pusula (döner animasyonlu) -->
-    <div class="compass"></div>
+  <!-- Contact & Social -->
+  <section>
+    <h2 data-aos="fade-up">Bize Ulaşın</h2>
+    <p data-aos="fade-up" data-aos-delay="200">
+      <strong>WhatsApp & Telefon:</strong> <a href="tel:+905336124402">+90 533 612 44 02</a><br>
+      <strong>E-posta:</strong> booking1@etourgood.com | support@etourgood.com
+    </p>
 
-    <script>
-        mapboxgl.accessToken = 'pk.eyJ1IjoiZmFrZXRva2VuIiwiYSI6ImNtMHB3b3B5cTB3eG8ya29qZ3F3b3B5Y2QifQ.fake'; // Ücretsiz çalışır!
+    <h2 data-aos="fade-up" style="margin-top:80px;">etourgood Resmi Hesapları</h2>
+    <div class="social-grid">
+      <a href="https://github.com/turgutoaydin/etourgood" target="_blank" class="social-card" data-aos="zoom-in">GitHub</a>
+      <a href="https://www.tripadvisor.com.tr/Attraction_Review-g293974-d22555182-Reviews-Etourgood_com-Istanbul.html" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="100">Tripadvisor</a>
+      <a href="https://www.youtube.com/@etourgood" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="200">YouTube</a>
+      <a href="https://www.instagram.com/etourgood" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="300">Instagram</a>
+      <a href="https://www.facebook.com/etourgood" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="400">Facebook</a>
+      <a href="https://tr.pinterest.com/etourgood" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="500">Pinterest</a>
+      <a href="https://www.tiktok.com/@etourgood" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="600">TikTok</a>
+      <a href="https://t.me/etourgood" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="700">Telegram</a>
+      <a href="https://wa.me/905336124402" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="800">WhatsApp</a>
+      <a href="https://g.co/kgs/16Xwcuc" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="900">Google</a>
+      <a href="https://x.com/etourgood" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="1000">X (Twitter)</a>
+    </div>
+  </section>
 
-        const map = new mapboxgl.Map({
-            container: 'map',
-            style: 'mapbox://styles/mapbox/satellite-v9', // 3D uyumlu
-            center: [38.654444, 38.743611], // Nemrut Dağı zirve koordinatı (tam doğru)
-            zoom: 12,
-            pitch: 65,     // 3D açı
-            bearing: -20,  // hafif döndürülmüş havalı bakış
-            antialias: true
-        });
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 etourgood.com - Travel Mesopotamia & Eastern Turkey with us!</p>
+    <p>Tüm hakları saklıdır. Türkiye'nin en özel rotalarını sizin için tasarlıyoruz.</p>
+  </footer>
 
-        // 3D arazi efekti (dağlar şişsin diye)
-        map.on('load', () => {
-            map.addSource('mapbox-dem', {
-                'type': 'raster-dem',
-                'url': 'mapbox://mapbox.mapbox-terrain-dem-v1'
-            });
-            map.addLayer({
-                'id': 'hillshading',
-                'source': 'mapbox-dem',
-                'type': 'hillshade',
-                'paint': {
-                    'hillshade-illumination-direction': 335,
-                    'hillshade-exaggeration': 0.6
-                }
-            });
-
-            // Turuncu-gri vintage filtre
-            map.setPaintProperty('hillshading', 'hillshade-accent-color', '#d35400');
-        });
-
-        // Özel Nemrut Dağı animasyonlu işaretleyici
-        const nemrutMarker = new mapboxgl.Marker({
-            element: (() => {
-                const el = document.createElement('div');
-                el.className = 'nemrut-marker';
-                return el;
-            })()
-        })
-        .setLngLat([38.654444, 38.743611])
-        .setPopup(new mapboxgl.Popup({ offset: 40 })
-            .setHTML(`
-                <div style="text-align:center; font-family:Pirata One; color:#2c1a0c;">
-                    <h3>NEMRUT DAĞI</h3>
-                    <p><strong>36°34'59.88"N</strong><br>
-                       <strong>38°44'35.88"E</strong></p>
-                    <p>Güneşin doğuşunu tanrı heykelleriyle karşıla!<br>
-                    <small>Antik dünyanın 8. harikası</small></p>
-                </div>
-            `))
-        .addTo(map);
-
-        // Harita yüklendiğinde hafif bir animasyonla yaklaş
-        map.on('load', () => {
-            map.flyTo({
-                center: [38.654444, 38.743611],
-                zoom: 14.5,
-                pitch: 70,
-                bearing: 30,
-                duration: 6000,
-                essential: true
-            });
-        });
-    </script>
+  <!-- AOS Animation Library -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 1000,
+      once: true
+    });
+  </script>
 </body>
 </html>
