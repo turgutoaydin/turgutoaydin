@@ -3,79 +3,170 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>SpinDEX – Crypto Slot</title>
+  <title>SpinDEX • Crypto Casino</title>
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
-  <script src="https://unpkg.com/@tonconnect/ui@1.0.0/dist/tonconnect-ui.min.js"></script>
+  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
   <style>
-    body { margin:0; padding:0; background:#000; font-family: 'Arial', sans-serif; overflow:hidden; }
-    #game-container { width:100vw; height:100vh; }
-    .ui { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; color:#fff; z-index:10; }
-    .balance { top:15px; left:20px; font-size:20px; font-weight:bold; background:rgba(0,0,0,0.6); padding:10px 20px; border-radius:12px; pointer-events:all; cursor:pointer; }
-    .bet-controls { bottom:20px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.7); padding:15px; border-radius:20px; text-align:center; pointer-events:all; }
-    .spin-btn { background:#ffeb3b; color:#000; font-weight:bold; font-size:28px; padding:15px 60px; border-radius:50px; margin-top:10px; cursor:pointer; box-shadow:0 8px #c8a800; }
-    .spin-btn:active { transform:translateY(4px); box-shadow:0 4px #c8a800; }
-    .win-popup { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) scale(0); background:rgba(0,0,0,0.9); padding:40px; border:5px solid #ffd700; border-radius:20px; text-align:center; font-size:50px; color:#ffd700; transition:0.5s; }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0d001a;overflow:hidden;font-family:'Orbitron',sans-serif}
+    canvas{display:block}
+    .ui{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10}
+    .header{
+      position:absolute;top:0;left:0;width:100%;padding:15px 20px;
+      background:linear-gradient(180deg,#1a0033 0%,transparent 100%);
+      display:flex;justify-content:space-between;align-items:center;color:#fff;
+    }
+    .logo{
+      font-size:28px;font-weight:900;background:linear-gradient(45deg,#ff00aa,#00ffff,#ffd700);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+      text-shadow:0 0 20px #ff00aa88;
+    }
+    .balance{
+      background:rgba(0,0,0,0.6);padding:10px 20px;border-radius:50px;
+      border:2px solid #ffd700;box-shadow:0 0 20px #ffd70044;
+      font-weight:bold;font-size:18px;
+    }
+    .bottom-bar{
+      position:absolute;bottom:0;left:0;width:100%;padding:20px;
+      background:linear-gradient(0deg,#1a0033 0%,transparent 100%);
+      display:flex;flex-direction:column;align-items:center;gap:15px;
+      pointer-events:all;
+    }
+    .bet-panel{
+      background:rgba(0,0,0,0.7);padding:15px 25px;border-radius:25px;
+      border:2px solid #00ffff;box-shadow:0 0 30px #00ffff66;
+      display:flex;align-items:center;gap:20px;color:#fff;
+    }
+    .bet-btn{
+      width:50px;height:50px;border-radius:50%;background:#ff00aa;color:#fff;font-size:30px;
+      border:none;box-shadow:0 0 20px #ff00aa88;cursor:pointer;
+    }
+    .bet-amount{font-size:32px;font-weight:900;color:#ffd700;text-shadow:0 0 15px #ffd700}
+    .spin-btn{
+      background:linear-gradient(45deg,#ff00aa,#ffd700,#00ffff,#ff00aa);
+      color:#000;font-size:36px;font-weight:900;padding:18px 80px;
+      border-radius:60px;border:none;box-shadow:0 0 40px #ff00aa88;
+      animation:pulse 2s infinite;cursor:pointer;
+    }
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    .bigwin{
+      position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
+      background:rgba(0,0,0,0.95);padding:40px 60px;border-radius:30px;
+      border:6px solid #ffd700;box-shadow:0 0 100px #ffd700;
+      text-align:center;color:#ffd700;font-size:50px;font-weight:900;
+      text-shadow:0 0 30px #ff00aa;z-index:999;pointer-events:none;
+      animation:winpop 3s forwards;
+    }
+    @keyframes winpop{
+      0%{transform:translate(-50%,-50%) scale(0);opacity:0}
+      20%{transform:translate(-50%,-50%) scale(1.2);opacity:1}
+      80%{transform:translate(-50%,-50%) scale(1)}
+      100%{transform:translate(-50%,-50%) scale(0);opacity:0}
+    }
+    .particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5}
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="game-container"></div>
+
+  <div id="game"></div>
+  <div class="particles" id="particles"></div>
 
   <div class="ui">
-    <div class="balance" id="balance">Bakiye: 1000.00 USDT (Demo)</div>
-    <div class="bet-controls">
-      <div style="margin-bottom:10px;">
-        <button onclick="changeBet(-0.2)" style="padding:10px 20px;font-size:20px;">-</button>
-        <span id="betAmount" style="margin:0 30px;font-size:28px;font-weight:bold;">1.00</span> USDT
-        <button onclick="changeBet(0.2)" style="padding:10px 20px;font-size:20px;">+</button>
+    <div class="header">
+      <div class="logo">SpinDEX</div>
+      <div class="balance" id="balance">10000.00 USDT</div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="bet-panel">
+        <button class="bet-btn" onclick="changeBet(-0.5)">−</button>
+        <div class="bet-amount" id="betAmount">1.00</div>
+        <button class="bet-btn" onclick="changeBet(0.5)">+</button>
       </div>
-      <div class="spin-btn" id="spinBtn" onclick="spin()">SPIN</div>
-      <div style="margin-top:10px;color:#888;">Demo Mod – Gerçek USDT ile oynayın →</div>
-      <button onclick="connectWallet()" style="background:#00d4ff;color:#000;padding:10px 20px;border:none;border-radius:10px;margin-top:5px;font-weight:bold;">
+      <button class="spin-btn" id="spinBtn" onclick="spin()">SPIN</button>
+      <button onclick="connectWallet()" style="background:#00ffff;color:#000;padding:10px 25px;border:none;border-radius:30px;font-weight:bold;margin-top:10px;">
         Connect TON Wallet
       </button>
     </div>
-    <div class="win-popup" id="winPopup">BIG WIN!<br><span id="winAmount">0</span> USDT</div>
+
+    <div class="bigwin" id="bigwin">
+      MEGA WIN!<br><span id="winAmount">0</span> USDT
+    </div>
   </div>
 
 <script>
-// Phaser Game Config
 const config = {
   type: Phaser.AUTO,
-  width: 480,
-  height: 720,
-  parent: 'game-container',
-  backgroundColor: '#0a001f',
+  width: 450,
+  height: 800,
+  parent: 'game',
+  backgroundColor: '#0d001a',
+  physics: { default: 'arcade' },
   scene: { preload, create, update }
 };
 
 const game = new Phaser.Game(config);
-let reels, symbols = [], isSpinning = false;
-let balance = 1000.00, bet = 1.00, totalWin = 0;
+let grid = [], isSpinning = false;
+let balance = 10000.00, bet = 1.00;
 
-const symbolTypes = ['♦️','❤️','⭐','⚡','💎','🌟','🍀','🪙','💰','7️⃣']; // 10 sembol
+const symbols = ['💎','⭐','❤️','⚡','🪙','7️⃣','🍀','🌟','💰','👑'];
 
 function preload() {
-  this.load.audio('spin', 'https://assets.mixkit.co/sfx/preview/mixkit-slot-machine-win-1933.mp3');
-  this.load.audio('win', 'https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3');
+  this.load.audio('spin', 'https://assets.mixkit.co/sfx/preview/mixkit-slot-machine-spin-1934.mp3');
+  this.load.audio('win', 'https://assets.mixkit.co/sfx/preview/mixkit-epic-win-notification-1982.mp3');
+  this.load.audio('bigwin', 'https://assets.mixkit.co/sfx/preview/mixkit-huge-game-win-1787.mp3');
 }
 
 function create() {
-  // Arka plan
-  this.add.rectangle(240, 360, 480, 720, 0x0a001f);
-  this.add.rectangle(240, 260, 420, 420, 0x1a0033, 0.8).setStrokeStyle(6, 0xffd700);
+  // Neon arka plan
+  const bg = this.add.graphics();
+  bg.fillGradientStyle(0x1a0033, 0x1a0033, 0x000000, 0x000000, 1);
+  bg.fillRect(0, 0, 450, 800);
 
-  // 6x5 Grid oluştur
-  reels = this.add.group();
-  for(let col=0; col<6; col++){
-    forAIT(let row=0; row<5; row++){
-      let sym = this.add.text(70 + col*68, 120 + row*68, '?', {fontSize:'50px'}).setOrigin(0.5);
-      symbols.push(sym);
-      reels.add(sym);
+  // Grid çerçevesi
+  const frame = this.add.graphics();
+  frame.lineStyle(6, 0x00ffff, 1);
+  frame.strokeRoundedRect(25, 150, 400, 500, 20);
+  frame.lineStyle(4, 0xff00aa, 1);
+  frame.strokeRoundedRect(30, 155, 390, 490, 15);
+
+  // 6x5 semboller
+  for(let x=0; x<6; x++){
+    grid[x] = [];
+    for(let y=0; y<5; y++){
+      let sym = this.add.text(75 + x*60, 200 + y*85, '?', {
+        fontSize: '60px'
+      }).setOrigin(0.5).setDepth(10);
+      grid[x][y] = sym;
     }
   }
+
+  // Parçacıklar (arka planda sürekli neon yağmuru)
+  setInterval(createParticle, 100);
 }
 
-function update() {}
+function createParticle() {
+  const p = document.createElement('div');
+  p.style.position = 'absolute';
+  p.style.width = '4px';
+  p.style.height = '20px';
+  p.style.background = Math.random()>0.5 ? '#00ffff' : '#ff00aa';
+  p.style.left = Math.random()*100 + 'vw';
+  p.style.top = '-20px';
+  p.style.boxShadow = '0 0 15px currentColor';
+  p.style.opacity = '0.8';
+  document.getElementById('particles').appendChild(p);
+
+  let pos = -20;
+  const fall = setInterval(()=>{
+    pos += 8;
+    p.style.top = pos + 'px';
+    if(pos > window.innerHeight){
+      p.remove();
+      clearInterval(fall);
+    }
+  }, 20);
+}
 
 function spin() {
   if(isSpinning || balance < bet) return;
@@ -84,68 +175,59 @@ function spin() {
   updateBalance();
   document.getElementById('spinBtn').innerText = 'SPINNING...';
 
-  // Ses
-  if(game.sound.get('spin')) game.sound.play('spin');
+  game.sound.play('spin');
 
-  // Tumble efekti simülasyonu
   let spins = 0;
-  const interval = setInterval(() => {
-    symbols.forEach(s => s.setText(symbolTypes[Math.floor(Math.random()*10)]));
-    spins++;
-    if(spins > 15){
-      clearInterval(interval);
-      setTimeout(() => {
-        finishSpin();
-      }, 500);
+  const spinInterval = setInterval(()=>{
+    for(let x=0;x<6;x++){
+      for(let y=0;y<5;y++){
+        const sym = symbols[Math.floor(Math.random()*symbols.length)];
+        grid[x][y].setText(sym).setTint(0xffffff);
+      }
     }
-  }, 80);
+    spins++;
+    if(spins > 18){
+      clearInterval(spinInterval);
+      setTimeout(finishSpin, 800);
+    }
+  }, 90);
 }
 
 function finishSpin() {
-  // Rastgele kazanç (demo olduğu için %40 ihtimalle kazanır)
-  const winMultiplier = Math.random() < 0.4 ? Phaser.Math.Between(1, 150) : 0;
-  const win = (bet * winMultiplier).toFixed(2);
-  if(win > 0){
+  const multiplier = Math.random() < 0.35 ? Phaser.Math.Between(2, 300) : 0;
+  const win = (bet * multiplier).toFixed(2);
+
+  if(multiplier > 0){
     balance += parseFloat(win);
-    totalWin += parseFloat(win);
-    document.getElementById('winAmount').innerText = win + ' USDT';
-    document.getElementById('winPopup').style.transform = 'translate(-50%,-50%) scale(1)';
-    if(game.sound.get('win')) game.sound.play('win');
-    setTimeout(() => {
-      document.getElementById('winPopup').style.transform = 'translate(-50%,-50%) scale(0)';
-    }, 2500);
+    document.getElementById('winAmount').innerText = win;
+    document.getElementById('bigwin').style.transform = 'translate(-50%,-50%) scale(1)';
+    game.sound.play(multiplier > 50 ? 'bigwin' : 'win');
+    setTimeout(()=>document.getElementById('bigwin').style.transform='translate(-50%,-50%) scale(0)', 3000);
   }
+
   updateBalance();
   document.getElementById('spinBtn').innerText = 'SPIN';
   isSpinning = false;
 }
 
-function changeBet(amount) {
-  bet = Math.max(0.20, Math.min(1000, (bet + amount).toFixed(2)));
+function changeBet(val){
+  bet = Math.max(0.2, Math.min(1000, (bet + val)));
+  bet = Number(bet.toFixed(2));
   document.getElementById('betAmount').innerText = bet.toFixed(2);
 }
 
-function updateBalance() {
-  document.getElementById('balance').innerText = `Bakiye: ${balance.toFixed(2)} USDT (Demo)`;
+function updateBalance(){
+  document.getElementById('balance').innerText = balance.toFixed(2) + ' USDT';
 }
 
-// TON Wallet Bağlantı (gerçek çalışır)
+// TON Connect
 const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
   manifestUrl: 'https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test/public/tonconnect-manifest.json'
 });
 
-async function connectWallet() {
-  try {
-    await tonConnectUI.openModal();
-    alert("Cüzdan bağlandı! Gerçek USDT modu aktif olur.");
-  } catch(e) {
-    alert("Bağlantı iptal edildi");
-  }
+async function connectWallet(){
+  await tonConnectUI.openModal();
 }
 </script>
-
-<div style="position:absolute;bottom:10px;right:10px;color:#555;font-size:12px;">
-  SpinDEX Demo v1.0 – Gerçek versiyon çok yakında! 
-</div>
 </body>
 </html>
