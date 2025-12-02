@@ -1,265 +1,151 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Travel Mesopotamia & Eastern Turkey with etourgood - Göbeklitepe, Nemrut, Mardin, Şanlıurfa, Diyarbakır, Van, Kars, Cappadocia">
-  <title>etourgood - Travel Mesopotamia / Eastern Turkey with us!</title>
-  
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <!-- Simple animate on scroll -->
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>SpinDEX – Crypto Slot</title>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
+  <script src="https://unpkg.com/@tonconnect/ui@1.0.0/dist/tonconnect-ui.min.js"></script>
   <style>
-    :root {
-      --orange: #FF6D00;
-      --dark-orange: #E65100;
-      --gray: #424242;
-      --light-gray: #616161;
-      --bg: #FAFAFA;
-      --white: #FFFFFF;
-    }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: var(--bg);
-      color: var(--gray);
-      line-height: 1.6;
-    }
-    a { text-decoration: none; color: inherit; }
-
-    /* Header */
-    header {
-      height: 100vh;
-      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1580130718672-db2a47d87a57?ixlib=rb-4.0.3&auto=format&fit=crop&q=80') center/cover no-repeat;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      color: white;
-      position: relative;
-    }
-    .hero h1 {
-      font-size: 3.5rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      animation: fadeInDown 1.2s ease;
-    }
-    .hero p {
-      font-size: 1.4rem;
-      max-width: 800px;
-      margin: 0 auto 2rem;
-      animation: fadeInUp 1.5s ease;
-    }
-    .cta-btn {
-      display: inline-block;
-      background: var(--orange);
-      color: white;
-      padding: 14px 36px;
-      border-radius: 50px;
-      font-weight: 600;
-      transition: all 0.3s;
-    }
-    .cta-btn:hover { background: var(--dark-orange); transform: translateY(-3px); }
-
-    /* Sections */
-    section { padding: 80px 20px; text-align: center; }
-    h2 { font-size: 2.8rem; color: var(--gray); margin-bottom: 50px; }
-    .destinations, .services {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 30px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .card {
-      background: white;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      transition: transform 0.4s;
-    }
-    .card:hover { transform: translateY(-15px); }
-    .card img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-    }
-    .card h3 { padding: 20px 15px 10px; font-size: 1.5rem; color: var(--orange); }
-    .card p { padding: 0 20px 25px; color: var(--light-gray); }
-
-    /* Social Links */
-    .social-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 20px;
-      max-width: 1000px;
-      margin: 50px auto;
-    }
-    .social-card {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-      transition: all 0.3s;
-      font-weight: 500;
-      color: var(--gray);
-    }
-    .social-card:hover {
-      background: var(--orange);
-      color: white;
-      transform: translateY(-5px);
-    }
-
-    /* Footer */
-    footer {
-      background: var(--gray);
-      color: white;
-      text-align: center;
-      padding: 50px 20px;
-    }
-    footer a { color: var(--orange); }
-
-    /* Animations */
-    @keyframes fadeInDown { from { opacity:0; transform:translateY(-50px); } to { opacity:1; transform:translateY(0); } }
-    @keyframes fadeInUp { from { opacity:0; transform:translateY(50px); } to { opacity:1; transform:translateY(0); } }
-
-    @media (max-width: 768px) {
-      .hero h1 { font-size: 2.8rem; }
-      .hero p { font-size: 1.2rem; }
-    }
+    body { margin:0; padding:0; background:#000; font-family: 'Arial', sans-serif; overflow:hidden; }
+    #game-container { width:100vw; height:100vh; }
+    .ui { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; color:#fff; z-index:10; }
+    .balance { top:15px; left:20px; font-size:20px; font-weight:bold; background:rgba(0,0,0,0.6); padding:10px 20px; border-radius:12px; pointer-events:all; cursor:pointer; }
+    .bet-controls { bottom:20px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.7); padding:15px; border-radius:20px; text-align:center; pointer-events:all; }
+    .spin-btn { background:#ffeb3b; color:#000; font-weight:bold; font-size:28px; padding:15px 60px; border-radius:50px; margin-top:10px; cursor:pointer; box-shadow:0 8px #c8a800; }
+    .spin-btn:active { transform:translateY(4px); box-shadow:0 4px #c8a800; }
+    .win-popup { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) scale(0); background:rgba(0,0,0,0.9); padding:40px; border:5px solid #ffd700; border-radius:20px; text-align:center; font-size:50px; color:#ffd700; transition:0.5s; }
   </style>
 </head>
 <body>
+  <div id="game-container"></div>
 
-  <!-- Header Hero -->
-  <header>
-    <div class="hero">
-      <h1 data-aos="fade-down">Travel Mesopotamia / Eastern Turkey with us!</h1>
-      <p data-aos="fade-up" data-aos-delay="300">
-        Göbeklitepe, Nemrut, Mardin, Şanlıurfa, Diyarbakır, Van, Kars ve Kapadokya'nın büyüsünü yerel uzmanlarla keşfedin
-      </p>
-      <a href="https://wa.me/905336124402" class="cta-btn" data-aos="zoom-in" data-aos-delay="600">Hemen Soru Sor / Rezervasyon</a>
+  <div class="ui">
+    <div class="balance" id="balance">Bakiye: 1000.00 USDT (Demo)</div>
+    <div class="bet-controls">
+      <div style="margin-bottom:10px;">
+        <button onclick="changeBet(-0.2)" style="padding:10px 20px;font-size:20px;">-</button>
+        <span id="betAmount" style="margin:0 30px;font-size:28px;font-weight:bold;">1.00</span> USDT
+        <button onclick="changeBet(0.2)" style="padding:10px 20px;font-size:20px;">+</button>
+      </div>
+      <div class="spin-btn" id="spinBtn" onclick="spin()">SPIN</div>
+      <div style="margin-top:10px;color:#888;">Demo Mod – Gerçek USDT ile oynayın →</div>
+      <button onclick="connectWallet()" style="background:#00d4ff;color:#000;padding:10px 20px;border:none;border-radius:10px;margin-top:5px;font-weight:bold;">
+        Connect TON Wallet
+      </button>
     </div>
-  </header>
+    <div class="win-popup" id="winPopup">BIG WIN!<br><span id="winAmount">0</span> USDT</div>
+  </div>
 
-  <!-- Destinations -->
-  <section>
-    <h2 data-aos="fade-up">Popüler Destinasyonlarımız</h2>
-    <div class="destinations">
-      <div class="card" data-aos="fade-up" data-aos-delay="100">
-        <img src="https://images.unsplash.com/photo-1599645997213-3bf5880c14da?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Nemrut">
-        <h3>Adıyaman - Nemrut</h3>
-        <p>Gün batımında dev heykeller</p>
-      </div>
-      <div class="card" data-aos="fade-up" data-aos-delay="200">
-        <img src="https://images.unsplash.com/photo-1635350732122-45586b30c995?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Mardin">
-        <h3>Mardin</h3>
-        <p>Taş evler ve tarih kokan sokaklar</p>
-      </div>
-      <div class="card" data-aos="fade-up" data-aos-delay="300">
-        <img src="https://images.unsplash.com/photo-1622290448082-c0db0507cc92?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Göbeklitepe">
-        <h3>Şanlıurfa - Göbeklitepe</h3>
-        <p>Dünyanın en eski tapınağı</p>
-      </div>
-      <div class="card" data-aos="fade-up" data-aos-delay="400">
-        <img src="https://images.unsplash.com/photo-1622290448082-c0db0507cc92?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Diyarbakır">
-        <h3>Diyarbakır</h3>
-        <p>Surları ve Hevsel Bahçeleri</p>
-      </div>
-      <div class="card" data-aos="fade-up" data-aos-delay="500">
-        <img src="https://images.unsplash.com/photo-1599645997213-3bf5880c14da?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Van">
-        <h3>Van</h3>
-        <p>Akdamar Adası & Van Gölü</p>
-      </div>
-      <div class="card" data-aos="fade-up" data-aos-delay="600">
-        <img src="https://images.unsplash.com/photo-1635350732122-45586b30c995?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Kars">
-        <h3>Kars & Ani</h3>
-        <p>Doğu Ekspresi ve tarihi harabeler</p>
-      </div>
-      <div class="card" data-aos="fade-up" data-aos-delay="700">
-        <img src="https://images.unsplash.com/photo-1578926368638-d7305f6e9b72?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Doğubeyazıt">
-        <h3>Doğubeyazıt - İshak Paşa</h3>
-        <p>Ağrı Dağı eteklerinde saray</p>
-      </div>
-      <div class="card" data-aos="fade-up" data-aos-delay="800">
-        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fcbf?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Cappadocia">
-        <h3>Kapadokya</h3>
-        <p>Peribacaları ve balon turları</p>
-      </div>
-    </div>
-  </section>
+<script>
+// Phaser Game Config
+const config = {
+  type: Phaser.AUTO,
+  width: 480,
+  height: 720,
+  parent: 'game-container',
+  backgroundColor: '#0a001f',
+  scene: { preload, create, update }
+};
 
-  <!-- Services -->
-  <section style="background:#fff;">
-    <h2 data-aos="fade-up">Hizmetlerimiz</h2>
-    <div class="services">
-      <div class="card" data-aos="flip-left">
-        <h3>Paket Tur</h3>
-        <p>Hazır programlı kültür turları</p>
-      </div>
-      <div class="card" data-aos="flip-left" data-aos-delay="100">
-        <h3>Otel Rezervasyon</h3>
-        <p>Butik otel ve özel konaklama</p>
-      </div>
-      <div class="card" data-aos="flip-left" data-aos-delay="200">
-        <h3>Araç & Taşımacılık</h3>
-        <p>VIP transfer ve şoförlü araç</p>
-      </div>
-      <div class="card" data-aos="flip-left" data-aos-delay="300">
-        <h3>Özel Turlar</h3>
-        <p>Sadece size özel rota</p>
-      </div>
-      <div class="card" data-aos="flip-left" data-aos-delay="400">
-        <h3>Grup Turları</h3>
-        <p>Arkadaş grupları ve aileler için</p>
-      </div>
-      <div class="card" data-aos="flip-left" data-aos-delay="500">
-        <h3>Kişiselleştirilmiş Turlar</h3>
-        <p>İlgi alanlarınıza göre tasarım</p>
-      </div>
-    </div>
-  </section>
+const game = new Phaser.Game(config);
+let reels, symbols = [], isSpinning = false;
+let balance = 1000.00, bet = 1.00, totalWin = 0;
 
-  <!-- Contact & Social -->
-  <section>
-    <h2 data-aos="fade-up">Bize Ulaşın</h2>
-    <p data-aos="fade-up" data-aos-delay="200">
-      <strong>WhatsApp & Telefon:</strong> <a href="tel:+905336124402">+90 533 612 44 02</a><br>
-      <strong>E-posta:</strong> booking1@etourgood.com | support@etourgood.com
-    </p>
+const symbolTypes = ['♦️','❤️','⭐','⚡','💎','🌟','🍀','🪙','💰','7️⃣']; // 10 sembol
 
-    <h2 data-aos="fade-up" style="margin-top:80px;">etourgood Resmi Hesapları</h2>
-    <div class="social-grid">
-      <a href="https://github.com/turgutoaydin/etourgood" target="_blank" class="social-card" data-aos="zoom-in">GitHub</a>
-      <a href="https://www.tripadvisor.com.tr/Attraction_Review-g293974-d22555182-Reviews-Etourgood_com-Istanbul.html" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="100">Tripadvisor</a>
-      <a href="https://www.youtube.com/@etourgood" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="200">YouTube</a>
-      <a href="https://www.instagram.com/etourgood" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="300">Instagram</a>
-      <a href="https://www.facebook.com/etourgood" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="400">Facebook</a>
-      <a href="https://tr.pinterest.com/etourgood" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="500">Pinterest</a>
-      <a href="https://www.tiktok.com/@etourgood" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="600">TikTok</a>
-      <a href="https://t.me/etourgood" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="700">Telegram</a>
-      <a href="https://wa.me/905336124402" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="800">WhatsApp</a>
-      <a href="https://g.co/kgs/16Xwcuc" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="900">Google</a>
-      <a href="https://x.com/etourgood" target="_blank" class="social-card" data-aos="zoom-in" data-aos-delay="1000">X (Twitter)</a>
-    </div>
-  </section>
+function preload() {
+  this.load.audio('spin', 'https://assets.mixkit.co/sfx/preview/mixkit-slot-machine-win-1933.mp3');
+  this.load.audio('win', 'https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3');
+}
 
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 etourgood.com - Travel Mesopotamia & Eastern Turkey with us!</p>
-    <p>Tüm hakları saklıdır. Türkiye'nin en özel rotalarını sizin için tasarlıyoruz.</p>
-  </footer>
+function create() {
+  // Arka plan
+  this.add.rectangle(240, 360, 480, 720, 0x0a001f);
+  this.add.rectangle(240, 260, 420, 420, 0x1a0033, 0.8).setStrokeStyle(6, 0xffd700);
 
-  <!-- AOS Animation Library -->
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script>
-    AOS.init({
-      duration: 1000,
-      once: true
-    });
-  </script>
+  // 6x5 Grid oluştur
+  reels = this.add.group();
+  for(let col=0; col<6; col++){
+    forAIT(let row=0; row<5; row++){
+      let sym = this.add.text(70 + col*68, 120 + row*68, '?', {fontSize:'50px'}).setOrigin(0.5);
+      symbols.push(sym);
+      reels.add(sym);
+    }
+  }
+}
+
+function update() {}
+
+function spin() {
+  if(isSpinning || balance < bet) return;
+  isSpinning = true;
+  balance -= bet;
+  updateBalance();
+  document.getElementById('spinBtn').innerText = 'SPINNING...';
+
+  // Ses
+  if(game.sound.get('spin')) game.sound.play('spin');
+
+  // Tumble efekti simülasyonu
+  let spins = 0;
+  const interval = setInterval(() => {
+    symbols.forEach(s => s.setText(symbolTypes[Math.floor(Math.random()*10)]));
+    spins++;
+    if(spins > 15){
+      clearInterval(interval);
+      setTimeout(() => {
+        finishSpin();
+      }, 500);
+    }
+  }, 80);
+}
+
+function finishSpin() {
+  // Rastgele kazanç (demo olduğu için %40 ihtimalle kazanır)
+  const winMultiplier = Math.random() < 0.4 ? Phaser.Math.Between(1, 150) : 0;
+  const win = (bet * winMultiplier).toFixed(2);
+  if(win > 0){
+    balance += parseFloat(win);
+    totalWin += parseFloat(win);
+    document.getElementById('winAmount').innerText = win + ' USDT';
+    document.getElementById('winPopup').style.transform = 'translate(-50%,-50%) scale(1)';
+    if(game.sound.get('win')) game.sound.play('win');
+    setTimeout(() => {
+      document.getElementById('winPopup').style.transform = 'translate(-50%,-50%) scale(0)';
+    }, 2500);
+  }
+  updateBalance();
+  document.getElementById('spinBtn').innerText = 'SPIN';
+  isSpinning = false;
+}
+
+function changeBet(amount) {
+  bet = Math.max(0.20, Math.min(1000, (bet + amount).toFixed(2)));
+  document.getElementById('betAmount').innerText = bet.toFixed(2);
+}
+
+function updateBalance() {
+  document.getElementById('balance').innerText = `Bakiye: ${balance.toFixed(2)} USDT (Demo)`;
+}
+
+// TON Wallet Bağlantı (gerçek çalışır)
+const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+  manifestUrl: 'https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test/public/tonconnect-manifest.json'
+});
+
+async function connectWallet() {
+  try {
+    await tonConnectUI.openModal();
+    alert("Cüzdan bağlandı! Gerçek USDT modu aktif olur.");
+  } catch(e) {
+    alert("Bağlantı iptal edildi");
+  }
+}
+</script>
+
+<div style="position:absolute;bottom:10px;right:10px;color:#555;font-size:12px;">
+  SpinDEX Demo v1.0 – Gerçek versiyon çok yakında! 
+</div>
 </body>
 </html>
