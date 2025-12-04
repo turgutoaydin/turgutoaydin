@@ -1,233 +1,272 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>SpinDEX • Crypto Casino</title>
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
-  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{background:#0d001a;overflow:hidden;font-family:'Orbitron',sans-serif}
-    canvas{display:block}
-    .ui{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10}
-    .header{
-      position:absolute;top:0;left:0;width:100%;padding:15px 20px;
-      background:linear-gradient(180deg,#1a0033 0%,transparent 100%);
-      display:flex;justify-content:space-between;align-items:center;color:#fff;
-    }
-    .logo{
-      font-size:28px;font-weight:900;background:linear-gradient(45deg,#ff00aa,#00ffff,#ffd700);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-      text-shadow:0 0 20px #ff00aa88;
-    }
-    .balance{
-      background:rgba(0,0,0,0.6);padding:10px 20px;border-radius:50px;
-      border:2px solid #ffd700;box-shadow:0 0 20px #ffd70044;
-      font-weight:bold;font-size:18px;
-    }
-    .bottom-bar{
-      position:absolute;bottom:0;left:0;width:100%;padding:20px;
-      background:linear-gradient(0deg,#1a0033 0%,transparent 100%);
-      display:flex;flex-direction:column;align-items:center;gap:15px;
-      pointer-events:all;
-    }
-    .bet-panel{
-      background:rgba(0,0,0,0.7);padding:15px 25px;border-radius:25px;
-      border:2px solid #00ffff;box-shadow:0 0 30px #00ffff66;
-      display:flex;align-items:center;gap:20px;color:#fff;
-    }
-    .bet-btn{
-      width:50px;height:50px;border-radius:50%;background:#ff00aa;color:#fff;font-size:30px;
-      border:none;box-shadow:0 0 20px #ff00aa88;cursor:pointer;
-    }
-    .bet-amount{font-size:32px;font-weight:900;color:#ffd700;text-shadow:0 0 15px #ffd700}
-    .spin-btn{
-      background:linear-gradient(45deg,#ff00aa,#ffd700,#00ffff,#ff00aa);
-      color:#000;font-size:36px;font-weight:900;padding:18px 80px;
-      border-radius:60px;border:none;box-shadow:0 0 40px #ff00aa88;
-      animation:pulse 2s infinite;cursor:pointer;
-    }
-    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-    .bigwin{
-      position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
-      background:rgba(0,0,0,0.95);padding:40px 60px;border-radius:30px;
-      border:6px solid #ffd700;box-shadow:0 0 100px #ffd700;
-      text-align:center;color:#ffd700;font-size:50px;font-weight:900;
-      text-shadow:0 0 30px #ff00aa;z-index:999;pointer-events:none;
-      animation:winpop 3s forwards;
-    }
-    @keyframes winpop{
-      0%{transform:translate(-50%,-50%) scale(0);opacity:0}
-      20%{transform:translate(-50%,-50%) scale(1.2);opacity:1}
-      80%{transform:translate(-50%,-50%) scale(1)}
-      100%{transform:translate(-50%,-50%) scale(0);opacity:0}
-    }
-    .particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5}
-  </style>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<title>NEON CHAIN SLOT - 6x5 Web3 Casino Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Roboto:wght@400;700&display=swap');
+
+  body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #0f0020, #1a0033);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Roboto', sans-serif;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Arka plan neon partikülleri */
+  .particles {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at 20% 80%, rgba(120, 0, 255, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 255, 255, 0.3) 0%, transparent 50%);
+    animation: pulse 8s infinite alternate;
+  }
+
+  @keyframes pulse {
+    0% { opacity: 0.6; }
+    100% { opacity: 1; }
+  }
+
+  .container {
+    position: relative;
+    width: 900px;
+    height: 700px;
+    background: rgba(10, 0, 30, 0.9);
+    border-radius: 30px;
+    box-shadow: 
+      0 0 50px rgba(138, 43, 226, 0.8),
+      0 0 100px rgba(0, 255, 255, 0.4),
+      inset 0 0 50px rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    border: 3px solid #8a2be2;
+    padding: 20px;
+  }
+
+  h1 {
+    text-align: center;
+    color: #00ffff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3.5rem;
+    text-shadow: 
+      0 0 20px #00ffff,
+      0 0 40px #00ffff;
+    margin: 0 0 20px 0;
+    letter-spacing: 5px;
+  }
+
+  .reel-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    height: 480px;
+    background: rgba(0,0,0,0.6);
+    padding: 20px;
+    border-radius: 20px;
+    border: 2px solid #ff00ff;
+    box-shadow: inset 0 0 40px rgba(255, 0, 255, 0.4);
+    overflow: hidden;
+  }
+
+  .reel {
+    background: linear-gradient(to bottom, #1a0033, #000);
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+  }
+
+  .symbols {
+    display: flex;
+    flex-direction: column;
+    animation: spin 0s linear infinite;
+  }
+
+  .symbol {
+    width: 100%;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    background: rgba(255,255,255,0.05);
+    border-bottom: 2px solid rgba(0,255,255,0.2);
+  }
+
+  .symbol.diamond   { color: #00ffff; text-shadow: 0 0 20px #00ffff; }
+  .symbol.bitcoin   { color: #f7931a; text-shadow: 0 0 20px #f7931a; }
+  .symbol.eth       { color: #627eea; text-shadow: 0 0 20px #627eea; }
+  .symbol.sol       { color: #14f195; text-shadow: 0 0 20px #14f195; }
+  .symbol.ada       { color: #0033ad; text-shadow: 0 0 20px #0033ad; }
+  .symbol.wild      { color: #ff00ff; text-shadow: 0 0 30px #ff00ff; animation: glow 1.5s infinite alternate; }
+
+  @keyframes glow {
+    from { text-shadow: 0 0 20px #ff00ff; }
+    to { text-shadow: 0 0 50px #ff00ff, 0 0 80px #ff00ff; }
+  }
+
+  .controls {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  #spinBtn {
+    margin-top: 15px;
+    padding: 18px 80px;
+    font-size: 2rem;
+    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(45deg, #8a2be2, #00ffff);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 30px rgba(138, 43, 226, 0.8);
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+  }
+
+  #spinBtn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 60px rgba(0, 255, 255, 0.9);
+  }
+
+  #spinBtn:active {
+    transform: scale(0.95);
+  }
+
+  .win-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 6rem;
+    font-family: 'Orbitron', sans-serif;
+    color: #ff00ff;
+    text-shadow: 0 0 40px #ff00ff;
+    opacity: 0;
+    pointer-events: none;
+    animation: bigwin 3s ease-out forwards;
+    z-index: 100;
+  }
+
+  @keyframes bigwin {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+  }
+
+  .spinning .symbols {
+    animation: spin 1.8s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
+  }
+
+  @keyframes spin {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-1800px); }
+  }
+</style>
 </head>
 <body>
 
-  <div id="game"></div>
-  <div class="particles" id="particles"></div>
+<div class="particles"></div>
 
-  <div class="ui">
-    <div class="header">
-      <div class="logo">SpinDEX</div>
-      <div class="balance" id="balance">10000.00 USDT</div>
-    </div>
-
-    <div class="bottom-bar">
-      <div class="bet-panel">
-        <button class="bet-btn" onclick="changeBet(-0.5)">−</button>
-        <div class="bet-amount" id="betAmount">1.00</div>
-        <button class="bet-btn" onclick="changeBet(0.5)">+</button>
-      </div>
-      <button class="spin-btn" id="spinBtn" onclick="spin()">SPIN</button>
-      <button onclick="connectWallet()" style="background:#00ffff;color:#000;padding:10px 25px;border:none;border-radius:30px;font-weight:bold;margin-top:10px;">
-        Connect TON Wallet
-      </button>
-    </div>
-
-    <div class="bigwin" id="bigwin">
-      MEGA WIN!<br><span id="winAmount">0</span> USDT
-    </div>
+<div class="container">
+  <h1>NEON CHAIN</h1>
+  
+  <div class="reel-container" id="reels">
+    <!-- 6 makara (reel) -->
+    <div class="reel"><div class="symbols" id="reel0"></div></div>
+    <div class="reel"><div class="symbols" id="reel1"></div></div>
+    <div class="reel"><div class="symbols" id="reel2"></div></div>
+    <div class="reel"><div class="symbols" id="reel3"></div></div>
+    <div class="reel"><div class="symbols" id="reel4"></div></div>
+    <div class="reel"><div class="symbols" id="reel5"></div></div>
   </div>
 
+  <div class="controls">
+    <button id="spinBtn">SPIN TO WIN</button>
+  </div>
+
+  <div class="win-message" id="winMessage">MEGA WIN!</div>
+</div>
+
 <script>
-const config = {
-  type: Phaser.AUTO,
-  width: 450,
-  height: 800,
-  parent: 'game',
-  backgroundColor: '#0d001a',
-  physics: { default: 'arcade' },
-  scene: { preload, create, update }
-};
+const symbols = ['💎', '₿', 'Ξ', '◉', '₳', '★', '💎', '₿', 'Ξ', '◉', '₳', '★']; // ★ = WILD
+const reelCount = 6;
+const visibleSymbols = 5;
+const totalSymbolsPerReel = 50; // Daha uzun animasyon için
 
-const game = new Phaser.Game(config);
-let grid = [], isSpinning = false;
-let balance = 10000.00, bet = 1.00;
-
-const symbols = ['💎','⭐','❤️','⚡','🪙','7️⃣','🍀','🌟','💰','👑'];
-
-function preload() {
-  this.load.audio('spin', 'https://assets.mixkit.co/sfx/preview/mixkit-slot-machine-spin-1934.mp3');
-  this.load.audio('win', 'https://assets.mixkit.co/sfx/preview/mixkit-epic-win-notification-1982.mp3');
-  this.load.audio('bigwin', 'https://assets.mixkit.co/sfx/preview/mixkit-huge-game-win-1787.mp3');
-}
-
-function create() {
-  // Neon arka plan
-  const bg = this.add.graphics();
-  bg.fillGradientStyle(0x1a0033, 0x1a0033, 0x000000, 0x000000, 1);
-  bg.fillRect(0, 0, 450, 800);
-
-  // Grid çerçevesi
-  const frame = this.add.graphics();
-  frame.lineStyle(6, 0x00ffff, 1);
-  frame.strokeRoundedRect(25, 150, 400, 500, 20);
-  frame.lineStyle(4, 0xff00aa, 1);
-  frame.strokeRoundedRect(30, 155, 390, 490, 15);
-
-  // 6x5 semboller
-  for(let x=0; x<6; x++){
-    grid[x] = [];
-    for(let y=0; y<5; y++){
-      let sym = this.add.text(75 + x*60, 200 + y*85, '?', {
-        fontSize: '60px'
-      }).setOrigin(0.5).setDepth(10);
-      grid[x][y] = sym;
-    }
+function createReel(reelId) {
+  const reel = document.getElementById(`reel${reelId}`);
+  reel.innerHTML = '';
+  
+  for(let i = 0; i < totalSymbolsPerReel; i++) {
+    const randSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+    const div = document.createElement('div');
+    div.className = 'symbol';
+    
+    if(randSymbol === '💎') div.classList.add('diamond');
+    else if(randSymbol === '₿') div.classList.add('bitcoin');
+    else if(randSymbol === 'Ξ') div.classList.add('eth');
+    else if(randSymbol === '◉') div.classList.add('sol');
+    else if(randSymbol === '₳') div.classList.add('ada');
+    else if(randSymbol === '★') div.classList.add('wild');
+    
+    div.textContent = randSymbol;
+    reel.appendChild(div);
   }
-
-  // Parçacıklar (arka planda sürekli neon yağmuru)
-  setInterval(createParticle, 100);
 }
 
-function createParticle() {
-  const p = document.createElement('div');
-  p.style.position = 'absolute';
-  p.style.width = '4px';
-  p.style.height = '20px';
-  p.style.background = Math.random()>0.5 ? '#00ffff' : '#ff00aa';
-  p.style.left = Math.random()*100 + 'vw';
-  p.style.top = '-20px';
-  p.style.boxShadow = '0 0 15px currentColor';
-  p.style.opacity = '0.8';
-  document.getElementById('particles').appendChild(p);
-
-  let pos = -20;
-  const fall = setInterval(()=>{
-    pos += 8;
-    p.style.top = pos + 'px';
-    if(pos > window.innerHeight){
-      p.remove();
-      clearInterval(fall);
-    }
-  }, 20);
+// Tüm makaraları hazırla
+for(let i = 0; i < reelCount; i++) {
+  createReel(i);
 }
 
-function spin() {
-  if(isSpinning || balance < bet) return;
+let isSpinning = false;
+
+document.getElementById('spinBtn').addEventListener('click', () => {
+  if(isSpinning) return;
   isSpinning = true;
-  balance -= bet;
-  updateBalance();
-  document.getElementById('spinBtn').innerText = 'SPINNING...';
-
-  game.sound.play('spin');
-
-  let spins = 0;
-  const spinInterval = setInterval(()=>{
-    for(let x=0;x<6;x++){
-      for(let y=0;y<5;y++){
-        const sym = symbols[Math.floor(Math.random()*symbols.length)];
-        grid[x][y].setText(sym).setTint(0xffffff);
+  
+  document.getElementById('reels').classList.add('spinning');
+  
+  // Her makarayı sırayla biraz gecikmeli durdur (gerçek slot hissi)
+  const delays = [0, 200, 400, 600, 800, 1000];
+  
+  for(let i = 0; i < reelCount; i++) {
+    setTimeout(() => {
+      const reel = document.getElementById(`reel${i}`);
+      reel.style.animation = 'none';
+      reel.offsetHeight; // reflow
+      reel.style.animation = null;
+      
+      // Rastgele bir pozisyonda durdur
+      const randomStop = Math.floor(Math.random() * (totalSymbolsPerReel - visibleSymbols)) * 90;
+      reel.style.transform = `translateY(-${randomStop}px)`;
+      
+      if(i === reelCount - 1) {
+        setTimeout(() => {
+          document.getElementById('reels').classList.remove('spinning');
+          isSpinning = false;
+          
+          // %10 ihtimalle "MEGA WIN" göster
+          if(Math.random() < 0.1) {
+            document.getElementById('winMessage').style.opacity = 1;
+            setTimeout(() => {
+              document.getElementById('winMessage').style.opacity = 0;
+            }, 3000);
+          }
+        }, 500);
       }
-    }
-    spins++;
-    if(spins > 18){
-      clearInterval(spinInterval);
-      setTimeout(finishSpin, 800);
-    }
-  }, 90);
-}
-
-function finishSpin() {
-  const multiplier = Math.random() < 0.35 ? Phaser.Math.Between(2, 300) : 0;
-  const win = (bet * multiplier).toFixed(2);
-
-  if(multiplier > 0){
-    balance += parseFloat(win);
-    document.getElementById('winAmount').innerText = win;
-    document.getElementById('bigwin').style.transform = 'translate(-50%,-50%) scale(1)';
-    game.sound.play(multiplier > 50 ? 'bigwin' : 'win');
-    setTimeout(()=>document.getElementById('bigwin').style.transform='translate(-50%,-50%) scale(0)', 3000);
+    }, 1800 + delays[i]);
   }
-
-  updateBalance();
-  document.getElementById('spinBtn').innerText = 'SPIN';
-  isSpinning = false;
-}
-
-function changeBet(val){
-  bet = Math.max(0.2, Math.min(1000, (bet + val)));
-  bet = Number(bet.toFixed(2));
-  document.getElementById('betAmount').innerText = bet.toFixed(2);
-}
-
-function updateBalance(){
-  document.getElementById('balance').innerText = balance.toFixed(2) + ' USDT';
-}
-
-// TON Connect
-const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-  manifestUrl: 'https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test/public/tonconnect-manifest.json'
 });
-
-async function connectWallet(){
-  await tonConnectUI.openModal();
-}
 </script>
+
 </body>
 </html>
