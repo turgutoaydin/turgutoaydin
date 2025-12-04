@@ -1,272 +1,690 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<title>NEON CHAIN SLOT - 6x5 Web3 Casino Demo</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Roboto:wght@400;700&display=swap');
-
-  body {
-    margin: 0;
-    height: 100vh;
-    background: linear-gradient(135deg, #0f0020, #1a0033);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Roboto', sans-serif;
-    overflow: hidden;
-    position: relative;
-  }
-
-  /* Arka plan neon partikülleri */
-  .particles {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at 20% 80%, rgba(120, 0, 255, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(0, 255, 255, 0.3) 0%, transparent 50%);
-    animation: pulse 8s infinite alternate;
-  }
-
-  @keyframes pulse {
-    0% { opacity: 0.6; }
-    100% { opacity: 1; }
-  }
-
-  .container {
-    position: relative;
-    width: 900px;
-    height: 700px;
-    background: rgba(10, 0, 30, 0.9);
-    border-radius: 30px;
-    box-shadow: 
-      0 0 50px rgba(138, 43, 226, 0.8),
-      0 0 100px rgba(0, 255, 255, 0.4),
-      inset 0 0 50px rgba(255, 255, 255, 0.1);
-    overflow: hidden;
-    border: 3px solid #8a2be2;
-    padding: 20px;
-  }
-
-  h1 {
-    text-align: center;
-    color: #00ffff;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 3.5rem;
-    text-shadow: 
-      0 0 20px #00ffff,
-      0 0 40px #00ffff;
-    margin: 0 0 20px 0;
-    letter-spacing: 5px;
-  }
-
-  .reel-container {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 10px;
-    height: 480px;
-    background: rgba(0,0,0,0.6);
-    padding: 20px;
-    border-radius: 20px;
-    border: 2px solid #ff00ff;
-    box-shadow: inset 0 0 40px rgba(255, 0, 255, 0.4);
-    overflow: hidden;
-  }
-
-  .reel {
-    background: linear-gradient(to bottom, #1a0033, #000);
-    border-radius: 15px;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
-  }
-
-  .symbols {
-    display: flex;
-    flex-direction: column;
-    animation: spin 0s linear infinite;
-  }
-
-  .symbol {
-    width: 100%;
-    height: 90px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 60px;
-    background: rgba(255,255,255,0.05);
-    border-bottom: 2px solid rgba(0,255,255,0.2);
-  }
-
-  .symbol.diamond   { color: #00ffff; text-shadow: 0 0 20px #00ffff; }
-  .symbol.bitcoin   { color: #f7931a; text-shadow: 0 0 20px #f7931a; }
-  .symbol.eth       { color: #627eea; text-shadow: 0 0 20px #627eea; }
-  .symbol.sol       { color: #14f195; text-shadow: 0 0 20px #14f195; }
-  .symbol.ada       { color: #0033ad; text-shadow: 0 0 20px #0033ad; }
-  .symbol.wild      { color: #ff00ff; text-shadow: 0 0 30px #ff00ff; animation: glow 1.5s infinite alternate; }
-
-  @keyframes glow {
-    from { text-shadow: 0 0 20px #ff00ff; }
-    to { text-shadow: 0 0 50px #ff00ff, 0 0 80px #ff00ff; }
-  }
-
-  .controls {
-    text-align: center;
-    margin-top: 20px;
-  }
-
-  #spinBtn {
-    margin-top: 15px;
-    padding: 18px 80px;
-    font-size: 2rem;
-    font-family: 'Orbitron', sans-serif;
-    background: linear-gradient(45deg, #8a2be2, #00ffff);
-    color: white;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    box-shadow: 0 0 30px rgba(138, 43, 226, 0.8);
-    transition: all 0.3s;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-  }
-
-  #spinBtn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 60px rgba(0, 255, 255, 0.9);
-  }
-
-  #spinBtn:active {
-    transform: scale(0.95);
-  }
-
-  .win-message {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 6rem;
-    font-family: 'Orbitron', sans-serif;
-    color: #ff00ff;
-    text-shadow: 0 0 40px #ff00ff;
-    opacity: 0;
-    pointer-events: none;
-    animation: bigwin 3s ease-out forwards;
-    z-index: 100;
-  }
-
-  @keyframes bigwin {
-    0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
-    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
-    100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
-  }
-
-  .spinning .symbols {
-    animation: spin 1.8s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
-  }
-
-  @keyframes spin {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-1800px); }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Web3 Slot - USDT Slot Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c0e2a 0%, #1a1f4e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #00d4ff;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            background: linear-gradient(to right, #00d4ff, #0088ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: #a0a8ff;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        
+        .slot-machine {
+            background: linear-gradient(145deg, #12163b, #0d1030);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid #2a2f7a;
+            flex: 1;
+            min-width: 300px;
+            max-width: 800px;
+        }
+        
+        .slot-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid #2a2f7a;
+        }
+        
+        .slot-cell {
+            aspect-ratio: 1/1;
+            background-color: #0f1338;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            transition: all 0.3s ease;
+            border: 2px solid #1e225c;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .slot-cell.matched {
+            animation: pulse 0.8s ease infinite;
+            border-color: #00ff88;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.7);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .bet-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .bet-amount {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .bet-label {
+            font-size: 0.9rem;
+            color: #a0a8ff;
+            margin-bottom: 5px;
+        }
+        
+        .bet-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        
+        .balance {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .balance-label {
+            font-size: 0.9rem;
+            color: #a0a8ff;
+            margin-bottom: 5px;
+        }
+        
+        .balance-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        
+        .spin-button {
+            background: linear-gradient(to right, #00d4ff, #0088ff);
+            border: none;
+            color: white;
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .spin-button:hover {
+            background: linear-gradient(to right, #00ff88, #00d4ff);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .spin-button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .spin-button.spinning {
+            animation: spinButton 1s ease infinite;
+        }
+        
+        @keyframes spinButton {
+            0% { background: linear-gradient(to right, #00d4ff, #0088ff); }
+            50% { background: linear-gradient(to right, #ff0088, #ff00ff); }
+            100% { background: linear-gradient(to right, #00d4ff, #0088ff); }
+        }
+        
+        .info-panel {
+            background: linear-gradient(145deg, #12163b, #0d1030);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid #2a2f7a;
+            flex: 1;
+            min-width: 300px;
+            max-width: 350px;
+        }
+        
+        .info-title {
+            color: #00d4ff;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px solid #2a2f7a;
+            padding-bottom: 10px;
+        }
+        
+        .game-info {
+            margin-bottom: 25px;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .info-label {
+            color: #a0a8ff;
+        }
+        
+        .info-value {
+            color: #fff;
+            font-weight: bold;
+        }
+        
+        .wins {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        
+        .win-title {
+            color: #00ff88;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .win-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00ff88;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        
+        .symbols {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .symbol {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 10px;
+            width: 80px;
+        }
+        
+        .symbol-icon {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .symbol-name {
+            font-size: 0.8rem;
+            text-align: center;
+            color: #a0a8ff;
+        }
+        
+        .web3-badge {
+            background-color: #1a1f4e;
+            color: #00d4ff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #a0a8ff;
+            font-size: 0.9rem;
+            width: 100%;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .game-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .slot-machine, .info-panel {
+                width: 100%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .slot-cell {
+                font-size: 1.8rem;
+            }
+        }
+        
+        /* Slot sembolleri için renkler */
+        .symbol-1 { color: #00d4ff; } /* USDT */
+        .symbol-2 { color: #ff0088; } /* BTC */
+        .symbol-3 { color: #00ff88; } /* ETH */
+        .symbol-4 { color: #ffaa00; } /* SOL */
+        .symbol-5 { color: #aa00ff; } /* DOT */
+        .symbol-6 { color: #ff5500; } /* AVAX */
+        .symbol-7 { color: #00ffcc; } /* ADA */
+        .symbol-8 { color: #ff3366; } /* MATIC */
+    </style>
 </head>
 <body>
-
-<div class="particles"></div>
-
-<div class="container">
-  <h1>NEON CHAIN</h1>
-  
-  <div class="reel-container" id="reels">
-    <!-- 6 makara (reel) -->
-    <div class="reel"><div class="symbols" id="reel0"></div></div>
-    <div class="reel"><div class="symbols" id="reel1"></div></div>
-    <div class="reel"><div class="symbols" id="reel2"></div></div>
-    <div class="reel"><div class="symbols" id="reel3"></div></div>
-    <div class="reel"><div class="symbols" id="reel4"></div></div>
-    <div class="reel"><div class="symbols" id="reel5"></div></div>
-  </div>
-
-  <div class="controls">
-    <button id="spinBtn">SPIN TO WIN</button>
-  </div>
-
-  <div class="win-message" id="winMessage">MEGA WIN!</div>
-</div>
-
-<script>
-const symbols = ['💎', '₿', 'Ξ', '◉', '₳', '★', '💎', '₿', 'Ξ', '◉', '₳', '★']; // ★ = WILD
-const reelCount = 6;
-const visibleSymbols = 5;
-const totalSymbolsPerReel = 50; // Daha uzun animasyon için
-
-function createReel(reelId) {
-  const reel = document.getElementById(`reel${reelId}`);
-  reel.innerHTML = '';
-  
-  for(let i = 0; i < totalSymbolsPerReel; i++) {
-    const randSymbol = symbols[Math.floor(Math.random() * symbols.length)];
-    const div = document.createElement('div');
-    div.className = 'symbol';
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-coins"></i> Digital Web3 Slot</h1>
+            <p class="subtitle">USDT tabanlı 6x5 slot oyunu - Her 8 eşleşmede kazanç!</p>
+            <div class="web3-badge">
+                <i class="fab fa-ethereum"></i>
+                <span>Web3 USDT Slot Game</span>
+            </div>
+        </header>
+        
+        <div class="game-container">
+            <div class="slot-machine">
+                <div class="slot-grid" id="slotGrid">
+                    <!-- Slot hücreleri JavaScript ile oluşturulacak -->
+                </div>
+                
+                <div class="controls">
+                    <div class="bet-controls">
+                        <div class="bet-amount">
+                            <div class="bet-label">BAHİS MİKTARI</div>
+                            <div class="bet-value"><i class="fas fa-coins"></i> <span id="betAmount">5.0</span> USDT</div>
+                        </div>
+                        
+                        <div class="balance">
+                            <div class="balance-label">BAKİYENİZ</div>
+                            <div class="balance-value"><i class="fas fa-wallet"></i> <span id="balance">1000.0</span> USDT</div>
+                        </div>
+                    </div>
+                    
+                    <button id="spinButton" class="spin-button">
+                        <i class="fas fa-play"></i> SLOT'U DÖNDÜR
+                    </button>
+                </div>
+            </div>
+            
+            <div class="info-panel">
+                <h2 class="info-title">OYUN BİLGİLERİ</h2>
+                
+                <div class="game-info">
+                    <div class="info-item">
+                        <div class="info-label">Grid Boyutu:</div>
+                        <div class="info-value">6x5</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Kazanç için:</div>
+                        <div class="info-value">8+ Eşleşme</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Maksimum Kazanç:</div>
+                        <div class="info-value">5000x</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">RTP (Geri Dönüş):</div>
+                        <div class="info-value">%96.5</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Sonuçlar:</div>
+                        <div class="info-value"><span id="matchCount">0</span> Eşleşme</div>
+                    </div>
+                </div>
+                
+                <div class="wins">
+                    <div class="win-title">SON KAZANÇ</div>
+                    <div class="win-amount"><i class="fas fa-coins"></i> <span id="lastWin">0.0</span> USDT</div>
+                </div>
+                
+                <div class="symbols">
+                    <div class="symbol">
+                        <div class="symbol-icon symbol-1"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="symbol-name">USDT</div>
+                    </div>
+                    <div class="symbol">
+                        <div class="symbol-icon symbol-2"><i class="fab fa-bitcoin"></i></div>
+                        <div class="symbol-name">BTC</div>
+                    </div>
+                    <div class="symbol">
+                        <div class="symbol-icon symbol-3"><i class="fab fa-ethereum"></i></div>
+                        <div class="symbol-name">ETH</div>
+                    </div>
+                    <div class="symbol">
+                        <div class="symbol-icon symbol-4"><i class="fas fa-gem"></i></div>
+                        <div class="symbol-name">SOL</div>
+                    </div>
+                    <div class="symbol">
+                        <div class="symbol-icon symbol-5"><i class="fas fa-circle"></i></div>
+                        <div class="symbol-name">DOT</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Digital Web3 Slot Game - Bu bir demo oyundur. Gerçek para ile oynamamaktadır.</p>
+            <p>Web3 teknolojisi ile USDT tabanlı slot oyunu deneyimi.</p>
+        </footer>
+    </div>
     
-    if(randSymbol === '💎') div.classList.add('diamond');
-    else if(randSymbol === '₿') div.classList.add('bitcoin');
-    else if(randSymbol === 'Ξ') div.classList.add('eth');
-    else if(randSymbol === '◉') div.classList.add('sol');
-    else if(randSymbol === '₳') div.classList.add('ada');
-    else if(randSymbol === '★') div.classList.add('wild');
-    
-    div.textContent = randSymbol;
-    reel.appendChild(div);
-  }
-}
-
-// Tüm makaraları hazırla
-for(let i = 0; i < reelCount; i++) {
-  createReel(i);
-}
-
-let isSpinning = false;
-
-document.getElementById('spinBtn').addEventListener('click', () => {
-  if(isSpinning) return;
-  isSpinning = true;
-  
-  document.getElementById('reels').classList.add('spinning');
-  
-  // Her makarayı sırayla biraz gecikmeli durdur (gerçek slot hissi)
-  const delays = [0, 200, 400, 600, 800, 1000];
-  
-  for(let i = 0; i < reelCount; i++) {
-    setTimeout(() => {
-      const reel = document.getElementById(`reel${i}`);
-      reel.style.animation = 'none';
-      reel.offsetHeight; // reflow
-      reel.style.animation = null;
-      
-      // Rastgele bir pozisyonda durdur
-      const randomStop = Math.floor(Math.random() * (totalSymbolsPerReel - visibleSymbols)) * 90;
-      reel.style.transform = `translateY(-${randomStop}px)`;
-      
-      if(i === reelCount - 1) {
-        setTimeout(() => {
-          document.getElementById('reels').classList.remove('spinning');
-          isSpinning = false;
-          
-          // %10 ihtimalle "MEGA WIN" göster
-          if(Math.random() < 0.1) {
-            document.getElementById('winMessage').style.opacity = 1;
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Oyun değişkenleri
+            const gridRows = 5;
+            const gridCols = 6;
+            const matchThreshold = 8; // Kazanç için gereken minimum eşleşme sayısı
+            let balance = 1000.0;
+            let betAmount = 5.0;
+            let lastWin = 0.0;
+            let matchCount = 0;
+            let isSpinning = false;
+            
+            // Semboller
+            const symbols = [
+                { icon: 'fa-dollar-sign', name: 'USDT', multiplier: 10, class: 'symbol-1' },
+                { icon: 'fab fa-bitcoin', name: 'BTC', multiplier: 25, class: 'symbol-2' },
+                { icon: 'fab fa-ethereum', name: 'ETH', multiplier: 15, class: 'symbol-3' },
+                { icon: 'fa-gem', name: 'SOL', multiplier: 20, class: 'symbol-4' },
+                { icon: 'fa-circle', name: 'DOT', multiplier: 12, class: 'symbol-5' },
+                { icon: 'fa-fire', name: 'AVAX', multiplier: 18, class: 'symbol-6' },
+                { icon: 'fa-star', name: 'ADA', multiplier: 14, class: 'symbol-7' },
+                { icon: 'fa-shield-alt', name: 'MATIC', multiplier: 16, class: 'symbol-8' }
+            ];
+            
+            // DOM elementleri
+            const slotGrid = document.getElementById('slotGrid');
+            const spinButton = document.getElementById('spinButton');
+            const balanceElement = document.getElementById('balance');
+            const betAmountElement = document.getElementById('betAmount');
+            const lastWinElement = document.getElementById('lastWin');
+            const matchCountElement = document.getElementById('matchCount');
+            
+            // Slot gridini oluştur
+            function createSlotGrid() {
+                slotGrid.innerHTML = '';
+                for (let row = 0; row < gridRows; row++) {
+                    for (let col = 0; col < gridCols; col++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'slot-cell';
+                        cell.dataset.row = row;
+                        cell.dataset.col = col;
+                        slotGrid.appendChild(cell);
+                    }
+                }
+                fillGridWithRandomSymbols();
+            }
+            
+            // Gridi rastgele sembollerle doldur
+            function fillGridWithRandomSymbols() {
+                const cells = document.querySelectorAll('.slot-cell');
+                cells.forEach(cell => {
+                    const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+                    cell.innerHTML = `<i class="fas ${randomSymbol.icon}"></i>`;
+                    cell.className = `slot-cell ${randomSymbol.class}`;
+                    cell.dataset.symbol = randomSymbol.name;
+                });
+            }
+            
+            // Slot döndürme fonksiyonu
+            function spinSlot() {
+                if (isSpinning || balance < betAmount) return;
+                
+                isSpinning = true;
+                balance -= betAmount;
+                updateUI();
+                
+                spinButton.disabled = true;
+                spinButton.classList.add('spinning');
+                
+                // Hücreleri döndürme animasyonu
+                const cells = document.querySelectorAll('.slot-cell');
+                cells.forEach((cell, index) => {
+                    // Önceki eşleşme vurgusunu kaldır
+                    cell.classList.remove('matched');
+                    
+                    // Döndürme efekti
+                    setTimeout(() => {
+                        let spinCount = 0;
+                        const spinInterval = setInterval(() => {
+                            const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+                            cell.innerHTML = `<i class="fas ${randomSymbol.icon}"></i>`;
+                            cell.className = `slot-cell ${randomSymbol.class}`;
+                            cell.dataset.symbol = randomSymbol.name;
+                            
+                            spinCount++;
+                            if (spinCount > 10) { // 10 döngü sonunda dur
+                                clearInterval(spinInterval);
+                                // Son sembolü belirle
+                                const finalSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+                                cell.innerHTML = `<i class="fas ${finalSymbol.icon}"></i>`;
+                                cell.className = `slot-cell ${finalSymbol.class}`;
+                                cell.dataset.symbol = finalSymbol.name;
+                                
+                                // Tüm hücreler döndükten sonra eşleşmeleri kontrol et
+                                if (index === cells.length - 1) {
+                                    setTimeout(checkMatches, 500);
+                                }
+                            }
+                        }, 50 + index * 5); // Kademeli döndürme efekti
+                    }, index * 50);
+                });
+            }
+            
+            // Eşleşmeleri kontrol et
+            function checkMatches() {
+                const cells = document.querySelectorAll('.slot-cell');
+                const symbolCount = {};
+                
+                // Her sembolün kaç kez göründüğünü say
+                cells.forEach(cell => {
+                    const symbol = cell.dataset.symbol;
+                    if (symbol) {
+                        symbolCount[symbol] = (symbolCount[symbol] || 0) + 1;
+                    }
+                });
+                
+                // Eşleşme sayısını hesapla
+                matchCount = 0;
+                Object.values(symbolCount).forEach(count => {
+                    if (count >= matchThreshold) {
+                        matchCount += count;
+                    }
+                });
+                
+                // Eşleşen sembolleri vurgula
+                Object.entries(symbolCount).forEach(([symbol, count]) => {
+                    if (count >= matchThreshold) {
+                        cells.forEach(cell => {
+                            if (cell.dataset.symbol === symbol) {
+                                cell.classList.add('matched');
+                            }
+                        });
+                    }
+                });
+                
+                // Kazanç hesapla
+                let winAmount = 0;
+                if (matchCount > 0) {
+                    // Her eşleşen sembol için kazanç hesapla
+                    Object.entries(symbolCount).forEach(([symbol, count]) => {
+                        if (count >= matchThreshold) {
+                            const symbolData = symbols.find(s => s.name === symbol);
+                            if (symbolData) {
+                                // Eşleşme sayısına göre çarpan uygula
+                                const multiplier = symbolData.multiplier * (count / matchThreshold);
+                                winAmount += betAmount * multiplier;
+                            }
+                        }
+                    });
+                    
+                    // Rastgele ek kazanç (demo amaçlı)
+                    winAmount = Math.round(winAmount * 100) / 100;
+                    lastWin = winAmount;
+                    balance += winAmount;
+                    
+                    // Büyük kazanç için ekstra animasyon
+                    if (winAmount > betAmount * 50) {
+                        celebrateWin();
+                    }
+                } else {
+                    lastWin = 0;
+                }
+                
+                // Oyun durumunu güncelle
+                updateUI();
+                
+                // Döndürme tamamlandı
+                setTimeout(() => {
+                    isSpinning = false;
+                    spinButton.disabled = false;
+                    spinButton.classList.remove('spinning');
+                }, 1500);
+            }
+            
+            // Büyük kazanç kutlama efekti
+            function celebrateWin() {
+                const winElement = document.querySelector('.win-amount');
+                winElement.style.animation = 'pulse 0.8s ease infinite';
+                
+                setTimeout(() => {
+                    winElement.style.animation = '';
+                }, 3000);
+            }
+            
+            // UI güncelleme
+            function updateUI() {
+                balanceElement.textContent = balance.toFixed(2);
+                betAmountElement.textContent = betAmount.toFixed(2);
+                lastWinElement.textContent = lastWin.toFixed(2);
+                matchCountElement.textContent = matchCount;
+                
+                // Yetersiz bakiye kontrolü
+                if (balance < betAmount) {
+                    spinButton.disabled = true;
+                    spinButton.textContent = 'YETERSİZ BAKİYE';
+                } else {
+                    spinButton.disabled = isSpinning;
+                    spinButton.innerHTML = '<i class="fas fa-play"></i> SLOT\'U DÖNDÜR';
+                }
+            }
+            
+            // Bahis ayarlama
+            function changeBet(amount) {
+                if (isSpinning) return;
+                
+                betAmount += amount;
+                if (betAmount < 1) betAmount = 1;
+                if (betAmount > 100) betAmount = 100;
+                
+                updateUI();
+            }
+            
+            // Event listener'lar
+            spinButton.addEventListener('click', spinSlot);
+            
+            // Klavye kontrolleri
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space' && !isSpinning && balance >= betAmount) {
+                    spinSlot();
+                }
+                
+                if (e.code === 'ArrowUp') {
+                    changeBet(1);
+                }
+                
+                if (e.code === 'ArrowDown') {
+                    changeBet(-1);
+                }
+            });
+            
+            // Oyunu başlat
+            createSlotGrid();
+            updateUI();
+            
+            // Demo: Otomatik döndürme (sadece demo amaçlı)
             setTimeout(() => {
-              document.getElementById('winMessage').style.opacity = 0;
-            }, 3000);
-          }
-        }, 500);
-      }
-    }, 1800 + delays[i]);
-  }
-});
-</script>
-
+                if (!isSpinning) {
+                    // İlk açılışta otomatik döndür
+                    spinSlot();
+                }
+            }, 1000);
+        });
+    </script>
 </body>
 </html>
