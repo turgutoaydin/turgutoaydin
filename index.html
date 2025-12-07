@@ -1,292 +1,319 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Pool Spin</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(180deg, #0f0c29, #302b63, #24243e);
-      color: white;
-      height: 100vh;
-      overflow: hidden;
-      touch-action: manipulation;
-    }
-    #game {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      padding: 10px;
-    }
-    header {
-      text-align: center;
-      padding: 10px 0;
-      background: rgba(0,0,0,0.3);
-      border-radius: 2px solid #ffeb3b;
-      border-radius: 15px;
-      margin-bottom: 10px;
-    }
-    h1 {
-      font-size: 28px;
-      color: #ffeb3b;
-      text-shadow: 0 0 10px #ffeb3b;
-    }
-    .score {
-      font-size: 20px;
-      margin-top: 5px;
-    }
-    #board {
-      flex: 1;
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 4px;
-      background: rgba(0,0,0,0.4);
-      padding: 10px;
-      border-radius: 15px;
-      max-width: 400px;
-      margin: 0 auto;
-      box-shadow: 0 0 20px rgba(255,235,59,0.5);
-    }
-    .tile {
-      aspect-ratio: 1;
-      border-radius: 12px;
-      background-size: 80%;
-      background-position: center;
-      background-repeat: no-repeat;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-      animation: drop 0.6s ease-out;
-    }
-    .selected { transform: scale(1.15); box-shadow: 0 0 20px #fff; z-index: 10; }
-    .match { animation: pop 0.4s ease-out forwards; }
-    
-    /* Renkli havuz topları teması */
-    .red    { background: radial-gradient(circle at 30% 30%, #ff5e62, #ff1744); }
-    .blue   { background: radial-gradient(circle at 30% 30%, #6eb5ff, #2979ff); }
-    .green  { background: radial-gradient(circle at 30% 30%, #80e27e, #00c853); }
-    .yellow { background: radial-gradient(circle at 30% 30%, #ffff6b, #ffd600); }
-    .purple { background: radial-gradient(circle at 30% 30%, #e040fb, #9c27b0); }
-    .orange { background: radial-gradient(circle at 30% 30%, #ff9e80, #ff5722); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Pool Spin</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root {
+    --bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gold: #ffd700;
+    --purple: #9c27b0;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Fredoka One', sans-serif;
+    background: var(--bg);
+    color: white;
+    height: 100vh;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  #app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    padding: 12px 16px;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(10px);
+    text-align: center;
+    border-bottom: 2px solid var(--gold);
+  }
+  h1 {
+    font-size: 32px;
+    color: var(--gold);
+    text-shadow: 0 0 15px #ffd700;
+  }
+  .balance {
+    font-size: 20px;
+    margin-top: 6px;
+  }
+  .bet-line {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding: 10px;
+    background: rgba(0,0,0,0.3);
+  }
+  .bet-btn {
+    padding: 8px 16px;
+    background: #333;
+    border-radius: 30px;
+    font-weight: bold;
+  }
+  .bet-btn.active { background: var(--gold); color: #000; }
 
-    footer {
-      text-align: center;
-      padding: 15px;
-    }
-    #spinBtn {
-      padding: 15px 40px;
-      font-size: 22px;
-      font-weight: bold;
-      background: linear-gradient(#ffeb3b, #ffb300);
-      color: #000;
-      border: none;
-      border-radius: 50px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-    }
-    #spinBtn:disabled { opacity: 0.6; }
+  #board {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+    padding: 10px;
+    max-width: 380px;
+    margin: 0 auto;
+    background: rgba(0,0,0,0.3);
+    border-radius: 20px;
+    position: relative;
+  }
+  .tile {
+    aspect-ratio: 1;
+    border-radius: 16px;
+    background-size: 80%;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    animation: drop 0.8s cubic-bezier(.2,.8,.2,1);
+  }
+  .multiplier {
+    font-weight: bold;
+    font-size: 24px;
+    color: #fff;
+    text-shadow: 0 0 10px #000;
+    animation: bomb 2s infinite;
+  }
 
-    @keyframes drop {
-      from { transform: translateY(-1000px); opacity: 0; }
-      to   { transform: translateY(0); opacity: 1; }
-    }
-    @keyframes pop {
-      0%   { transform: scale(1); }
-      50%  { transform: scale(1.3); opacity: 0.8; }
-      100% { transform: scale(0); opacity: 0; }
-    }
-  </style>
+  /* Semboller */
+  .s1 { background: radial-gradient(circle at 30% 30%, #ff6b6b, #ee1111); }
+  .s2 { background: radial-gradient(circle at 30% 30%, #4ecdc4, #1a9c8f); }
+  .s3 { background: radial-gradient(circle at 30% 30%, #ffe66d, #ffb300); }
+  .s4 { background: radial-gradient(circle at 30% 30%, #a8e6cf, #4caf50); }
+  .s5 { background: radial-gradient(circle at 30% 30%, #ff9ff3, #e91e63); }
+  .s6 { background: radial-gradient(circle at 30% 30%, #74b9ff, #0984e3); }
+  .s7 { background: radial-gradient(circle at 30% 30%, #fd79a8, #e84393); }
+  .s8 { background: url('https://i.ibb.co/0jD7g1K/crown.png') center/70% no-repeat, radial-gradient(circle, #ffd700, #ff8c00); }
+
+  .win-effect {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
+    animation: flash 0.6s;
+    z-index: 10;
+  }
+
+  footer {
+    padding: 12px;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .info {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+  button {
+    padding: 16px 30px;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(#ffd700, #ff8c00);
+    color: #000;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  }
+  button:active { transform: scale(0.95); }
+  button:disabled { opacity: 0.5; }
+
+  @keyframes drop {
+    0% { transform: translateY(-1000px) rotate(360deg); opacity: 0; }
+    80% { transform: translateY(10px); }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes flash {
+    0%,100% { opacity: 0; }
+    50% { opacity: 1; }
+  }
+  @keyframes bomb {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.3); text-shadow: 0 0 20px #fff; }
+  }
+</style>
 </head>
 <body>
-  <div id="game">
-    <header>
-      <h1>Pool Spin</h1>
-      <div class="score">Skor: <span id="score">0</span></div>
-    </header>
+<div id="app">
+  <header>
+    <h1>Pool Spin</h1>
+    <div class="balance">Bakiye: <span id="balance">100.00</span> USDT</div>
+  </header>
 
-    <div id="board"></div>
-
-    <footer>
-      <button id="spinBtn">SPIN!</button>
-    </footer>
+  <div class="bet-line">
+    <div class="bet-btn active" data-bet="0.01">0.01</div>
+    <div class="bet-btn" data-bet="0.05">0.05</div>
+    <div class="bet-btn" data-bet="0.10">0.10</div>
+    <div class="bet-btn" data-bet="0.50">0.50</div>
+    <div class="bet-btn" data-bet="1.00">1.00</div>
   </div>
 
-  <script>
-    // Telegram WebApp hazır olduğunda büyüt butonu vs.
-    Telegram.WebApp.ready();
-    Telegram.WebApp.expand();
+  <div id="board"></div>
 
-    const ROWS = 5;
-    const COLS = 6;
-    const TYPES = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
-    let board = [];
-    let score = 0;
-    let isSpinning = false;
-    let selectedTile = null;
+  <footer>
+    <div class="info">
+      Son Kazanç: <span id="lastWin">0.00</span> USDT | 
+      Toplam Kazanç: <span id="totalWin">0.00</span> USDT
+    </div>
+    <div class="controls">
+      <button id="autoBtn">AUTO</button>
+      <button id="spinBtn">SPIN – <span id="betAmount">0.01</span> USDT</button>
+    </div>
+  </footer>
+</div>
 
-    const boardEl = document.getElementById('board');
-    const scoreEl = document.getElementById('score');
-    const spinBtn = document.getElementById('spinBtn');
+<script>
+Telegram.WebApp.ready();
+Telegram.WebApp.expand();
 
-    function createBoard() {
-      boardEl.innerHTML = '';
-      board = [];
-      for (let r = 0; r < ROWS; r++) {
-        board[r] = [];
-        for (let c = 0; c < COLS; c++) {
-          const tile = document.createElement('div');
-          tile.classList.add('tile');
-          const type = TYPES[Math.floor(Math.random() * TYPES.length)];
-          tile.classList.add(type);
-          tile.dataset.row = r;
-          tile.dataset.col = c;
-          tile.addEventListener('click', () => selectTile(tile));
-          boardEl.appendChild(tile);
-          board[r][c] = { element: tile, type };
-        }
-      }
-      checkMatches();
+const ROWS = 5, COLS = 6;
+const SYMBOLS = ['s1','s2','s3','s4','s5','s6','s7','s8']; // s8 = scatter/crown
+let board = [];
+let balance = 100;
+let bet = 0.01;
+let isSpinning = false;
+let autoSpins = 0;
+
+const boardEl = document.getElementById('board');
+const balanceEl = document.getElementById('balance');
+const lastWinEl = document.getElementById('lastWin');
+const totalWinEl = document.getElementById('totalWin');
+const betAmountEl = document.getElementById('betAmount');
+const spinBtn = document.getElementById('spinBtn');
+const autoBtn = document.getElementById('autoBtn');
+
+function initBoard() {
+  boardEl.innerHTML = '';
+  board = [];
+  for(let r=0; r<ROWS; r++) {
+    board[r] = [];
+    for(let c=0; c<COLS; c++) {
+      const div = document.createElement('div');
+      const sym = SYMBOLS[Math.floor(Math.random()*SYMBOLS.length)];
+      div.className = `tile ${sym}`;
+      if(sym==='s8') div.innerHTML = '<div class="multiplier">×</div>'; // görsel çarpan
+      boardEl.appendChild(div);
+      board[r][c] = { el: div, sym, mult: sym==='s8' ? randomMult() : 1 };
     }
+  }
+}
 
-    function selectTile(tile) {
-      if (isSpinning) return;
-      if (selectedTile === tile) {
-        tile.classList.remove('selected');
-        selectedTile = null;
-        return;
-      }
-      if (selectedTile) selectedTile.classList.remove('selected');
-      selectedTile = tile;
-      tile.classList.add('selected');
+function randomMult() {
+  const mults = [2,3,4,5,8,10,15,20,25,50,100];
+  return mults[Math.floor(Math.random()*mults.length)];
+}
+
+function spin() {
+  if (isSpinning || balance < bet) return;
+  Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+
+  balance -= bet;
+  balanceEl.textContent = balance.toFixed(2);
+  lastWinEl.textContent = '0.00';
+  isSpinning = true;
+  spinBtn.disabled = true;
+
+  initBoard();
+  setTimeout(() => checkWin(), 1000);
+}
+
+function checkWin() {
+  let win = 0;
+  const matched = new Set();
+
+  // 8+ aynı sembol = kazanç (scatter-free gibi)
+  const count = {};
+  board.flat().forEach(cell => {
+    count[cell.sym] = (count[cell.sym] || 0) + 1;
+    if(cell.sym === 's8') win += bet * cell.mult; // çarpan bombaları direkt öder
+  });
+
+  for(let sym in count) {
+    if(count[sym] >= 8) {
+      win += bet * payoutTable(sym, count[sym]);
+      // patlama efekti
+      board.flat().filter(c=>c.sym===sym).forEach(c=> {
+        c.el.classList.add('match');
+        matched.add(c.el);
+      });
     }
+  }
 
-    function swapTiles(tile1, tile2) {
-      const r1 = +tile1.dataset.row, c1 = +tile1.dataset.col;
-      const r2 = +tile2.dataset.row, c2 = +tile2.dataset.col;
+  if(win > 0) {
+    balance += win;
+    balanceEl.textContent = balance.toFixed(2);
+    lastWinEl.textContent = win.toFixed(2);
+    totalWinEl.textContent = (parseFloat(totalWinEl.textContent) + win).toFixed(2);
 
-      // Sadece yatay/dikey komşuysa izin ver
-      if ((Math.abs(r1 - r2) === 1 && c1 === c2) || (Math.abs(c1 - c2) === 1 && r1 === r2)) {
-        // Swap
-        const temp = board[r1][c1];
-        board[r1][c1] = board[r2][c2];
-        board[r2][c2] = temp;
-
-        board[r1][c1].element.dataset.row = r1; board[r1][c1].element.dataset.col = c1;
-        board[r2][c2].element.dataset.row = r2; board[r2][c2].element.dataset.col = c2;
-
-        // Görsel swap
-        const tempType = tile1.className;
-        tile1.className = tile2.className;
-        tile2.className = tempType;
-
-        selectedTile.classList.remove('selected');
-        selectedTile = null;
-
-        setTimeout(() => {
-          if (checkMatches()) {
-            dropTiles();
-          } else {
-            // Geri al (eşleşme yoksa)
-            // basitçe tekrar swap
-            swapTiles(tile1, tile2);
-          }
-        }, 300);
-      }
+    // Büyük kazanç efekti
+    if(win > bet*50) {
+      const flash = document.createElement('div');
+      flash.className = 'win-effect';
+      boardEl.appendChild(flash);
+      setTimeout(()=>flash.remove(), 800);
+      Telegram.WebApp.HapticFeedback.notificationOccurred('success');
     }
+  }
 
-    function checkMatches() {
-      let found = false;
-      const toRemove = new Set();
+  isSpinning = false;
+  spinBtn.disabled = false;
 
-      // Yatay
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS - 2; c++) {
-          const type = board[r][c].type;
-          if (type && type === board[r][c+1].type && type === board[r][c+2].type) {
-            toRemove.add(board[r][c].element);
-            toRemove.add(board[r][c+1].element);
-            toRemove.add(board[r][c+2].element);
-            found = true;
-          }
-        }
-      }
+  if(autoSpins > 0) {
+    autoSpins--;
+    autoBtn.textContent = `AUTO (${autoSpins})`;
+    if(autoSpins > 0) setTimeout(spin, 1200);
+    else autoBtn.textContent = 'AUTO';
+  }
+}
 
-      // Dikey
-      for (let c = 0; c < COLS; c++) {
-        for (let r = 0; r < ROWS - 2; r++) {
-          const type = board[r][c].type;
-          if (type && type === board[r+1][c].type && type === board[r+2][c].type) {
-            toRemove.add(board[r][c].element);
-            toRemove.add(board[r+1][c].element);
-            toRemove.add(board[r+2][c].element);
-            found = true;
-          }
-        }
-      }
+function payoutTable(sym, count) {
+  if(sym==='s8') return 0; // zaten çarpanla ödedik
+  const table = {8:3,9:5,10:8,11:15,12:50};
+  for(let c=12; c>=8; c--) if(count>=c) return table[c] || 100;
+}
 
-      if (found) {
-        score += toRemove.size * 10;
-        scoreEl.textContent = score;
-        toRemove.forEach(el => {
-          el.classList.add('match');
-          const r = +el.dataset.row, c = +el.dataset.col;
-          board[r][c].type = null;
-        });
-      }
-      return found;
-    }
+// Bet seçimi
+document.querySelectorAll('.bet-btn').forEach(btn=>{
+  btn.onclick = () => {
+    document.querySelector('.bet-btn.active').classList.remove('active');
+    btn.classList.add('active');
+    bet = parseFloat(btn.dataset.bet);
+    betAmountEl.textContent = bet.toFixed(2);
+  };
+});
 
-    function dropTiles() {
-      let dropped = false;
-      for (let c = 0; c < COLS; c++) {
-        let empty = [];
-        for (let r = ROWS - 1; r >= 0; r--) {
-          if (!board[r][c].type) empty.push(r);
-          else if (empty.length > 0) {
-            const targetR = empty.shift();
-            // Swap
-            board[targetR][c] = board[r][c];
-            board[r][c] = { element: board[targetR][c].element, type: null };
-            board[targetR][c].element.dataset.row = targetR;
-            board[targetR][c].element.style.animation = 'drop 0.6s ease-out';
-            dropped = true;
-            empty.push(r);
-          }
-        }
-        // Üstteki boşluklara yeni taşlar
-        empty.forEach(r => {
-          const tile = board[r][c].element;
-          const type = TYPES[Math.floor(Math.random() * TYPES.length)];
-          tile.className = 'tile ' + type;
-          tile.style.animation = 'drop 0.6s ease-out';
-          board[r][c].type = type;
-          dropped = true;
-        });
-      }
-      if (dropped) {
-        setTimeout(() => {
-          if (checkMatches()) dropTiles();
-        }, 700);
-      }
-    }
+// Auto spin
+autoBtn.onclick = () => {
+  if(isSpinning) return;
+  const nums = [10,25,50,100,250,500,1000];
+  let i = nums.indexOf(autoSpins)+1;
+  if(i>=nums.length) i=0;
+  autoSpins = nums[i];
+  autoBtn.textContent = `AUTO (${autoSpins})`;
+  if(autoSpins>0) spin();
+};
 
-    function dropTiles() {
-      setTimeout(drop, 500);
-    }
+// Manuel spin
+spinBtn.onclick = spin;
 
-    spinBtn.addEventListener('click', () => {
-      if (isSpinning) return;
-      isSpinning = true;
-      spinBtn.disabled = true;
-      createBoard(); // Yeni spin = yeni tahta
-      setTimeout(() => {
-        isSpinning = false;
-        spinBtn.disabled = false;
-      }, 1000);
-    });
-
-    // İlk spin
-    createBoard();
-  </script>
+// İlk yükleme
+initBoard();
+</script>
 </body>
 </html>
