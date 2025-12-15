@@ -2,318 +2,125 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>Pool Spin</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<title>Kule Oyunu - Ekran</title>
 <style>
-  :root {
-    --bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --gold: #ffd700;
-    --purple: #9c27b0;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    font-family: 'Fredoka One', sans-serif;
-    background: var(--bg);
-    color: white;
-    height: 100vh;
-    overflow: hidden;
-    touch-action: manipulation;
-  }
-  #app {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  header {
-    padding: 12px 16px;
-    background: rgba(0,0,0,0.4);
-    backdrop-filter: blur(10px);
-    text-align: center;
-    border-bottom: 2px solid var(--gold);
-  }
-  h1 {
-    font-size: 32px;
-    color: var(--gold);
-    text-shadow: 0 0 15px #ffd700;
-  }
-  .balance {
-    font-size: 20px;
-    margin-top: 6px;
-  }
-  .bet-line {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    padding: 10px;
-    background: rgba(0,0,0,0.3);
-  }
-  .bet-btn {
-    padding: 8px 16px;
-    background: #333;
-    border-radius: 30px;
-    font-weight: bold;
-  }
-  .bet-btn.active { background: var(--gold); color: #000; }
-
-  #board {
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 5px;
-    padding: 10px;
-    max-width: 380px;
-    margin: 0 auto;
-    background: rgba(0,0,0,0.3);
-    border-radius: 20px;
-    position: relative;
-  }
-  .tile {
-    aspect-ratio: 1;
-    border-radius: 16px;
-    background-size: 80%;
-    background-position: center;
-    background-repeat: no-repeat;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-    animation: drop 0.8s cubic-bezier(.2,.8,.2,1);
-  }
-  .multiplier {
-    font-weight: bold;
-    font-size: 24px;
-    color: #fff;
-    text-shadow: 0 0 10px #000;
-    animation: bomb 2s infinite;
-  }
-
-  /* Semboller */
-  .s1 { background: radial-gradient(circle at 30% 30%, #ff6b6b, #ee1111); }
-  .s2 { background: radial-gradient(circle at 30% 30%, #4ecdc4, #1a9c8f); }
-  .s3 { background: radial-gradient(circle at 30% 30%, #ffe66d, #ffb300); }
-  .s4 { background: radial-gradient(circle at 30% 30%, #a8e6cf, #4caf50); }
-  .s5 { background: radial-gradient(circle at 30% 30%, #ff9ff3, #e91e63); }
-  .s6 { background: radial-gradient(circle at 30% 30%, #74b9ff, #0984e3); }
-  .s7 { background: radial-gradient(circle at 30% 30%, #fd79a8, #e84393); }
-  .s8 { background: url('https://i.ibb.co/0jD7g1K/crown.png') center/70% no-repeat, radial-gradient(circle, #ffd700, #ff8c00); }
-
-  .win-effect {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
-    animation: flash 0.6s;
-    z-index: 10;
-  }
-
-  footer {
-    padding: 12px;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .info {
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
-  }
-  .controls {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-  }
-  button {
-    padding: 16px 30px;
-    font-size: 20px;
-    font-weight: bold;
-    border: none;
-    border-radius: 50px;
-    background: linear-gradient(#ffd700, #ff8c00);
-    color: #000;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-  }
-  button:active { transform: scale(0.95); }
-  button:disabled { opacity: 0.5; }
-
-  @keyframes drop {
-    0% { transform: translateY(-1000px) rotate(360deg); opacity: 0; }
-    80% { transform: translateY(10px); }
-    100% { transform: translateY(0); opacity: 1; }
-  }
-  @keyframes flash {
-    0%,100% { opacity: 0; }
-    50% { opacity: 1; }
-  }
-  @keyframes bomb {
-    0%,100% { transform: scale(1); }
-    50% { transform: scale(1.3); text-shadow: 0 0 20px #fff; }
-  }
+  body { margin:0; background:#111; color:white; font-family:Arial; text-align:center; }
+  canvas { background:#000; display:block; margin:20px auto; border:2px solid #444; }
+  #info { font-size:28px; margin:20px; }
+  #qr { width:250px; height:250px; margin:30px auto; background:white; padding:10px; border-radius:10px; }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 </head>
 <body>
-<div id="app">
-  <header>
-    <h1>Pool Spin</h1>
-    <div class="balance">Bakiye: <span id="balance">100.00</span> USDT</div>
-  </header>
-
-  <div class="bet-line">
-    <div class="bet-btn active" data-bet="0.01">0.01</div>
-    <div class="bet-btn" data-bet="0.05">0.05</div>
-    <div class="bet-btn" data-bet="0.10">0.10</div>
-    <div class="bet-btn" data-bet="0.50">0.50</div>
-    <div class="bet-btn" data-bet="1.00">1.00</div>
-  </div>
-
-  <div id="board"></div>
-
-  <footer>
-    <div class="info">
-      Son Kazanç: <span id="lastWin">0.00</span> USDT | 
-      Toplam Kazanç: <span id="totalWin">0.00</span> USDT
-    </div>
-    <div class="controls">
-      <button id="autoBtn">AUTO</button>
-      <button id="spinBtn">SPIN – <span id="betAmount">0.01</span> USDT</button>
-    </div>
-  </footer>
-</div>
+<h1>Kule Oyunu - Büyük Ekran</h1>
+<div id="info">Şifre: <span id="password">-</span> | Skor: <span id="score">0</span></div>
+<canvas id="canvas" width="400" height="600"></canvas>
+<div id="qr"></div>
+<p>Telefonla QR'ı tara veya şifreyi gir → Kumanda aktif olsun!</p>
 
 <script>
-Telegram.WebApp.ready();
-Telegram.WebApp.expand();
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
 
-const ROWS = 5, COLS = 6;
-const SYMBOLS = ['s1','s2','s3','s4','s5','s6','s7','s8']; // s8 = scatter/crown
-let board = [];
-let balance = 100;
-let bet = 0.01;
-let isSpinning = false;
-let autoSpins = 0;
+// Rastgele 4 haneli şifre
+const password = Math.floor(1000 + Math.random() * 9000);
+document.getElementById('password').textContent = password;
 
-const boardEl = document.getElementById('board');
-const balanceEl = document.getElementById('balance');
-const lastWinEl = document.getElementById('lastWin');
-const totalWinEl = document.getElementById('totalWin');
-const betAmountEl = document.getElementById('betAmount');
-const spinBtn = document.getElementById('spinBtn');
-const autoBtn = document.getElementById('autoBtn');
+// Controller URL'si (şifre ile)
+const controllerUrl = `https://turgutoaydin.github.io/pokemonw3/?pass=${password}`;
+QRCode.toCanvas(document.getElementById('qr'), controllerUrl, {width:250});
 
-function initBoard() {
-  boardEl.innerHTML = '';
-  board = [];
-  for(let r=0; r<ROWS; r++) {
-    board[r] = [];
-    for(let c=0; c<COLS; c++) {
-      const div = document.createElement('div');
-      const sym = SYMBOLS[Math.floor(Math.random()*SYMBOLS.length)];
-      div.className = `tile ${sym}`;
-      if(sym==='s8') div.innerHTML = '<div class="multiplier">×</div>'; // görsel çarpan
-      boardEl.appendChild(div);
-      board[r][c] = { el: div, sym, mult: sym==='s8' ? randomMult() : 1 };
-    }
+// Oyun değişkenleri
+let blocks = [{x:100, y:H-50, w:200, h:50}]; // taban
+let currentBlock = null;
+let direction = 1;
+let speed = 3;
+let score = 0;
+let gameOver = false;
+
+// URL'den drop komutu kontrol et (her saniye)
+setInterval(() => {
+  const params = new URLSearchParams(location.search);
+  if(params.get('drop') === '1' && currentBlock) {
+    dropBlock();
+    // URL'yi temizle (isteğe bağlı)
+    history.replaceState(null, '', location.pathname);
   }
+}, 500);
+
+function newCurrentBlock() {
+  if(gameOver) return;
+  currentBlock = {x:0, y:100, w:blocks[blocks.length-1].w, h:50};
+  direction = Math.random() > 0.5 ? 1 : -1;
+  speed += 0.4;
 }
 
-function randomMult() {
-  const mults = [2,3,4,5,8,10,15,20,25,50,100];
-  return mults[Math.floor(Math.random()*mults.length)];
+function dropBlock() {
+  if(gameOver || !currentBlock) return;
+  
+  const last = blocks[blocks.length-1];
+  let newX = currentBlock.x;
+  let newW = currentBlock.w;
+
+  // Taşma kontrolü (basit versiyon)
+  if(currentBlock.x < last.x) {
+    newW = currentBlock.x + currentBlock.w - last.x;
+    newX = last.x;
+  } else if(currentBlock.x + currentBlock.w > last.x + last.w) {
+    newW = last.x + last.w - currentBlock.x;
+  }
+
+  if(newW <= 20) {
+    gameOver = true;
+    alert('Oyun Bitti! Skor: ' + score);
+    return;
+  }
+
+  blocks.push({x:newX, y:last.y - 50, w:newW, h:50});
+  score++;
+  document.getElementById('score').textContent = score;
+  newCurrentBlock();
 }
 
-function spin() {
-  if (isSpinning || balance < bet) return;
-  Telegram.WebApp.HapticFeedback.impactOccurred('medium');
-
-  balance -= bet;
-  balanceEl.textContent = balance.toFixed(2);
-  lastWinEl.textContent = '0.00';
-  isSpinning = true;
-  spinBtn.disabled = true;
-
-  initBoard();
-  setTimeout(() => checkWin(), 1000);
-}
-
-function checkWin() {
-  let win = 0;
-  const matched = new Set();
-
-  // 8+ aynı sembol = kazanç (scatter-free gibi)
-  const count = {};
-  board.flat().forEach(cell => {
-    count[cell.sym] = (count[cell.sym] || 0) + 1;
-    if(cell.sym === 's8') win += bet * cell.mult; // çarpan bombaları direkt öder
+function draw() {
+  ctx.clearRect(0,0,W,H);
+  
+  // Kule
+  blocks.forEach(b => {
+    ctx.fillStyle = '#4CAF50';
+    ctx.fillRect(b.x, b.y, b.w, b.h);
   });
-
-  for(let sym in count) {
-    if(count[sym] >= 8) {
-      win += bet * payoutTable(sym, count[sym]);
-      // patlama efekti
-      board.flat().filter(c=>c.sym===sym).forEach(c=> {
-        c.el.classList.add('match');
-        matched.add(c.el);
-      });
-    }
+  
+  // Sallanan küp
+  if(currentBlock) {
+    ctx.fillStyle = '#FF9800';
+    ctx.fillRect(currentBlock.x, currentBlock.y, currentBlock.w, currentBlock.h);
   }
-
-  if(win > 0) {
-    balance += win;
-    balanceEl.textContent = balance.toFixed(2);
-    lastWinEl.textContent = win.toFixed(2);
-    totalWinEl.textContent = (parseFloat(totalWinEl.textContent) + win).toFixed(2);
-
-    // Büyük kazanç efekti
-    if(win > bet*50) {
-      const flash = document.createElement('div');
-      flash.className = 'win-effect';
-      boardEl.appendChild(flash);
-      setTimeout(()=>flash.remove(), 800);
-      Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-    }
-  }
-
-  isSpinning = false;
-  spinBtn.disabled = false;
-
-  if(autoSpins > 0) {
-    autoSpins--;
-    autoBtn.textContent = `AUTO (${autoSpins})`;
-    if(autoSpins > 0) setTimeout(spin, 1200);
-    else autoBtn.textContent = 'AUTO';
+  
+  if(gameOver) {
+    ctx.font = '40px Arial';
+    ctx.fillStyle = 'red';
+    ctx.fillText('OYUN BİTTİ', W/2 - 120, H/2);
   }
 }
 
-function payoutTable(sym, count) {
-  if(sym==='s8') return 0; // zaten çarpanla ödedik
-  const table = {8:3,9:5,10:8,11:15,12:50};
-  for(let c=12; c>=8; c--) if(count>=c) return table[c] || 100;
+function update() {
+  if(gameOver || !currentBlock) return;
+  currentBlock.x += speed * direction;
+  if(currentBlock.x <= 0 || currentBlock.x + currentBlock.w >= W) {
+    direction *= -1;
+  }
 }
 
-// Bet seçimi
-document.querySelectorAll('.bet-btn').forEach(btn=>{
-  btn.onclick = () => {
-    document.querySelector('.bet-btn.active').classList.remove('active');
-    btn.classList.add('active');
-    bet = parseFloat(btn.dataset.bet);
-    betAmountEl.textContent = bet.toFixed(2);
-  };
-});
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
 
-// Auto spin
-autoBtn.onclick = () => {
-  if(isSpinning) return;
-  const nums = [10,25,50,100,250,500,1000];
-  let i = nums.indexOf(autoSpins)+1;
-  if(i>=nums.length) i=0;
-  autoSpins = nums[i];
-  autoBtn.textContent = `AUTO (${autoSpins})`;
-  if(autoSpins>0) spin();
-};
-
-// Manuel spin
-spinBtn.onclick = spin;
-
-// İlk yükleme
-initBoard();
+newCurrentBlock();
+loop();
 </script>
 </body>
 </html>
