@@ -3,104 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>etourgood.com | Havalimanı Transfer</title>
+    <title>etourgood.com | Rehber Bul</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            background-color: #f3f4f6; /* Açık Gri Arka Plan */
-            font-family: 'Inter', sans-serif;
-        }
-        .bg-etour-orange {
-            background-color: #FF8C00; /* Ana Turuncu */
-        }
-        .text-etour-orange {
-            color: #FF8C00;
-        }
-        .etour-gradient {
-            background: linear-gradient(135deg, #FF8C00 0%, #e67e22 100%);
-        }
-        .card-shadow {
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-        }
+        body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; }
+        .etour-gradient { background: linear-gradient(135deg, #FF8C00 0%, #e67e22 100%); }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        /* Özel Checkbox Renklendirme */
+        input:checked + label { border-color: #FF8C00; background-color: #fffaf0; color: #FF8C00; }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
 
-    <div class="w-full max-w-md bg-white rounded-[2rem] overflow-hidden card-shadow border-8 border-gray-800 relative">
+    <div class="w-full max-w-md bg-white rounded-[2.5rem] overflow-hidden card-shadow border-[6px] border-gray-900">
         
-        <div class="h-6 bg-gray-800 w-full flex justify-center">
-            <div class="w-24 h-4 bg-gray-900 rounded-b-xl"></div>
+        <div class="etour-gradient p-8 text-white relative">
+            <div class="flex justify-between items-center mb-4">
+                <button class="bg-white/20 p-2 rounded-full"><i class="fas fa-chevron-left"></i></button>
+                <h1 class="text-xl font-bold uppercase tracking-widest">etour<span class="text-gray-900">good</span></h1>
+                <button class="bg-white/20 p-2 rounded-full"><i class="fas fa-ellipsis-v"></i></button>
+            </div>
+            <h2 class="text-2xl font-extrabold">Size Özel Rehberi Bulun</h2>
+            <p class="text-sm opacity-80 mt-1">Sertifikalı ve uzman yerel rehberler.</p>
         </div>
 
-        <div class="etour-gradient p-8 text-white text-center">
-            <h1 class="text-2xl font-bold tracking-tight">etour<span class="text-gray-900">good</span></h1>
-            <p class="text-sm opacity-90 mt-1">Konforlu ve Güvenli Transfer</p>
-        </div>
-
-        <div class="p-6 -mt-8">
-            <div class="bg-white rounded-2xl p-6 shadow-xl border border-gray-100">
+        <div class="p-6 -mt-6 bg-white rounded-t-3xl relative z-10">
+            
+            <form action="#" class="space-y-6">
                 
-                <form action="#" class="space-y-5">
-                    
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 ml-1">Nereden (Havalimanı)</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                                <i class="fas fa-plane-arrival"></i>
-                            </span>
-                            <select class="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-700 appearance-none">
-                                <option>İstanbul Havalimanı (IST)</option>
-                                <option>Sabiha Gökçen (SAW)</option>
-                                <option>Antalya Havalimanı (AYT)</option>
-                            </select>
-                        </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Hangi Şehirde?</label>
+                    <div class="relative">
+                        <i class="fas fa-city absolute left-4 top-4 text-gray-400"></i>
+                        <input type="text" placeholder="Şehir Ara (Örn: Kapadokya)" 
+                               class="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 font-medium text-gray-700">
                     </div>
+                </div>
 
+                <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 ml-1">Nereye (Otel veya Bölge)</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </span>
-                            <input type="text" placeholder="Örn: Sultanahmet veya Otel Adı" class="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-700">
-                        </div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Başlangıç</label>
+                        <input type="date" class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:ring-2 focus:ring-orange-500">
                     </div>
-
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 ml-1">Transfer Tarihi</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                                <i class="fas fa-calendar-alt"></i>
-                            </span>
-                            <input type="datetime-local" class="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-700">
-                        </div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Bitiş</label>
+                        <input type="date" class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:ring-2 focus:ring-orange-500">
                     </div>
+                </div>
 
-                    <button type="submit" class="w-full etour-gradient text-white font-bold py-4 rounded-xl shadow-lg hover:opacity-90 transition-all active:scale-[0.98] flex items-center justify-center space-x-2">
-                        <i class="fas fa-search"></i>
-                        <span>UYGUN ARAÇLARI BUL</span>
-                    </button>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Konuşulan Dil</label>
+                    <div class="flex flex-wrap gap-2">
+                        <input type="checkbox" id="lang-tr" class="hidden peer" checked>
+                        <label for="lang-tr" class="px-4 py-2 border border-gray-200 rounded-full text-xs font-semibold cursor-pointer transition-all">Türkçe</label>
+                        
+                        <input type="checkbox" id="lang-en" class="hidden peer">
+                        <label for="lang-en" class="px-4 py-2 border border-gray-200 rounded-full text-xs font-semibold cursor-pointer transition-all">English</label>
+                        
+                        <input type="checkbox" id="lang-ru" class="hidden peer">
+                        <label for="lang-ru" class="px-4 py-2 border border-gray-200 rounded-full text-xs font-semibold cursor-pointer transition-all">Russian</label>
+                    </div>
+                </div>
 
-                </form>
-            </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Uzmanlık Alanı</label>
+                    <select class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-gray-700 font-medium appearance-none focus:ring-2 focus:ring-orange-500">
+                        <option>Tüm Uzmanlıklar</option>
+                        <option>Tarih & Arkeoloji</option>
+                        <option>Gastronomi (Yemek Turu)</option>
+                        <option>Doğa & Doğa Sporları</option>
+                        <option>Sanat & Mimari</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full etour-gradient text-white font-black py-4 rounded-2xl shadow-lg shadow-orange-200 tracking-widest hover:scale-[1.02] transition-transform">
+                    REHBERLERİ LİSTELE
+                </button>
+
+            </form>
         </div>
 
-        <div class="px-8 pb-8 flex justify-between text-gray-400 text-xs">
-            <div class="flex flex-col items-center text-etour-orange">
-                <i class="fas fa-search text-lg"></i>
-                <span class="mt-1">Ara</span>
+        <div class="bg-gray-50 p-6 flex justify-around border-t border-gray-100">
+            <div class="text-center opacity-30 cursor-pointer">
+                <i class="fas fa-car-side text-xl"></i>
+                <p class="text-[10px] mt-1 font-bold">TRANSFER</p>
             </div>
-            <div class="flex flex-col items-center">
-                <i class="fas fa-history text-lg"></i>
-                <span class="mt-1">Rezervasyonlarım</span>
+            <div class="text-center text-etour-orange cursor-pointer">
+                <i class="fas fa-user-tie text-xl text-orange-500"></i>
+                <p class="text-[10px] mt-1 font-bold text-orange-500">GUIDE</p>
             </div>
-            <div class="flex flex-col items-center">
-                <i class="fas fa-user text-lg"></i>
-                <span class="mt-1">Profil</span>
+            <div class="text-center opacity-30 cursor-pointer">
+                <i class="fas fa-map-marked-alt text-xl"></i>
+                <p class="text-[10px] mt-1 font-bold">TOURS</p>
             </div>
         </div>
-
     </div>
 
 </body>
