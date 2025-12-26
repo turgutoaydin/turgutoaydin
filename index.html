@@ -1,126 +1,107 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<title>Kule Oyunu - Ekran</title>
-<style>
-  body { margin:0; background:#111; color:white; font-family:Arial; text-align:center; }
-  canvas { background:#000; display:block; margin:20px auto; border:2px solid #444; }
-  #info { font-size:28px; margin:20px; }
-  #qr { width:250px; height:250px; margin:30px auto; background:white; padding:10px; border-radius:10px; }
-</style>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>etourgood.com | Havalimanı Transfer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f3f4f6; /* Açık Gri Arka Plan */
+            font-family: 'Inter', sans-serif;
+        }
+        .bg-etour-orange {
+            background-color: #FF8C00; /* Ana Turuncu */
+        }
+        .text-etour-orange {
+            color: #FF8C00;
+        }
+        .etour-gradient {
+            background: linear-gradient(135deg, #FF8C00 0%, #e67e22 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
-<body>
-<h1>Kule Oyunu - Büyük Ekran</h1>
-<div id="info">Şifre: <span id="password">-</span> | Skor: <span id="score">0</span></div>
-<canvas id="canvas" width="400" height="600"></canvas>
-<div id="qr"></div>
-<p>Telefonla QR'ı tara veya şifreyi gir → Kumanda aktif olsun!</p>
+<body class="flex items-center justify-center min-h-screen p-4">
 
-<script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const W = canvas.width, H = canvas.height;
+    <div class="w-full max-w-md bg-white rounded-[2rem] overflow-hidden card-shadow border-8 border-gray-800 relative">
+        
+        <div class="h-6 bg-gray-800 w-full flex justify-center">
+            <div class="w-24 h-4 bg-gray-900 rounded-b-xl"></div>
+        </div>
 
-// Rastgele 4 haneli şifre
-const password = Math.floor(1000 + Math.random() * 9000);
-document.getElementById('password').textContent = password;
+        <div class="etour-gradient p-8 text-white text-center">
+            <h1 class="text-2xl font-bold tracking-tight">etour<span class="text-gray-900">good</span></h1>
+            <p class="text-sm opacity-90 mt-1">Konforlu ve Güvenli Transfer</p>
+        </div>
 
-// Controller URL'si (şifre ile)
-const controllerUrl = `https://turgutoaydin.github.io/pokemonw3/?pass=${password}`;
-QRCode.toCanvas(document.getElementById('qr'), controllerUrl, {width:250});
+        <div class="p-6 -mt-8">
+            <div class="bg-white rounded-2xl p-6 shadow-xl border border-gray-100">
+                
+                <form action="#" class="space-y-5">
+                    
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 ml-1">Nereden (Havalimanı)</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                <i class="fas fa-plane-arrival"></i>
+                            </span>
+                            <select class="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-700 appearance-none">
+                                <option>İstanbul Havalimanı (IST)</option>
+                                <option>Sabiha Gökçen (SAW)</option>
+                                <option>Antalya Havalimanı (AYT)</option>
+                            </select>
+                        </div>
+                    </div>
 
-// Oyun değişkenleri
-let blocks = [{x:100, y:H-50, w:200, h:50}]; // taban
-let currentBlock = null;
-let direction = 1;
-let speed = 3;
-let score = 0;
-let gameOver = false;
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 ml-1">Nereye (Otel veya Bölge)</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </span>
+                            <input type="text" placeholder="Örn: Sultanahmet veya Otel Adı" class="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-700">
+                        </div>
+                    </div>
 
-// URL'den drop komutu kontrol et (her saniye)
-setInterval(() => {
-  const params = new URLSearchParams(location.search);
-  if(params.get('drop') === '1' && currentBlock) {
-    dropBlock();
-    // URL'yi temizle (isteğe bağlı)
-    history.replaceState(null, '', location.pathname);
-  }
-}, 500);
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 ml-1">Transfer Tarihi</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                <i class="fas fa-calendar-alt"></i>
+                            </span>
+                            <input type="datetime-local" class="block w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-700">
+                        </div>
+                    </div>
 
-function newCurrentBlock() {
-  if(gameOver) return;
-  currentBlock = {x:0, y:100, w:blocks[blocks.length-1].w, h:50};
-  direction = Math.random() > 0.5 ? 1 : -1;
-  speed += 0.4;
-}
+                    <button type="submit" class="w-full etour-gradient text-white font-bold py-4 rounded-xl shadow-lg hover:opacity-90 transition-all active:scale-[0.98] flex items-center justify-center space-x-2">
+                        <i class="fas fa-search"></i>
+                        <span>UYGUN ARAÇLARI BUL</span>
+                    </button>
 
-function dropBlock() {
-  if(gameOver || !currentBlock) return;
-  
-  const last = blocks[blocks.length-1];
-  let newX = currentBlock.x;
-  let newW = currentBlock.w;
+                </form>
+            </div>
+        </div>
 
-  // Taşma kontrolü (basit versiyon)
-  if(currentBlock.x < last.x) {
-    newW = currentBlock.x + currentBlock.w - last.x;
-    newX = last.x;
-  } else if(currentBlock.x + currentBlock.w > last.x + last.w) {
-    newW = last.x + last.w - currentBlock.x;
-  }
+        <div class="px-8 pb-8 flex justify-between text-gray-400 text-xs">
+            <div class="flex flex-col items-center text-etour-orange">
+                <i class="fas fa-search text-lg"></i>
+                <span class="mt-1">Ara</span>
+            </div>
+            <div class="flex flex-col items-center">
+                <i class="fas fa-history text-lg"></i>
+                <span class="mt-1">Rezervasyonlarım</span>
+            </div>
+            <div class="flex flex-col items-center">
+                <i class="fas fa-user text-lg"></i>
+                <span class="mt-1">Profil</span>
+            </div>
+        </div>
 
-  if(newW <= 20) {
-    gameOver = true;
-    alert('Oyun Bitti! Skor: ' + score);
-    return;
-  }
+    </div>
 
-  blocks.push({x:newX, y:last.y - 50, w:newW, h:50});
-  score++;
-  document.getElementById('score').textContent = score;
-  newCurrentBlock();
-}
-
-function draw() {
-  ctx.clearRect(0,0,W,H);
-  
-  // Kule
-  blocks.forEach(b => {
-    ctx.fillStyle = '#4CAF50';
-    ctx.fillRect(b.x, b.y, b.w, b.h);
-  });
-  
-  // Sallanan küp
-  if(currentBlock) {
-    ctx.fillStyle = '#FF9800';
-    ctx.fillRect(currentBlock.x, currentBlock.y, currentBlock.w, currentBlock.h);
-  }
-  
-  if(gameOver) {
-    ctx.font = '40px Arial';
-    ctx.fillStyle = 'red';
-    ctx.fillText('OYUN BİTTİ', W/2 - 120, H/2);
-  }
-}
-
-function update() {
-  if(gameOver || !currentBlock) return;
-  currentBlock.x += speed * direction;
-  if(currentBlock.x <= 0 || currentBlock.x + currentBlock.w >= W) {
-    direction *= -1;
-  }
-}
-
-function loop() {
-  update();
-  draw();
-  requestAnimationFrame(loop);
-}
-
-newCurrentBlock();
-loop();
-</script>
 </body>
 </html>
