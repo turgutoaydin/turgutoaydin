@@ -3,102 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>etourgood.com | Rehber Bul</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Alien Tower Defence</title>
+
     <style>
-        body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; }
-        .etour-gradient { background: linear-gradient(135deg, #FF8C00 0%, #e67e22 100%); }
-        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
-        /* Özel Checkbox Renklendirme */
-        input:checked + label { border-color: #FF8C00; background-color: #fffaf0; color: #FF8C00; }
+        *{
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body{
+            margin:0;
+            background:#020617;
+            color:white;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+        }
+
+        canvas{
+            background: radial-gradient(circle at center, #0b1035, #020617 65%);
+            border:2px solid #0ea5e9;
+            border-radius:12px;
+            width: 95vw;
+            height: 70vh;
+            max-width:600px;
+        }
+
+        .hud{
+            width:95vw;
+            max-width:600px;
+            display:flex;
+            justify-content:space-between;
+            margin:10px 0;
+        }
+
+        .panel{
+            width:95vw;
+            max-width:600px;
+            display:flex;
+            justify-content:space-around;
+            margin-top:10px;
+        }
+
+        button{
+            padding:10px 15px;
+            border-radius:8px;
+            border:none;
+            background:#0ea5e9;
+            font-weight:bold;
+            color:white;
+        }
+
+        button:active{
+            transform:scale(.96);
+        }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
 
-    <div class="w-full max-w-md bg-white rounded-[2.5rem] overflow-hidden card-shadow border-[6px] border-gray-900">
-        
-        <div class="etour-gradient p-8 text-white relative">
-            <div class="flex justify-between items-center mb-4">
-                <button class="bg-white/20 p-2 rounded-full"><i class="fas fa-chevron-left"></i></button>
-                <h1 class="text-xl font-bold uppercase tracking-widest">etour<span class="text-gray-900">good</span></h1>
-                <button class="bg-white/20 p-2 rounded-full"><i class="fas fa-ellipsis-v"></i></button>
-            </div>
-            <h2 class="text-2xl font-extrabold">Size Özel Rehberi Bulun</h2>
-            <p class="text-sm opacity-80 mt-1">Sertifikalı ve uzman yerel rehberler.</p>
-        </div>
+<body>
 
-        <div class="p-6 -mt-6 bg-white rounded-t-3xl relative z-10">
-            
-            <form action="#" class="space-y-6">
-                
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Hangi Şehirde?</label>
-                    <div class="relative">
-                        <i class="fas fa-city absolute left-4 top-4 text-gray-400"></i>
-                        <input type="text" placeholder="Şehir Ara (Örn: Kapadokya)" 
-                               class="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 font-medium text-gray-700">
-                    </div>
-                </div>
+<div class="hud">
+    <div>Can: <span id="hp">100</span></div>
+    <div>Altın: <span id="gold">0</span></div>
+    <div>Dalga: <span id="wave">1</span></div>
+</div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Başlangıç</label>
-                        <input type="date" class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:ring-2 focus:ring-orange-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Bitiş</label>
-                        <input type="date" class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:ring-2 focus:ring-orange-500">
-                    </div>
-                </div>
+<canvas id="gameCanvas"></canvas>
 
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Konuşulan Dil</label>
-                    <div class="flex flex-wrap gap-2">
-                        <input type="checkbox" id="lang-tr" class="hidden peer" checked>
-                        <label for="lang-tr" class="px-4 py-2 border border-gray-200 rounded-full text-xs font-semibold cursor-pointer transition-all">Türkçe</label>
-                        
-                        <input type="checkbox" id="lang-en" class="hidden peer">
-                        <label for="lang-en" class="px-4 py-2 border border-gray-200 rounded-full text-xs font-semibold cursor-pointer transition-all">English</label>
-                        
-                        <input type="checkbox" id="lang-ru" class="hidden peer">
-                        <label for="lang-ru" class="px-4 py-2 border border-gray-200 rounded-full text-xs font-semibold cursor-pointer transition-all">Russian</label>
-                    </div>
-                </div>
+<div class="panel">
+    <button id="upgradeDamage">Hasar +</button>
+    <button id="upgradeSpeed">Hız +</button>
+</div>
 
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Uzmanlık Alanı</label>
-                    <select class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-gray-700 font-medium appearance-none focus:ring-2 focus:ring-orange-500">
-                        <option>Tüm Uzmanlıklar</option>
-                        <option>Tarih & Arkeoloji</option>
-                        <option>Gastronomi (Yemek Turu)</option>
-                        <option>Doğa & Doğa Sporları</option>
-                        <option>Sanat & Mimari</option>
-                    </select>
-                </div>
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-                <button type="submit" class="w-full etour-gradient text-white font-black py-4 rounded-2xl shadow-lg shadow-orange-200 tracking-widest hover:scale-[1.02] transition-transform">
-                    REHBERLERİ LİSTELE
-                </button>
+// mobil tuvale uygun ölçü
+canvas.width = 350;
+canvas.height = 550;
 
-            </form>
-        </div>
+// kule
+let tower = {
+    x: canvas.width / 2,
+    y: canvas.height - 80,
+    radius: 25,
+    hp: 100,
+    damage: 10,
+    fireRate: 600
+};
 
-        <div class="bg-gray-50 p-6 flex justify-around border-t border-gray-100">
-            <div class="text-center opacity-30 cursor-pointer">
-                <i class="fas fa-car-side text-xl"></i>
-                <p class="text-[10px] mt-1 font-bold">TRANSFER</p>
-            </div>
-            <div class="text-center text-etour-orange cursor-pointer">
-                <i class="fas fa-user-tie text-xl text-orange-500"></i>
-                <p class="text-[10px] mt-1 font-bold text-orange-500">GUIDE</p>
-            </div>
-            <div class="text-center opacity-30 cursor-pointer">
-                <i class="fas fa-map-marked-alt text-xl"></i>
-                <p class="text-[10px] mt-1 font-bold">TOURS</p>
-            </div>
-        </div>
-    </div>
+let bullets = [];
+let enemies = [];
+let gold = 0;
+let wave = 1;
+
+document.getElementById("hp").innerText = tower.hp;
+document.getElementById("gold").innerText = gold;
+document.getElementById("wave").innerText = wave;
+
+// dalga üret
+function spawnWave() {
+    for(let i=0;i<wave+2;i++){
+        enemies.push({
+            x: Math.random()*canvas.width,
+            y: -20,
+            radius: 18,
+            speed: 0.6 + wave*0.1,
+            hp: 20 + wave*5
+        });
+    }
+}
+
+spawnWave();
+
+// otomatik ateş
+setInterval(()=> {
+    if(enemies.length === 0) return;
+
+    let target = enemies[0];
+
+    bullets.push({
+        x:tower.x,
+        y:tower.y,
+        target:target,
+        speed:4
+    });
+
+}, tower.fireRate);
+
+// oyun döngüsü
+function update(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    // kule
+    ctx.fillStyle="cyan";
+    ctx.beginPath();
+    ctx.arc(tower.x,tower.y,tower.radius,0,Math.PI*2);
+    ctx.fill();
+
+    // düşmanlar
+    enemies.forEach((e,index)=>{
+        e.y += e.speed;
+
+        // kuleye çarparsa
+        if(e.y >= tower.y-30){
+            tower.hp -= 5;
+            enemies.splice(index,1);
+            document.getElementById("hp").innerText = tower.hp;
+        }
+
+        ctx.fillStyle="lime";
+        ctx.beginPath();
+        ctx.arc(e.x,e.y,e.radius,0,Math.PI*2);
+        ctx.fill();
+    });
+
+    // mermi
+    bullets.forEach((b,bIndex)=>{
+        if(!b.target) return;
+
+        let dx = b.target.x - b.x;
+        let dy = b.target.y - b.y;
+        let dist = Math.hypot(dx,dy);
+
+        b.x += dx/dist*b.speed;
+        b.y += dy/dist*b.speed;
+
+        ctx.fillStyle="yellow";
+        ctx.beginPath();
+        ctx.arc(b.x,b.y,4,0,Math.PI*2);
+        ctx.fill();
+
+        // isabet algılama
+        if(dist<10){
+            b.target.hp -= tower.damage;
+
+            if(b.target.hp<=0){
+                gold += 5;
+                enemies.splice(enemies.indexOf(b.target),1);
+                document.getElementById("gold").innerText = gold;
+            }
+
+            bullets.splice(bIndex,1);
+        }
+    });
+
+    // yeni dalga
+    if(enemies.length===0){
+        wave++;
+        document.getElementById("wave").innerText = wave;
+        spawnWave();
+    }
+
+    requestAnimationFrame(update);
+}
+
+update();
+
+// geliştirme butonları
+document.getElementById("upgradeDamage").onclick = ()=>{
+    if(gold>=20){
+        gold-=20;
+        tower.damage+=5;
+        document.getElementById("gold").innerText = gold;
+    }
+};
+
+document.getElementById("upgradeSpeed").onclick = ()=>{
+    if(gold>=20){
+        gold-=20;
+        tower.fireRate = Math.max(150, tower.fireRate-60);
+        document.getElementById("gold").innerText = gold;
+    }
+};
+</script>
 
 </body>
 </html>
