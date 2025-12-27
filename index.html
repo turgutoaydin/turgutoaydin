@@ -1,64 +1,57 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alien Tower Defence</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alien Defense – Neon Base</title>
 
-    <style>
-        *{
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+<style>
+    *{box-sizing:border-box;font-family:Arial}
+    body{
+        margin:0;
+        background:#030617;
+        color:white;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+    }
 
-        body{
-            margin:0;
-            background:#020617;
-            color:white;
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            justify-content:center;
-        }
+    .hud{
+        width:95vw;
+        max-width:620px;
+        display:flex;
+        justify-content:space-between;
+        margin-top:10px;
+        font-weight:bold;
+        letter-spacing:.5px;
+    }
 
-        canvas{
-            background: radial-gradient(circle at center, #0b1035, #020617 65%);
-            border:2px solid #0ea5e9;
-            border-radius:12px;
-            width: 95vw;
-            height: 70vh;
-            max-width:600px;
-        }
+    canvas{
+        border:2px solid #0ea5e9;
+        border-radius:14px;
+        width:95vw;
+        height:72vh;
+        max-width:620px;
+        background:black;
+    }
 
-        .hud{
-            width:95vw;
-            max-width:600px;
-            display:flex;
-            justify-content:space-between;
-            margin:10px 0;
-        }
+    .panel{
+        width:95vw;
+        max-width:620px;
+        display:flex;
+        justify-content:space-around;
+        margin-top:10px;
+    }
 
-        .panel{
-            width:95vw;
-            max-width:600px;
-            display:flex;
-            justify-content:space-around;
-            margin-top:10px;
-        }
-
-        button{
-            padding:10px 15px;
-            border-radius:8px;
-            border:none;
-            background:#0ea5e9;
-            font-weight:bold;
-            color:white;
-        }
-
-        button:active{
-            transform:scale(.96);
-        }
-    </style>
+    button{
+        padding:10px 16px;
+        border-radius:8px;
+        border:none;
+        background:#0ea5e9;
+        color:white;
+        font-weight:bold;
+    }
+</style>
 </head>
 
 <body>
@@ -73,152 +66,262 @@
 
 <div class="panel">
     <button id="upgradeDamage">Hasar +</button>
-    <button id="upgradeSpeed">Hız +</button>
+    <button id="upgradeSpeed">Atış Hızı +</button>
+    <button id="upgradeShield">Kalkan +</button>
 </div>
 
 <script>
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+const canvas=document.getElementById("gameCanvas");
+const ctx=canvas.getContext("2d");
+canvas.width=380;
+canvas.height=600;
 
-// mobil tuvale uygun ölçü
-canvas.width = 350;
-canvas.height = 550;
-
-// kule
-let tower = {
-    x: canvas.width / 2,
-    y: canvas.height - 80,
-    radius: 25,
-    hp: 100,
-    damage: 10,
-    fireRate: 600
+let tower={
+    x:canvas.width/2,
+    y:canvas.height-95,
+    radius:32,
+    hp:120,
+    damage:14,
+    fireRate:420,
+    shield:60
 };
 
-let bullets = [];
-let enemies = [];
-let gold = 0;
-let wave = 1;
+let bullets=[];
+let enemies=[];
+let particles=[];
+let stars=[];
+let wave=1;
+let gold=0;
 
-document.getElementById("hp").innerText = tower.hp;
-document.getElementById("gold").innerText = gold;
-document.getElementById("wave").innerText = wave;
+document.getElementById("hp").innerText=tower.hp;
+document.getElementById("gold").innerText=gold;
+document.getElementById("wave").innerText=wave;
 
-// dalga üret
-function spawnWave() {
-    for(let i=0;i<wave+2;i++){
+/* PARALLAX STARFIELD */
+for(let i=0;i<80;i++){
+    stars.push({
+        x:Math.random()*canvas.width,
+        y:Math.random()*canvas.height,
+        s:Math.random()*2+0.5,
+        v:Math.random()*0.5+0.2
+    });
+}
+
+/* WAVES */
+function spawnWave(){
+    const count=6+wave*2;
+    for(let i=0;i<count;i++){
         enemies.push({
-            x: Math.random()*canvas.width,
-            y: -20,
-            radius: 18,
-            speed: 0.6 + wave*0.1,
-            hp: 20 + wave*5
+            x:Math.random()*canvas.width,
+            y:-40-Math.random()*200,
+            r:22+Math.random()*8,
+            hp:40+wave*10,
+            baseHP:40+wave*10,
+            speed:0.6+wave*0.08,
+            angle:Math.random()*Math.PI*2
+        });
+    }
+}
+spawnWave();
+
+/* SHOOTING */
+setInterval(()=>{
+    if(enemies.length===0) return;
+    let target=enemies.reduce((a,b)=>{
+        return (a.y>b.y)?a:b;
+    });
+    bullets.push({
+        x:tower.x,
+        y:tower.y-20,
+        tx:target,
+        speed:6
+    });
+},tower.fireRate);
+
+/* PARTICLES */
+function addExplosion(x,y,color){
+    for(let i=0;i<12;i++){
+        particles.push({
+            x,y,
+            vx:(Math.random()-0.5)*3,
+            vy:(Math.random()-0.5)*3,
+            life:20,
+            color
         });
     }
 }
 
-spawnWave();
-
-// otomatik ateş
-setInterval(()=> {
-    if(enemies.length === 0) return;
-
-    let target = enemies[0];
-
-    bullets.push({
-        x:tower.x,
-        y:tower.y,
-        target:target,
-        speed:4
-    });
-
-}, tower.fireRate);
-
-// oyun döngüsü
+/* MAIN LOOP */
 function update(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // kule
-    ctx.fillStyle="cyan";
+    /* BACKGROUND */
+    ctx.fillStyle="black";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    // stars
+    stars.forEach(s=>{
+        ctx.fillStyle="white";
+        ctx.globalAlpha=Math.random()*0.7+0.3;
+        ctx.beginPath();
+        ctx.arc(s.x,s.y,s.s,0,Math.PI*2);
+        ctx.fill();
+        s.y+=s.v;
+        if(s.y>canvas.height) s.y=0;
+    });
+    ctx.globalAlpha=1;
+
+    /* BASE */
+    // lower platform
+    ctx.fillStyle="#041b3e";
+    ctx.fillRect(0,canvas.height-80,canvas.width,90);
+
+    // tower glow
+    let grd=ctx.createRadialGradient(tower.x,tower.y,5,tower.x,tower.y,80);
+    grd.addColorStop(0,"rgba(0,255,255,.6)");
+    grd.addColorStop(1,"rgba(0,0,0,0)");
+    ctx.fillStyle=grd;
+    ctx.beginPath();
+    ctx.arc(tower.x,tower.y,90,0,Math.PI*2);
+    ctx.fill();
+
+    // shield ring
+    ctx.strokeStyle="rgba(0,200,255,.7)";
+    ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.arc(tower.x,tower.y,tower.radius+18,0,Math.PI*2);
+    ctx.stroke();
+
+    // tower core
+    ctx.fillStyle="#0ef";
     ctx.beginPath();
     ctx.arc(tower.x,tower.y,tower.radius,0,Math.PI*2);
     ctx.fill();
 
-    // düşmanlar
-    enemies.forEach((e,index)=>{
-        e.y += e.speed;
+    /* ENEMIES */
+    enemies.forEach((e,i)=>{
+        e.y+=e.speed;
+        e.angle+=0.05;
+        e.x+=Math.sin(e.angle)*1.2;
 
-        // kuleye çarparsa
-        if(e.y >= tower.y-30){
-            tower.hp -= 5;
-            enemies.splice(index,1);
-            document.getElementById("hp").innerText = tower.hp;
-        }
+        // body glow
+        ctx.shadowBlur=20;
+        ctx.shadowColor="lime";
+        ctx.fillStyle="rgba(0,255,120,.8)";
+        ctx.beginPath();
+        ctx.arc(e.x,e.y,e.r,0,Math.PI*2);
+        ctx.fill();
 
+        // eye
+        ctx.shadowBlur=0;
+        ctx.fillStyle="red";
+        ctx.beginPath();
+        ctx.arc(e.x,e.y,6,0,Math.PI*2);
+        ctx.fill();
+
+        // HP bar
+        ctx.fillStyle="red";
+        ctx.fillRect(e.x-18,e.y-e.r-10,36,4);
         ctx.fillStyle="lime";
-        ctx.beginPath();
-        ctx.arc(e.x,e.y,e.radius,0,Math.PI*2);
-        ctx.fill();
-    });
+        ctx.fillRect(e.x-18,e.y-e.r-10,36*(e.hp/e.baseHP),4);
 
-    // mermi
-    bullets.forEach((b,bIndex)=>{
-        if(!b.target) return;
-
-        let dx = b.target.x - b.x;
-        let dy = b.target.y - b.y;
-        let dist = Math.hypot(dx,dy);
-
-        b.x += dx/dist*b.speed;
-        b.y += dy/dist*b.speed;
-
-        ctx.fillStyle="yellow";
-        ctx.beginPath();
-        ctx.arc(b.x,b.y,4,0,Math.PI*2);
-        ctx.fill();
-
-        // isabet algılama
-        if(dist<10){
-            b.target.hp -= tower.damage;
-
-            if(b.target.hp<=0){
-                gold += 5;
-                enemies.splice(enemies.indexOf(b.target),1);
-                document.getElementById("gold").innerText = gold;
+        // collision with base
+        if(e.y>=tower.y-25){
+            if(tower.shield>0){
+                tower.shield-=10;
+            } else {
+                tower.hp-=8;
             }
-
-            bullets.splice(bIndex,1);
+            enemies.splice(i,1);
+            document.getElementById("hp").innerText=tower.hp;
         }
     });
 
-    // yeni dalga
+    /* BULLETS */
+    bullets.forEach((b,bi)=>{
+        if(!b.tx) return;
+        let dx=b.tx.x-b.x;
+        let dy=b.tx.y-b.y;
+        let d=Math.hypot(dx,dy);
+        b.x+=dx/d*b.speed;
+        b.y+=dy/d*b.speed;
+
+        // tracer line
+        ctx.strokeStyle="yellow";
+        ctx.lineWidth=2;
+        ctx.beginPath();
+        ctx.moveTo(tower.x,tower.y-20);
+        ctx.lineTo(b.x,b.y);
+        ctx.stroke();
+
+        ctx.fillStyle="white";
+        ctx.beginPath();
+        ctx.arc(b.x,b.y,3,0,Math.PI*2);
+        ctx.fill();
+
+        if(d<10){
+            b.tx.hp-=tower.damage;
+            addExplosion(b.tx.x,b.tx.y,"yellow");
+            bullets.splice(bi,1);
+
+            if(b.tx.hp<=0){
+                gold+=6+wave;
+                document.getElementById("gold").innerText=gold;
+                enemies.splice(enemies.indexOf(b.tx),1);
+                addExplosion(b.tx.x,b.tx.y,"lime");
+            }
+        }
+    });
+
+    /* PARTICLES */
+    particles.forEach((p,pi)=>{
+        ctx.fillStyle=p.color;
+        ctx.globalAlpha=p.life/20;
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,3,0,Math.PI*2);
+        ctx.fill();
+        ctx.globalAlpha=1;
+        p.x+=p.vx;
+        p.y+=p.vy;
+        p.life--;
+        if(p.life<=0) particles.splice(pi,1);
+    });
+
+    /* WAVE CONTROL */
     if(enemies.length===0){
         wave++;
-        document.getElementById("wave").innerText = wave;
+        document.getElementById("wave").innerText=wave;
         spawnWave();
     }
 
     requestAnimationFrame(update);
 }
-
 update();
 
-// geliştirme butonları
-document.getElementById("upgradeDamage").onclick = ()=>{
-    if(gold>=20){
-        gold-=20;
-        tower.damage+=5;
-        document.getElementById("gold").innerText = gold;
+/* UPGRADES */
+document.getElementById("upgradeDamage").onclick=()=>{
+    if(gold>=25){
+        gold-=25;
+        tower.damage+=6;
+        document.getElementById("gold").innerText=gold;
     }
 };
 
-document.getElementById("upgradeSpeed").onclick = ()=>{
+document.getElementById("upgradeSpeed").onclick=()=>{
+    if(gold>=30){
+        gold-=30;
+        tower.fireRate=Math.max(160,tower.fireRate-40);
+        document.getElementById("gold").innerText=gold;
+    }
+};
+
+document.getElementById("upgradeShield").onclick=()=>{
     if(gold>=20){
         gold-=20;
-        tower.fireRate = Math.max(150, tower.fireRate-60);
-        document.getElementById("gold").innerText = gold;
+        tower.shield+=20;
+        document.getElementById("gold").innerText=gold;
     }
 };
 </script>
-
 </body>
 </html>
