@@ -3,142 +3,146 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Football Pinball Match</title>
+<title>Pinball Football – Mini App</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
-    background:#06220f;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    font-family:Arial;
+    background:#022c14;
+    font-family:Arial, Helvetica, sans-serif;
 }
 
-/* SAFE GAME AREA UNDER TELEGRAM TOP BAR */
+/* SAFE AREA BELOW TELEGRAM TOP BAR */
 #game{
-    width:100%;
-    max-width:480px;
-    height:100vh;
     position:relative;
+    width:100%;
+    height:100vh;
+    padding-top:60px; /* üst bar boşluğu */
     overflow:hidden;
-    background:#0c7a36;
 }
 
-/* STADIUM GRADIENT */
-#stadium{
+/* FIELD BACKGROUND */
+#field{
     position:absolute;
     inset:0;
-    background:radial-gradient(circle at center,#0ca84a 30%, #0a6d34 70%, #064a22 100%);
+    background:radial-gradient(circle at center, #0cb04a 20%, #0b7f3a 55%, #085d2b 90%);
 }
 
-/* FIELD LINES */
+/* TOUCH OF STADIUM DARK OUTER EDGE */
+#vignette{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    box-shadow:inset 0 0 120px rgba(0,0,0,0.55);
+}
+
+/* SIDE AD BOARDS */
+.ad-vertical{
+    position:absolute;
+    width:28px;
+    height:70%;
+    top:15%;
+    background:#ffffff18;
+    border:1px solid #ffffff35;
+    color:white;
+    writing-mode:vertical-rl;
+    text-orientation:upright;
+    font-size:11px;
+    text-align:center;
+    letter-spacing:2px;
+}
+#ad-left{left:6px;}
+#ad-right{right:6px;}
+
+/* MAIN FIELD LINES */
 .line{
     position:absolute;
+    border:2px solid rgba(255,255,255,0.7);
+}
+#half-line{top:50%; width:100%;}
+#center-circle{
+    width:140px;height:140px;
+    border-radius:50%;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
     border:2px solid rgba(255,255,255,0.6);
 }
-#midline{
-    top:50%;
-    width:100%;
-}
-#center-circle{
-    width:140px;
-    height:140px;
-    border-radius:50%;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    border:2px solid rgba(255,255,255,0.4);
-}
 
-/* BOX AREAS */
-.goal-box{
+/* PENALTY AREAS */
+.box{
     width:70%;
-    height:70px;
+    height:80px;
     left:50%;
     transform:translateX(-50%);
-    border:2px solid rgba(255,255,255,0.5);
+    border:2px solid rgba(255,255,255,0.7);
 }
-#top-box{top:40px;}
-#bottom-box{bottom:40px;}
+#top-box{top:80px;}
+#bottom-box{bottom:80px;}
 
 /* GOALS */
 .goal{
-    position:absolute;
-    width:140px;
-    height:26px;
+    width:130px;height:22px;
     left:50%;
     transform:translateX(-50%);
     border:3px solid white;
-    border-radius:4px;
     background:#ffffff30;
+    border-radius:4px;
 }
-#top-goal{top:10px;}
-#bottom-goal{bottom:10px;}
-
-/* AD BOARDS */
-.ad{
-    position:absolute;
-    width:90%;
-    height:24px;
-    left:50%;
-    transform:translateX(-50%);
-    background:#ffffff20;
-    border:1px solid #ffffff30;
-    color:white;
-    text-align:center;
-    font-size:11px;
-    letter-spacing:2px;
-}
-#ad-top{top:100px;}
-#ad-bottom{bottom:100px;}
+#top-goal{top:50px;}
+#bottom-goal{bottom:50px;}
 
 /* BALL */
 #ball{
-    width:26px;
-    height:26px;
+    width:24px;height:24px;
     border-radius:50%;
     background:white;
     position:absolute;
+    top:52%;
     left:50%;
-    top:55%;
     transform:translate(-50%,-50%);
-    box-shadow:0 0 8px rgba(0,0,0,0.5);
+    box-shadow:0 0 8px rgba(0,0,0,0.6);
 }
 
-/* PLAYERS / FLIPPERS */
+/* GOALKEEPERS */
+.keeper{
+    width:60px;height:16px;
+    border-radius:16px;
+}
+#ai-keeper{
+    background:linear-gradient(#1b5dff,#002fa3);
+    position:absolute;
+    top:84px;
+    left:50%;
+    transform:translateX(-50%);
+}
+#user-keeper{
+    background:linear-gradient(#ffc400,#b28900);
+    position:absolute;
+    bottom:84px;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+/* FLIPPERS / FEET */
 .player{
-    position:absolute;
-    width:80px;
-    height:16px;
-    border-radius:16px;
-    background:linear-gradient(#202020,#000000);
-}
-#left-player{bottom:140px; left:22%;}
-#right-player{bottom:140px; right:22%;}
-
-/* GOALKEEPER AI */
-.goalkeeper{
-    width:60px;
-    height:16px;
-    border-radius:16px;
-    background:linear-gradient(#0044ff,#001a80);
+    width:90px;height:18px;
+    background:#111;
+    border-radius:18px;
     position:absolute;
 }
-#ai-keeper{top:50px; left:50%; transform:translateX(-50%);}
-#user-keeper{bottom:50px; left:50%; transform:translateX(-50%); background:linear-gradient(#ffcc00,#c99800);}
+#left-player{bottom:150px;left:20%;}
+#right-player{bottom:150px;right:20%;}
 
-/* SCORE & TIMER */
+/* HUD */
 #hud{
     position:absolute;
-    top:8px;
+    top:65px;
     width:100%;
     text-align:center;
     color:white;
     font-weight:bold;
+    font-size:15px;
 }
-#hud span{margin:0 10px;}
 
 /* CONTROLS */
 #controls{
@@ -149,12 +153,12 @@ body{
     justify-content:space-around;
 }
 button{
-    width:45%;
-    padding:12px 0;
-    border-radius:8px;
-    background:#ffffff30;
-    border:1px solid #ffffff50;
+    width:44%;
+    padding:12px;
+    border-radius:10px;
+    background:#ffffff25;
     color:white;
+    border:1px solid #ffffff40;
     font-size:15px;
 }
 </style>
@@ -164,116 +168,100 @@ button{
 
 <div id="game">
 
-    <div id="stadium"></div>
+    <div id="field"></div>
+    <div id="vignette"></div>
 
-    <!-- LINES -->
-    <div id="midline" class="line"></div>
+    <!-- vertical side ads -->
+    <div id="ad-left" class="ad-vertical">ETOURGOOD · PINBALL FOOTBALL</div>
+    <div id="ad-right" class="ad-vertical">SPONSOR · TRAVEL MORE</div>
+
+    <!-- markings -->
+    <div id="half-line" class="line"></div>
     <div id="center-circle"></div>
 
-    <div id="top-box" class="goal-box"></div>
-    <div id="bottom-box" class="goal-box"></div>
+    <div id="top-box" class="box"></div>
+    <div id="bottom-box" class="box"></div>
 
-    <!-- GOALS -->
+    <!-- goals -->
     <div id="top-goal" class="goal"></div>
     <div id="bottom-goal" class="goal"></div>
 
-    <!-- AD BOARDS -->
-    <div id="ad-top" class="ad">ETOURGOOD · LIVE FOOTBALL PINBALL · MINI APP</div>
-    <div id="ad-bottom" class="ad">SPONSOR · TRAVEL MORE · PLAY MORE</div>
-
-    <!-- PLAY ELEMENTS -->
+    <!-- actors -->
     <div id="ball"></div>
+    <div id="ai-keeper" class="keeper"></div>
+    <div id="user-keeper" class="keeper"></div>
 
     <div id="left-player" class="player"></div>
     <div id="right-player" class="player"></div>
 
-    <div id="ai-keeper" class="goalkeeper"></div>
-    <div id="user-keeper" class="goalkeeper"></div>
-
-    <!-- HUD -->
+    <!-- scoreboard -->
     <div id="hud">
-        <span>BEN: <b id="userScore">0</b></span>
-        <span>–</span>
-        <span>RAKİP: <b id="aiScore">0</b></span>
-        <span>⏱ <b id="time">03:00</b></span>
+        BEN: <span id="me">0</span> – RAKİP: <span id="ai">0</span>
+        | ⏱ <span id="time">03:00</span>
     </div>
 
-    <!-- CONTROLS -->
+    <!-- controls -->
     <div id="controls">
         <button id="leftBtn">SOL AYAK</button>
         <button id="rightBtn">SAĞ AYAK</button>
     </div>
+
 </div>
 
 <script>
 const ball=document.getElementById("ball");
 const aiKeeper=document.getElementById("ai-keeper");
-const userKeeper=document.getElementById("user-keeper");
-const userScoreEl=document.getElementById("userScore");
-const aiScoreEl=document.getElementById("aiScore");
+const userScore=document.getElementById("me");
+const aiScore=document.getElementById("ai");
 const timeEl=document.getElementById("time");
 
-let bx=220, by=430, vx=1.8, vy=-2.4;
-let userScore=0, aiScore=0;
-
-let kickoff="user"; // avantaj yönü
-
-/* TIMER – 3 MINUTE MATCH */
+let bx=240,by=420,vx=1.7,vy=-2.2;
+let sMe=0,sAi=0;
 let time=180;
+
 setInterval(()=>{
+    if(time<=0)return;
     time--;
-    if(time<=0){ alert("Maç bitti! Skor "+userScore+" - "+aiScore); time=0;}
-    const m=Math.floor(time/60).toString().padStart(2,"0");
-    const s=(time%60).toString().padStart(2,"0");
+    const m=String(Math.floor(time/60)).padStart(2,"0");
+    const s=String(time%60).padStart(2,"0");
     timeEl.textContent=`${m}:${s}`;
 },1000);
 
-/* GAME LOOP */
+function reset(dir){
+    bx=240;by=420;
+    vx=dir==="me"?1.8:-1.8;
+    vy=dir==="me"?-2.4:2.4;
+}
+
 function loop(){
-    bx+=vx; by+=vy;
+    bx+=vx;by+=vy;
     vy+=0.03;
 
-    if(bx<10||bx>450)vx*=-1;
-    if(by<10||by>780)vy*=-1;
+    if(bx<20||bx>460)vx*=-1;
+    if(by<40||by>820)vy*=-1;
 
-    /* AI GOALKEEPER TRACKING */
-    const targetX=bx;
-    const gkX=parseFloat(aiKeeper.style.left)||240;
-    aiKeeper.style.left = (gkX + (targetX-gkX)*0.05)+"px";
+    // AI keeper tracking
+    const target=bx;
+    const current=parseFloat(aiKeeper.style.left)||240;
+    aiKeeper.style.left=(current+(target-current)*0.08)+"px";
 
-    /* GOAL CHECKS */
-    const goalTop = by<40;
-    const goalBottom = by>760;
-
-    if(goalTop && Math.abs(bx-240)<60){
-        userScore++;
-        reset("ai");
+    // goals
+    if(by<60 && Math.abs(bx-240)<60){
+        sMe++; userScore.textContent=sMe; reset("ai");
     }
-    if(goalBottom && Math.abs(bx-240)<60){
-        aiScore++;
-        reset("user");
+    if(by>780 && Math.abs(bx-240)<60){
+        sAi++; aiScore.textContent=sAi; reset("me");
     }
 
     ball.style.left=bx+"px";
     ball.style.top=by+"px";
 
-    userScoreEl.textContent=userScore;
-    aiScoreEl.textContent=aiScore;
-
     requestAnimationFrame(loop);
 }
 loop();
 
-/* RESET AFTER GOAL */
-function reset(side){
-    bx=240; by=400;
-    vx= side==="user" ? 1.8 : -1.8;
-    vy= side==="user" ? -2.2 : 2.2;
-}
-
-/* PLAYER SHOTS */
-document.getElementById("leftBtn").onclick=()=>{vy=-3.5; vx=-2.5;}
-document.getElementById("rightBtn").onclick=()=>{vy=-3.5; vx=2.5;}
+document.getElementById("leftBtn").onclick=()=>{vy=-3.4;vx=-2.2;}
+document.getElementById("rightBtn").onclick=()=>{vy=-3.4;vx=2.2;}
 </script>
 
 </body>
