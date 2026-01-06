@@ -1,267 +1,191 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Pinball Football – Mini App</title>
+    <meta charset="UTF-8" />
+    <title>TON Pool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{
-    background:#022c14;
-    font-family:Arial, Helvetica, sans-serif;
-}
+    <style>
 
-/* SAFE AREA BELOW TELEGRAM TOP BAR */
-#game{
-    position:relative;
-    width:100%;
-    height:100vh;
-    padding-top:60px; /* üst bar boşluğu */
-    overflow:hidden;
-}
+        *{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
 
-/* FIELD BACKGROUND */
-#field{
-    position:absolute;
-    inset:0;
-    background:radial-gradient(circle at center, #0cb04a 20%, #0b7f3a 55%, #085d2b 90%);
-}
+        body{
+            background: linear-gradient(#061a2b, #083b5c);
+            height: 100vh;
+            overflow: hidden;
+        }
 
-/* TOUCH OF STADIUM DARK OUTER EDGE */
-#vignette{
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    box-shadow:inset 0 0 120px rgba(0,0,0,0.55);
-}
+        .game-container{
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
 
-/* SIDE AD BOARDS */
-.ad-vertical{
-    position:absolute;
-    width:28px;
-    height:70%;
-    top:15%;
-    background:#ffffff18;
-    border:1px solid #ffffff35;
-    color:white;
-    writing-mode:vertical-rl;
-    text-orientation:upright;
-    font-size:11px;
-    text-align:center;
-    letter-spacing:2px;
-}
-#ad-left{left:6px;}
-#ad-right{right:6px;}
+        .top-bar{
+            color: white;
+            padding: 12px 14px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+        }
 
-/* MAIN FIELD LINES */
-.line{
-    position:absolute;
-    border:2px solid rgba(255,255,255,0.7);
-}
-#half-line{top:50%; width:100%;}
-#center-circle{
-    width:140px;height:140px;
-    border-radius:50%;
-    top:50%;left:50%;
-    transform:translate(-50%,-50%);
-    border:2px solid rgba(255,255,255,0.6);
-}
+        .pool-area{
+            position: relative;
+            flex: 1;
+            overflow: hidden;
+        }
 
-/* PENALTY AREAS */
-.box{
-    width:70%;
-    height:80px;
-    left:50%;
-    transform:translateX(-50%);
-    border:2px solid rgba(255,255,255,0.7);
-}
-#top-box{top:80px;}
-#bottom-box{bottom:80px;}
+        /* falling drop */
+        #drop{
+            position: absolute;
+            top: -50px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #8ae8ff, #1d9cff);
+            box-shadow: 0 0 12px rgba(0,180,255,0.9);
+        }
 
-/* GOALS */
-.goal{
-    width:130px;height:22px;
-    left:50%;
-    transform:translateX(-50%);
-    border:3px solid white;
-    background:#ffffff30;
-    border-radius:4px;
-}
-#top-goal{top:50px;}
-#bottom-goal{bottom:50px;}
+        /* player collector bucket */
+        #collector{
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 110px;
+            height: 32px;
+            border-radius: 20px;
+            background: linear-gradient(145deg,#ffd34a,#ff8c00);
+            box-shadow: 0 0 12px rgba(255,170,0,0.9);
+        }
 
-/* BALL */
-#ball{
-    width:24px;height:24px;
-    border-radius:50%;
-    background:white;
-    position:absolute;
-    top:52%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    box-shadow:0 0 8px rgba(0,0,0,0.6);
-}
+        .footer-info{
+            text-align: center;
+            color: #cde9ff;
+            padding: 8px;
+            font-size: 12px;
+            opacity: 0.9;
+        }
 
-/* GOALKEEPERS */
-.keeper{
-    width:60px;height:16px;
-    border-radius:16px;
-}
-#ai-keeper{
-    background:linear-gradient(#1b5dff,#002fa3);
-    position:absolute;
-    top:84px;
-    left:50%;
-    transform:translateX(-50%);
-}
-#user-keeper{
-    background:linear-gradient(#ffc400,#b28900);
-    position:absolute;
-    bottom:84px;
-    left:50%;
-    transform:translateX(-50%);
-}
-
-/* FLIPPERS / FEET */
-.player{
-    width:90px;height:18px;
-    background:#111;
-    border-radius:18px;
-    position:absolute;
-}
-#left-player{bottom:150px;left:20%;}
-#right-player{bottom:150px;right:20%;}
-
-/* HUD */
-#hud{
-    position:absolute;
-    top:65px;
-    width:100%;
-    text-align:center;
-    color:white;
-    font-weight:bold;
-    font-size:15px;
-}
-
-/* CONTROLS */
-#controls{
-    position:absolute;
-    bottom:10px;
-    width:100%;
-    display:flex;
-    justify-content:space-around;
-}
-button{
-    width:44%;
-    padding:12px;
-    border-radius:10px;
-    background:#ffffff25;
-    color:white;
-    border:1px solid #ffffff40;
-    font-size:15px;
-}
-</style>
+    </style>
 </head>
 
 <body>
 
-<div id="game">
+<div class="game-container">
 
-    <div id="field"></div>
-    <div id="vignette"></div>
+    <header class="top-bar">
+        <div>Balance: <span id="balance">1.000 TON</span></div>
+        <div>Reward: <span id="reward">0.001 TON</span></div>
+        <div>Level: <span id="level">1</span></div>
+    </header>
 
-    <!-- vertical side ads -->
-    <div id="ad-left" class="ad-vertical">ETOURGOOD · PINBALL FOOTBALL</div>
-    <div id="ad-right" class="ad-vertical">SPONSOR · TRAVEL MORE</div>
+    <div class="pool-area" id="gameArea">
 
-    <!-- markings -->
-    <div id="half-line" class="line"></div>
-    <div id="center-circle"></div>
+        <div id="drop"></div>
 
-    <div id="top-box" class="box"></div>
-    <div id="bottom-box" class="box"></div>
+        <div id="collector"></div>
 
-    <!-- goals -->
-    <div id="top-goal" class="goal"></div>
-    <div id="bottom-goal" class="goal"></div>
-
-    <!-- actors -->
-    <div id="ball"></div>
-    <div id="ai-keeper" class="keeper"></div>
-    <div id="user-keeper" class="keeper"></div>
-
-    <div id="left-player" class="player"></div>
-    <div id="right-player" class="player"></div>
-
-    <!-- scoreboard -->
-    <div id="hud">
-        BEN: <span id="me">0</span> – RAKİP: <span id="ai">0</span>
-        | ⏱ <span id="time">03:00</span>
     </div>
 
-    <!-- controls -->
-    <div id="controls">
-        <button id="leftBtn">SOL AYAK</button>
-        <button id="rightBtn">SAĞ AYAK</button>
-    </div>
+    <footer class="footer-info">
+        TON Pool Demo – parmağınızla kovayı hareket ettirin ve damlaları yakalayın
+    </footer>
 
 </div>
 
 <script>
-const ball=document.getElementById("ball");
-const aiKeeper=document.getElementById("ai-keeper");
-const userScore=document.getElementById("me");
-const aiScore=document.getElementById("ai");
-const timeEl=document.getElementById("time");
 
-let bx=240,by=420,vx=1.7,vy=-2.2;
-let sMe=0,sAi=0;
-let time=180;
+const drop = document.getElementById("drop");
+const collector = document.getElementById("collector");
+const gameArea = document.getElementById("gameArea");
 
-setInterval(()=>{
-    if(time<=0)return;
-    time--;
-    const m=String(Math.floor(time/60)).padStart(2,"0");
-    const s=String(time%60).padStart(2,"0");
-    timeEl.textContent=`${m}:${s}`;
-},1000);
+let balance = 1.0;
+let reward = 0.001;
+let level = 1;
 
-function reset(dir){
-    bx=240;by=420;
-    vx=dir==="me"?1.8:-1.8;
-    vy=dir==="me"?-2.4:2.4;
+let fallSpeed = 2.2;
+
+let dropX = 100;
+let dropY = -50;
+
+function updateUI(){
+    document.getElementById("balance").innerText = balance.toFixed(3) + " TON";
+    document.getElementById("reward").innerText = reward.toFixed(3) + " TON";
+    document.getElementById("level").innerText = level;
 }
 
-function loop(){
-    bx+=vx;by+=vy;
-    vy+=0.03;
+function resetDrop(){
+    dropX = Math.random() * (gameArea.clientWidth - 40);
+    dropY = -40;
 
-    if(bx<20||bx>460)vx*=-1;
-    if(by<40||by>820)vy*=-1;
+    // difficulty scaling
+    fallSpeed += 0.18;
+    reward = parseFloat((reward * 1.12).toFixed(6));
+    level++;
 
-    // AI keeper tracking
-    const target=bx;
-    const current=parseFloat(aiKeeper.style.left)||240;
-    aiKeeper.style.left=(current+(target-current)*0.08)+"px";
-
-    // goals
-    if(by<60 && Math.abs(bx-240)<60){
-        sMe++; userScore.textContent=sMe; reset("ai");
-    }
-    if(by>780 && Math.abs(bx-240)<60){
-        sAi++; aiScore.textContent=sAi; reset("me");
-    }
-
-    ball.style.left=bx+"px";
-    ball.style.top=by+"px";
-
-    requestAnimationFrame(loop);
+    updateUI();
 }
-loop();
 
-document.getElementById("leftBtn").onclick=()=>{vy=-3.4;vx=-2.2;}
-document.getElementById("rightBtn").onclick=()=>{vy=-3.4;vx=2.2;}
+function gameLoop(){
+    dropY += fallSpeed;
+    drop.style.top = dropY + "px";
+    drop.style.left = dropX + "px";
+
+    const collectorRect = collector.getBoundingClientRect();
+    const dropRect = drop.getBoundingClientRect();
+
+    if(
+        dropRect.bottom >= collectorRect.top &&
+        dropRect.left < collectorRect.right &&
+        dropRect.right > collectorRect.left
+    ){
+        balance += reward;
+        resetDrop();
+    }
+
+    if(dropY > gameArea.clientHeight){
+        balance -= reward;
+        if(balance < 0) balance = 0;
+        resetDrop();
+    }
+
+    updateUI();
+    requestAnimationFrame(gameLoop);
+}
+
+// mobile drag movement
+let isDragging = false;
+
+gameArea.addEventListener("touchstart", (e)=>{
+    isDragging = true;
+});
+
+gameArea.addEventListener("touchmove", (e)=>{
+    if(!isDragging) return;
+    const touch = e.touches[0];
+    const areaRect = gameArea.getBoundingClientRect();
+    let x = touch.clientX - areaRect.left;
+
+    x = Math.max(0, Math.min(x, gameArea.clientWidth));
+
+    collector.style.left = (x - collector.clientWidth/2) + "px";
+});
+
+gameArea.addEventListener("touchend", ()=>{
+    isDragging = false;
+});
+
+updateUI();
+resetDrop();
+gameLoop();
+
 </script>
 
 </body>
