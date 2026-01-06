@@ -1,164 +1,246 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Empty Planet – Open World Demo</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Football Pinball – Mini App Demo</title>
 
 <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
     body{
-        margin:0;
-        background:#020617;
-        color:white;
-        font-family:Arial;
+        background:#0b1220;
+        font-family:Arial, Helvetica, sans-serif;
         display:flex;
-        flex-direction:column;
+        justify-content:center;
         align-items:center;
+        height:100vh;
     }
 
-    h2{margin:8px 0 2px 0}
-
-    #game{
-        border:2px solid #0ea5e9;
-        border-radius:10px;
-        background:black;
-        width:95vw;
-        height:75vh;
-        max-width:800px;
+    /* TELEGRAM MINI APP – MOBILE PORTRAIT SAFE AREA */
+    #game-container{
+        width:100%;
+        max-width:480px;
+        height:100vh;
+        background:#0a8f3c;
+        position:relative;
+        overflow:hidden;
+        border-radius:18px;
+        border:3px solid #ffffff20;
     }
 
-    .hud{
-        width:95vw;
-        max-width:800px;
+    /* FOOTBALL FIELD */
+    #field{
+        position:absolute;
+        inset:0;
+        background:linear-gradient(#0fa54a,#0b7d39);
+    }
+
+    .center-line{
+        width:100%;
+        height:2px;
+        background:white;
+        position:absolute;
+        top:50%;
+        left:0;
+        opacity:0.3;
+    }
+
+    .center-circle{
+        width:120px;
+        height:120px;
+        border:2px solid white;
+        border-radius:50%;
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform:translate(-50%,-50%);
+        opacity:0.3;
+    }
+
+    /* GOAL */
+    #goal{
+        position:absolute;
+        top:10px;
+        left:50%;
+        transform:translateX(-50%);
+        width:140px;
+        height:30px;
+        border:3px solid white;
+        border-radius:6px;
+        background:#ffffff10;
+    }
+
+    /* BALL */
+    #ball{
+        width:28px;
+        height:28px;
+        border-radius:50%;
+        background:white;
+        position:absolute;
+        bottom:120px;
+        left:50%;
+        transform:translateX(-50%);
+        box-shadow:0 0 6px rgba(0,0,0,0.4);
+    }
+
+    /* FLIPPERS */
+    .flipper{
+        position:absolute;
+        width:100px;
+        height:18px;
+        background:#222;
+        border-radius:18px;
+        bottom:60px;
+        transform-origin:100% 50%;
+    }
+    #left-flipper{
+        left:18%;
+        transform-origin:0% 50%;
+        background:#222;
+    }
+    #right-flipper{
+        right:18%;
+        transform-origin:100% 50%;
+        background:#222;
+    }
+
+    /* SCOREBOARD */
+    #scoreboard{
+        position:absolute;
+        top:8px;
+        right:8px;
+        color:white;
+        font-weight:bold;
+        font-size:16px;
+        text-shadow:0 0 4px black;
+    }
+
+    /* TOUCH BUTTONS FOR MOBILE */
+    #controls{
+        position:absolute;
+        bottom:10px;
+        width:100%;
         display:flex;
-        justify-content:space-between;
-        margin:8px 0;
+        justify-content:space-around;
+    }
+    .btn{
+        width:42%;
+        padding:12px 0;
+        background:#ffffff20;
+        color:white;
+        text-align:center;
+        border-radius:8px;
+        user-select:none;
+        border:1px solid #ffffff40;
+        backdrop-filter: blur(4px);
     }
 </style>
 </head>
-
 <body>
 
-<h2>EMPTY PLANET – DEMO</h2>
-<div class="hud">
-    <div>Gezegen: Yeni Dünya</div>
-    <div>Durum: Keşif</div>
+<div id="game-container">
+    <div id="field">
+        <div class="center-line"></div>
+        <div class="center-circle"></div>
+    </div>
+
+    <div id="goal"></div>
+
+    <div id="ball"></div>
+
+    <div id="left-flipper" class="flipper"></div>
+    <div id="right-flipper" class="flipper"></div>
+
+    <div id="scoreboard">SCORE: 0</div>
+
+    <div id="controls">
+        <div class="btn" id="left-btn">SOL AYAK</div>
+        <div class="btn" id="right-btn">SAĞ AYAK</div>
+    </div>
 </div>
 
-<canvas id="game"></canvas>
-
 <script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+/* BASIC PINBALL MECHANICS – FOOTBALL THEME */
+const ball = document.getElementById("ball");
+const goal = document.getElementById("goal");
+const leftFlipper = document.getElementById("left-flipper");
+const rightFlipper = document.getElementById("right-flipper");
+const scoreEl = document.getElementById("scoreboard");
 
-canvas.width = 800;
-canvas.height = 480;
+let score = 0;
+let x = 200, y = 500;
+let vx = 1.2, vy = -2.2;
+const gravity = 0.08;
+const friction = 0.995;
 
-/* === WORLD === */
-const world = {
-    width: 4000,
-    height: 4000
-};
+/* GAME LOOP */
+function loop(){
+    vy += gravity;
+    x += vx;
+    y += vy;
 
-/* === PLAYER === */
-const player = {
-    x: world.width/2,
-    y: world.height/2,
-    r: 14,
-    speed: 3
-};
-
-/* CAMERA FOLLOW */
-const camera = {x:0,y:0};
-
-/* KEYS */
-let keys = {};
-
-document.addEventListener("keydown", e=> keys[e.key]=true);
-document.addEventListener("keyup", e=> keys[e.key]=false);
-
-/* RANDOM PLANET TEXTURES */
-let craters=[];
-for(let i=0;i<180;i++){
-    craters.push({
-        x:Math.random()*world.width,
-        y:Math.random()*world.height,
-        r:20+Math.random()*120
-    });
-}
-
-/* MAIN LOOP */
-function update(){
-
-    /* MOVEMENT */
-    if(keys["w"]||keys["ArrowUp"]) player.y-=player.speed;
-    if(keys["s"]||keys["ArrowDown"]) player.y+=player.speed;
-    if(keys["a"]||keys["ArrowLeft"]) player.x-=player.speed;
-    if(keys["d"]||keys["ArrowRight"]) player.x+=player.speed;
-
-    /* LIMITS */
-    player.x=Math.max(0,Math.min(world.width,player.x));
-    player.y=Math.max(0,Math.min(world.height,player.y));
-
-    /* CAMERA CENTER */
-    camera.x = player.x - canvas.width/2;
-    camera.y = player.y - canvas.height/2;
-
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    /* BACKGROUND PLANET SURFACE */
-    ctx.fillStyle="#04121f";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    /* PARALLAX GRID FEEL */
-    ctx.strokeStyle="rgba(0,255,255,0.05)";
-    for(let gx=0;gx<world.width;gx+=140){
-        ctx.beginPath();
-        ctx.moveTo(gx-camera.x,0-camera.y);
-        ctx.lineTo(gx-camera.x,world.height-camera.y);
-        ctx.stroke();
+    // walls
+    if(x < 10 || x > 440){
+        vx *= -1;
     }
-    for(let gy=0;gy<world.height;gy+=140){
-        ctx.beginPath();
-        ctx.moveTo(0-camera.x,gy-camera.y);
-        ctx.lineTo(world.width-camera.x,gy-camera.y);
-        ctx.stroke();
+    if(y < 10){
+        vy *= -1;
     }
 
-    /* CRATERS */
-    craters.forEach(c=>{
-        ctx.fillStyle="#062b38";
-        ctx.beginPath();
-        ctx.arc(c.x-camera.x,c.y-camera.y,c.r,0,Math.PI*2);
-        ctx.fill();
+    // floor reset
+    if(y > 680){
+        x = 240;
+        y = 520;
+        vx = 1.5;
+        vy = -2.5;
+    }
 
-        ctx.strokeStyle="rgba(0,255,255,.2)";
-        ctx.beginPath();
-        ctx.arc(c.x-camera.x,c.y-camera.y,c.r+4,0,Math.PI*2);
-        ctx.stroke();
-    });
+    // goal detect
+    const goalRect = goal.getBoundingClientRect();
+    const ballRect = ball.getBoundingClientRect();
 
-    /* PLAYER */
-    ctx.fillStyle="#00ffff";
-    ctx.beginPath();
-    ctx.arc(player.x-camera.x,player.y-camera.y,player.r,0,Math.PI*2);
-    ctx.fill();
+    if(
+        ballRect.top < goalRect.bottom &&
+        ballRect.left > goalRect.left &&
+        ballRect.right < goalRect.right
+    ){
+        score++;
+        scoreEl.textContent = "SCORE: " + score;
+        vy = 3;
+        vx *= -1;
+    }
 
-    /* player core */
-    ctx.fillStyle="white";
-    ctx.beginPath();
-    ctx.arc(player.x-camera.x,player.y-camera.y,4,0,Math.PI*2);
-    ctx.fill();
+    ball.style.left = x + "px";
+    ball.style.top = y + "px";
 
-    /* TEXT “EMPTY WORLD” */
-    ctx.fillStyle="rgba(255,255,255,.25)";
-    ctx.font="18px Arial";
-    ctx.fillText("Boş Gezegen – Oyuncular İnşa Edecek",20,30);
+    requestAnimationFrame(loop);
+}
+loop();
 
-    requestAnimationFrame(update);
+/* FLIPPERS */
+function leftKick(){
+    vy = -4.5;
+    vx = -2.5;
+    leftFlipper.style.transform = "rotate(-25deg)";
+    setTimeout(()=>leftFlipper.style.transform="rotate(0deg)",120);
 }
 
-update();
+function rightKick(){
+    vy = -4.5;
+    vx = 2.5;
+    rightFlipper.style.transform = "rotate(25deg)";
+    setTimeout(()=>rightFlipper.style.transform="rotate(0deg)",120);
+}
+
+/* TOUCH CONTROLS */
+document.getElementById("left-btn").ontouchstart = leftKick;
+document.getElementById("right-btn").ontouchstart = rightKick;
+
+/* DESKTOP SUPPORT */
+document.addEventListener("keydown",(e)=>{
+    if(e.key==="a") leftKick();
+    if(e.key==="l") rightKick();
+});
 </script>
 
 </body>
