@@ -2,927 +2,215 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ETGPay | Profesyonel Dijital Cüzdan</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>101 Okey Demo</title>
     <style>
-        :root {
-            --primary-color: #FF6B35;
-            --primary-dark: #E55A2B;
-            --primary-light: #FF9E7A;
-            --secondary-color: #1A1A2E;
-            --light-color: #F8F9FA;
-            --dark-color: #212529;
-            --gray-color: #6C757D;
-            --success-color: #28A745;
-            --warning-color: #FFC107;
-            --danger-color: #DC3545;
-            --border-radius: 12px;
-            --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
-        }
-
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-        }
-
-        body {
-            background-color: #f5f7fb;
-            color: var(--dark-color);
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header */
-        header {
-            background-color: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 18px 0;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo-icon {
-            background-color: var(--primary-color);
+            background: linear-gradient(#0a3d0a, #1e6b1e);
+            font-family: 'Arial', sans-serif;
             color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+        #game-container {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            font-weight: 700;
+            flex-direction: column;
+            height: 100vh;
         }
-
-        .logo-text {
-            font-size: 26px;
-            font-weight: 800;
-            color: var(--secondary-color);
-        }
-
-        .logo-text span {
-            color: var(--primary-color);
-        }
-
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .notification {
+        #table {
+            flex: 1;
+            background: radial-gradient(#2e8b2e, #0a5d0a);
+            background-image: url('https://c8.alamy.com/comp/2E01J67/legendary-game-okey-and-game-table-turkish-board-game-okey-rummikub-a-table-with-green-cloth-and-chips-hands-of-the-players-2E01J67.jpg');
+            background-size: cover;
+            background-position: center;
             position: relative;
-            cursor: pointer;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
         }
-
-        .notification-badge {
+        #middle-area {
             position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: var(--danger-color);
-            color: white;
-            font-size: 12px;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .user-avatar {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-        }
-
-        /* Ana İçerik */
-        .dashboard {
-            padding: 30px 0;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 25px;
-        }
-
-        /* Kartlar */
-        .card {
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            padding: 24px;
-            margin-bottom: 25px;
-            transition: var(--transition);
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--secondary-color);
-        }
-
-        .card-action {
-            color: var(--primary-color);
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        /* Bakiye Kartı */
-        .balance-card {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            padding: 30px;
-            border-radius: var(--border-radius);
-            margin-bottom: 30px;
-        }
-
-        .balance-title {
-            font-size: 16px;
-            opacity: 0.9;
-            margin-bottom: 8px;
-        }
-
-        .balance-amount {
-            font-size: 40px;
-            font-weight: 800;
-            margin-bottom: 20px;
-        }
-
-        .balance-details {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .balance-item {
-            text-align: center;
-        }
-
-        .balance-label {
-            font-size: 14px;
-            opacity: 0.8;
-            margin-bottom: 5px;
-        }
-
-        .balance-value {
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        /* Hızlı İşlemler */
-        .quick-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-        }
-
-        .action-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            padding: 18px 15px;
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            width: 23%;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            color: var(--dark-color);
-        }
-
-        .action-btn:hover {
-            background-color: var(--primary-color);
-            color: white;
-            transform: translateY(-5px);
-        }
-
-        .action-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            background-color: rgba(255, 107, 53, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            color: var(--primary-color);
-        }
-
-        .action-btn:hover .action-icon {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-
-        .action-text {
-            font-weight: 600;
-            font-size: 14px;
-            text-align: center;
-        }
-
-        /* İşlemler Tablosu */
-        .transaction-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .transaction-table th {
-            text-align: left;
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-            color: var(--gray-color);
-            font-weight: 600;
-        }
-
-        .transaction-table td {
-            padding: 15px 0;
-            border-bottom: 1px solid #f8f9fa;
-        }
-
-        .transaction-type {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .transaction-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .income {
-            background-color: rgba(40, 167, 69, 0.1);
-            color: var(--success-color);
-        }
-
-        .expense {
-            background-color: rgba(220, 53, 69, 0.1);
-            color: var(--danger-color);
-        }
-
-        .exchange {
-            background-color: rgba(255, 193, 7, 0.1);
-            color: var(--warning-color);
-        }
-
-        .transaction-amount {
-            font-weight: 700;
-        }
-
-        .positive {
-            color: var(--success-color);
-        }
-
-        .negative {
-            color: var(--danger-color);
-        }
-
-        /* Kredi Kartları */
-        .credit-cards {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .credit-card {
-            background: linear-gradient(135deg, #2D3047, #1A1A2E);
-            color: white;
-            padding: 20px;
-            border-radius: 16px;
-            position: relative;
-            height: 180px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .card-chip {
-            width: 50px;
-            height: 40px;
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            border-radius: 8px;
-        }
-
-        .card-number {
-            font-size: 22px;
-            letter-spacing: 2px;
-            margin: 15px 0;
-        }
-
-        .card-details {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-        }
-
-        .token-code {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 8px 15px;
+            top: 20%;
+            left: 10%;
+            right: 10%;
+            height: 40%;
+            border: 4px dashed rgba(255,255,255,0.3);
             border-radius: 20px;
-            font-family: monospace;
-            font-size: 14px;
+            background: rgba(0,0,0,0.2);
         }
-
-        /* Döviz Çevirici */
-        .exchange-box {
-            background-color: white;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-top: 20px;
+        #hand {
+            height: 180px;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+            overflow-x: auto;
         }
-
-        .exchange-form {
+        .tile {
+            width: 60px;
+            height: 90px;
+            background: linear-gradient(#fff, #eee);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
-            gap: 15px;
-        }
-
-        .exchange-row {
-            display: flex;
             align-items: center;
-            gap: 15px;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            user-select: none;
+            cursor: grab;
+            position: relative;
         }
-
-        .exchange-input {
-            flex: 1;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-
-        .exchange-select {
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            background-color: white;
-        }
-
-        .exchange-btn {
-            background-color: var(--primary-color);
+        .tile:active { cursor: grabbing; transform: scale(1.1); }
+        .red { color: #d00; }
+        .yellow { color: #dd0; }
+        .blue { color: #00d; }
+        .black { color: #000; }
+        .joker {
+            background: linear-gradient(45deg, #ff0, #f00);
             color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 15px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            margin-top: 10px;
+            font-size: 20px;
         }
-
-        .exchange-btn:hover {
-            background-color: var(--primary-dark);
+        .joker::before {
+            content: "★";
+            font-size: 40px;
         }
-
-        /* Footer */
-        footer {
-            background-color: var(--secondary-color);
-            color: white;
-            padding: 40px 0 20px;
-            margin-top: 50px;
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 40px;
-        }
-
-        .footer-section {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .footer-title {
-            font-size: 18px;
-            margin-bottom: 20px;
-            color: var(--primary-light);
-        }
-
-        .footer-links {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-
-        .footer-links a {
-            color: #bbb;
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .footer-links a:hover {
-            color: var(--primary-color);
-        }
-
-        .copyright {
+        #controls {
             text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: #bbb;
-            font-size: 14px;
+            padding: 10px;
+            background: rgba(0,0,0,0.6);
         }
-
-        /* Responsive */
-        @media (max-width: 992px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .quick-actions {
-                flex-wrap: wrap;
-                gap: 15px;
-            }
-            
-            .action-btn {
-                width: 48%;
-            }
+        button {
+            padding: 12px 24px;
+            font-size: 18px;
+            background: #d4af37;
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            margin: 0 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
         }
-
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .balance-details {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .action-btn {
-                width: 100%;
-            }
-            
-            .exchange-row {
-                flex-direction: column;
-            }
-            
-            .exchange-input, .exchange-select {
-                width: 100%;
-            }
+        #total {
+            font-size: 24px;
+            margin: 10px;
+        }
+        @media (orientation: landscape) {
+            #hand { height: 220px; }
+            .tile { width: 70px; height: 110px; font-size: 36px; }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <div class="logo-icon">E</div>
-                    <div class="logo-text">ETG<span>Pay</span></div>
-                </div>
-                
-                <div class="user-menu">
-                    <div class="notification">
-                        <i class="fas fa-bell fa-lg" style="color: var(--gray-color);"></i>
-                        <div class="notification-badge">3</div>
-                    </div>
-                    
-                    <div class="user-profile">
-                        <div class="user-avatar">AK</div>
-                        <div>
-                            <div style="font-weight: 600;">Ahmet Kaya</div>
-                            <div style="font-size: 14px; color: var(--gray-color);">Premium Üye</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div id="game-container">
+        <div id="table">
+            <div id="middle-area" class="drop-zone"></div>
         </div>
-    </header>
-
-    <!-- Ana İçerik -->
-    <main class="dashboard">
-        <div class="container">
-            <!-- Bakiye Kartı -->
-            <div class="balance-card">
-                <div class="balance-title">TOPLAM BAKİYE</div>
-                <div class="balance-amount">₺12,450.75</div>
-                
-                <div class="balance-details">
-                    <div class="balance-item">
-                        <div class="balance-label">USD</div>
-                        <div class="balance-value">$1,250.50</div>
-                    </div>
-                    <div class="balance-item">
-                        <div class="balance-label">EUR</div>
-                        <div class="balance-value">€950.30</div>
-                    </div>
-                    <div class="balance-item">
-                        <div class="balance-label">BTC</div>
-                        <div class="balance-value">₿0.025</div>
-                    </div>
-                    <div class="balance-item">
-                        <div class="balance-label">ETH</div>
-                        <div class="balance-value">Ξ0.15</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Hızlı İşlemler -->
-            <div class="quick-actions">
-                <a href="#" class="action-btn">
-                    <div class="action-icon">
-                        <i class="fas fa-wallet"></i>
-                    </div>
-                    <div class="action-text">Bakiye Yükle</div>
-                </a>
-                
-                <a href="#" class="action-btn">
-                    <div class="action-icon">
-                        <i class="fas fa-exchange-alt"></i>
-                    </div>
-                    <div class="action-text">Döviz Çevir</div>
-                </a>
-                
-                <a href="#" class="action-btn">
-                    <div class="action-icon">
-                        <i class="fas fa-credit-card"></i>
-                    </div>
-                    <div class="action-text">Kart Yönetimi</div>
-                </a>
-                
-                <a href="#" class="action-btn">
-                    <div class="action-icon">
-                        <i class="fas fa-history"></i>
-                    </div>
-                    <div class="action-text">İşlem Geçmişi</div>
-                </a>
-            </div>
-
-            <div class="dashboard-grid">
-                <!-- Sol Kolon -->
-                <div class="left-column">
-                    <!-- Son İşlemler -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Son İşlemler</div>
-                            <div class="card-action">Tümünü Gör</div>
-                        </div>
-                        
-                        <table class="transaction-table">
-                            <thead>
-                                <tr>
-                                    <th>İşlem</th>
-                                    <th>Tarih</th>
-                                    <th>Tutar</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="transaction-type">
-                                            <div class="transaction-icon income">
-                                                <i class="fas fa-arrow-down"></i>
-                                            </div>
-                                            <div>
-                                                <div style="font-weight: 600;">Bakiye Yükleme</div>
-                                                <div style="font-size: 14px; color: var(--gray-color);">Kredi Kartı •••• 4582</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>15 Haz, 13:45</td>
-                                    <td class="transaction-amount positive">+₺500.00</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="transaction-type">
-                                            <div class="transaction-icon expense">
-                                                <i class="fas fa-shopping-cart"></i>
-                                            </div>
-                                            <div>
-                                                <div style="font-weight: 600;">Trendyol Alışveriş</div>
-                                                <div style="font-size: 14px; color: var(--gray-color);">Online Alışveriş</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>14 Haz, 20:30</td>
-                                    <td class="transaction-amount negative">-₺247.90</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="transaction-type">
-                                            <div class="transaction-icon exchange">
-                                                <i class="fas fa-exchange-alt"></i>
-                                            </div>
-                                            <div>
-                                                <div style="font-weight: 600;">USD/TL Çevrim</div>
-                                                <div style="font-size: 14px; color: var(--gray-color);">Döviz İşlemi</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>13 Haz, 10:15</td>
-                                    <td class="transaction-amount positive">+$100.00</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="transaction-type">
-                                            <div class="transaction-icon income">
-                                                <i class="fas fa-briefcase"></i>
-                                            </div>
-                                            <div>
-                                                <div style="font-weight: 600;">Maaş Ödemesi</div>
-                                                <div style="font-size: 14px; color: var(--gray-color);">ABC Şirketi</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>10 Haz, 09:00</td>
-                                    <td class="transaction-amount positive">+₺8,750.00</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="transaction-type">
-                                            <div class="transaction-icon expense">
-                                                <i class="fas fa-bolt"></i>
-                                            </div>
-                                            <div>
-                                                <div style="font-weight: 600;">Elektrik Faturası</div>
-                                                <div style="font-size: 14px; color: var(--gray-color);">Otomatik Ödeme</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>08 Haz, 14:20</td>
-                                    <td class="transaction-amount negative">-₺185.60</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Sağ Kolon -->
-                <div class="right-column">
-                    <!-- Kredi Kartları -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Kredi Kartlarım</div>
-                            <div class="card-action">+ Yeni Ekle</div>
-                        </div>
-                        
-                        <div class="credit-cards">
-                            <div class="credit-card">
-                                <div class="card-chip"></div>
-                                <div class="card-number">**** **** **** 4582</div>
-                                <div class="card-details">
-                                    <div>
-                                        <div style="font-size: 12px; opacity: 0.8;">KART SAHİBİ</div>
-                                        <div>AHMET KAYA</div>
-                                    </div>
-                                    <div>
-                                        <div style="font-size: 12px; opacity: 0.8;">SON KULLANMA</div>
-                                        <div>08/26</div>
-                                    </div>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="token-code">TOKEN: 7A9B3C</div>
-                                    <div class="card-logo">
-                                        <i class="fab fa-cc-visa fa-2x"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div style="font-size: 14px; color: var(--gray-color); margin-top: 10px;">
-                                <i class="fas fa-info-circle" style="color: var(--primary-color); margin-right: 8px;"></i>
-                                Token kodu her işlemde otomatik değişir ve bağımsızdır.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Döviz Çevirici -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Döviz Çevir</div>
-                            <div class="card-action">
-                                <i class="fas fa-sync-alt"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="exchange-box">
-                            <div class="exchange-form">
-                                <div class="exchange-row">
-                                    <input type="number" class="exchange-input" placeholder="Miktar" value="100">
-                                    <select class="exchange-select">
-                                        <option>TRY</option>
-                                        <option>USD</option>
-                                        <option>EUR</option>
-                                        <option>GBP</option>
-                                    </select>
-                                </div>
-                                
-                                <div style="text-align: center; color: var(--gray-color);">
-                                    <i class="fas fa-arrow-down"></i>
-                                </div>
-                                
-                                <div class="exchange-row">
-                                    <input type="number" class="exchange-input" placeholder="Çevrilen Miktar" readonly value="3.25">
-                                    <select class="exchange-select">
-                                        <option>BTC</option>
-                                        <option>ETH</option>
-                                        <option>USDT</option>
-                                        <option>XRP</option>
-                                    </select>
-                                </div>
-                                
-                                <div style="font-size: 14px; color: var(--gray-color); margin-top: 10px;">
-                                    1 BTC = ₺512,450.75 | Güncel: 15.06.2023 14:30
-                                </div>
-                                
-                                <button class="exchange-btn">Hemen Çevir</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div id="hand"></div>
+        <div id="controls">
+            <button onclick="newGame()">Yeni Oyun</button>
+            <button onclick="calculateTotal()">Per Toplamı Hesapla</button>
+            <div id="total"></div>
         </div>
-    </main>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <div class="footer-title">ETGPay</div>
-                    <p>Modern dijital cüzdan çözümü. Bankacılık ve kripto işlemlerini bir arada sunan güvenli platform.</p>
-                </div>
-                
-                <div class="footer-section">
-                    <div class="footer-title">Hizmetler</div>
-                    <ul class="footer-links">
-                        <li><a href="#">Bakiye Yükleme</a></li>
-                        <li><a href="#">Döviz Çevirme</a></li>
-                        <li><a href="#">Kripto İşlemleri</a></li>
-                        <li><a href="#">Fatura Ödeme</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <div class="footer-title">Güvenlik</div>
-                    <ul class="footer-links">
-                        <li><a href="#">2FA Doğrulama</a></li>
-                        <li><a href="#">Token Sistemi</a></li>
-                        <li><a href="#">Gizlilik Politikası</a></li>
-                        <li><a href="#">Güvenlik İpuçları</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <div class="footer-title">İletişim</div>
-                    <ul class="footer-links">
-                        <li><a href="#">Destek Merkezi</a></li>
-                        <li><a href="#">Canlı Destek</a></li>
-                        <li><a href="#">info@etgpay.com</a></li>
-                        <li><a href="#">+90 212 123 4567</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="copyright">
-                &copy; 2023 ETGPay. Tüm hakları saklıdır. | Türkçe
-            </div>
-        </div>
-    </footer>
+    </div>
 
     <script>
-        // Döviz çevirme butonu işlevselliği
-        document.querySelector('.exchange-btn').addEventListener('click', function() {
-            const amount = document.querySelector('.exchange-input').value;
-            const fromCurrency = document.querySelectorAll('.exchange-select')[0].value;
-            const toCurrency = document.querySelectorAll('.exchange-select')[1].value;
-            
-            // Basit döviz kuru simülasyonu
-            const exchangeRates = {
-                'TRY': { 'BTC': 0.00000195, 'ETH': 0.000032, 'USDT': 0.036, 'XRP': 1.2 },
-                'USD': { 'BTC': 0.000037, 'ETH': 0.0006, 'USDT': 1, 'XRP': 33.5 },
-                'EUR': { 'BTC': 0.000041, 'ETH': 0.00067, 'USDT': 1.1, 'XRP': 36.8 }
-            };
-            
-            let result = 0;
-            if (exchangeRates[fromCurrency] && exchangeRates[fromCurrency][toCurrency]) {
-                result = amount * exchangeRates[fromCurrency][toCurrency];
+        const colors = ['red', 'yellow', 'blue', 'black'];
+        const colorNames = { red: 'Kırmızı', yellow: 'Sarı', blue: 'Mavi', black: 'Siyah' };
+
+        function createTile(number, color, isJoker = false) {
+            const tile = document.createElement('div');
+            tile.className = `tile ${color} ${isJoker ? 'joker' : ''}`;
+            tile.dataset.number = number;
+            tile.dataset.color = color;
+            tile.dataset.value = number;
+            if (!isJoker) {
+                tile.innerHTML = `<span>${number}</span>`;
             } else {
-                result = amount * 0.5; // Varsayılan oran
+                tile.innerHTML = 'JOKER';
             }
-            
-            document.querySelectorAll('.exchange-input')[1].value = result.toFixed(6);
-            
-            // Bildirim efekti
-            this.textContent = 'Çevriliyor...';
-            this.style.backgroundColor = '#28A745';
-            
-            setTimeout(() => {
-                this.textContent = 'Çevirme Tamamlandı!';
-                setTimeout(() => {
-                    this.textContent = 'Hemen Çevir';
-                    this.style.backgroundColor = 'var(--primary-color)';
-                }, 1500);
-            }, 800);
-        });
-        
-        // Kredi kartı token kodu güncelleme (simülasyon)
-        function updateTokenCode() {
-            const tokenElement = document.querySelector('.token-code');
-            const chars = 'ABCDEF0123456789';
-            let newToken = '';
-            
-            for (let i = 0; i < 6; i++) {
-                newToken += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            
-            tokenElement.textContent = `TOKEN: ${newToken}`;
-            
-            // Token'ın güncellendiğini göstermek için animasyon
-            tokenElement.style.transform = 'scale(1.1)';
-            tokenElement.style.transition = 'transform 0.3s';
-            
-            setTimeout(() => {
-                tokenElement.style.transform = 'scale(1)';
-            }, 300);
+            tile.draggable = true;
+            tile.addEventListener('dragstart', dragStart);
+            return tile;
         }
-        
-        // Her 30 saniyede bir token kodu güncelle
-        setInterval(updateTokenCode, 30000);
-        
-        // Hızlı işlem butonları için tıklama olayları
-        document.querySelectorAll('.action-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
+
+        function dragStart(e) {
+            e.dataTransfer.setData('text/plain', '');
+            e.target.style.opacity = '0.7';
+        }
+
+        function dragEnd(e) {
+            e.target.style.opacity = '1';
+        }
+
+        function newGame() {
+            const hand = document.getElementById('hand');
+            hand.innerHTML = '';
+            document.getElementById('middle-area').innerHTML = '';
+            document.getElementById('total').textContent = '';
+
+            // 106 taş seti (2 set 1-13 + 2 joker)
+            const deck = [];
+            for (let i = 0; i < 2; i++) {
+                for (let c of colors) {
+                    for (let n = 1; n <= 13; n++) {
+                        deck.push({num: n, col: c});
+                    }
+                }
+            }
+            deck.push({num: 0, col: 'joker'}, {num: 0, col: 'joker'});
+
+            // Karıştır
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+
+            // 21 taş dağıt (demo için 21)
+            for (let i = 0; i < 21; i++) {
+                const t = deck.pop();
+                const tile = t.col === 'joker' ? createTile(0, '', true) : createTile(t.num, t.col);
+                tile.addEventListener('dragend', dragEnd);
+                hand.appendChild(tile);
+            }
+
+            // Orta alan drop zone
+            const middle = document.getElementById('middle-area');
+            middle.addEventListener('dragover', e => e.preventDefault());
+            middle.addEventListener('drop', e => {
                 e.preventDefault();
-                const actionText = this.querySelector('.action-text').textContent;
-                
-                // Buton tıklama animasyonu
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 200);
-                
-                // Basit bildirim
-                alert(`${actionText} işlemi seçildi. Demo modunda çalışıyorsunuz.`);
+                const activeTile = document.querySelector('.tile[style*="opacity: 0.7"]');
+                if (activeTile && activeTile.parentElement === hand) {
+                    middle.appendChild(activeTile);
+                }
             });
-        });
+
+            // Eli drop zone (geri alma)
+            hand.addEventListener('dragover', e => e.preventDefault());
+            hand.addEventListener('drop', e => {
+                e.preventDefault();
+                const activeTile = document.querySelector('.tile[style*="opacity: 0.7"]');
+                if (activeTile && activeTile.parentElement === middle) {
+                    hand.appendChild(activeTile);
+                }
+            });
+        }
+
+        function calculateTotal() {
+            const middle = document.getElementById('middle-area');
+            let total = 0;
+            middle.querySelectorAll('.tile').forEach(tile => {
+                total += parseInt(tile.dataset.value);
+            });
+            const msg = total >= 101 ? 'Açılabilirsin! 🎉' : 'Henüz değil...';
+            document.getElementById('total').textContent = `Per Toplamı: ${total} - ${msg}`;
+        }
+
+        // Başlat
+        newGame();
     </script>
 </body>
 </html>
