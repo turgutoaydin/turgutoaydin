@@ -3,33 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>101 Okey Plus • Mini App</title>
+  <title>101 Okey Plus • Demo</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: #0a1f3a;
-      --table: #001122;
-      --card: #1e3a5f;
-      --card-light: #2c5282;
+      --bg: #0f172a;
+      --table: #0a1421;
+      --card: #1e293b;
+      --card-selected: #334155;
       --accent: #f59e0b;
       --text: #e2e8f0;
-      --border: #4a5568;
-    }
-
-    [data-theme="light"] {
-      --bg: #e2e8f0;
-      --table: #cbd5e0;
-      --card: #edf2f7;
-      --card-light: #f7fafc;
-      --text: #2d3748;
-      --border: #a0aec0;
+      --border: #475569;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --blue: #3b82f6;
+      --red: #ef4444;
+      --black: #1e293b;
+      --okey: #f59e0b;
+      --joker: #a855f7;
     }
 
     body, html {
       margin: 0;
       padding: 0;
       height: 100%;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: system-ui, -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
       overflow: hidden;
@@ -43,77 +41,118 @@
     }
 
     header {
-      background: rgba(0,0,0,0.4);
+      background: rgba(15,23,42,0.7);
       padding: 8px 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 0.9rem;
-      backdrop-filter: blur(6px);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #334155;
     }
 
-    .player-info {
+    .player {
       display: flex;
       align-items: center;
       gap: 8px;
+      font-size: 0.85rem;
     }
 
     .avatar {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
-      background: #4a5568;
+      background: #334155;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.1rem;
+      border: 2px solid var(--accent);
     }
 
     #table {
       flex: 1;
       background: var(--table);
       position: relative;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      padding: 8px;
+      overflow: hidden;
     }
 
-    .opened-area {
-      height: 35%;
+    .opponents {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 12px;
+    }
+
+    .opponent {
+      text-align: center;
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+
+    .middle-area {
+      flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      padding: 12px;
-      overflow-x: auto;
-      white-space: nowrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+      overflow-y: auto;
+      padding: 12px 0;
+    }
+
+    .per-row {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 90%;
     }
 
     .per {
-      display: inline-flex;
+      display: flex;
       gap: 4px;
-      background: rgba(255,255,255,0.08);
+      background: rgba(30,41,59,0.6);
       padding: 6px 10px;
       border-radius: 8px;
-      border: 1px solid var(--border);
-      min-width: 140px;
+      border: 1px dashed #475569;
+      min-height: 54px;
+      align-items: center;
     }
 
-    .my-hand {
-      height: 28%;
-      background: rgba(0,0,0,0.3);
-      padding: 12px;
+    .thrown-area {
+      width: 80px;
+      height: 110px;
+      background: rgba(30,41,59,0.4);
+      border: 2px dashed var(--accent);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      margin: 12px auto;
+    }
+
+    .my-hand-area {
+      height: 26%;
+      background: rgba(15,23,42,0.8);
+      padding: 10px 0;
+      border-top: 3px solid var(--accent);
       overflow-x: auto;
       white-space: nowrap;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
-      border-top: 2px solid var(--accent);
     }
 
     .tile {
-      width: 54px;
-      height: 78px;
+      width: 42px;
+      height: 60px;
       background: var(--card);
       border: 2px solid var(--border);
       border-radius: 8px;
@@ -121,76 +160,79 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
+      font-size: 1.35rem;
       font-weight: bold;
       color: white;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-      transition: all 0.18s;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+      transition: all 0.18s ease;
       user-select: none;
       position: relative;
-      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .tile.small {
+      width: 32px;
+      height: 46px;
+      font-size: 1.1rem;
+      border-width: 1.5px;
     }
 
     .tile.selected {
-      transform: translateY(-12px) scale(1.12);
-      box-shadow: 0 12px 24px rgba(245,158,11,0.5);
+      transform: translateY(-14px) scale(1.18);
+      box-shadow: 0 10px 20px rgba(245,158,11,0.5);
       border-color: var(--accent);
       z-index: 10;
     }
 
     .tile.okey {
-      background: linear-gradient(135deg, #f59e0b, #d69e2e);
-      color: #1a202c;
+      background: linear-gradient(135deg, var(--okey), #d97706);
+      color: #111827;
     }
 
     .tile.joker {
-      background: linear-gradient(135deg, #9f7aea, #805ad5);
+      background: linear-gradient(135deg, var(--joker), #7e22ce);
     }
 
     .tile .num {
-      font-size: 2.1rem;
+      font-size: 1.6rem;
+    }
+
+    .tile.small .num {
+      font-size: 1.3rem;
     }
 
     .tile .color-dot {
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       margin-top: 4px;
+      border: 1px solid rgba(255,255,255,0.3);
     }
 
-    .red    { background: #e53e3e; }
-    .yellow { background: #f6e05e; }
-    .blue   { background: #4299e1; }
-    .black  { background: #2d3748; }
-
-    .thrown {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 70px;
-      height: 100px;
-      z-index: 5;
-    }
+    .red    { background: var(--red);    }
+    .yellow { background: var(--yellow); }
+    .blue   { background: var(--blue);   }
+    .green  { background: var(--green);  }
 
     #status {
       text-align: center;
-      padding: 8px;
-      background: rgba(0,0,0,0.4);
+      padding: 10px;
+      background: rgba(15,23,42,0.7);
       font-size: 0.95rem;
+      border-top: 1px solid #334155;
     }
 
     @media (orientation: portrait) {
       body::before {
-        content: "Lütfen telefonu yatay çevirin • Landscape modu önerilir";
+        content: "Lütfen cihazı yatay konuma getirin";
         position: fixed;
         inset: 0;
-        background: rgba(0,0,0,0.9);
+        background: rgba(0,0,0,0.92);
         color: white;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         text-align: center;
         z-index: 9999;
       }
@@ -201,97 +243,89 @@
 
 <div id="root">
   <header>
-    <div class="player-info">
-      <div class="avatar">🧑</div>
-      <span>Sen (Turgut)</span>
+    <div class="player">
+      <div class="avatar">😎</div>
+      <span>@LiraKurdi</span>
     </div>
     <div>101 Okey Plus • Demo</div>
-    <div class="player-info">
-      <span>Rakip • 42</span>
-      <div class="avatar">🤖</div>
+    <div class="player">
+      <span>Sıra sende</span>
     </div>
   </header>
 
   <div id="table">
-    <div class="opened-area" id="opponent-per">
-      <!-- Rakibin açtığı perler -->
+    <div class="opponents">
+      <div class="opponent">
+        <div class="avatar">🧑‍💻</div>
+        <div>PC1</div>
+      </div>
+      <div class="opponent">
+        <div class="avatar">🤖</div>
+        <div>PC2</div>
+      </div>
+      <div class="opponent">
+        <div class="avatar">👾</div>
+        <div>PC3</div>
+      </div>
     </div>
 
-    <div class="opened-area" id="table-per">
-      <!-- Masa perleri / açılanlar -->
-      <div class="per"></div>
+    <div class="middle-area">
+      <div class="per-row" id="per-row-1">
+        <!-- 1. sıra perler -->
+      </div>
+      <div class="per-row" id="per-row-2">
+        <!-- 2. sıra perler -->
+      </div>
+
+      <div class="thrown-area" id="thrown">13</div>
     </div>
 
-    <div class="thrown" id="thrown-tile">?</div>
+    <div class="my-hand-area" id="my-hand">
+      <!-- taşlar buraya -->
+    </div>
   </div>
 
-  <div id="my-hand" class="my-hand">
-    <!-- Oyuncunun eli buraya gelecek -->
-  </div>
-
-  <div id="status">Sıra sende • Taş seç ve at</div>
+  <div id="status">Taş seç • Tekrar dokun → at</div>
 </div>
 
 <script>
-// Telegram Mini App Başlatma
 const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
-
-// Tam ekran + yatay kilitleme denemesi (destekleyen cihazlarda)
 if (tg.requestFullscreen) tg.requestFullscreen();
-if (tg.lockOrientation) tg.lockOrientation('landscape');
 
-// Tema algılama ve uygulama
 function applyTheme() {
-  const isDark = tg.colorScheme === 'dark';
-  document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+  document.documentElement.dataset.theme = tg.colorScheme === 'dark' ? 'dark' : 'light';
 }
 applyTheme();
 tg.onEvent('themeChanged', applyTheme);
 
-// Basit taş veri yapısı (demo için)
-const colors = ['red', 'yellow', 'blue', 'black'];
-const tilesInHand = [
-  {num: 10, color: 'red'},
-  {num: 11, color: 'red'},
-  {num: 12, color: 'red'},
-  {num: 7,  color: 'yellow'},
-  {num: 8,  color: 'yellow'},
-  {num: 9,  color: 'yellow'},
-  {num: 5,  color: 'blue'},
-  {num: 6,  color: 'blue'},
-  {num: 7,  color: 'blue'},
-  {num: 1,  color: 'black'},
-  {num: 2,  color: 'black'},
-  {num: 3,  color: 'black'},
-  {num: 14, color: 'black'}, // sahte okey
-  {num: 0,  color: 'joker'}, // joker / gerçek okey
-  {num: 13, color: 'red'},
-  {num: 1,  color: 'yellow'},
-  {num: 4,  color: 'blue'},
-  {num: 10, color: 'black'},
-  {num: 11, color: 'black'},
-  {num: 12, color: 'black'},
-  {num: 8,  color: 'red'}
+// Demo taşlar (senin elin)
+const myTiles = [
+  {num:10, color:'red'}, {num:11, color:'red'}, {num:12, color:'red'},
+  {num:7, color:'yellow'}, {num:8, color:'yellow'}, {num:9, color:'yellow'},
+  {num:5, color:'blue'}, {num:6, color:'blue'}, {num:7, color:'blue'},
+  {num:1, color:'green'}, {num:2, color:'green'}, {num:3, color:'green'},
+  {num:14, color:'black', isOkey:true},           // gerçek okey
+  {num:0, color:'joker'},                         // joker
+  {num:1, color:'yellow'}, {num:4, color:'blue'},
+  {num:10, color:'green'}, {num:11, color:'green'}, {num:12, color:'green'},
+  {num:8, color:'red'}
 ];
 
 let selectedIndex = -1;
 
-// Taş render fonksiyonu
-function createTile(tile, index) {
+function createTile(tile, index, isSmall = false) {
   const div = document.createElement('div');
   div.classList.add('tile');
+  if (isSmall) div.classList.add('small');
+  if (tile.isOkey || tile.num === 14) div.classList.add('okey');
   if (tile.color === 'joker') div.classList.add('joker');
-  else if (tile.num === 14 || tile.isOkey) div.classList.add('okey');
 
-  if (tile.num === 0 || tile.num === 14) {
-    div.innerHTML = `<div class="num">OK</div>`;
-  } else {
-    div.innerHTML = `<div class="num">${tile.num}</div>`;
-  }
+  const numText = tile.num === 0 || tile.num === 14 ? 'OK' : tile.num;
+  div.innerHTML = `<div class="num">${numText}</div>`;
 
-  if (tile.color !== 'joker') {
+  if (tile.color !== 'joker' && tile.color !== 'black') {
     const dot = document.createElement('div');
     dot.classList.add('color-dot', tile.color);
     div.appendChild(dot);
@@ -299,57 +333,64 @@ function createTile(tile, index) {
 
   div.addEventListener('click', () => {
     if (selectedIndex === index) {
-      // Atma simülasyonu
-      throwTile(index);
+      // at
+      const thrown = document.getElementById('thrown');
+      thrown.textContent = numText;
+      thrown.style.color = tile.isOkey || tile.num === 14 ? '#111827' : 'white';
+      thrown.style.background = div.style.background || '';
+
+      div.style.transition = 'all 0.5s';
+      div.style.transform = 'translateY(-80px) scale(0.4) rotate(20deg)';
+      div.style.opacity = '0';
+
+      setTimeout(() => {
+        div.remove();
+        selectedIndex = -1;
+        document.getElementById('status').textContent = 'Taş atıldı • Sıra rakipte';
+      }, 500);
     } else {
-      // Seçme
       document.querySelectorAll('.tile').forEach(t => t.classList.remove('selected'));
       div.classList.add('selected');
       selectedIndex = index;
-      document.getElementById('status').textContent = `Seçili: ${tile.num || 'OK'} • Tekrar dokun → at`;
+      document.getElementById('status').textContent = `Seçili: ${numText} • Tekrar dokun → at`;
     }
   });
 
   return div;
 }
 
-// Taş atma (demo efekti)
-function throwTile(index) {
-  const tileEl = document.querySelectorAll('#my-hand .tile')[index];
-  if (!tileEl) return;
-
-  const thrown = document.getElementById('thrown-tile');
-  thrown.textContent = tileEl.querySelector('.num').textContent;
-  thrown.style.background = tileEl.style.background || '';
-  thrown.style.borderColor = tileEl.style.borderColor || '';
-
-  // Efekt
-  tileEl.style.transition = 'all 0.6s';
-  tileEl.style.transform = 'translateY(-120px) rotate(30deg) scale(0.6)';
-  tileEl.style.opacity = '0';
-
-  setTimeout(() => {
-    tileEl.remove();
-    selectedIndex = -1;
-    document.getElementById('status').textContent = 'Taş atıldı • Sıra rakipte';
-  }, 600);
-}
-
-// Eli render et
-function renderHand() {
-  const hand = document.getElementById('my-hand');
-  hand.innerHTML = '';
-  tilesInHand.forEach((tile, i) => {
-    hand.appendChild(createTile(tile, i));
+function renderMyHand() {
+  const container = document.getElementById('my-hand');
+  container.innerHTML = '';
+  myTiles.forEach((tile, i) => {
+    container.appendChild(createTile(tile, i));
   });
 }
 
-renderHand();
+renderMyHand();
 
-// Başlangıç mesajı
-setTimeout(() => {
-  document.getElementById('status').textContent = 'Sıra sende • Bir taş seç';
-}, 1200);
+// Örnek orta masa perleri (demo)
+const demoPer1 = [
+  {num:5, color:'red'}, {num:6, color:'red'}, {num:7, color:'red'}, {num:8, color:'red'}
+];
+
+const demoPer2 = [
+  {num:10, color:'blue'}, {num:10, color:'yellow'}, {num:10, color:'green'}, {num:10, color:'red'}
+];
+
+function renderPer(rowId, tiles) {
+  const row = document.getElementById(rowId);
+  row.innerHTML = '';
+  const perDiv = document.createElement('div');
+  perDiv.classList.add('per');
+  tiles.forEach(t => {
+    perDiv.appendChild(createTile(t, -1, true));
+  });
+  row.appendChild(perDiv);
+}
+
+renderPer('per-row-1', demoPer1);
+renderPer('per-row-2', demoPer2);
 
 </script>
 </body>
