@@ -3,160 +3,197 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Sihirbaz Satrancı ⚡♟</title>
+  <title>101 Okey Plus • Mini App</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --dark-stone: #1a1a2e;
-      --light-stone: #e0c9a6;
-      --accent: #d4af37;
-      --glow: rgba(212, 175, 55, 0.7);
+      --bg: #0a1f3a;
+      --table: #001122;
+      --card: #1e3a5f;
+      --card-light: #2c5282;
+      --accent: #f59e0b;
+      --text: #e2e8f0;
+      --border: #4a5568;
+    }
+
+    [data-theme="light"] {
+      --bg: #e2e8f0;
+      --table: #cbd5e0;
+      --card: #edf2f7;
+      --card-light: #f7fafc;
+      --text: #2d3748;
+      --border: #a0aec0;
     }
 
     body, html {
       margin: 0;
       padding: 0;
       height: 100%;
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      color: #f0e8d0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
       overflow: hidden;
+      touch-action: manipulation;
     }
 
     #root {
-      height: 100vh;
+      height: 100dvh;
       display: flex;
       flex-direction: column;
     }
 
     header {
-      background: rgba(0,0,0,0.6);
-      padding: 12px;
-      text-align: center;
-      border-bottom: 1px solid #d4af3744;
+      background: rgba(0,0,0,0.4);
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
       backdrop-filter: blur(6px);
     }
 
-    h1 {
-      margin: 0;
-      font-size: 1.5rem;
-      color: var(--accent);
-      text-shadow: 0 0 10px var(--glow);
+    .player-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .status {
-      font-size: 0.9rem;
-      margin-top: 4px;
-      opacity: 0.9;
-    }
-
-    #board {
-      flex: 1;
-      display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      grid-template-rows: repeat(8, 1fr);
-      gap: 2px;
-      padding: 10px;
-      max-width: 100%;
-      aspect-ratio: 1 / 1;
-      margin: 0 auto;
-      background: radial-gradient(circle at 30% 30%, #3a2a5f, #0f0c29);
-      border: 8px solid #4a3728;
-      border-radius: 12px;
-      box-shadow: 
-        0 0 30px rgba(212,175,55,0.25),
-        inset 0 0 60px rgba(0,0,0,0.7);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .board::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: url('https://images.unsplash.com/photo-1617791160505-6f00504e3519?w=800&q=10') center/cover;
-      opacity: 0.07;
-      pointer-events: none;
-    }
-
-    .square {
-      position: relative;
-      background: var(--dark-stone);
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #4a5568;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.4rem;
-      cursor: pointer;
-      transition: all 0.25s;
-      box-shadow: inset 0 0 8px rgba(0,0,0,0.6);
+      font-size: 1.1rem;
     }
 
-    .square.light {
-      background: var(--light-stone);
+    #table {
+      flex: 1;
+      background: var(--table);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
-    .piece {
-      transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
-      text-shadow: 0 0 10px black;
-      filter: drop-shadow(0 4px 6px black);
+    .opened-area {
+      height: 35%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 12px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .per {
+      display: inline-flex;
+      gap: 4px;
+      background: rgba(255,255,255,0.08);
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      min-width: 140px;
+    }
+
+    .my-hand {
+      height: 28%;
+      background: rgba(0,0,0,0.3);
+      padding: 12px;
+      overflow-x: auto;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-top: 2px solid var(--accent);
+    }
+
+    .tile {
+      width: 54px;
+      height: 78px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: white;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+      transition: all 0.18s;
       user-select: none;
+      position: relative;
+      cursor: pointer;
     }
 
-    .piece.white { color: #f8f0d8; }
-    .piece.black { color: #2d1b12; }
-
-    /* Sihirli hareket animasyonu */
-    @keyframes magic-move {
-      0%   { transform: translate(0,0) scale(1); }
-      30%  { transform: translateY(-20px) scale(1.15); text-shadow: 0 0 20px var(--glow); }
-      70%  { transform: translateY(-8px) scale(1.08); }
-      100% { transform: translate(0,0) scale(1); }
-    }
-
-    .moving {
-      animation: magic-move 0.8s ease-out forwards;
+    .tile.selected {
+      transform: translateY(-12px) scale(1.12);
+      box-shadow: 0 12px 24px rgba(245,158,11,0.5);
+      border-color: var(--accent);
       z-index: 10;
     }
 
-    /* Yendiğinde parçalanma efekti */
-    @keyframes destroy {
-      0%   { transform: scale(1) rotate(0deg); opacity: 1; }
-      40%  { transform: scale(1.4) rotate(15deg); opacity: 0.9; }
-      100% { transform: scale(0.2) rotate(180deg); opacity: 0; }
+    .tile.okey {
+      background: linear-gradient(135deg, #f59e0b, #d69e2e);
+      color: #1a202c;
     }
 
-    .destroyed {
-      animation: destroy 0.7s forwards;
-      pointer-events: none;
+    .tile.joker {
+      background: linear-gradient(135deg, #9f7aea, #805ad5);
     }
 
-    .selected {
-      box-shadow: 0 0 0 4px var(--accent), inset 0 0 12px var(--glow);
-      background: rgba(212,175,55,0.15) !important;
+    .tile .num {
+      font-size: 2.1rem;
     }
 
-    .possible {
-      background: rgba(100,200,100,0.35) !important;
-      box-shadow: 0 0 12px rgba(100,255,100,0.6);
+    .tile .color-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      margin-top: 4px;
     }
 
-    #info {
-      padding: 12px;
-      background: rgba(0,0,0,0.5);
+    .red    { background: #e53e3e; }
+    .yellow { background: #f6e05e; }
+    .blue   { background: #4299e1; }
+    .black  { background: #2d3748; }
+
+    .thrown {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70px;
+      height: 100px;
+      z-index: 5;
+    }
+
+    #status {
       text-align: center;
+      padding: 8px;
+      background: rgba(0,0,0,0.4);
       font-size: 0.95rem;
-      border-top: 1px solid #d4af3744;
     }
 
-    button {
-      margin: 8px 12px;
-      padding: 10px 20px;
-      font-size: 1rem;
-      background: #4a3728;
-      color: var(--accent);
-      border: 2px solid var(--accent);
-      border-radius: 8px;
-      cursor: pointer;
+    @media (orientation: portrait) {
+      body::before {
+        content: "Lütfen telefonu yatay çevirin • Landscape modu önerilir";
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.9);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        text-align: center;
+        z-index: 9999;
+      }
     }
   </style>
 </head>
@@ -164,189 +201,155 @@
 
 <div id="root">
   <header>
-    <h1>⚡ Sihirbaz Satrancı ♟</h1>
-    <div class="status" id="status">Beyaz başlar — Sen beyazsın</div>
+    <div class="player-info">
+      <div class="avatar">🧑</div>
+      <span>Sen (Turgut)</span>
+    </div>
+    <div>101 Okey Plus • Demo</div>
+    <div class="player-info">
+      <span>Rakip • 42</span>
+      <div class="avatar">🤖</div>
+    </div>
   </header>
 
-  <div id="board"></div>
+  <div id="table">
+    <div class="opened-area" id="opponent-per">
+      <!-- Rakibin açtığı perler -->
+    </div>
 
-  <div id="info">
-    <div id="message">Taş seçmek için bir taşına dokun</div>
-    <button onclick="resetGame()">Yeni Oyun Başlat</button>
+    <div class="opened-area" id="table-per">
+      <!-- Masa perleri / açılanlar -->
+      <div class="per"></div>
+    </div>
+
+    <div class="thrown" id="thrown-tile">?</div>
   </div>
+
+  <div id="my-hand" class="my-hand">
+    <!-- Oyuncunun eli buraya gelecek -->
+  </div>
+
+  <div id="status">Sıra sende • Taş seç ve at</div>
 </div>
 
 <script>
-// ──────────────────────────────────────────────
-//   Basit Sihirbaz Satrancı – Telegram Mini App Demo
-// ──────────────────────────────────────────────
+// Telegram Mini App Başlatma
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
 
-const boardEl = document.getElementById('board');
-const statusEl = document.getElementById('status');
-const messageEl = document.getElementById('message');
+// Tam ekran + yatay kilitleme denemesi (destekleyen cihazlarda)
+if (tg.requestFullscreen) tg.requestFullscreen();
+if (tg.lockOrientation) tg.lockOrientation('landscape');
 
-let selectedPiece = null;
-let currentPlayer = 'w'; // w / b
-let board = [];
-
-const pieces = {
-  'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
-  'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
-};
-
-function createBoard() {
-  board = [
-    'rnbqkbnr'.split(''),
-    'pppppppp'.split(''),
-    Array(8).fill(null),
-    Array(8).fill(null),
-    Array(8).fill(null),
-    Array(8).fill(null),
-    'PPPPPPPP'.split(''),
-    'RNBQKBNR'.split('')
-  ];
-
-  renderBoard();
-  updateStatus();
+// Tema algılama ve uygulama
+function applyTheme() {
+  const isDark = tg.colorScheme === 'dark';
+  document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
 }
+applyTheme();
+tg.onEvent('themeChanged', applyTheme);
 
-function renderBoard() {
-  boardEl.innerHTML = '';
+// Basit taş veri yapısı (demo için)
+const colors = ['red', 'yellow', 'blue', 'black'];
+const tilesInHand = [
+  {num: 10, color: 'red'},
+  {num: 11, color: 'red'},
+  {num: 12, color: 'red'},
+  {num: 7,  color: 'yellow'},
+  {num: 8,  color: 'yellow'},
+  {num: 9,  color: 'yellow'},
+  {num: 5,  color: 'blue'},
+  {num: 6,  color: 'blue'},
+  {num: 7,  color: 'blue'},
+  {num: 1,  color: 'black'},
+  {num: 2,  color: 'black'},
+  {num: 3,  color: 'black'},
+  {num: 14, color: 'black'}, // sahte okey
+  {num: 0,  color: 'joker'}, // joker / gerçek okey
+  {num: 13, color: 'red'},
+  {num: 1,  color: 'yellow'},
+  {num: 4,  color: 'blue'},
+  {num: 10, color: 'black'},
+  {num: 11, color: 'black'},
+  {num: 12, color: 'black'},
+  {num: 8,  color: 'red'}
+];
 
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
-      const square = document.createElement('div');
-      square.classList.add('square');
-      if ((r + c) % 2 === 1) square.classList.add('light');
+let selectedIndex = -1;
 
-      square.dataset.row = r;
-      square.dataset.col = c;
+// Taş render fonksiyonu
+function createTile(tile, index) {
+  const div = document.createElement('div');
+  div.classList.add('tile');
+  if (tile.color === 'joker') div.classList.add('joker');
+  else if (tile.num === 14 || tile.isOkey) div.classList.add('okey');
 
-      const p = board[r][c];
-      if (p) {
-        const piece = document.createElement('div');
-        piece.classList.add('piece', p === p.toUpperCase() ? 'white' : 'black');
-        piece.textContent = pieces[p];
-        piece.dataset.piece = p;
-        square.appendChild(piece);
-      }
-
-      square.addEventListener('click', onSquareClick);
-      boardEl.appendChild(square);
-    }
-  }
-}
-
-function onSquareClick(e) {
-  const square = e.currentTarget;
-  const r = +square.dataset.row;
-  const c = +square.dataset.col;
-  const piece = board[r][c];
-
-  if (selectedPiece) {
-    // Hareket denemesi
-    if (isValidMove(selectedPiece.r, selectedPiece.c, r, c)) {
-      movePiece(selectedPiece.r, selectedPiece.c, r, c);
-      selectedPiece = null;
-      clearHighlights();
-      switchPlayer();
-    } else {
-      clearHighlights();
-      selectedPiece = null;
-      messageEl.textContent = "Geçersiz hamle!";
-    }
-  } else if (piece && ((currentPlayer === 'w' && piece === piece.toUpperCase()) || 
-                        (currentPlayer === 'b' && piece === piece.toLowerCase()))) {
-    // Taş seçme
-    selectedPiece = { r, c };
-    highlightSelected(r, c);
-    messageEl.textContent = "Nereye götüreceksin?";
-  }
-}
-
-function highlightSelected(r, c) {
-  const squares = boardEl.querySelectorAll('.square');
-  squares.forEach(sq => {
-    const sr = +sq.dataset.row, sc = +sq.dataset.col;
-    if (sr === r && sc === c) sq.classList.add('selected');
-    // Gerçek oyunda burada possible moves gösterilir (şimdilik basitçe seçili gösteriyoruz)
-  });
-}
-
-function clearHighlights() {
-  document.querySelectorAll('.selected, .possible').forEach(el => {
-    el.classList.remove('selected', 'possible');
-  });
-}
-
-function movePiece(fromR, fromC, toR, toC) {
-  const piece = board[fromR][fromC];
-  const captured = board[toR][toC];
-
-  board[toR][toC] = piece;
-  board[fromR][fromC] = null;
-
-  renderBoard();
-
-  // Animasyon tetikleme
-  const fromSquare = getSquare(fromR, fromC);
-  const toSquare = getSquare(toR, toC);
-
-  if (fromSquare && toSquare) {
-    const pieceEl = fromSquare.querySelector('.piece');
-    if (pieceEl) {
-      pieceEl.classList.add('moving');
-      setTimeout(() => pieceEl.classList.remove('moving'), 900);
-    }
-  }
-
-  if (captured) {
-    const capturedEl = toSquare.querySelector('.piece');
-    if (capturedEl) {
-      capturedEl.classList.add('destroyed');
-      setTimeout(() => capturedEl.remove(), 800);
-    }
-    messageEl.textContent = `BAM! ${captured.toUpperCase()} yok edildi!`;
+  if (tile.num === 0 || tile.num === 14) {
+    div.innerHTML = `<div class="num">OK</div>`;
   } else {
-    messageEl.textContent = "Sihirli bir hamle!";
+    div.innerHTML = `<div class="num">${tile.num}</div>`;
   }
+
+  if (tile.color !== 'joker') {
+    const dot = document.createElement('div');
+    dot.classList.add('color-dot', tile.color);
+    div.appendChild(dot);
+  }
+
+  div.addEventListener('click', () => {
+    if (selectedIndex === index) {
+      // Atma simülasyonu
+      throwTile(index);
+    } else {
+      // Seçme
+      document.querySelectorAll('.tile').forEach(t => t.classList.remove('selected'));
+      div.classList.add('selected');
+      selectedIndex = index;
+      document.getElementById('status').textContent = `Seçili: ${tile.num || 'OK'} • Tekrar dokun → at`;
+    }
+  });
+
+  return div;
 }
 
-function getSquare(r, c) {
-  return boardEl.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+// Taş atma (demo efekti)
+function throwTile(index) {
+  const tileEl = document.querySelectorAll('#my-hand .tile')[index];
+  if (!tileEl) return;
+
+  const thrown = document.getElementById('thrown-tile');
+  thrown.textContent = tileEl.querySelector('.num').textContent;
+  thrown.style.background = tileEl.style.background || '';
+  thrown.style.borderColor = tileEl.style.borderColor || '';
+
+  // Efekt
+  tileEl.style.transition = 'all 0.6s';
+  tileEl.style.transform = 'translateY(-120px) rotate(30deg) scale(0.6)';
+  tileEl.style.opacity = '0';
+
+  setTimeout(() => {
+    tileEl.remove();
+    selectedIndex = -1;
+    document.getElementById('status').textContent = 'Taş atıldı • Sıra rakipte';
+  }, 600);
 }
 
-function isValidMove(fromR, fromC, toR, toC) {
-  // Şimdilik çok basit (her yere gitmesine izin veriyoruz)
-  // Gerçek satranç kuralları için chess.js kütüphanesi eklenebilir
-  return true; // ← DEMO için her hamleye izin
-  // İleride: chess.js ile kontrol → https://github.com/jhlywa/chess.js
+// Eli render et
+function renderHand() {
+  const hand = document.getElementById('my-hand');
+  hand.innerHTML = '';
+  tilesInHand.forEach((tile, i) => {
+    hand.appendChild(createTile(tile, i));
+  });
 }
 
-function switchPlayer() {
-  currentPlayer = currentPlayer === 'w' ? 'b' : 'w';
-  updateStatus();
-}
+renderHand();
 
-function updateStatus() {
-  statusEl.textContent = currentPlayer === 'w' 
-    ? "Beyazların sırası — Sen beyazsın ⚡" 
-    : "Siyahların sırası — Karanlık güçler oynuyor 🖤";
-}
-
-function resetGame() {
-  currentPlayer = 'w';
-  selectedPiece = null;
-  createBoard();
-  messageEl.textContent = "Yeni oyun başladı! Beyaz başlar.";
-}
-
-// Başlat
-createBoard();
-
-// Telegram Mini App hazır olunca tema vs. alabilirsin
-window.Telegram?.WebApp?.ready();
-window.Telegram?.WebApp?.expand();
+// Başlangıç mesajı
+setTimeout(() => {
+  document.getElementById('status').textContent = 'Sıra sende • Bir taş seç';
+}, 1200);
 
 </script>
 </body>
