@@ -2,30 +2,38 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>Köy Merkezi – 3D Demo</title>
 
 <style>
-  body {
+  html, body {
     margin: 0;
-    background: radial-gradient(circle at top, #1a3d2f, #08150f);
+    padding: 0;
     overflow: hidden;
+    background: radial-gradient(circle at top, #1a3d2f, #08150f);
+    touch-action: none;
     font-family: system-ui, sans-serif;
-    color: white;
+    color: #fff;
   }
 
-  #ui {
+  canvas {
+    display: block;
+  }
+
+  /* UI */
+  .ui {
     position: fixed;
     inset: 0;
     pointer-events: none;
   }
 
-  .top-ui {
+  .top {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    right: 10px;
-    background: rgba(255,255,255,0.08);
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    background: rgba(255,255,255,.08);
     backdrop-filter: blur(12px);
     border-radius: 14px;
     padding: 10px 14px;
@@ -35,14 +43,9 @@
     pointer-events: auto;
   }
 
-  .stat {
-    font-size: 12px;
-    opacity: .8;
-  }
-
-  .bottom-ui {
+  .bottom {
     position: absolute;
-    bottom: 16px;
+    bottom: 18px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -51,13 +54,15 @@
   }
 
   .btn {
-    background: linear-gradient(180deg, #facc15, #eab308);
+    background: linear-gradient(180deg,#facc15,#eab308);
     color: #111;
+    font-weight: 700;
     padding: 12px 16px;
     border-radius: 14px;
-    font-weight: 700;
-    box-shadow: inset 0 -4px 0 rgba(0,0,0,.3), 0 10px 25px rgba(0,0,0,.5);
     border: none;
+    box-shadow:
+      inset 0 -4px 0 rgba(0,0,0,.3),
+      0 10px 25px rgba(0,0,0,.5);
   }
 
   .btn:active {
@@ -68,19 +73,18 @@
 </head>
 <body>
 
-<canvas id="scene"></canvas>
+<canvas id="c"></canvas>
 
-<!-- UI LAYER -->
-<div id="ui">
-  <div class="top-ui">
+<div class="ui">
+  <div class="top">
     <div>
-      <div class="stat">🏰 Köy Merkezi</div>
+      <div style="font-size:12px;opacity:.7">🏰 Köy Merkezi</div>
       <strong>Seviye 7</strong>
     </div>
-    <div class="stat">😊 Halk: %82</div>
+    <div style="font-size:12px">😊 Halk %82</div>
   </div>
 
-  <div class="bottom-ui">
+  <div class="bottom">
     <button class="btn">👥 Halk</button>
     <button class="btn">💰 Yatırım</button>
     <button class="btn">📊 Yönetim</button>
@@ -90,11 +94,24 @@
 <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
 
 <script>
-/* =========================
-   BASIC THREE.JS SETUP
-========================= */
+/* =============================
+   TARAYICI ZOOM TAM KAPALI
+============================= */
+document.addEventListener('gesturestart', e => e.preventDefault());
+document.addEventListener('gesturechange', e => e.preventDefault());
+document.addEventListener('gestureend', e => e.preventDefault());
 
-const canvas = document.getElementById("scene");
+let lastTouchEnd = 0;
+document.addEventListener('touchend', e => {
+  const now = Date.now();
+  if (now - lastTouchEnd <= 300) e.preventDefault();
+  lastTouchEnd = now;
+}, false);
+
+/* =============================
+   THREE.JS SETUP
+============================= */
+const canvas = document.getElementById("c");
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(
@@ -104,81 +121,80 @@ const camera = new THREE.PerspectiveCamera(
   100
 );
 
-camera.position.set(0, 6, 12);
+// ISOMETRIC / FARMVILLE AÇISI
+camera.position.set(0, 9, 16);
+camera.lookAt(0, 1.5, 0);
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  antialias: true,
+  alpha: true
+});
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 
-/* =========================
-   LIGHTS
-========================= */
-
+/* =============================
+   LIGHT
+============================= */
 scene.add(new THREE.AmbientLight(0xffffff, 0.7));
 
-const sun = new THREE.DirectionalLight(0xfff2cc, 1.2);
+const sun = new THREE.DirectionalLight(0xfff2cc, 1.3);
 sun.position.set(10, 15, 10);
 scene.add(sun);
 
-/* =========================
-   GROUND
-========================= */
-
+/* =============================
+   GROUND / MAP
+============================= */
 const ground = new THREE.Mesh(
-  new THREE.CircleGeometry(12, 64),
+  new THREE.CircleGeometry(14, 64),
   new THREE.MeshStandardMaterial({ color: 0x2f6b4f })
 );
 ground.rotation.x = -Math.PI / 2;
 scene.add(ground);
 
-/* =========================
-   VILLAGE CENTER BUILDING
-========================= */
+/* =============================
+   VILLAGE CENTER
+============================= */
+const centerGroup = new THREE.Group();
 
 const base = new THREE.Mesh(
-  new THREE.CylinderGeometry(2.5, 3, 2, 6),
+  new THREE.CylinderGeometry(2.6, 3.2, 2.2, 6),
   new THREE.MeshStandardMaterial({ color: 0x8b5a2b })
 );
-base.position.y = 1;
-scene.add(base);
+base.position.y = 1.1;
 
 const roof = new THREE.Mesh(
-  new THREE.ConeGeometry(3.2, 2, 6),
+  new THREE.ConeGeometry(3.5, 2.2, 6),
   new THREE.MeshStandardMaterial({ color: 0xd97706 })
 );
-roof.position.y = 3;
-scene.add(roof);
+roof.position.y = 3.3;
 
-/* =========================
-   NPCs (PEOPLE)
-========================= */
+centerGroup.add(base, roof);
+scene.add(centerGroup);
 
-const npcGroup = new THREE.Group();
+/* =============================
+   NPCs
+============================= */
+const npcs = new THREE.Group();
 
-for (let i = 0; i < 8; i++) {
+for (let i = 0; i < 10; i++) {
   const npc = new THREE.Mesh(
-    new THREE.SphereGeometry(0.25, 16, 16),
+    new THREE.SphereGeometry(0.28, 16, 16),
     new THREE.MeshStandardMaterial({ color: 0xfcd34d })
   );
 
-  const angle = (i / 8) * Math.PI * 2;
-  npc.position.set(
-    Math.cos(angle) * 4,
-    0.25,
-    Math.sin(angle) * 4
-  );
-
-  npcGroup.add(npc);
+  const a = (i / 10) * Math.PI * 2;
+  npc.position.set(Math.cos(a) * 4.5, 0.28, Math.sin(a) * 4.5);
+  npcs.add(npc);
 }
 
-scene.add(npcGroup);
+scene.add(npcs);
 
-/* =========================
-   AURA EFFECT (POWER)
-========================= */
-
+/* =============================
+   AURA
+============================= */
 const aura = new THREE.Mesh(
-  new THREE.RingGeometry(3.2, 3.6, 64),
+  new THREE.RingGeometry(3.4, 3.8, 64),
   new THREE.MeshBasicMaterial({
     color: 0xfacc15,
     transparent: true,
@@ -189,53 +205,79 @@ const aura = new THREE.Mesh(
 aura.rotation.x = -Math.PI / 2;
 scene.add(aura);
 
-/* =========================
-   INTERACTION (ROTATE)
-========================= */
-
-let isTouching = false;
+/* =============================
+   TOUCH CONTROLS
+============================= */
+let isRotating = false;
 let lastX = 0;
 
-window.addEventListener("touchstart", e => {
-  isTouching = true;
-  lastX = e.touches[0].clientX;
+let pinchStartDist = 0;
+let startCamZ = camera.position.z;
+
+canvas.addEventListener("touchstart", e => {
+  if (e.touches.length === 1) {
+    isRotating = true;
+    lastX = e.touches[0].clientX;
+  }
+
+  if (e.touches.length === 2) {
+    pinchStartDist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    startCamZ = camera.position.z;
+  }
 });
 
-window.addEventListener("touchend", () => isTouching = false);
+canvas.addEventListener("touchmove", e => {
+  if (e.touches.length === 1 && isRotating) {
+    const dx = e.touches[0].clientX - lastX;
+    scene.rotation.y += dx * 0.004;
+    lastX = e.touches[0].clientX;
+  }
 
-window.addEventListener("touchmove", e => {
-  if (!isTouching) return;
-  const dx = e.touches[0].clientX - lastX;
-  scene.rotation.y += dx * 0.005;
-  lastX = e.touches[0].clientX;
+  if (e.touches.length === 2) {
+    const dist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+
+    const zoom = (pinchStartDist - dist) * 0.01;
+    camera.position.z = THREE.MathUtils.clamp(
+      startCamZ + zoom,
+      10,
+      22
+    );
+  }
 });
 
-/* =========================
-   ANIMATION LOOP
-========================= */
+canvas.addEventListener("touchend", () => {
+  isRotating = false;
+});
 
+/* =============================
+   LOOP
+============================= */
 function animate() {
   requestAnimationFrame(animate);
 
-  npcGroup.children.forEach((npc, i) => {
-    npc.position.y = 0.25 + Math.sin(Date.now() * 0.002 + i) * 0.05;
+  npcs.children.forEach((n, i) => {
+    n.position.y = 0.28 + Math.sin(Date.now() * 0.002 + i) * 0.06;
   });
 
   aura.rotation.z += 0.01;
 
   renderer.render(scene, camera);
 }
-
 animate();
 
-/* =========================
+/* =============================
    RESIZE
-========================= */
-
+============================= */
 window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(innerWidth, innerHeight);
 });
 </script>
 
