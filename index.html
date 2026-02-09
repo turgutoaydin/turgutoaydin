@@ -1,220 +1,148 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Voxel Village – Sandbox Map</title>
+<title>My Village – Pixel Map</title>
 
 <style>
   html, body {
     margin: 0;
     padding: 0;
+    background: #6fcf97;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
     overflow: hidden;
-    background: #0b1e14;
     touch-action: none;
   }
-  canvas { display: block; }
+
+  canvas {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
 </style>
 </head>
 <body>
 
-<canvas id="c"></canvas>
-
-<script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+<canvas id="game" width="300" height="180"></canvas>
 
 <script>
-/* =========================
-   ZOOM KAPAT
-========================= */
-document.addEventListener('gesturestart', e => e.preventDefault());
-document.addEventListener('gesturechange', e => e.preventDefault());
-document.addEventListener('gestureend', e => e.preventDefault());
+/* ===============================
+   BASIC SETUP
+================================ */
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
-/* =========================
-   SCENE
-========================= */
-const canvas = document.getElementById("c");
-const scene = new THREE.Scene();
+const TILE = 20;
+const COLS = 15;
+const ROWS = 9;
 
-scene.background = new THREE.Color(0x0b1e14);
-
-/* =========================
-   CAMERA (ÜSTTEN ISOMETRIC)
-========================= */
-const camera = new THREE.PerspectiveCamera(
-  45,
-  innerWidth / innerHeight,
-  0.1,
-  200
-);
-
-camera.position.set(15, 20, 15);
-camera.lookAt(0, 0, 0);
-
-/* =========================
-   RENDERER
-========================= */
-const renderer = new THREE.WebGLRenderer({
-  canvas,
-  antialias: true
-});
-renderer.setSize(innerWidth, innerHeight);
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-
-/* =========================
-   LIGHT
-========================= */
-scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-
-const sun = new THREE.DirectionalLight(0xffffff, 0.9);
-sun.position.set(20, 30, 10);
-scene.add(sun);
-
-/* =========================
-   VOXEL MATERIALS
-========================= */
-const MAT_GRASS = new THREE.MeshStandardMaterial({ color: 0x2ecc71 });
-const MAT_DIRT  = new THREE.MeshStandardMaterial({ color: 0x8e5a2a });
-const MAT_WATER = new THREE.MeshStandardMaterial({ color: 0x3498db });
-const MAT_FLOWER = new THREE.MeshStandardMaterial({ color: 0xe84393 });
-
-/* =========================
-   VOXEL MAP (X,Y)
-========================= */
 /*
-0 = çimen
-1 = toprak
-2 = su
-3 = çiçek
+0 = grass
+1 = road
+2 = house
+3 = tree
+4 = farm
+5 = tent
+6 = campfire
 */
 
 const MAP = [
-  [0,0,0,0,0,0,0,0],
-  [0,0,3,0,0,3,0,0],
-  [0,0,0,1,1,0,0,0],
-  [0,3,0,1,1,0,3,0],
-  [0,0,0,0,0,0,0,0],
-  [0,0,2,2,2,2,0,0],
-  [0,0,2,2,2,2,0,0],
-  [0,0,0,0,0,0,0,0]
+  [0,0,0,0,3,0,0,0,0,3,0,0,0,0,0],
+  [0,2,1,1,1,1,1,0,1,1,1,1,2,0,0],
+  [0,0,0,0,3,0,0,0,0,3,0,0,0,0,0],
+  [0,0,4,0,1,1,1,1,1,0,5,0,0,0,0],
+  [0,0,0,0,0,0,1,0,0,0,6,0,0,0,0],
+  [0,2,1,1,1,0,1,0,0,2,1,1,1,2,0],
+  [0,0,0,0,3,0,1,0,0,0,0,0,0,0,0],
+  [0,2,1,1,1,1,1,1,1,1,1,1,2,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 ];
 
-/* =========================
-   VOXEL BUILD
-========================= */
-const tileSize = 1;
-const mapGroup = new THREE.Group();
+/* ===============================
+   DRAW FUNCTIONS
+================================ */
+function drawTile(x, y, type) {
+  const px = x * TILE;
+  const py = y * TILE;
 
-MAP.forEach((row, x) => {
-  row.forEach((cell, z) => {
-
-    let mat = MAT_GRASS;
-    let height = 0.5;
-
-    if (cell === 1) mat = MAT_DIRT;
-    if (cell === 2) mat = MAT_WATER;
-    if (cell === 3) mat = MAT_GRASS;
-
-    const cube = new THREE.Mesh(
-      new THREE.BoxGeometry(tileSize, height, tileSize),
-      mat
-    );
-
-    cube.position.set(
-      x * tileSize,
-      height / 2,
-      z * tileSize
-    );
-
-    cube.userData = { x, z, type: cell };
-
-    mapGroup.add(cube);
-
-    /* FLOWER */
-    if (cell === 3) {
-      const flower = new THREE.Mesh(
-        new THREE.BoxGeometry(0.2, 0.5, 0.2),
-        MAT_FLOWER
-      );
-      flower.position.set(
-        x * tileSize,
-        height + 0.25,
-        z * tileSize
-      );
-      mapGroup.add(flower);
-    }
-  });
-});
-
-mapGroup.position.x = -MAP.length / 2;
-mapGroup.position.z = -MAP[0].length / 2;
-
-scene.add(mapGroup);
-
-/* =========================
-   TOUCH CONTROL
-========================= */
-let lastX = 0;
-let rotating = false;
-
-let pinchStart = 0;
-let camStartY = camera.position.y;
-
-canvas.addEventListener("touchstart", e => {
-  if (e.touches.length === 1) {
-    rotating = true;
-    lastX = e.touches[0].clientX;
+  if (type === 0) { // grass
+    ctx.fillStyle = "#4caf50";
+    ctx.fillRect(px, py, TILE, TILE);
   }
 
-  if (e.touches.length === 2) {
-    pinchStart = Math.hypot(
-      e.touches[0].clientX - e.touches[1].clientX,
-      e.touches[0].clientY - e.touches[1].clientY
-    );
-    camStartY = camera.position.y;
-  }
-});
-
-canvas.addEventListener("touchmove", e => {
-  if (e.touches.length === 1 && rotating) {
-    const dx = e.touches[0].clientX - lastX;
-    mapGroup.rotation.y += dx * 0.004;
-    lastX = e.touches[0].clientX;
+  if (type === 1) { // road
+    ctx.fillStyle = "#e6d3a3";
+    ctx.fillRect(px, py, TILE, TILE);
   }
 
-  if (e.touches.length === 2) {
-    const dist = Math.hypot(
-      e.touches[0].clientX - e.touches[1].clientX,
-      e.touches[0].clientY - e.touches[1].clientY
-    );
-    const zoom = (pinchStart - dist) * 0.01;
-    camera.position.y = THREE.MathUtils.clamp(
-      camStartY + zoom,
-      8,
-      30
-    );
+  if (type === 2) { // house
+    ctx.fillStyle = "#8d6e63";
+    ctx.fillRect(px+2, py+6, TILE-4, TILE-6);
+    ctx.fillStyle = "#a1887f";
+    ctx.fillRect(px+1, py+2, TILE-2, 6);
   }
-});
 
-canvas.addEventListener("touchend", () => rotating = false);
+  if (type === 3) { // tree
+    ctx.fillStyle = "#2e7d32";
+    ctx.beginPath();
+    ctx.arc(px+10, py+10, 8, 0, Math.PI*2);
+    ctx.fill();
+  }
 
-/* =========================
-   ANIMATE
-========================= */
-function animate() {
-  requestAnimationFrame(animate);
-  renderer.render(scene, camera);
+  if (type === 4) { // farm
+    ctx.fillStyle = "#795548";
+    ctx.fillRect(px+2, py+2, TILE-4, TILE-4);
+    ctx.fillStyle = "#8bc34a";
+    ctx.fillRect(px+4, py+4, TILE-8, TILE-8);
+  }
+
+  if (type === 5) { // tent
+    ctx.fillStyle = "#ffb74d";
+    ctx.beginPath();
+    ctx.moveTo(px+10, py+3);
+    ctx.lineTo(px+2, py+16);
+    ctx.lineTo(px+18, py+16);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  if (type === 6) { // campfire
+    ctx.fillStyle = "#ff7043";
+    ctx.beginPath();
+    ctx.arc(px+10, py+12, 4, 0, Math.PI*2);
+    ctx.fill();
+  }
 }
-animate();
 
-/* =========================
-   RESIZE
-========================= */
-addEventListener("resize", () => {
-  camera.aspect = innerWidth / innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight);
+/* ===============================
+   RENDER MAP
+================================ */
+function render() {
+  for (let y = 0; y < ROWS; y++) {
+    for (let x = 0; x < COLS; x++) {
+      drawTile(x, y, MAP[y][x]);
+    }
+  }
+}
+
+render();
+
+/* ===============================
+   CLICK = TILE INFO
+================================ */
+canvas.addEventListener("click", e => {
+  const rect = canvas.getBoundingClientRect();
+  const x = Math.floor((e.clientX - rect.left) / TILE);
+  const y = Math.floor((e.clientY - rect.top) / TILE);
+
+  const tile = MAP[y][x];
+  console.log("Tile:", { x, y, type: tile });
 });
 </script>
 
