@@ -1,708 +1,108 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>My Village - Köyüm</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    :root {
-      --wood: #8B5A2B;
-      --gold: #FFD700;
-      --stone: #A0A0A0;
-      --bg: #1a2f27;
-      --accent: #d4a373;
-      --dark: #0a1710;
-      --success: #5cb85c;
-      --danger: #d9534f;
-      --info: #5bc0de;
-    }
-    
-    * { 
-      margin:0; 
-      padding:0; 
-      box-sizing:border-box; 
-    }
-    
-    html {
-      scroll-behavior: smooth;
-      height: 100%;
-    }
-    
-    body {
-      font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #1a2f27 0%, #0a1710 100%);
-      color: #f0e6d2;
-      min-height: 100vh;
-      background-image: radial-gradient(circle at 20% 30%, rgba(139, 90, 43, 0.15) 0%, transparent 20%),
-                        radial-gradient(circle at 80% 70%, rgba(212, 163, 115, 0.1) 0%, transparent 20%);
-      overflow-x: hidden;
-      perspective: 1000px;
-    }
-    
-    /* 3D efekti için container */
-    .scene {
-      transform-style: preserve-3d;
-      transition: transform 0.5s ease-out;
-    }
-    
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 10px 12px;
-    }
-    
-    /* Header ve oyun başlığı */
-    header {
-      background: rgba(10, 23, 16, 0.92);
-      backdrop-filter: blur(12px);
-      padding: 10px 0;
-      border-bottom: 2px solid var(--accent);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      transform: translateZ(20px);
-    }
-    
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 12px;
-    }
-    
-    .player-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 2px solid var(--gold);
-      background: linear-gradient(135deg, #3a2515, #5a3a1f);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-      transform: translateZ(30px);
-    }
-    
-    .player-text {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .player-text strong {
-      font-size: 0.95rem;
-      color: var(--gold);
-    }
-    
-    .level-badge {
-      background: linear-gradient(to right, var(--accent), #e0b866);
-      color: #111;
-      padding: 3px 10px;
-      border-radius: 15px;
-      font-weight: bold;
-      font-size: 0.85rem;
-      display: inline-block;
-      margin-top: 3px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    }
-    
-    .resources {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-    
-    .res {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(0,0,0,0.5);
-      padding: 5px 10px;
-      border-radius: 15px;
-      border: 1px solid rgba(255,215,0,0.2);
-      font-size: 0.85rem;
-      min-width: 60px;
-      justify-content: center;
-      transform: translateZ(10px);
-      transition: all 0.2s;
-    }
-    
-    .res:hover {
-      transform: translateZ(15px) scale(1.05);
-      border-color: rgba(255,215,0,0.5);
-    }
-    
-    .res i {
-      color: var(--gold);
-    }
-    
-    .village-name {
-      font-family: 'MedievalSharp', cursive;
-      font-size: 1.5rem;
-      color: var(--gold);
-      text-shadow: 1px 1px 3px #000, 0 0 10px rgba(255,215,0,0.3);
-      text-align: center;
-      margin: 12px 0 8px;
-      letter-spacing: 1px;
-      transform: translateZ(40px);
-    }
-    
-    /* Kart grid - mobil dikey odaklı */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 14px;
-      margin: 16px 0;
-    }
-    
-    /* Kartlar daha küçük ve 3D */
-    .card {
-      background: rgba(20, 35, 25, 0.95);
-      border: 1px solid var(--wood);
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.6);
-      transition: all 0.3s ease;
-      transform-style: preserve-3d;
-      position: relative;
-      transform: translateZ(0);
-      min-height: 280px;
-    }
-    
-    .card:hover {
-      transform: translateZ(15px) translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.7), 0 0 20px rgba(212, 163, 115, 0.3);
-      border-color: var(--accent);
-    }
-    
-    /* Kart başlıkları daha küçük */
-    .card-header {
-      background: linear-gradient(to right, #2a4436, #1a2f27);
-      padding: 10px;
-      text-align: center;
-      font-weight: bold;
-      border-bottom: 1px solid var(--accent);
-      font-size: 1rem;
-      letter-spacing: 0.5px;
-    }
-    
-    /* 3D görsel efektleri */
-    .building-preview {
-      height: 120px;
-      background: linear-gradient(135deg, #2a4436, #1a2f27);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    /* 3D şekiller ekleyelim */
-    .cube {
-      position: absolute;
-      width: 40px;
-      height: 40px;
-      background: var(--accent);
-      opacity: 0.7;
-      transform: rotate(15deg);
-      bottom: 20px;
-      left: 20px;
-      box-shadow: 0 0 10px rgba(212, 163, 115, 0.5);
-    }
-    
-    .pyramid {
-      position: absolute;
-      width: 0;
-      height: 0;
-      border-left: 25px solid transparent;
-      border-right: 25px solid transparent;
-      border-bottom: 40px solid var(--wood);
-      opacity: 0.7;
-      top: 20px;
-      right: 20px;
-    }
-    
-    .overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent 70%);
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      padding-bottom: 10px;
-      font-size: 1rem;
-      font-weight: bold;
-      text-shadow: 1px 1px 3px #000;
-      z-index: 2;
-    }
-    
-    /* Yazılar %50 küçültüldü */
-    .stats {
-      padding: 10px;
-      font-size: 0.75rem;
-    }
-    
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      margin: 5px 0;
-      padding-bottom: 5px;
-      border-bottom: 1px dashed rgba(255,255,255,0.1);
-    }
-    
-    .btn {
-      display: block;
-      background: linear-gradient(to right, var(--accent), #e0b866);
-      color: #111;
-      text-align: center;
-      padding: 8px;
-      margin: 10px;
-      border-radius: 6px;
-      font-weight: bold;
-      text-decoration: none;
-      transition: all 0.2s;
-      font-size: 0.85rem;
-      border: none;
-      cursor: pointer;
-      transform: translateZ(5px);
-    }
-    
-    .btn:hover {
-      background: linear-gradient(to right, #e0b866, #f5c97c);
-      transform: translateZ(10px) scale(1.03);
-      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-    }
-    
-    /* Oyun fikirleri bölümü */
-    .game-ideas {
-      margin-top: 25px;
-      padding: 15px;
-      background: rgba(10, 23, 16, 0.7);
-      border-radius: 10px;
-      border: 1px solid rgba(212, 163, 115, 0.3);
-    }
-    
-    .game-ideas h3 {
-      color: var(--gold);
-      margin-bottom: 10px;
-      font-size: 1.1rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .ideas-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-      margin-top: 10px;
-    }
-    
-    .idea-card {
-      background: rgba(30, 50, 40, 0.8);
-      padding: 12px;
-      border-radius: 8px;
-      border-left: 3px solid var(--accent);
-      transform: translateZ(5px);
-      transition: all 0.3s;
-    }
-    
-    .idea-card:hover {
-      transform: translateZ(10px);
-      background: rgba(40, 65, 55, 0.9);
-    }
-    
-    .idea-card h4 {
-      font-size: 0.9rem;
-      color: var(--accent);
-      margin-bottom: 5px;
-    }
-    
-    .idea-card p {
-      font-size: 0.75rem;
-      color: #d0c6b0;
-    }
-    
-    footer {
-      text-align: center;
-      padding: 15px;
-      color: #aaa;
-      font-size: 0.75rem;
-      margin-top: 25px;
-      border-top: 1px solid rgba(212, 163, 115, 0.2);
-    }
-    
-    /* Animasyonlar */
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) translateZ(0); }
-      50% { transform: translateY(-5px) translateZ(5px); }
-    }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-    
-    @keyframes rotate {
-      from { transform: rotateY(0deg); }
-      to { transform: rotateY(360deg); }
-    }
-    
-    .float-animation {
-      animation: float 3s ease-in-out infinite;
-    }
-    
-    .pulse-animation {
-      animation: pulse 2s infinite;
-    }
-    
-    /* Mobil optimizasyon */
-    @media (max-width: 768px) {
-      .top-bar {
-        flex-direction: column;
-        gap: 12px;
-      }
-      
-      .resources {
-        justify-content: center;
-        width: 100%;
-      }
-      
-      .grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-      
-      .card {
-        min-height: 250px;
-      }
-      
-      .building-preview {
-        height: 100px;
-      }
-      
-      .village-name {
-        font-size: 1.3rem;
-      }
-      
-      .ideas-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      /* Mobilde 3D efektleri azalt */
-      .scene {
-        transform: none !important;
-      }
-    }
-    
-    /* Parallax efekti için */
-    .parallax-layer {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-      z-index: -1;
-    }
-    
-    .layer-1 {
-      background: radial-gradient(circle at 30% 20%, rgba(139, 90, 43, 0.1) 0%, transparent 40%);
-      transform: translateZ(-100px) scale(2);
-    }
-    
-    .layer-2 {
-      background: radial-gradient(circle at 70% 80%, rgba(212, 163, 115, 0.08) 0%, transparent 40%);
-      transform: translateZ(-200px) scale(3);
-    }
-    
-    /* İlerleme çubukları */
-    .progress-bar {
-      height: 6px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 3px;
-      margin-top: 3px;
-      overflow: hidden;
-    }
-    
-    .progress {
-      height: 100%;
-      background: linear-gradient(to right, var(--accent), var(--gold));
-      border-radius: 3px;
-      width: 0%;
-      transition: width 1s ease-out;
-    }
-    
-    /* Kaydırma animasyonu */
-    .scroll-hint {
-      text-align: center;
-      margin-top: 10px;
-      color: var(--accent);
-      font-size: 0.8rem;
-      opacity: 0.7;
-    }
-    
-    .scroll-hint i {
-      animation: bounce 2s infinite;
-    }
-    
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-      40% {transform: translateY(-5px);}
-      60% {transform: translateY(-3px);}
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>My Village – Ultimate</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  body {
+    background: radial-gradient(circle at top, #1a3d2f, #08150f);
+  }
+
+  .card-3d {
+    transform-style: preserve-3d;
+    transition: all .3s ease;
+  }
+
+  .card-3d:active {
+    transform: scale(.96) rotateX(6deg);
+  }
+
+  .btn-3d {
+    box-shadow:
+      inset 0 -4px 0 rgba(0,0,0,.25),
+      0 6px 20px rgba(0,0,0,.4);
+  }
+
+  .btn-3d:active {
+    transform: translateY(3px);
+    box-shadow:
+      inset 0 -1px 0 rgba(0,0,0,.3);
+  }
+
+  .glass {
+    background: rgba(255,255,255,.08);
+    backdrop-filter: blur(12px);
+  }
+</style>
 </head>
-<body>
-  <div class="scene" id="scene">
-    <!-- Parallax katmanları -->
-    <div class="parallax-layer layer-1"></div>
-    <div class="parallax-layer layer-2"></div>
-    
-    <header>
-      <div class="container">
-        <div class="top-bar">
-          <div class="player-info">
-            <div class="avatar">
-              <i class="fas fa-crown"></i>
-            </div>
-            <div class="player-text">
-              <strong>Turgut Köyü</strong>
-              <span class="level-badge">Seviye 7 Lord</span>
-            </div>
-          </div>
 
-          <div class="resources">
-            <div class="res"><i class="fas fa-coins"></i> 12,450</div>
-            <div class="res"><i class="fas fa-tree"></i> 3,820</div>
-            <div class="res"><i class="fas fa-mountain"></i> 2,110</div>
-            <div class="res"><i class="fas fa-bread-slice"></i> 1,680</div>
-          </div>
-        </div>
-      </div>
-    </header>
+<body class="text-white h-screen overflow-hidden">
 
-    <div class="container">
-      <h1 class="village-name float-animation">My Village</h1>
-      
-      <p class="scroll-hint"><i class="fas fa-chevron-down"></i> Kaydır</p>
-
-      <div class="grid">
-        <!-- Köy Merkezi -->
-        <div class="card">
-          <div class="card-header">Köy Merkezi</div>
-          <div class="building-preview">
-            <div class="cube"></div>
-            <div class="pyramid"></div>
-            <div class="overlay">Merkez Binası Lv. 7</div>
-          </div>
-          <div class="stats">
-            <div class="stat-row"><span>Nüfus:</span><strong>248 / 450</strong></div>
-            <div class="progress-bar"><div class="progress" style="width:55%"></div></div>
-            
-            <div class="stat-row"><span>Mutluluk:</span><strong>82%</strong></div>
-            <div class="progress-bar"><div class="progress" style="width:82%"></div></div>
-            
-            <div class="stat-row"><span>Savunma:</span><strong>145</strong></div>
-            <div class="stat-row"><span>Üretim Hızı:</span><strong>+%18</strong></div>
-          </div>
-          <button class="btn pulse-animation">Köyü Yönet →</button>
-        </div>
-
-        <!-- Depolar & Üretim -->
-        <div class="card">
-          <div class="card-header">Depolar & Üretim</div>
-          <div class="building-preview">
-            <div class="cube" style="left:50px; background:var(--wood);"></div>
-            <div class="cube" style="left:100px; background:var(--stone);"></div>
-            <div class="overlay">Depo & Madenler</div>
-          </div>
-          <div class="stats">
-            <div class="stat-row"><span>Odun:</span><strong>3.820 / 8.000</strong></div>
-            <div class="progress-bar"><div class="progress" style="width:48%"></div></div>
-            
-            <div class="stat-row"><span>Taş:</span><strong>2.110 / 6.000</strong></div>
-            <div class="progress-bar"><div class="progress" style="width:35%"></div></div>
-            
-            <div class="stat-row"><span>Tahıl:</span><strong>1.680 / 5.000</strong></div>
-            <div class="progress-bar"><div class="progress" style="width:34%"></div></div>
-            
-            <div class="stat-row"><span>Demir:</span><strong>420 / 2.500</strong></div>
-            <div class="progress-bar"><div class="progress" style="width:17%"></div></div>
-          </div>
-          <button class="btn">Topla & Yükselt</button>
-        </div>
-
-        <!-- Görevler / Quest -->
-        <div class="card">
-          <div class="card-header">Güncel Görevler</div>
-          <div class="stats">
-            <p><strong>1.</strong> Yeni çiftlik inşa et (Ödül: 800 odun + 150 altın)</p>
-            <p><strong>2.</strong> 5 saat üretim topla (Ödül: 300 taş)</p>
-            <p><strong>3.</strong> Komşu köyden casusluk yap (Riskli!)</p>
-            <p><strong>4.</strong> Köy mutluluğunu %90'a çıkar</p>
-          </div>
-          <button class="btn">Görevlere Git →</button>
-        </div>
-
-        <!-- Ordu / Savunma -->
-        <div class="card">
-          <div class="card-header">Ordu & Savunma</div>
-          <div class="building-preview">
-            <div class="pyramid" style="border-bottom-color:var(--danger);"></div>
-            <div class="overlay">Savunma Kulesi Lv. 5</div>
-          </div>
-          <div class="stats">
-            <div class="stat-row"><span>Asker:</span><strong>42</strong></div>
-            <div class="stat-row"><span>Okçu:</span><strong>18</strong></div>
-            <div class="stat-row"><span>Atlı:</span><strong>0</strong></div>
-            <div class="stat-row"><span>Kalkan:</span><strong>145 → 180</strong></div>
-            <div class="progress-bar"><div class="progress" style="width:81%"></div></div>
-          </div>
-          <button class="btn">Asker Eğit</button>
-        </div>
-      </div>
-      
-      <!-- Oyun Fikirleri Bölümü -->
-      <div class="game-ideas">
-        <h3><i class="fas fa-lightbulb"></i> Oyun İçin Fikirler</h3>
-        <div class="ideas-grid">
-          <div class="idea-card">
-            <h4>Köy Turu Modu</h4>
-            <p>Oyuncular 3D olarak köyü dolaşabilir, vatandaşlarla konuşabilir ve yapıları yakından inceleyebilir.</p>
-          </div>
-          
-          <div class="idea-card">
-            <h4>Hava Durumu & Mevsimler</h4>
-            <p>Gerçek zamanlı hava durumu ve mevsim geçişleri ile üretim hızları ve kaynaklar etkilenebilir.</p>
-          </div>
-          
-          <div class="idea-card">
-            <h4>AR (Artırılmış Gerçeklik)</h4>
-            <p>Telefon kamerası ile gerçek dünyada köyünüzü kurun ve yönetin.</p>
-          </div>
-          
-          <div class="idea-card">
-            <h4>Klan Savaşları</h4>
-            <p>Büyük ölçekli klan savaşları ile devasa haritalarda stratejik savaşlar yapılabilir.</p>
-          </div>
-        </div>
-      </div>
+<!-- TOP BAR -->
+<div class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
+  <div class="flex justify-between items-center px-4 py-2">
+    <div>
+      <div class="text-xs opacity-70">Seviye 7</div>
+      <div class="font-bold text-yellow-400">Turgut Köyü</div>
     </div>
 
-    <footer>
-      My Village © 2026 – Turgut'un Köyü | 3D Mobil Oyun Demo
-    </footer>
+    <div class="flex gap-2 text-xs">
+      <div class="bg-black/40 px-2 py-1 rounded-full">🪙 12K</div>
+      <div class="bg-black/40 px-2 py-1 rounded-full">🌲 3.8K</div>
+      <div class="bg-black/40 px-2 py-1 rounded-full">🪨 2.1K</div>
+    </div>
+  </div>
+</div>
+
+<!-- WORLD -->
+<div class="pt-20 pb-28 px-4 space-y-4 overflow-y-auto h-full">
+
+  <!-- Village Center -->
+  <div class="card-3d bg-gradient-to-br from-emerald-700 to-emerald-900 rounded-2xl p-4">
+    <div class="flex justify-between items-center">
+      <div>
+        <div class="font-bold text-lg">🏰 Köy Merkezi</div>
+        <div class="text-xs opacity-70">Seviye 7</div>
+      </div>
+      <div class="text-yellow-300 font-bold">+18%</div>
+    </div>
+
+    <div class="mt-3 h-2 bg-black/30 rounded-full overflow-hidden">
+      <div class="h-full bg-gradient-to-r from-yellow-400 to-orange-500 w-[55%]"></div>
+    </div>
   </div>
 
-  <script>
-    // 3D fare hareketi efekti
-    document.addEventListener('mousemove', (e) => {
-      const scene = document.getElementById('scene');
-      const xAxis = (window.innerWidth / 2 - e.pageX) / 30;
-      const yAxis = (window.innerHeight / 2 - e.pageY) / 30;
-      
-      // Mobilde daha az hassas, masaüstünde daha fazla
-      const isMobile = window.innerWidth <= 768;
-      const sensitivity = isMobile ? 5 : 15;
-      
-      scene.style.transform = `rotateY(${xAxis / sensitivity}deg) rotateX(${yAxis / sensitivity}deg)`;
-    });
-    
-    // Mobil için dokunma hareketi
-    let touchStartX = 0;
-    let touchStartY = 0;
-    
-    document.addEventListener('touchstart', (e) => {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-    }, {passive: true});
-    
-    document.addEventListener('touchmove', (e) => {
-      if (window.innerWidth > 768) {
-        e.preventDefault();
-        const touchX = e.touches[0].clientX;
-        const touchY = e.touches[0].clientY;
-        
-        const xDiff = touchStartX - touchX;
-        const yDiff = touchStartY - touchY;
-        
-        const scene = document.getElementById('scene');
-        const xAxis = xDiff / 5;
-        const yAxis = yDiff / 5;
-        
-        scene.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-      }
-    }, {passive: false});
-    
-    // Kartlara hover efekti için ek JavaScript
-    document.querySelectorAll('.card').forEach(card => {
-      card.addEventListener('mouseenter', () => {
-        card.style.zIndex = '10';
-      });
-      
-      card.addEventListener('mouseleave', () => {
-        card.style.zIndex = '1';
-      });
-    });
-    
-    // İlerleme çubukları animasyonu
-    document.addEventListener('DOMContentLoaded', () => {
-      const progressBars = document.querySelectorAll('.progress');
-      progressBars.forEach(bar => {
-        const width = bar.style.width;
-        bar.style.width = '0%';
-        setTimeout(() => {
-          bar.style.width = width;
-        }, 300);
-      });
-    });
-    
-    // Kaynak animasyonu
-    const resources = document.querySelectorAll('.res');
-    resources.forEach(res => {
-      res.addEventListener('click', function() {
-        this.style.transform = 'translateZ(20px) scale(1.1)';
-        setTimeout(() => {
-          this.style.transform = 'translateZ(10px) scale(1)';
-        }, 300);
-      });
-    });
-    
-    // Buton tıklama efekti
-    document.querySelectorAll('.btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        this.style.transform = 'translateZ(5px) scale(0.95)';
-        setTimeout(() => {
-          this.style.transform = 'translateZ(10px) scale(1.03)';
-        }, 150);
-        
-        // Butona özel işlevler (demo amaçlı)
-        if (this.textContent.includes('Köyü Yönet')) {
-          alert('Köy yönetim ekranı açılıyor...');
-        } else if (this.textContent.includes('Topla')) {
-          alert('Kaynaklar toplanıyor...');
-        } else if (this.textContent.includes('Görevlere Git')) {
-          alert('Görevler ekranına yönlendiriliyorsunuz...');
-        } else if (this.textContent.includes('Asker Eğit')) {
-          alert('Asker eğitim ekranı açılıyor...');
-        }
-      });
-    });
-    
-    // Sayfa yüklendiğinde 3D efekti sıfırla
-    window.addEventListener('load', () => {
-      document.getElementById('scene').style.transform = 'rotateY(0deg) rotateX(0deg)';
-    });
-  </script>
+  <!-- Production -->
+  <div class="grid grid-cols-2 gap-3">
+    <div class="card-3d bg-gradient-to-br from-amber-600 to-orange-700 rounded-xl p-3">
+      🌾 Çiftlik<br><span class="text-xs opacity-70">Üretim +</span>
+    </div>
+    <div class="card-3d bg-gradient-to-br from-slate-600 to-slate-800 rounded-xl p-3">
+      ⛏ Maden<br><span class="text-xs opacity-70">Taş / Demir</span>
+    </div>
+  </div>
+
+  <!-- Army -->
+  <div class="card-3d bg-gradient-to-br from-red-700 to-red-900 rounded-2xl p-4">
+    <div class="font-bold">⚔️ Ordu</div>
+    <div class="text-xs opacity-70">Savunma 145 → 180</div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="fixed bottom-0 left-0 right-0 z-50 glass border-t border-white/10">
+  <div class="grid grid-cols-4 gap-2 px-3 py-2 text-xs text-center">
+    <button class="btn-3d bg-emerald-600 rounded-xl py-2">🏡 Köy</button>
+    <button class="btn-3d bg-amber-500 rounded-xl py-2">🏗 İnşa</button>
+    <button class="btn-3d bg-purple-600 rounded-xl py-2">📜 Görev</button>
+    <button class="btn-3d bg-cyan-600 rounded-xl py-2">⚔️ Ordu</button>
+  </div>
+</div>
+
 </body>
 </html>
