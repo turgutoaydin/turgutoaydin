@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Village - Köy Simülasyonu</title>
+    <title>My Village 3D - Köy Simülasyonu</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -16,8 +16,8 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to bottom, #87CEEB, #E0F7FF);
-            color: #333;
+            background: #000;
+            color: #fff;
             overflow: hidden;
             height: 100vh;
             display: flex;
@@ -33,19 +33,21 @@
             max-height: 700px;
             display: flex;
             flex-direction: column;
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(0, 10, 20, 0.8);
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 100, 255, 0.3);
             position: relative;
         }
         
         header {
-            background: linear-gradient(to right, #2E7D32, #4CAF50);
+            background: linear-gradient(to right, #1a237e, #283593);
             color: white;
             padding: 15px;
             text-align: center;
-            border-bottom: 3px solid #1B5E20;
+            border-bottom: 3px solid #0d47a1;
+            position: relative;
+            z-index: 100;
         }
         
         h1 {
@@ -61,7 +63,6 @@
         .game-area {
             flex: 1;
             position: relative;
-            background-color: #4CAF50; /* Yeşil harita rengi */
             overflow: hidden;
         }
         
@@ -72,16 +73,18 @@
         }
         
         .controls {
-            background-color: #f5f5f5;
+            background-color: rgba(10, 25, 47, 0.9);
             padding: 15px;
             display: flex;
             justify-content: space-around;
-            border-top: 2px solid #ddd;
+            border-top: 2px solid #1a237e;
+            position: relative;
+            z-index: 100;
         }
         
         .btn {
             padding: 12px 20px;
-            background: linear-gradient(to bottom, #4CAF50, #2E7D32);
+            background: linear-gradient(to bottom, #283593, #1a237e);
             color: white;
             border: none;
             border-radius: 50px;
@@ -91,14 +94,14 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
             transition: all 0.2s;
             min-width: 120px;
         }
         
         .btn:active {
             transform: translateY(3px);
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
         }
         
         .btn i {
@@ -109,9 +112,11 @@
             display: flex;
             justify-content: space-between;
             padding: 10px 15px;
-            background-color: #2E7D32;
+            background-color: rgba(13, 71, 161, 0.8);
             color: white;
             font-size: 0.9rem;
+            position: relative;
+            z-index: 100;
         }
         
         .stat-item {
@@ -130,7 +135,7 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: rgba(10, 25, 47, 0.95);
             border-radius: 15px;
             padding: 15px;
             display: none;
@@ -139,14 +144,15 @@
             gap: 10px;
             width: 90%;
             max-width: 350px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-            z-index: 10;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            border: 2px solid #3949ab;
         }
         
         .build-item {
             width: 70px;
             height: 70px;
-            background-color: #f0f0f0;
+            background-color: rgba(30, 60, 114, 0.8);
             border-radius: 10px;
             display: flex;
             flex-direction: column;
@@ -159,23 +165,25 @@
         
         .build-item:active {
             transform: scale(0.95);
-            background-color: #e0e0e0;
+            background-color: rgba(40, 80, 150, 0.8);
         }
         
         .build-item.selected {
-            border-color: #4CAF50;
-            background-color: #E8F5E9;
+            border-color: #00e5ff;
+            background-color: rgba(0, 229, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
         }
         
         .build-item i {
             font-size: 1.5rem;
-            color: #2E7D32;
+            color: #00e5ff;
             margin-bottom: 5px;
         }
         
         .build-item span {
             font-size: 0.7rem;
             text-align: center;
+            color: #bbdefb;
         }
         
         .close-menu {
@@ -185,26 +193,81 @@
             background: none;
             border: none;
             font-size: 1.2rem;
-            color: #666;
+            color: #bbdefb;
             cursor: pointer;
         }
         
-        .instructions {
+        .camera-controls {
             position: absolute;
             top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+        
+        .camera-btn {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(30, 60, 114, 0.8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #00e5ff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border: 2px solid #3949ab;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .camera-btn:active {
+            background-color: rgba(40, 80, 150, 0.8);
+        }
+        
+        .selection-info {
+            position: absolute;
+            bottom: 80px;
             left: 10px;
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(10, 25, 47, 0.9);
             padding: 10px;
             border-radius: 10px;
             font-size: 0.8rem;
             max-width: 200px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-            z-index: 5;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            border: 1px solid #3949ab;
+            display: none;
         }
         
-        .instructions h3 {
-            color: #2E7D32;
+        .selection-info h3 {
+            color: #00e5ff;
             margin-bottom: 5px;
+        }
+        
+        .grid-info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(10, 25, 47, 0.9);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            max-width: 200px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            border: 1px solid #3949ab;
+        }
+        
+        .grid-info h3 {
+            color: #00e5ff;
+            margin-bottom: 5px;
+        }
+        
+        .coords {
+            display: flex;
+            gap: 10px;
         }
         
         @media (max-width: 400px) {
@@ -217,14 +280,19 @@
                 min-width: 100px;
                 padding: 10px 15px;
             }
+            
+            .camera-controls {
+                top: 5px;
+                right: 5px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>My Village</h1>
-            <div class="subtitle">Köyünü İnşa Et ve Yönet</div>
+            <h1>My Village 3D</h1>
+            <div class="subtitle">Evrende Yüzen Köy Adası</div>
         </header>
         
         <div class="stats">
@@ -233,21 +301,51 @@
                 <div class="stat-value" id="population">50</div>
             </div>
             <div class="stat-item">
-                <div class="stat-label">Para</div>
-                <div class="stat-value" id="money">2500 <i class="fas fa-coins"></i></div>
+                <div class="stat-label">Kaynak</div>
+                <div class="stat-value" id="money">5000 <i class="fas fa-coins"></i></div>
             </div>
             <div class="stat-item">
-                <div class="stat-label">Mutluluk</div>
-                <div class="stat-value" id="happiness">75%</div>
+                <div class="stat-label">Enerji</div>
+                <div class="stat-value" id="energy">100%</div>
             </div>
         </div>
         
         <div class="game-area">
-            <div class="instructions">
-                <h3>Nasıl Oynanır?</h3>
-                <p>• Binaları yerleştirmek için "Yap" butonuna bas</p>
-                <p>• Bir bina seç ve haritaya tıkla</p>
-                <p>• Köyünü genişlet, geliştir</p>
+            <div class="grid-info">
+                <h3>Köy Haritası</h3>
+                <p>Boyut: 20x20 grid</p>
+                <div class="coords">
+                    <div>X: <span id="coordX">0</span></div>
+                    <div>Z: <span id="coordZ">0</span></div>
+                </div>
+            </div>
+            
+            <div class="camera-controls">
+                <div class="camera-btn" id="cameraUp">
+                    <i class="fas fa-arrow-up"></i>
+                </div>
+                <div class="camera-btn" id="cameraLeft">
+                    <i class="fas fa-arrow-left"></i>
+                </div>
+                <div class="camera-btn" id="cameraReset">
+                    <i class="fas fa-crosshairs"></i>
+                </div>
+                <div class="camera-btn" id="cameraRight">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="camera-btn" id="cameraDown">
+                    <i class="fas fa-arrow-down"></i>
+                </div>
+            </div>
+            
+            <div class="selection-info" id="selectionInfo">
+                <h3 id="selectedTitle">Seçili Bina</h3>
+                <p>Tip: <span id="selectedType">-</span></p>
+                <p>Konum: <span id="selectedPos">-</span></p>
+                <p>Seviye: <span id="selectedLevel">-</span></p>
+                <button class="btn" id="moveBtn" style="margin-top: 8px; padding: 5px 10px; font-size: 0.8rem; min-width: auto;">
+                    <i class="fas fa-arrows-alt"></i> Taşı
+                </button>
             </div>
             
             <canvas id="gameCanvas"></canvas>
@@ -256,7 +354,7 @@
                 <button class="close-menu" id="closeMenu"><i class="fas fa-times"></i></button>
                 <div class="build-item" data-building="townhall">
                     <i class="fas fa-landmark"></i>
-                    <span>Belediye</span>
+                    <span>Yönetim</span>
                 </div>
                 <div class="build-item" data-building="house">
                     <i class="fas fa-home"></i>
@@ -266,27 +364,27 @@
                     <i class="fas fa-tractor"></i>
                     <span>Çiftlik</span>
                 </div>
-                <div class="build-item" data-building="shop">
-                    <i class="fas fa-store"></i>
-                    <span>Dükkan</span>
+                <div class="build-item" data-building="factory">
+                    <i class="fas fa-industry"></i>
+                    <span>Fabrika</span>
                 </div>
-                <div class="build-item" data-building="park">
-                    <i class="fas fa-tree"></i>
-                    <span>Park</span>
+                <div class="build-item" data-building="power">
+                    <i class="fas fa-bolt"></i>
+                    <span>Enerji</span>
                 </div>
-                <div class="build-item" data-building="road">
-                    <i class="fas fa-road"></i>
-                    <span>Yol</span>
+                <div class="build-item" data-building="lab">
+                    <i class="fas fa-flask"></i>
+                    <span>Laboratuvar</span>
                 </div>
             </div>
         </div>
         
         <div class="controls">
             <button class="btn" id="buildBtn">
-                <i class="fas fa-hammer"></i> Yap
+                <i class="fas fa-plus-circle"></i> İnşa
             </button>
-            <button class="btn" id="upgradeBtn">
-                <i class="fas fa-arrow-up"></i> Geliştir
+            <button class="btn" id="selectBtn">
+                <i class="fas fa-mouse-pointer"></i> Seç
             </button>
             <button class="btn" id="destroyBtn">
                 <i class="fas fa-trash"></i> Yık
@@ -295,33 +393,51 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
     <script>
         // Oyun değişkenleri
         let selectedBuilding = null;
         let buildings = [];
-        let money = 2500;
+        let grid = []; // 20x20 grid
+        let money = 5000;
         let population = 50;
-        let happiness = 75;
+        let energy = 100;
+        let selectionMode = 'build'; // 'build', 'select', 'destroy', 'move'
+        let selectedObject = null;
+        let moveObject = null;
         
         // DOM elementleri
         const gameCanvas = document.getElementById('gameCanvas');
         const buildBtn = document.getElementById('buildBtn');
-        const upgradeBtn = document.getElementById('upgradeBtn');
+        const selectBtn = document.getElementById('selectBtn');
         const destroyBtn = document.getElementById('destroyBtn');
         const buildMenu = document.getElementById('buildMenu');
         const closeMenu = document.getElementById('closeMenu');
         const buildItems = document.querySelectorAll('.build-item');
         const populationEl = document.getElementById('population');
         const moneyEl = document.getElementById('money');
-        const happinessEl = document.getElementById('happiness');
+        const energyEl = document.getElementById('energy');
+        const selectionInfo = document.getElementById('selectionInfo');
+        const selectedTitle = document.getElementById('selectedTitle');
+        const selectedType = document.getElementById('selectedType');
+        const selectedPos = document.getElementById('selectedPos');
+        const selectedLevel = document.getElementById('selectedLevel');
+        const moveBtn = document.getElementById('moveBtn');
+        const cameraUp = document.getElementById('cameraUp');
+        const cameraDown = document.getElementById('cameraDown');
+        const cameraLeft = document.getElementById('cameraLeft');
+        const cameraRight = document.getElementById('cameraRight');
+        const cameraReset = document.getElementById('cameraReset');
+        const coordX = document.getElementById('coordX');
+        const coordZ = document.getElementById('coordZ');
         
         // Three.js scene setup
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x4CAF50); // Yeşil harita rengi
+        scene.background = new THREE.Color(0x000814); // Koyu uzay rengi
         
-        // Kamera ayarları - mobil dikey için optimize
-        const camera = new THREE.PerspectiveCamera(75, 400/180, 0.1, 1000);
-        camera.position.set(0, 10, 15);
+        // Kamera ayarları
+        const camera = new THREE.PerspectiveCamera(60, 400/180, 0.1, 1000);
+        camera.position.set(15, 20, 25);
         camera.lookAt(0, 0, 0);
         
         // Renderer
@@ -331,128 +447,338 @@
         });
         renderer.setSize(400, 180);
         renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         
-        // Işıklandırma
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        // OrbitControls (kamera kontrolü)
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.minDistance = 10;
+        controls.maxDistance = 50;
+        controls.maxPolarAngle = Math.PI / 2;
+        
+        // Işıklandırma - Güneş
+        const sunLight = new THREE.DirectionalLight(0xffeedd, 1.5);
+        sunLight.position.set(30, 50, 30);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 2048;
+        sunLight.shadow.mapSize.height = 2048;
+        scene.add(sunLight);
+        
+        // Ambient light
+        const ambientLight = new THREE.AmbientLight(0x333366, 0.3);
         scene.add(ambientLight);
         
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(10, 20, 5);
-        scene.add(directionalLight);
-        
-        // Harita oluşturma (400x180 yeşil harita)
-        function createMap() {
-            // Zemin - yeşil renkte harita
-            const groundGeometry = new THREE.PlaneGeometry(40, 18);
-            const groundMaterial = new THREE.MeshLambertMaterial({ 
-                color: 0x4CAF50,
-                side: THREE.DoubleSide
-            });
-            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-            ground.rotation.x = -Math.PI / 2;
-            ground.position.y = -0.5;
-            scene.add(ground);
+        // Uzay efekti - yıldızlar
+        function createStars() {
+            const starGeometry = new THREE.BufferGeometry();
+            const starCount = 5000;
+            const positions = new Float32Array(starCount * 3);
             
-            // Zemin detayları - çim
-            for (let i = 0; i < 50; i++) {
-                const grassGeometry = new THREE.ConeGeometry(0.05, 0.2, 3);
-                const grassMaterial = new THREE.MeshLambertMaterial({ color: 0x2E7D32 });
-                const grass = new THREE.Mesh(grassGeometry, grassMaterial);
-                grass.position.set(
-                    (Math.random() - 0.5) * 38,
-                    0,
-                    (Math.random() - 0.5) * 16
-                );
-                scene.add(grass);
+            for (let i = 0; i < starCount * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 2000;
+                positions[i+1] = (Math.random() - 0.5) * 2000;
+                positions[i+2] = (Math.random() - 0.5) * 2000;
             }
             
-            // Başlangıç binaları
-            createBuilding('townhall', -5, 0, 0);
-            createBuilding('house', -2, 0, 3);
-            createBuilding('house', -2, 0, -3);
-            createBuilding('farm', 3, 0, 4);
-            createBuilding('shop', 3, 0, -4);
+            starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            
+            const starMaterial = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 0.7,
+                transparent: true
+            });
+            
+            const stars = new THREE.Points(starGeometry, starMaterial);
+            scene.add(stars);
+        }
+        
+        // Köy platformu (evrende yüzen ada)
+        function createVillagePlatform() {
+            // Ana platform
+            const platformGeometry = new THREE.CircleGeometry(15, 32);
+            const platformMaterial = new THREE.MeshLambertMaterial({ 
+                color: 0x2E7D32,
+                side: THREE.DoubleSide
+            });
+            const platform = new THREE.Mesh(platformGeometry, platformMaterial);
+            platform.rotation.x = -Math.PI / 2;
+            platform.position.y = -0.5;
+            platform.receiveShadow = true;
+            scene.add(platform);
+            
+            // Platform kenarı
+            const edgeGeometry = new THREE.CylinderGeometry(15, 15, 1, 32, 1, true);
+            const edgeMaterial = new THREE.MeshLambertMaterial({ 
+                color: 0x1B5E20,
+                side: THREE.DoubleSide
+            });
+            const edge = new THREE.Mesh(edgeGeometry, edgeMaterial);
+            edge.position.y = -1;
+            edge.receiveShadow = true;
+            scene.add(edge);
+            
+            // Grid oluştur
+            const gridSize = 20;
+            const gridSpacing = 1.4;
+            const gridOffset = (gridSize * gridSpacing) / 2 - gridSpacing / 2;
+            
+            for (let i = 0; i < gridSize; i++) {
+                grid[i] = [];
+                for (let j = 0; j < gridSize; j++) {
+                    grid[i][j] = null;
+                    
+                    // Grid çizgileri
+                    if (i === 0 || j === 0 || i === gridSize-1 || j === gridSize-1) {
+                        const lineGeometry = new THREE.BoxGeometry(gridSpacing, 0.1, gridSpacing);
+                        const lineMaterial = new THREE.MeshBasicMaterial({ 
+                            color: 0x00e5ff,
+                            transparent: true,
+                            opacity: 0.3
+                        });
+                        const line = new THREE.Mesh(lineGeometry, lineMaterial);
+                        line.position.set(
+                            i * gridSpacing - gridOffset,
+                            0.01,
+                            j * gridSpacing - gridOffset
+                        );
+                        line.userData = { gridX: i, gridZ: j, type: 'grid' };
+                        scene.add(line);
+                    }
+                }
+            }
+            
+            return { platform, gridSize, gridSpacing, gridOffset };
         }
         
         // Bina oluşturma
-        function createBuilding(type, x, y, z) {
-            let geometry, material, building;
-            let color;
+        function createBuilding(type, gridX, gridZ) {
+            const buildingData = {
+                'townhall': { color: 0x8B4513, size: 2, height: 3, cost: 1000 },
+                'house': { color: 0xFFA500, size: 1, height: 1.5, cost: 300 },
+                'farm': { color: 0xCD853F, size: 1.5, height: 1, cost: 500 },
+                'factory': { color: 0x4682B4, size: 2, height: 2.5, cost: 800 },
+                'power': { color: 0xFFD700, size: 1.5, height: 2, cost: 700 },
+                'lab': { color: 0x9C27B0, size: 1.5, height: 2, cost: 900 }
+            };
             
-            switch(type) {
-                case 'townhall':
-                    geometry = new THREE.BoxGeometry(3, 2, 2);
-                    color = 0x8B4513; // Kahverengi
-                    break;
-                case 'house':
-                    geometry = new THREE.BoxGeometry(1.5, 1.5, 1.5);
-                    color = 0xFFA500; // Turuncu
-                    break;
-                case 'farm':
-                    geometry = new THREE.BoxGeometry(2, 1, 2);
-                    color = 0xCD853F; // Açık kahverengi
-                    break;
-                case 'shop':
-                    geometry = new THREE.BoxGeometry(2, 1.8, 1.5);
-                    color = 0x4682B4; // Çelik mavi
-                    break;
-                case 'park':
-                    geometry = new THREE.CylinderGeometry(1, 1, 0.2, 8);
-                    color = 0x32CD32; // Açık yeşil
-                    break;
-                case 'road':
-                    geometry = new THREE.BoxGeometry(3, 0.1, 1);
-                    color = 0x696969; // Gri
-                    break;
-                default:
-                    geometry = new THREE.BoxGeometry(1, 1, 1);
-                    color = 0x808080;
+            const data = buildingData[type];
+            if (!data) return null;
+            
+            const { gridSpacing, gridOffset } = villageData;
+            
+            // Grid konumunu hesapla
+            const x = gridX * gridSpacing - gridOffset;
+            const z = gridZ * gridSpacing - gridOffset;
+            
+            // Grid kontrolü
+            if (gridX < 0 || gridX >= villageData.gridSize || gridZ < 0 || gridZ >= villageData.gridSize) {
+                console.log('Grid dışına çıkamazsınız!');
+                return null;
             }
             
-            material = new THREE.MeshLambertMaterial({ color: color });
-            building = new THREE.Mesh(geometry, material);
-            building.position.set(x, y, z);
-            building.userData = { type: type };
+            if (grid[gridX][gridZ] !== null) {
+                console.log('Bu grid hücresi dolu!');
+                return null;
+            }
+            
+            // Bina geometrisi
+            const geometry = new THREE.BoxGeometry(data.size, data.height, data.size);
+            const material = new THREE.MeshLambertMaterial({ color: data.color });
+            const building = new THREE.Mesh(geometry, material);
+            
+            building.position.set(x, data.height/2, z);
+            building.castShadow = true;
+            building.receiveShadow = true;
+            
+            // Bina bilgilerini sakla
+            building.userData = { 
+                type: type, 
+                gridX: gridX, 
+                gridZ: gridZ,
+                level: 1,
+                color: data.color
+            };
+            
+            // Grid'i işaretle
+            grid[gridX][gridZ] = building;
             
             scene.add(building);
             buildings.push(building);
             
             // İstatistikleri güncelle
             if (type === 'house') population += 5;
+            if (type === 'power') energy += 10;
             updateStats();
             
             return building;
+        }
+        
+        // Bina seçme
+        function selectBuilding(building) {
+            if (selectedObject) {
+                // Önceki seçimi temizle
+                selectedObject.material.color.setHex(selectedObject.userData.color);
+            }
+            
+            selectedObject = building;
+            if (building) {
+                // Seçili binayı vurgula
+                building.material.color.setHex(0x00ff00);
+                
+                // Seçim bilgilerini göster
+                selectedTitle.textContent = building.userData.type === 'townhall' ? 'Köy Yönetim Binası' :
+                                          building.userData.type === 'house' ? 'Konut' :
+                                          building.userData.type === 'farm' ? 'Tarım Çiftliği' :
+                                          building.userData.type === 'factory' ? 'Üretim Fabrikası' :
+                                          building.userData.type === 'power' ? 'Enerji Santrali' : 'Araştırma Laboratuvarı';
+                
+                selectedType.textContent = building.userData.type;
+                selectedPos.textContent = `X: ${building.userData.gridX}, Z: ${building.userData.gridZ}`;
+                selectedLevel.textContent = building.userData.level;
+                selectionInfo.style.display = 'block';
+            } else {
+                selectionInfo.style.display = 'none';
+            }
+        }
+        
+        // Bina taşıma
+        function moveBuilding(building, newGridX, newGridZ) {
+            if (!building) return false;
+            
+            const { gridSpacing, gridOffset } = villageData;
+            
+            // Grid kontrolü
+            if (newGridX < 0 || newGridX >= villageData.gridSize || newGridZ < 0 || newGridZ >= villageData.gridSize) {
+                console.log('Grid dışına çıkamazsınız!');
+                return false;
+            }
+            
+            if (grid[newGridX][newGridZ] !== null && grid[newGridX][newGridZ] !== building) {
+                console.log('Bu grid hücresi dolu!');
+                return false;
+            }
+            
+            // Eski grid hücresini boşalt
+            grid[building.userData.gridX][building.userData.gridZ] = null;
+            
+            // Yeni konumu hesapla ve güncelle
+            const x = newGridX * gridSpacing - gridOffset;
+            const z = newGridZ * gridSpacing - gridOffset;
+            
+            building.position.set(x, building.position.y, z);
+            building.userData.gridX = newGridX;
+            building.userData.gridZ = newGridZ;
+            
+            // Yeni grid hücresini işaretle
+            grid[newGridX][newGridZ] = building;
+            
+            selectedPos.textContent = `X: ${newGridX}, Z: ${newGridZ}`;
+            
+            return true;
+        }
+        
+        // Bina yıkma
+        function destroyBuilding(building) {
+            if (!building || building.userData.type === 'townhall') {
+                alert('Köy yönetim binasını yıkamazsınız!');
+                return;
+            }
+            
+            // Grid'den kaldır
+            grid[building.userData.gridX][building.userData.gridZ] = null;
+            
+            // Sahneden kaldır
+            scene.remove(building);
+            
+            // Listeden kaldır
+            const index = buildings.indexOf(building);
+            if (index > -1) buildings.splice(index, 1);
+            
+            // İstatistikleri güncelle
+            if (building.userData.type === 'house') population = Math.max(10, population - 5);
+            if (building.userData.type === 'power') energy = Math.max(20, energy - 10);
+            
+            // Seçimi temizle
+            selectBuilding(null);
+            
+            updateStats();
         }
         
         // İstatistikleri güncelle
         function updateStats() {
             populationEl.textContent = population;
             moneyEl.innerHTML = `${money} <i class="fas fa-coins"></i>`;
-            happinessEl.textContent = `${happiness}%`;
+            energyEl.textContent = `${Math.min(100, energy)}%`;
         }
         
-        // Bina yerleştirme
-        function placeBuilding(type) {
-            // Basit bir yerleştirme mantığı - rastgele konum
-            const x = (Math.random() - 0.5) * 30;
-            const z = (Math.random() - 0.5) * 12;
+        // Raycaster ile tıklanan nesneyi bul
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        
+        function onCanvasClick(event) {
+            // Mouse/Touch pozisyonunu normalize et (-1 ile +1 arası)
+            const rect = gameCanvas.getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
             
-            // Bina maliyetleri
-            const costs = {
-                'townhall': 1000,
-                'house': 300,
-                'farm': 500,
-                'shop': 600,
-                'park': 200,
-                'road': 100
-            };
+            // Raycaster'ı güncelle
+            raycaster.setFromCamera(mouse, camera);
             
-            if (money >= costs[type]) {
-                createBuilding(type, x, 0, z);
-                money -= costs[type];
-                updateStats();
-            } else {
-                alert('Yeterli paranız yok!');
+            // Tıklanan nesneleri bul
+            const intersects = raycaster.intersectObjects(scene.children, true);
+            
+            if (intersects.length > 0) {
+                const clickedObject = intersects[0].object;
+                
+                // Grid hücresi tıklandı mı?
+                if (clickedObject.userData.type === 'grid' && selectionMode === 'build' && selectedBuilding) {
+                    const gridX = clickedObject.userData.gridX;
+                    const gridZ = clickedObject.userData.gridZ;
+                    
+                    // Bina maliyet kontrolü
+                    const costs = {
+                        'townhall': 1000,
+                        'house': 300,
+                        'farm': 500,
+                        'factory': 800,
+                        'power': 700,
+                        'lab': 900
+                    };
+                    
+                    if (money >= costs[selectedBuilding]) {
+                        const building = createBuilding(selectedBuilding, gridX, gridZ);
+                        if (building) {
+                            money -= costs[selectedBuilding];
+                            updateStats();
+                            
+                            // Grid koordinatlarını güncelle
+                            coordX.textContent = gridX;
+                            coordZ.textContent = gridZ;
+                        }
+                    } else {
+                        alert('Yeterli kaynağınız yok!');
+                    }
+                }
+                // Bina tıklandı mı?
+                else if (clickedObject.userData.type && clickedObject.userData.type !== 'grid') {
+                    if (selectionMode === 'select') {
+                        selectBuilding(clickedObject);
+                    } else if (selectionMode === 'destroy') {
+                        destroyBuilding(clickedObject);
+                    } else if (selectionMode === 'move' && moveObject) {
+                        if (clickedObject.userData.type === 'grid') {
+                            const gridX = clickedObject.userData.gridX;
+                            const gridZ = clickedObject.userData.gridZ;
+                            if (moveBuilding(moveObject, gridX, gridZ)) {
+                                moveObject = null;
+                                selectionMode = 'select';
+                                selectBtn.innerHTML = '<i class="fas fa-mouse-pointer"></i> Seç';
+                            }
+                        }
+                    }
+                }
             }
         }
         
@@ -460,19 +786,49 @@
         function animate() {
             requestAnimationFrame(animate);
             
-            // Binaları hafifçe döndür (canlılık efekti)
+            // Köy platformunu yavaşça döndür (uzayda yüzüyormuş hissi)
+            if (villageData && villageData.platform) {
+                villageData.platform.rotation.z += 0.0005;
+            }
+            
+            // Binaları hafifçe sallandır (uzayda yüzüyormuş hissi)
             buildings.forEach(building => {
-                if (building.userData.type !== 'road') {
-                    building.rotation.y += 0.005;
+                if (building.userData.type !== 'townhall') {
+                    building.position.y = building.geometry.parameters.height/2 + 
+                                        Math.sin(Date.now() * 0.001 + building.userData.gridX) * 0.05;
                 }
             });
             
+            controls.update();
             renderer.render(scene, camera);
         }
         
         // Event listeners
         buildBtn.addEventListener('click', () => {
             buildMenu.style.display = 'flex';
+            selectionMode = 'build';
+            selectBuilding(null);
+            selectBtn.innerHTML = '<i class="fas fa-mouse-pointer"></i> Seç';
+        });
+        
+        selectBtn.addEventListener('click', () => {
+            if (selectionMode === 'move') {
+                selectionMode = 'select';
+                selectBtn.innerHTML = '<i class="fas fa-mouse-pointer"></i> Seç';
+                moveObject = null;
+            } else {
+                selectionMode = 'select';
+                buildMenu.style.display = 'none';
+                selectBtn.innerHTML = '<i class="fas fa-mouse-pointer"></i> Seç';
+            }
+        });
+        
+        destroyBtn.addEventListener('click', () => {
+            selectionMode = 'destroy';
+            buildMenu.style.display = 'none';
+            selectBuilding(null);
+            selectBtn.innerHTML = '<i class="fas fa-mouse-pointer"></i> Seç';
+            alert('Yıkmak için bir binaya tıklayın');
         });
         
         closeMenu.addEventListener('click', () => {
@@ -494,93 +850,54 @@
                 // Seçili olanı işaretle
                 item.classList.add('selected');
                 selectedBuilding = item.getAttribute('data-building');
-                
-                // Bina yerleştir
-                if (selectedBuilding) {
-                    placeBuilding(selectedBuilding);
-                    
-                    // Menüyü kapat ve seçimi temizle
-                    setTimeout(() => {
-                        buildMenu.style.display = 'none';
-                        item.classList.remove('selected');
-                        selectedBuilding = null;
-                    }, 500);
-                }
+                alert(`Şimdi bir grid hücresine tıklayarak ${selectedBuilding} inşa edin`);
             });
         });
         
-        upgradeBtn.addEventListener('click', () => {
-            if (money >= 500) {
-                // Mutluluğu arttır
-                happiness = Math.min(100, happiness + 10);
-                money -= 500;
-                updateStats();
-                alert('Köy geliştirildi! Mutluluk arttı.');
-            } else {
-                alert('Geliştirme için yeterli paranız yok!');
+        moveBtn.addEventListener('click', () => {
+            if (selectedObject) {
+                selectionMode = 'move';
+                moveObject = selectedObject;
+                selectBtn.innerHTML = '<i class="fas fa-times"></i> İptal';
+                alert('Şimdi binayı taşımak için bir grid hücresine tıklayın');
             }
         });
         
-        destroyBtn.addEventListener('click', () => {
-            if (buildings.length > 1 && money >= 100) {
-                // Son binayı kaldır (belediye binası hariç)
-                const lastBuilding = buildings.pop();
-                if (lastBuilding.userData.type !== 'townhall') {
-                    scene.remove(lastBuilding);
-                    money -= 100;
-                    
-                    // Eğer evse nüfusu düşür
-                    if (lastBuilding.userData.type === 'house') {
-                        population = Math.max(10, population - 5);
-                    }
-                    
-                    updateStats();
-                } else {
-                    // Belediye binasını geri ekle
-                    buildings.push(lastBuilding);
-                    alert('Belediye binasını yıkamazsınız!');
-                }
-            } else {
-                alert('Yıkım için yeterli paranız yok veya yıkılacak bina yok!');
-            }
+        // Kamera kontrolleri
+        cameraUp.addEventListener('click', () => {
+            camera.position.y += 5;
+            controls.update();
         });
         
-        // Dokunmatik kontroller
-        let touchStartX = 0;
-        let touchStartY = 0;
+        cameraDown.addEventListener('click', () => {
+            camera.position.y = Math.max(10, camera.position.y - 5);
+            controls.update();
+        });
         
-        gameCanvas.addEventListener('touchstart', (e) => {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            e.preventDefault();
-        }, { passive: false });
+        cameraLeft.addEventListener('click', () => {
+            camera.position.x -= 5;
+            controls.update();
+        });
         
+        cameraRight.addEventListener('click', () => {
+            camera.position.x += 5;
+            controls.update();
+        });
+        
+        cameraReset.addEventListener('click', () => {
+            camera.position.set(15, 20, 25);
+            camera.lookAt(0, 0, 0);
+            controls.update();
+        });
+        
+        // Tıklama eventi
+        gameCanvas.addEventListener('click', onCanvasClick);
+        
+        // Touch event için
         gameCanvas.addEventListener('touchend', (e) => {
-            const touchEndX = e.changedTouches[0].clientX;
-            const touchEndY = e.changedTouches[0].clientY;
-            
-            // Basit dokunma algılama (kaydırma yerine tıklama)
-            const diffX = Math.abs(touchEndX - touchStartX);
-            const diffY = Math.abs(touchEndY - touchStartY);
-            
-            if (diffX < 10 && diffY < 10) {
-                // Tıklama algılandı
-                if (selectedBuilding) {
-                    // Rastgele bir yere bina yerleştir
-                    placeBuilding(selectedBuilding);
-                }
-            }
-            
             e.preventDefault();
+            onCanvasClick(e.changedTouches[0]);
         }, { passive: false });
-        
-        // Fare tıklaması için
-        gameCanvas.addEventListener('click', () => {
-            if (selectedBuilding) {
-                // Rastgele bir yere bina yerleştir
-                placeBuilding(selectedBuilding);
-            }
-        });
         
         // Pencere boyutu değiştiğinde
         window.addEventListener('resize', () => {
@@ -594,12 +911,39 @@
         });
         
         // Oyunu başlat
-        createMap();
+        createStars();
+        const villageData = createVillagePlatform();
+        
+        // Başlangıç binaları
+        createBuilding('townhall', 10, 10);
+        createBuilding('house', 8, 10);
+        createBuilding('house', 12, 10);
+        createBuilding('farm', 10, 8);
+        createBuilding('power', 10, 12);
+        
         animate();
         updateStats();
         
         // İlk yükleme için boyut ayarı
         window.dispatchEvent(new Event('resize'));
+        
+        // Fare hareketi ile grid koordinatlarını güncelle
+        gameCanvas.addEventListener('mousemove', (event) => {
+            const rect = gameCanvas.getBoundingClientRect();
+            const mouseX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            const mouseY = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+            
+            raycaster.setFromCamera(new THREE.Vector2(mouseX, mouseY), camera);
+            const intersects = raycaster.intersectObjects(scene.children, true);
+            
+            if (intersects.length > 0) {
+                const object = intersects[0].object;
+                if (object.userData.type === 'grid') {
+                    coordX.textContent = object.userData.gridX;
+                    coordZ.textContent = object.userData.gridZ;
+                }
+            }
+        });
     </script>
 </body>
 </html>
