@@ -1,108 +1,243 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<title>My Village – Ultimate</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>Köy Merkezi – 3D Demo</title>
 
 <style>
   body {
+    margin: 0;
     background: radial-gradient(circle at top, #1a3d2f, #08150f);
+    overflow: hidden;
+    font-family: system-ui, sans-serif;
+    color: white;
   }
 
-  .card-3d {
-    transform-style: preserve-3d;
-    transition: all .3s ease;
+  #ui {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
   }
 
-  .card-3d:active {
-    transform: scale(.96) rotateX(6deg);
-  }
-
-  .btn-3d {
-    box-shadow:
-      inset 0 -4px 0 rgba(0,0,0,.25),
-      0 6px 20px rgba(0,0,0,.4);
-  }
-
-  .btn-3d:active {
-    transform: translateY(3px);
-    box-shadow:
-      inset 0 -1px 0 rgba(0,0,0,.3);
-  }
-
-  .glass {
-    background: rgba(255,255,255,.08);
+  .top-ui {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    background: rgba(255,255,255,0.08);
     backdrop-filter: blur(12px);
+    border-radius: 14px;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: auto;
+  }
+
+  .stat {
+    font-size: 12px;
+    opacity: .8;
+  }
+
+  .bottom-ui {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    pointer-events: auto;
+  }
+
+  .btn {
+    background: linear-gradient(180deg, #facc15, #eab308);
+    color: #111;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-weight: 700;
+    box-shadow: inset 0 -4px 0 rgba(0,0,0,.3), 0 10px 25px rgba(0,0,0,.5);
+    border: none;
+  }
+
+  .btn:active {
+    transform: translateY(3px);
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,.4);
   }
 </style>
 </head>
+<body>
 
-<body class="text-white h-screen overflow-hidden">
+<canvas id="scene"></canvas>
 
-<!-- TOP BAR -->
-<div class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
-  <div class="flex justify-between items-center px-4 py-2">
+<!-- UI LAYER -->
+<div id="ui">
+  <div class="top-ui">
     <div>
-      <div class="text-xs opacity-70">Seviye 7</div>
-      <div class="font-bold text-yellow-400">Turgut Köyü</div>
+      <div class="stat">🏰 Köy Merkezi</div>
+      <strong>Seviye 7</strong>
     </div>
+    <div class="stat">😊 Halk: %82</div>
+  </div>
 
-    <div class="flex gap-2 text-xs">
-      <div class="bg-black/40 px-2 py-1 rounded-full">🪙 12K</div>
-      <div class="bg-black/40 px-2 py-1 rounded-full">🌲 3.8K</div>
-      <div class="bg-black/40 px-2 py-1 rounded-full">🪨 2.1K</div>
-    </div>
+  <div class="bottom-ui">
+    <button class="btn">👥 Halk</button>
+    <button class="btn">💰 Yatırım</button>
+    <button class="btn">📊 Yönetim</button>
   </div>
 </div>
 
-<!-- WORLD -->
-<div class="pt-20 pb-28 px-4 space-y-4 overflow-y-auto h-full">
+<script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
 
-  <!-- Village Center -->
-  <div class="card-3d bg-gradient-to-br from-emerald-700 to-emerald-900 rounded-2xl p-4">
-    <div class="flex justify-between items-center">
-      <div>
-        <div class="font-bold text-lg">🏰 Köy Merkezi</div>
-        <div class="text-xs opacity-70">Seviye 7</div>
-      </div>
-      <div class="text-yellow-300 font-bold">+18%</div>
-    </div>
+<script>
+/* =========================
+   BASIC THREE.JS SETUP
+========================= */
 
-    <div class="mt-3 h-2 bg-black/30 rounded-full overflow-hidden">
-      <div class="h-full bg-gradient-to-r from-yellow-400 to-orange-500 w-[55%]"></div>
-    </div>
-  </div>
+const canvas = document.getElementById("scene");
+const scene = new THREE.Scene();
 
-  <!-- Production -->
-  <div class="grid grid-cols-2 gap-3">
-    <div class="card-3d bg-gradient-to-br from-amber-600 to-orange-700 rounded-xl p-3">
-      🌾 Çiftlik<br><span class="text-xs opacity-70">Üretim +</span>
-    </div>
-    <div class="card-3d bg-gradient-to-br from-slate-600 to-slate-800 rounded-xl p-3">
-      ⛏ Maden<br><span class="text-xs opacity-70">Taş / Demir</span>
-    </div>
-  </div>
+const camera = new THREE.PerspectiveCamera(
+  45,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  100
+);
 
-  <!-- Army -->
-  <div class="card-3d bg-gradient-to-br from-red-700 to-red-900 rounded-2xl p-4">
-    <div class="font-bold">⚔️ Ordu</div>
-    <div class="text-xs opacity-70">Savunma 145 → 180</div>
-  </div>
+camera.position.set(0, 6, 12);
 
-</div>
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-<!-- BOTTOM NAV -->
-<div class="fixed bottom-0 left-0 right-0 z-50 glass border-t border-white/10">
-  <div class="grid grid-cols-4 gap-2 px-3 py-2 text-xs text-center">
-    <button class="btn-3d bg-emerald-600 rounded-xl py-2">🏡 Köy</button>
-    <button class="btn-3d bg-amber-500 rounded-xl py-2">🏗 İnşa</button>
-    <button class="btn-3d bg-purple-600 rounded-xl py-2">📜 Görev</button>
-    <button class="btn-3d bg-cyan-600 rounded-xl py-2">⚔️ Ordu</button>
-  </div>
-</div>
+/* =========================
+   LIGHTS
+========================= */
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+
+const sun = new THREE.DirectionalLight(0xfff2cc, 1.2);
+sun.position.set(10, 15, 10);
+scene.add(sun);
+
+/* =========================
+   GROUND
+========================= */
+
+const ground = new THREE.Mesh(
+  new THREE.CircleGeometry(12, 64),
+  new THREE.MeshStandardMaterial({ color: 0x2f6b4f })
+);
+ground.rotation.x = -Math.PI / 2;
+scene.add(ground);
+
+/* =========================
+   VILLAGE CENTER BUILDING
+========================= */
+
+const base = new THREE.Mesh(
+  new THREE.CylinderGeometry(2.5, 3, 2, 6),
+  new THREE.MeshStandardMaterial({ color: 0x8b5a2b })
+);
+base.position.y = 1;
+scene.add(base);
+
+const roof = new THREE.Mesh(
+  new THREE.ConeGeometry(3.2, 2, 6),
+  new THREE.MeshStandardMaterial({ color: 0xd97706 })
+);
+roof.position.y = 3;
+scene.add(roof);
+
+/* =========================
+   NPCs (PEOPLE)
+========================= */
+
+const npcGroup = new THREE.Group();
+
+for (let i = 0; i < 8; i++) {
+  const npc = new THREE.Mesh(
+    new THREE.SphereGeometry(0.25, 16, 16),
+    new THREE.MeshStandardMaterial({ color: 0xfcd34d })
+  );
+
+  const angle = (i / 8) * Math.PI * 2;
+  npc.position.set(
+    Math.cos(angle) * 4,
+    0.25,
+    Math.sin(angle) * 4
+  );
+
+  npcGroup.add(npc);
+}
+
+scene.add(npcGroup);
+
+/* =========================
+   AURA EFFECT (POWER)
+========================= */
+
+const aura = new THREE.Mesh(
+  new THREE.RingGeometry(3.2, 3.6, 64),
+  new THREE.MeshBasicMaterial({
+    color: 0xfacc15,
+    transparent: true,
+    opacity: 0.6,
+    side: THREE.DoubleSide
+  })
+);
+aura.rotation.x = -Math.PI / 2;
+scene.add(aura);
+
+/* =========================
+   INTERACTION (ROTATE)
+========================= */
+
+let isTouching = false;
+let lastX = 0;
+
+window.addEventListener("touchstart", e => {
+  isTouching = true;
+  lastX = e.touches[0].clientX;
+});
+
+window.addEventListener("touchend", () => isTouching = false);
+
+window.addEventListener("touchmove", e => {
+  if (!isTouching) return;
+  const dx = e.touches[0].clientX - lastX;
+  scene.rotation.y += dx * 0.005;
+  lastX = e.touches[0].clientX;
+});
+
+/* =========================
+   ANIMATION LOOP
+========================= */
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  npcGroup.children.forEach((npc, i) => {
+    npc.position.y = 0.25 + Math.sin(Date.now() * 0.002 + i) * 0.05;
+  });
+
+  aura.rotation.z += 0.01;
+
+  renderer.render(scene, camera);
+}
+
+animate();
+
+/* =========================
+   RESIZE
+========================= */
+
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
 
 </body>
 </html>
