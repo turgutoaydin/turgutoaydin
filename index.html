@@ -2,168 +2,255 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>My Village - Ana Ekran Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Village - Köyüm</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body { margin:0; overflow:hidden; background:#000; touch-action:none; }
-    canvas { display:block; width:100%; height:100%; }
-    #overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      pointer-events: none;
-      color: white;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 20px;
-      box-sizing: border-box;
-      z-index: 10;
+    :root {
+      --wood: #8B5A2B;
+      --gold: #FFD700;
+      --stone: #808080;
+      --bg: #1e3a2f;
+      --accent: #d4a373;
+      --dark: #0f1f17;
     }
-    #title { font-size: 24px; text-shadow: 0 2px 8px black; }
-    #status { font-size: 16px; text-shadow: 0 1px 4px black; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to bottom, #2c5a44, #1e3a2f);
+      color: #e0d4b3;
+      min-height: 100vh;
+      background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+      background-size: cover;
+      background-attachment: fixed;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 10px 15px;
+    }
+    header {
+      background: rgba(15, 31, 23, 0.85);
+      backdrop-filter: blur(6px);
+      padding: 12px 0;
+      border-bottom: 3px solid var(--accent);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 0 15px;
+    }
+    .player-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      background: #444 url('https://via.placeholder.com/48/444?text=AV') center/cover;
+    }
+    .resources {
+      display: flex;
+      gap: 18px;
+      font-weight: bold;
+    }
+    .res {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,0,0,0.4);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,215,0,0.3);
+    }
+    .village-name {
+      font-family: 'MedievalSharp', cursive;
+      font-size: 2.1rem;
+      color: var(--gold);
+      text-shadow: 2px 2px 6px #000;
+      text-align: center;
+      margin: 15px 0 8px;
+    }
+    .level-badge {
+      background: var(--accent);
+      color: #111;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .card {
+      background: rgba(20, 35, 25, 0.92);
+      border: 2px solid var(--wood);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.6);
+      transition: transform 0.15s;
+    }
+    .card:hover { transform: translateY(-6px); }
+    .card-header {
+      background: linear-gradient(to right, #3a5c4a, #2a4436);
+      padding: 12px;
+      text-align: center;
+      font-weight: bold;
+      border-bottom: 2px solid var(--accent);
+      font-size: 1.3rem;
+    }
+    .building-preview {
+      height: 160px;
+      background: #222 url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') center/cover;
+      position: relative;
+    }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent 60%);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 12px;
+      font-size: 1.4rem;
+      text-shadow: 2px 2px 4px #000;
+    }
+    .stats {
+      padding: 12px;
+      font-size: 0.95rem;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 6px 0;
+    }
+    .btn {
+      display: block;
+      background: var(--accent);
+      color: #111;
+      text-align: center;
+      padding: 12px;
+      margin: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+    .btn:hover { background: #e0b866; transform: scale(1.03); }
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #aaa;
+      font-size: 0.85rem;
+      margin-top: 30px;
+    }
+    @media (max-width: 600px) {
+      .top-bar { flex-direction: column; }
+      .resources { justify-content: center; }
+    }
   </style>
 </head>
 <body>
 
-<div id="overlay">
-  <div id="title">My Village</div>
-  <div id="status">Köy merkezi yükleniyor... Parmakla döndür • Çift parmakla zoom yap</div>
-</div>
+  <header>
+    <div class="container">
+      <div class="top-bar">
+        <div class="player-info">
+          <div class="avatar"></div>
+          <div>
+            <strong>Turgut Köyü</strong><br>
+            <span class="level-badge">Seviye 7 Lord</span>
+          </div>
+        </div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.168.0/examples/js/controls/OrbitControls.min.js"></script>
+        <div class="resources">
+          <div class="res">🪙 12,450</div>
+          <div class="res">🌲 3,820</div>
+          <div class="res">🪨 2,110</div>
+          <div class="res">🍞 1,680</div>
+        </div>
+      </div>
+    </div>
+  </header>
 
-<script>
-  console.log("Demo başladı - Three.js versiyon:", THREE.REVISION);
+  <div class="container">
+    <h1 class="village-name">My Village</h1>
 
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x88ddff); // açık mavi gökyüzü
+    <div class="grid">
 
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 12, 30);
-  camera.lookAt(0, 0, 0);
+      <!-- Ana Köy Genel Bakış -->
+      <div class="card">
+        <div class="card-header">Köy Merkezi</div>
+        <div class="building-preview">
+          <div class="overlay">Merkez Binası Lv. 7</div>
+        </div>
+        <div class="stats">
+          <div class="stat-row"><span>Nüfus:</span><strong>248 / 450</strong></div>
+          <div class="stat-row"><span>Mutluluk:</span><strong>82%</strong></div>
+          <div class="stat-row"><span>Savunma:</span><strong>145</strong></div>
+          <div class="stat-row"><span>Üretim Hızı:</span><strong>+%18</strong></div>
+        </div>
+        <a href="#" class="btn">Köyü Yönet →</a>
+      </div>
 
-  const renderer = new THREE.WebGLRenderer({ antialias: false });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(1); // mobil siyah ekran fix #1
-  document.body.appendChild(renderer.domElement);
+      <!-- Depolar -->
+      <div class="card">
+        <div class="card-header">Depolar & Üretim</div>
+        <div class="building-preview">
+          <div class="overlay">Depo & Madenler</div>
+        </div>
+        <div class="stats">
+          <div class="stat-row"><span>Odun:</span><strong>3.820 / 8.000</strong></div>
+          <div class="stat-row"><span>Taş:</span><strong>2.110 / 6.000</strong></div>
+          <div class="stat-row"><span>Tahıl:</span><strong>1.680 / 5.000</strong></div>
+          <div class="stat-row"><span>Demir:</span><strong>420 / 2.500</strong></div>
+        </div>
+        <a href="#" class="btn">Topla & Yükselt</a>
+      </div>
 
-  const controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.12;
-  controls.rotateSpeed = 0.7;
-  controls.zoomSpeed = 1.1;
-  controls.minDistance = 12;
-  controls.maxDistance = 80;
-  controls.maxPolarAngle = Math.PI * 0.5;
-  controls.enablePan = false;
-  controls.target.set(0, 2, 0);
+      <!-- Görevler / Quest -->
+      <div class="card">
+        <div class="card-header">Güncel Görevler</div>
+        <div class="stats">
+          <p><strong>1.</strong> Yeni çiftlik inşa et (Ödül: 800 odun + 150 altın)</p>
+          <p><strong>2.</strong> 5 saat üretim topla (Ödül: 300 taş)</p>
+          <p><strong>3.</strong> Komşu köyden casusluk yap (Riskli!)</p>
+        </div>
+        <a href="#" class="btn">Görevlere Git →</a>
+      </div>
 
-  // Basit ışık
-  scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+      <!-- Ordu / Savunma -->
+      <div class="card">
+        <div class="card-header">Ordu & Savunma</div>
+        <div class="stats">
+          <div class="stat-row"><span>Asker:</span><strong>42</strong></div>
+          <div class="stat-row"><span>Okçu:</span><strong>18</strong></div>
+          <div class="stat-row"><span>Atlı:</span><strong>0</strong></div>
+          <div class="stat-row"><span>Kalkan:</span><strong>145 → 180</strong></div>
+        </div>
+        <a href="#" class="btn">Asker Eğit</a>
+      </div>
 
-  // Düz zemin
-  const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(120, 120),
-    new THREE.MeshBasicMaterial({ color: 0x7caf5e }) // yeşil çimen
-  );
-  ground.rotation.x = -Math.PI / 2;
-  scene.add(ground);
+    </div>
+  </div>
 
-  // Ev ekleme fonksiyonu (çok basit, shadow yok)
-  function evEkle(x, z, renk = 0xff5555) {
-    const grup = new THREE.Group();
+  <footer>
+    My Village © 2026 – Turgut'un Köyü | Demo Dashboard
+  </footer>
 
-    // Taban
-    const taban = new THREE.Mesh(
-      new THREE.BoxGeometry(8, 1, 9),
-      new THREE.MeshBasicMaterial({ color: 0xcccccc })
-    );
-    taban.position.y = 0.5;
-    grup.add(taban);
-
-    // Duvar
-    const duvar = new THREE.Mesh(
-      new THREE.BoxGeometry(7, 6, 8),
-      new THREE.MeshBasicMaterial({ color: renk })
-    );
-    duvar.position.y = 3.5;
-    grup.add(duvar);
-
-    // Çatı
-    const cati = new THREE.Mesh(
-      new THREE.ConeGeometry(7, 5, 4),
-      new THREE.MeshBasicMaterial({ color: 0x880000 })
-    );
-    cati.position.y = 7;
-    cati.rotation.y = Math.PI / 4;
-    grup.add(cati);
-
-    grup.position.set(x, 0, z);
-    scene.add(grup);
-    console.log("Ev eklendi:", x, z);
-  }
-
-  // Ağaç
-  function agacEkle(x, z) {
-    const grup = new THREE.Group();
-
-    const govde = new THREE.Mesh(
-      new THREE.CylinderGeometry(1.2, 1.8, 7, 6),
-      new THREE.MeshBasicMaterial({ color: 0x8b4513 })
-    );
-    govde.position.y = 3.5;
-    grup.add(govde);
-
-    const yaprak = new THREE.Mesh(
-      new THREE.ConeGeometry(6, 10, 6),
-      new THREE.MeshBasicMaterial({ color: 0x228b22 })
-    );
-    yaprak.position.y = 9;
-    grup.add(yaprak);
-
-    grup.position.set(x, 0, z);
-    scene.add(grup);
-    console.log("Ağaç eklendi:", x, z);
-  }
-
-  // Köyü kur
-  evEkle(-12, -8, 0xff7777);
-  evEkle(10, -10, 0x7777ff);
-  evEkle(15, 6, 0xffaa55);
-
-  agacEkle(-18, 12);
-  agacEkle(20, -15);
-  agacEkle(-5, 18);
-
-  // Küçük gölet
-  const golet = new THREE.Mesh(
-    new THREE.CircleGeometry(9, 24),
-    new THREE.MeshBasicMaterial({ color: 0x4488ff })
-  );
-  golet.rotation.x = -Math.PI / 2;
-  golet.position.set(-4, 0.05, 14);
-  scene.add(golet);
-
-  console.log("Tüm nesneler sahneye eklendi - animate başlıyor");
-
-  function animate() {
-    requestAnimationFrame(animate);
-    controls.update();
-    renderer.render(scene, camera);
-  }
-  animate();
-
-  // Resize
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
-
-  // Status güncelle
-  document.getElementById('status').innerText = "Köy hazır! Köyümü büyütmeye başla...";
-</script>
 </body>
 </html>
