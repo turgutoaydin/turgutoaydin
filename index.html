@@ -1,337 +1,222 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Köy Merkezi – Pixel 3D Demo</title>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Voxel Village – Sandbox Map</title>
 
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-      background: radial-gradient(circle at 30% 20%, #1e3a2f, #0d1a12);
-      font-family: system-ui, -apple-system, sans-serif;
-      color: #f0f0e8;
-      touch-action: none;
-    }
-
-    canvas {
-      display: block;
-    }
-
-    .ui {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    .top-bar {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      right: 10px;
-      background: rgba(20,35,25,0.58);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-radius: 16px;
-      padding: 10px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.94rem;
-      border: 1px solid rgba(180,220,180,0.12);
-      pointer-events: auto;
-    }
-
-    .bottom-bar {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 12px;
-      pointer-events: auto;
-    }
-
-    .btn {
-      background: linear-gradient(180deg, #fcd34d, #eab308);
-      color: #1a1a0f;
-      font-weight: 700;
-      padding: 12px 20px;
-      border-radius: 14px;
-      border: none;
-      box-shadow: 
-        0 6px 16px rgba(0,0,0,0.5),
-        inset 0 -3px 0 rgba(0,0,0,0.35);
-      font-size: 1rem;
-      cursor: pointer;
-      transition: transform 0.08s;
-    }
-
-    .btn:active {
-      transform: translateY(2px);
-      box-shadow: 
-        0 2px 8px rgba(0,0,0,0.6),
-        inset 0 -1px 0 rgba(0,0,0,0.4);
-    }
-  </style>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #0b1e14;
+    touch-action: none;
+  }
+  canvas { display: block; }
+</style>
 </head>
 <body>
 
-<canvas id="canvas"></canvas>
-
-<div class="ui">
-  <div class="top-bar">
-    <div>
-      <div style="font-size:0.78rem; opacity:0.75">🏡 Köy Meydanı</div>
-      <strong>Seviye 7  •  Gelişmekte</strong>
-    </div>
-    <div style="font-size:0.9rem">😊 Mutluluk: 84%</div>
-  </div>
-
-  <div class="bottom-bar">
-    <button class="btn">👥 Köylüler</button>
-    <button class="btn">🌾 Tarlalar</button>
-    <button class="btn">⚒️ İnşa</button>
-  </div>
-</div>
+<canvas id="c"></canvas>
 
 <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
-<script src="https://unpkg.com/three@0.158.0/examples/js/postprocessing/EffectComposer.js"></script>
-<script src="https://unpkg.com/three@0.158.0/examples/js/postprocessing/RenderPass.js"></script>
-<script src="https://unpkg.com/three@0.158.0/examples/js/postprocessing/ShaderPass.js"></script>
 
 <script>
-// ────────────────────────────────────────────────
-//  SETUP
-// ────────────────────────────────────────────────
-const canvas = document.getElementById('canvas');
+/* =========================
+   ZOOM KAPAT
+========================= */
+document.addEventListener('gesturestart', e => e.preventDefault());
+document.addEventListener('gesturechange', e => e.preventDefault());
+document.addEventListener('gestureend', e => e.preventDefault());
+
+/* =========================
+   SCENE
+========================= */
+const canvas = document.getElementById("c");
 const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x0d1a12, 0.0009);
 
-const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 120);
-camera.position.set(6, 13, 24);
+scene.background = new THREE.Color(0x0b1e14);
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
-renderer.setPixelRatio(1);
-renderer.setSize(innerWidth, innerHeight);
-renderer.outputColorSpace = THREE.SRGBColorSpace;
+/* =========================
+   CAMERA (ÜSTTEN ISOMETRIC)
+========================= */
+const camera = new THREE.PerspectiveCamera(
+  45,
+  innerWidth / innerHeight,
+  0.1,
+  200
+);
 
-// Post-processing ────────────────────────────────
-const composer = new THREE.EffectComposer(renderer);
-const renderPass = new THREE.RenderPass(scene, camera);
-composer.addPass(renderPass);
+camera.position.set(15, 20, 15);
+camera.lookAt(0, 0, 0);
 
-// Basit pixelation
-const pixelPass = new THREE.ShaderPass({
-  uniforms: {
-    tDiffuse: { value: null },
-    resolution: { value: new THREE.Vector2() },
-    pixelSize: { value: 3.4 }
-  },
-  vertexShader: `
-    varying vec2 vUv;
-    void main() {
-      vUv = uv;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-  `,
-  fragmentShader: `
-    uniform sampler2D tDiffuse;
-    uniform vec2 resolution;
-    uniform float pixelSize;
-    varying vec2 vUv;
-
-    void main() {
-      vec2 ps = resolution / pixelSize;
-      vec2 coord = floor(vUv * ps + 0.5) / ps;
-      gl_FragColor = texture2D(tDiffuse, coord);
-    }
-  `
+/* =========================
+   RENDERER
+========================= */
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  antialias: true
 });
-pixelPass.uniforms.resolution.value.set(innerWidth, innerHeight);
-composer.addPass(pixelPass);
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 
-// ────────────────────────────────────────────────
-// IŞIK
-// ────────────────────────────────────────────────
-scene.add(new THREE.AmbientLight(0xe0f0ff, 0.45));
+/* =========================
+   LIGHT
+========================= */
+scene.add(new THREE.AmbientLight(0xffffff, 0.7));
 
-const sun = new THREE.DirectionalLight(0xfff2d1, 1.4);
-sun.position.set(18, 28, 14);
+const sun = new THREE.DirectionalLight(0xffffff, 0.9);
+sun.position.set(20, 30, 10);
 scene.add(sun);
 
-const hemi = new THREE.HemisphereLight(0xc9e4ff, 0x4a704a, 0.7);
-scene.add(hemi);
+/* =========================
+   VOXEL MATERIALS
+========================= */
+const MAT_GRASS = new THREE.MeshStandardMaterial({ color: 0x2ecc71 });
+const MAT_DIRT  = new THREE.MeshStandardMaterial({ color: 0x8e5a2a });
+const MAT_WATER = new THREE.MeshStandardMaterial({ color: 0x3498db });
+const MAT_FLOWER = new THREE.MeshStandardMaterial({ color: 0xe84393 });
 
-// ────────────────────────────────────────────────
-// ZEMİN (hafif dokulu his)
-// ────────────────────────────────────────────────
-const ground = new THREE.Mesh(
-  new THREE.CircleGeometry(32, 72),
-  new THREE.MeshStandardMaterial({
-    color: 0x3a5f44,
-    roughness: 0.92,
-    metalness: 0.04
-  })
-);
-ground.rotation.x = -Math.PI / 2;
-scene.add(ground);
+/* =========================
+   VOXEL MAP (X,Y)
+========================= */
+/*
+0 = çimen
+1 = toprak
+2 = su
+3 = çiçek
+*/
 
-// ────────────────────────────────────────────────
-// KÖY MERKEZİ (daha detaylı)
-// ────────────────────────────────────────────────
-const villageCenter = new THREE.Group();
+const MAP = [
+  [0,0,0,0,0,0,0,0],
+  [0,0,3,0,0,3,0,0],
+  [0,0,0,1,1,0,0,0],
+  [0,3,0,1,1,0,3,0],
+  [0,0,0,0,0,0,0,0],
+  [0,0,2,2,2,2,0,0],
+  [0,0,2,2,2,2,0,0],
+  [0,0,0,0,0,0,0,0]
+];
 
-const base = new THREE.Mesh(
-  new THREE.BoxGeometry(6.4, 4.2, 5.6),
-  new THREE.MeshStandardMaterial({ color: 0x7a4c28, roughness: 0.88 })
-);
-base.position.y = 2.1;
+/* =========================
+   VOXEL BUILD
+========================= */
+const tileSize = 1;
+const mapGroup = new THREE.Group();
 
-const roof = new THREE.Mesh(
-  new THREE.ConeGeometry(5.1, 4.2, 6),
-  new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.75 })
-);
-roof.position.y = 5.2;
+MAP.forEach((row, x) => {
+  row.forEach((cell, z) => {
 
-const chimney = new THREE.Mesh(
-  new THREE.BoxGeometry(1.1, 2.4, 1.1),
-  new THREE.MeshStandardMaterial({ color: 0x4b5e40 })
-);
-chimney.position.set(1.8, 6.4, 0.9);
+    let mat = MAT_GRASS;
+    let height = 0.5;
 
-villageCenter.add(base, roof, chimney);
-scene.add(villageCenter);
+    if (cell === 1) mat = MAT_DIRT;
+    if (cell === 2) mat = MAT_WATER;
+    if (cell === 3) mat = MAT_GRASS;
 
-// ────────────────────────────────────────────────
-// NPC'ler (basit low-poly insan)
-// ────────────────────────────────────────────────
-const npcs = new THREE.Group();
-for (let i = 0; i < 14; i++) {
-  const person = new THREE.Group();
+    const cube = new THREE.Mesh(
+      new THREE.BoxGeometry(tileSize, height, tileSize),
+      mat
+    );
 
-  const body = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.24, 0.20, 1.1, 8),
-    new THREE.MeshStandardMaterial({ color: 0xe0c070 })
-  );
-  body.position.y = 0.55;
+    cube.position.set(
+      x * tileSize,
+      height / 2,
+      z * tileSize
+    );
 
-  const head = new THREE.Mesh(
-    new THREE.SphereGeometry(0.22, 12, 12),
-    new THREE.MeshStandardMaterial({ color: 0xffd9a3 })
-  );
-  head.position.y = 1.3;
+    cube.userData = { x, z, type: cell };
 
-  person.add(body, head);
-  const angle = i * 0.44 + Math.random() * 0.6;
-  person.position.set(
-    Math.cos(angle) * (4.2 + Math.random() * 3.8),
-    0,
-    Math.sin(angle) * (4.2 + Math.random() * 3.8)
-  );
+    mapGroup.add(cube);
 
-  npcs.add(person);
-}
-scene.add(npcs);
+    /* FLOWER */
+    if (cell === 3) {
+      const flower = new THREE.Mesh(
+        new THREE.BoxGeometry(0.2, 0.5, 0.2),
+        MAT_FLOWER
+      );
+      flower.position.set(
+        x * tileSize,
+        height + 0.25,
+        z * tileSize
+      );
+      mapGroup.add(flower);
+    }
+  });
+});
 
-// ────────────────────────────────────────────────
-// Hafif glow halkası
-// ────────────────────────────────────────────────
-const glow = new THREE.Mesh(
-  new THREE.RingGeometry(5.8, 7.2, 64),
-  new THREE.MeshBasicMaterial({
-    color: 0xffe066,
-    transparent: true,
-    opacity: 0.28,
-    side: THREE.DoubleSide
-  })
-);
-glow.rotation.x = -Math.PI / 2;
-glow.position.y = 0.05;
-scene.add(glow);
+mapGroup.position.x = -MAP.length / 2;
+mapGroup.position.z = -MAP[0].length / 2;
 
-// ────────────────────────────────────────────────
-// KONTROLLER (dokunmatik)
-// ────────────────────────────────────────────────
-let touchRot = false;
+scene.add(mapGroup);
+
+/* =========================
+   TOUCH CONTROL
+========================= */
 let lastX = 0;
-let pinchStart = 0;
-let camStartZ = camera.position.z;
+let rotating = false;
 
-canvas.addEventListener('touchstart', e => {
+let pinchStart = 0;
+let camStartY = camera.position.y;
+
+canvas.addEventListener("touchstart", e => {
   if (e.touches.length === 1) {
-    touchRot = true;
+    rotating = true;
     lastX = e.touches[0].clientX;
   }
+
   if (e.touches.length === 2) {
     pinchStart = Math.hypot(
       e.touches[0].clientX - e.touches[1].clientX,
       e.touches[0].clientY - e.touches[1].clientY
     );
-    camStartZ = camera.position.z;
+    camStartY = camera.position.y;
   }
 });
 
-canvas.addEventListener('touchmove', e => {
-  e.preventDefault();
-  if (touchRot && e.touches.length === 1) {
+canvas.addEventListener("touchmove", e => {
+  if (e.touches.length === 1 && rotating) {
     const dx = e.touches[0].clientX - lastX;
-    scene.rotation.y += dx * 0.0038;
+    mapGroup.rotation.y += dx * 0.004;
     lastX = e.touches[0].clientX;
   }
+
   if (e.touches.length === 2) {
     const dist = Math.hypot(
       e.touches[0].clientX - e.touches[1].clientX,
       e.touches[0].clientY - e.touches[1].clientY
     );
-    const delta = (pinchStart - dist) * 0.018;
-    camera.position.z = THREE.MathUtils.clamp(camStartZ + delta, 14, 38);
+    const zoom = (pinchStart - dist) * 0.01;
+    camera.position.y = THREE.MathUtils.clamp(
+      camStartY + zoom,
+      8,
+      30
+    );
   }
 });
 
-canvas.addEventListener('touchend', () => touchRot = false);
+canvas.addEventListener("touchend", () => rotating = false);
 
-// ────────────────────────────────────────────────
-// ANİMASYON DÖNGÜSÜ
-// ────────────────────────────────────────────────
-let t = 0;
-
+/* =========================
+   ANIMATE
+========================= */
 function animate() {
-  t += 0.008;
-
-  // Nefes alan kamera
-  camera.position.y = 13 + Math.sin(t * 0.7) * 0.45;
-  camera.position.x = 6 + Math.sin(t * 0.35) * 0.7;
-
-  // Yavaş otomatik dönüş
-  scene.rotation.y += 0.0004;
-
-  // NPC hafif hoplama
-  npcs.children.forEach((p, i) => {
-    p.position.y = Math.sin(t * 1.6 + i * 1.3) * 0.06;
-  });
-
-  // Glow nabız atması
-  glow.scale.setScalar(1 + Math.sin(t * 1.2) * 0.04);
-
-  composer.render();
   requestAnimationFrame(animate);
+  renderer.render(scene, camera);
 }
-
 animate();
 
-// Resize
-window.addEventListener('resize', () => {
+/* =========================
+   RESIZE
+========================= */
+addEventListener("resize", () => {
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
-  composer.setSize(innerWidth, innerHeight);
-  pixelPass.uniforms.resolution.value.set(innerWidth, innerHeight);
 });
 </script>
+
 </body>
 </html>
