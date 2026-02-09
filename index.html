@@ -3,395 +3,220 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>101 Okey Plus • Demo</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Köy Merkezi - 3D Demo</title>
   <style>
-    :root {
-      --bg: #0f172a;
-      --table: #0a1421;
-      --card: #1e293b;
-      --card-selected: #334155;
-      --accent: #f59e0b;
-      --text: #e2e8f0;
-      --border: #475569;
-      --green: #22c55e;
-      --yellow: #eab308;
-      --blue: #3b82f6;
-      --red: #ef4444;
-      --black: #1e293b;
-      --okey: #f59e0b;
-      --joker: #a855f7;
-    }
-
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: system-ui, -apple-system, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow: hidden;
-      touch-action: manipulation;
-    }
-
-    #root {
-      height: 100dvh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    header {
-      background: rgba(15,23,42,0.7);
-      padding: 8px 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.9rem;
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid #334155;
-    }
-
-    .player {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-    }
-
-    .avatar {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: #334155;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      border: 2px solid var(--accent);
-    }
-
-    #table {
-      flex: 1;
-      background: var(--table);
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 8px;
-      overflow: hidden;
-    }
-
-    .opponents {
-      display: flex;
-      justify-content: space-around;
-      margin-bottom: 12px;
-    }
-
-    .opponent {
-      text-align: center;
-      font-size: 0.8rem;
-      opacity: 0.9;
-    }
-
-    .middle-area {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      align-items: center;
-      justify-content: center;
-      overflow-y: auto;
-      padding: 12px 0;
-    }
-
-    .per-row {
-      display: flex;
-      gap: 6px;
-      justify-content: center;
-      flex-wrap: wrap;
-      max-width: 90%;
-    }
-
-    .per {
-      display: flex;
-      gap: 4px;
-      background: rgba(30,41,59,0.6);
-      padding: 6px 10px;
+    body { margin:0; overflow:hidden; background:#000; font-family:Arial, sans-serif; }
+    #ui {
+      position: absolute;
+      top: 12px; left: 12px; color: white;
+      background: rgba(0,0,0,0.4);
+      padding: 10px 14px;
       border-radius: 8px;
-      border: 1px dashed #475569;
-      min-height: 54px;
-      align-items: center;
-    }
-
-    .thrown-area {
-      width: 80px;
-      height: 110px;
-      background: rgba(30,41,59,0.4);
-      border: 2px dashed var(--accent);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.2rem;
-      font-weight: bold;
-      margin: 12px auto;
-    }
-
-    .my-hand-area {
-      height: 26%;
-      background: rgba(15,23,42,0.8);
-      padding: 10px 0;
-      border-top: 3px solid var(--accent);
-      overflow-x: auto;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .tile {
-      width: 42px;
-      height: 60px;
-      background: var(--card);
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.35rem;
-      font-weight: bold;
-      color: white;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.5);
-      transition: all 0.18s ease;
-      user-select: none;
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .tile.small {
-      width: 32px;
-      height: 46px;
-      font-size: 1.1rem;
-      border-width: 1.5px;
-    }
-
-    .tile.selected {
-      transform: translateY(-14px) scale(1.18);
-      box-shadow: 0 10px 20px rgba(245,158,11,0.5);
-      border-color: var(--accent);
+      pointer-events: none;
+      font-size: 13px;
       z-index: 10;
     }
-
-    .tile.okey {
-      background: linear-gradient(135deg, var(--okey), #d97706);
-      color: #111827;
-    }
-
-    .tile.joker {
-      background: linear-gradient(135deg, var(--joker), #7e22ce);
-    }
-
-    .tile .num {
-      font-size: 1.6rem;
-    }
-
-    .tile.small .num {
-      font-size: 1.3rem;
-    }
-
-    .tile .color-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-top: 4px;
-      border: 1px solid rgba(255,255,255,0.3);
-    }
-
-    .red    { background: var(--red);    }
-    .yellow { background: var(--yellow); }
-    .blue   { background: var(--blue);   }
-    .green  { background: var(--green);  }
-
-    #status {
-      text-align: center;
-      padding: 10px;
-      background: rgba(15,23,42,0.7);
-      font-size: 0.95rem;
-      border-top: 1px solid #334155;
-    }
-
-    @media (orientation: portrait) {
-      body::before {
-        content: "Lütfen cihazı yatay konuma getirin";
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.92);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.4rem;
-        text-align: center;
-        z-index: 9999;
-      }
+    #info {
+      position: absolute;
+      bottom: 16px; left: 50%;
+      transform: translateX(-50%);
+      color: #eee;
+      font-size: 14px;
+      text-shadow: 0 1px 3px #000;
+      pointer-events: none;
+      z-index: 10;
     }
   </style>
 </head>
 <body>
 
-<div id="root">
-  <header>
-    <div class="player">
-      <div class="avatar">😎</div>
-      <span>@LiraKurdi</span>
-    </div>
-    <div>101 Okey Plus • Demo</div>
-    <div class="player">
-      <span>Sıra sende</span>
-    </div>
-  </header>
+<div id="ui">Köy Merkezi 3D Demo<br>Parmakla döndür • Çift parmakla zoom</div>
+<div id="info">My Village – Köyüm büyüyor...</div>
 
-  <div id="table">
-    <div class="opponents">
-      <div class="opponent">
-        <div class="avatar">🧑‍💻</div>
-        <div>PC1</div>
-      </div>
-      <div class="opponent">
-        <div class="avatar">🤖</div>
-        <div>PC2</div>
-      </div>
-      <div class="opponent">
-        <div class="avatar">👾</div>
-        <div>PC3</div>
-      </div>
-    </div>
-
-    <div class="middle-area">
-      <div class="per-row" id="per-row-1">
-        <!-- 1. sıra perler -->
-      </div>
-      <div class="per-row" id="per-row-2">
-        <!-- 2. sıra perler -->
-      </div>
-
-      <div class="thrown-area" id="thrown">13</div>
-    </div>
-
-    <div class="my-hand-area" id="my-hand">
-      <!-- taşlar buraya -->
-    </div>
-  </div>
-
-  <div id="status">Taş seç • Tekrar dokun → at</div>
-</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.168.0/examples/js/controls/OrbitControls.min.js"></script>
 
 <script>
-const tg = window.Telegram.WebApp;
-tg.ready();
-tg.expand();
-if (tg.requestFullscreen) tg.requestFullscreen();
+// ======================== SAHNE AYARLARI ========================
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x88aaff);           // Gökyüzü mavisi
+scene.fog = new THREE.FogExp2(0x88aaff, 0.0009);        // Hafif sis efekti
 
-function applyTheme() {
-  document.documentElement.dataset.theme = tg.colorScheme === 'dark' ? 'dark' : 'light';
-}
-applyTheme();
-tg.onEvent('themeChanged', applyTheme);
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+camera.position.set(18, 14, 22);
 
-// Demo taşlar (senin elin)
-const myTiles = [
-  {num:10, color:'red'}, {num:11, color:'red'}, {num:12, color:'red'},
-  {num:7, color:'yellow'}, {num:8, color:'yellow'}, {num:9, color:'yellow'},
-  {num:5, color:'blue'}, {num:6, color:'blue'}, {num:7, color:'blue'},
-  {num:1, color:'green'}, {num:2, color:'green'}, {num:3, color:'green'},
-  {num:14, color:'black', isOkey:true},           // gerçek okey
-  {num:0, color:'joker'},                         // joker
-  {num:1, color:'yellow'}, {num:4, color:'blue'},
-  {num:10, color:'green'}, {num:11, color:'green'}, {num:12, color:'green'},
-  {num:8, color:'red'}
-];
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
 
-let selectedIndex = -1;
+// Mobil dostu kontroller
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.07;
+controls.rotateSpeed = 0.5;
+controls.zoomSpeed = 0.9;
+controls.minDistance = 8;
+controls.maxDistance = 60;
+controls.maxPolarAngle = Math.PI * 0.48;   // Çok aşağı bakmayı engeller
+controls.target.set(0, 1, 0);
 
-function createTile(tile, index, isSmall = false) {
-  const div = document.createElement('div');
-  div.classList.add('tile');
-  if (isSmall) div.classList.add('small');
-  if (tile.isOkey || tile.num === 14) div.classList.add('okey');
-  if (tile.color === 'joker') div.classList.add('joker');
+// Işıklar
+const ambient = new THREE.AmbientLight(0xffffff, 0.55);
+scene.add(ambient);
 
-  const numText = tile.num === 0 || tile.num === 14 ? 'OK' : tile.num;
-  div.innerHTML = `<div class="num">${numText}</div>`;
+const sun = new THREE.DirectionalLight(0xfff8e8, 1.1);
+sun.position.set(30, 60, 40);
+sun.castShadow = true;
+sun.shadow.mapSize.width = 2048;
+sun.shadow.mapSize.height = 2048;
+sun.shadow.camera.near = 0.5;
+sun.shadow.camera.far = 150;
+sun.shadow.camera.left = -40;
+sun.shadow.camera.right = 40;
+sun.shadow.camera.top = 40;
+sun.shadow.camera.bottom = -40;
+scene.add(sun);
 
-  if (tile.color !== 'joker' && tile.color !== 'black') {
-    const dot = document.createElement('div');
-    dot.classList.add('color-dot', tile.color);
-    div.appendChild(dot);
-  }
+// ======================== ARAZİ (Terrain) ========================
+const terrainSize = 80;
+const segments = 80;
 
-  div.addEventListener('click', () => {
-    if (selectedIndex === index) {
-      // at
-      const thrown = document.getElementById('thrown');
-      thrown.textContent = numText;
-      thrown.style.color = tile.isOkey || tile.num === 14 ? '#111827' : 'white';
-      thrown.style.background = div.style.background || '';
+const geometry = new THREE.PlaneGeometry(terrainSize, terrainSize, segments, segments);
+geometry.rotateX(-Math.PI / 2);
 
-      div.style.transition = 'all 0.5s';
-      div.style.transform = 'translateY(-80px) scale(0.4) rotate(20deg)';
-      div.style.opacity = '0';
+const vertices = geometry.attributes.position.array;
 
-      setTimeout(() => {
-        div.remove();
-        selectedIndex = -1;
-        document.getElementById('status').textContent = 'Taş atıldı • Sıra rakipte';
-      }, 500);
-    } else {
-      document.querySelectorAll('.tile').forEach(t => t.classList.remove('selected'));
-      div.classList.add('selected');
-      selectedIndex = index;
-      document.getElementById('status').textContent = `Seçili: ${numText} • Tekrar dokun → at`;
-    }
-  });
-
-  return div;
+for (let i = 2; i < vertices.length; i += 3) {
+  const x = vertices[i-2];
+  const z = vertices[i];
+  // Basit sinüs + gürültü ile hafif engebeli arazi
+  vertices[i] = 
+    Math.sin(x * 0.15) * 1.8 + 
+    Math.sin(z * 0.22) * 1.4 +
+    Math.sin(x * 0.4 + z * 0.3) * 0.9;
 }
 
-function renderMyHand() {
-  const container = document.getElementById('my-hand');
-  container.innerHTML = '';
-  myTiles.forEach((tile, i) => {
-    container.appendChild(createTile(tile, i));
-  });
+geometry.computeVertexNormals();
+
+const terrainMaterial = new THREE.MeshStandardMaterial({
+  color: 0x5b8c3f,        // Çimen yeşili
+  roughness: 0.9,
+  metalness: 0.05
+});
+
+const terrain = new THREE.Mesh(geometry, terrainMaterial);
+terrain.receiveShadow = true;
+scene.add(terrain);
+
+// ======================== KÖY NESNELERİ ========================
+
+// Yardımcı fonksiyon: low-poly ev
+function createHouse(x, z, scale = 1, color = 0xe06666) {
+  const group = new THREE.Group();
+
+  // Taban
+  const base = new THREE.Mesh(
+    new THREE.BoxGeometry(5*scale, 0.4*scale, 6*scale),
+    new THREE.MeshStandardMaterial({color: 0xaaaaaa})
+  );
+  base.position.y = 0.2*scale;
+  base.castShadow = true;
+  group.add(base);
+
+  // Duvarlar
+  const walls = new THREE.Mesh(
+    new THREE.BoxGeometry(4.6*scale, 3.2*scale, 5.6*scale),
+    new THREE.MeshStandardMaterial({color})
+  );
+  walls.position.y = 1.8*scale;
+  walls.castShadow = true;
+  group.add(walls);
+
+  // Çatı
+  const roofGeo = new THREE.ConeGeometry(4.2*scale, 3*scale, 4);
+  roofGeo.rotateY(Math.PI/4);
+  const roof = new THREE.Mesh(
+    roofGeo,
+    new THREE.MeshStandardMaterial({color: 0x8b0000})
+  );
+  roof.position.y = 3.8*scale;
+  roof.castShadow = true;
+  group.add(roof);
+
+  group.position.set(x, 0, z);
+  return group;
 }
 
-renderMyHand();
+// Yardımcı fonksiyon: Ağaç (basit low-poly)
+function createTree(x, z) {
+  const group = new THREE.Group();
 
-// Örnek orta masa perleri (demo)
-const demoPer1 = [
-  {num:5, color:'red'}, {num:6, color:'red'}, {num:7, color:'red'}, {num:8, color:'red'}
-];
+  const trunk = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.6, 0.9, 4, 6),
+    new THREE.MeshStandardMaterial({color: 0x8B4513})
+  );
+  trunk.position.y = 2;
+  trunk.castShadow = true;
+  group.add(trunk);
 
-const demoPer2 = [
-  {num:10, color:'blue'}, {num:10, color:'yellow'}, {num:10, color:'green'}, {num:10, color:'red'}
-];
+  const leaves = new THREE.Mesh(
+    new THREE.ConeGeometry(3.2, 5.5, 6),
+    new THREE.MeshStandardMaterial({color: 0x2e7d32})
+  );
+  leaves.position.y = 5.2;
+  leaves.castShadow = true;
+  group.add(leaves);
 
-function renderPer(rowId, tiles) {
-  const row = document.getElementById(rowId);
-  row.innerHTML = '';
-  const perDiv = document.createElement('div');
-  perDiv.classList.add('per');
-  tiles.forEach(t => {
-    perDiv.appendChild(createTile(t, -1, true));
-  });
-  row.appendChild(perDiv);
+  const leaves2 = leaves.clone();
+  leaves2.scale.set(0.8, 0.8, 0.8);
+  leaves2.position.y = 6.8;
+  group.add(leaves2);
+
+  group.position.set(x, 0, z);
+  return group;
 }
 
-renderPer('per-row-1', demoPer1);
-renderPer('per-row-2', demoPer2);
+// Köyü yerleştir
+scene.add(createHouse(-8, -6, 1.1, 0xe57373));   // Kırmızı ev
+scene.add(createHouse(5, -9, 0.95, 0x64b5f6));   // Mavi ev
+scene.add(createHouse(12, 4, 1.2, 0xffb74d));    // Turuncu ev
 
+scene.add(createTree(-14, 8));
+scene.add(createTree(15, -12));
+scene.add(createTree(-3, 14));
+scene.add(createTree(9, 11));
+
+// Küçük gölet / su
+const waterGeo = new THREE.CircleGeometry(6, 32);
+const waterMat = new THREE.MeshStandardMaterial({
+  color: 0x448aff,
+  roughness: 0,
+  metalness: 0.3,
+  transparent: true,
+  opacity: 0.75
+});
+const water = new THREE.Mesh(waterGeo, waterMat);
+water.rotation.x = -Math.PI/2;
+water.position.set(-2, 0.1, 10);
+scene.add(water);
+
+// ======================== ANİMASYON DÖNGÜSÜ ========================
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+// ======================== RESPONSIVE ========================
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
 </script>
 </body>
 </html>
