@@ -3,165 +3,167 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Köy 3D - Basit Demo</title>
+  <title>My Village - Ana Ekran Demo</title>
   <style>
-    body { margin:0; overflow:hidden; background:#000; touch-action: none; }
-    canvas { display:block; }
-    #ui {
+    body { margin:0; overflow:hidden; background:#000; touch-action:none; }
+    canvas { display:block; width:100%; height:100%; }
+    #overlay {
       position: absolute;
-      top: 20px; left: 20px;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
       color: white;
-      background: rgba(0,0,0,0.6);
-      padding: 12px 18px;
-      border-radius: 12px;
-      font-size: 16px;
-      pointer-events: none;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+      box-sizing: border-box;
       z-index: 10;
     }
-    #info {
-      position: absolute;
-      bottom: 30px; left: 50%;
-      transform: translateX(-50%);
-      color: #fff;
-      font-size: 15px;
-      text-shadow: 0 2px 6px #000;
-      pointer-events: none;
-      z-index: 10;
-    }
+    #title { font-size: 24px; text-shadow: 0 2px 8px black; }
+    #status { font-size: 16px; text-shadow: 0 1px 4px black; }
   </style>
 </head>
 <body>
 
-<div id="ui">Köy Merkezi Demo<br>Sürükle: döndür • Çift parmak: zoom</div>
-<div id="info">My Village – Köyüm büyüyor...</div>
+<div id="overlay">
+  <div id="title">My Village</div>
+  <div id="status">Köy merkezi yükleniyor... Parmakla döndür • Çift parmakla zoom yap</div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.168.0/examples/js/controls/OrbitControls.min.js"></script>
 
 <script>
-console.log("Three.js demo başladı – eğer siyahsa konsola bak");
+  console.log("Demo başladı - Three.js versiyon:", THREE.REVISION);
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x7ec0ee);  // açık mavi gök
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x88ddff); // açık mavi gökyüzü
 
-const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 10, 25);
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 12, 30);
+  camera.lookAt(0, 0, 0);
 
-const renderer = new THREE.WebGLRenderer({ 
-  antialias: false,                // performans için kapattım
-  powerPreference: "low-power",    // iOS/Safari için önemli
-  alpha: false
-});
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(1);         // ← kritik: yüksek ratio siyah ekran yapar
-document.body.appendChild(renderer.domElement);
-
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.1;
-controls.rotateSpeed = 0.8;
-controls.zoomSpeed = 1.2;
-controls.minDistance = 10;
-controls.maxDistance = 60;
-controls.maxPolarAngle = Math.PI * 0.5;
-controls.enablePan = false;
-controls.target.set(0, 0, 0);
-
-// Işık – basit tutalım
-const ambient = new THREE.AmbientLight(0xffffff, 0.9);
-scene.add(ambient);
-
-const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-dirLight.position.set(20, 40, 30);
-scene.add(dirLight);
-
-// Düz arazi (engebe yok, sorun çıkmasın)
-const groundGeo = new THREE.PlaneGeometry(100, 100);
-const groundMat = new THREE.MeshBasicMaterial({ color: 0x88aa55 });  // yeşil çimen
-const ground = new THREE.Mesh(groundGeo, groundMat);
-ground.rotation.x = -Math.PI / 2;
-scene.add(ground);
-
-// Basit ev fonksiyonu (shadow yok)
-function addHouse(x, z, color = 0xff6666) {
-  const group = new THREE.Group();
-
-  // taban
-  const base = new THREE.Mesh(
-    new THREE.BoxGeometry(6, 0.5, 7),
-    new THREE.MeshBasicMaterial({ color: 0xdddddd })
-  );
-  base.position.y = 0.25;
-  group.add(base);
-
-  // duvar
-  const walls = new THREE.Mesh(
-    new THREE.BoxGeometry(5.5, 4, 6.5),
-    new THREE.MeshBasicMaterial({ color })
-  );
-  walls.position.y = 2.25;
-  group.add(walls);
-
-  // çatı
-  const roof = new THREE.Mesh(
-    new THREE.ConeGeometry(5, 4, 4),
-    new THREE.MeshBasicMaterial({ color: 0xaa0000 })
-  );
-  roof.position.y = 4.5;
-  roof.rotation.y = Math.PI / 4;
-  group.add(roof);
-
-  group.position.set(x, 0, z);
-  scene.add(group);
-}
-
-// Ağaç basit
-function addTree(x, z) {
-  const group = new THREE.Group();
-
-  const trunk = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.8, 1.2, 5, 6),
-    new THREE.MeshBasicMaterial({ color: 0x8b4513 })
-  );
-  trunk.position.y = 2.5;
-  group.add(trunk);
-
-  const leaves = new THREE.Mesh(
-    new THREE.ConeGeometry(4, 7, 6),
-    new THREE.MeshBasicMaterial({ color: 0x228b22 })
-  );
-  leaves.position.y = 6;
-  group.add(leaves);
-
-  group.position.set(x, 0, z);
-  scene.add(group);
-}
-
-// Yerleştir
-addHouse(-8, -5, 0xff7777);
-addHouse(6, -7, 0x7799ff);
-addHouse(10, 4, 0xffcc66);
-
-addTree(-12, 8);
-addTree(14, -10);
-addTree(0, 12);
-
-// Animate
-function animate() {
-  requestAnimationFrame(animate);
-  controls.update();
-  renderer.render(scene, camera);
-}
-animate();
-
-// Resize
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
+  const renderer = new THREE.WebGLRenderer({ antialias: false });
   renderer.setSize(window.innerWidth, window.innerHeight);
-});
+  renderer.setPixelRatio(1); // mobil siyah ekran fix #1
+  document.body.appendChild(renderer.domElement);
 
-console.log("Sahne yüklendi – nesneler eklendi. Renderer aktif.");
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.12;
+  controls.rotateSpeed = 0.7;
+  controls.zoomSpeed = 1.1;
+  controls.minDistance = 12;
+  controls.maxDistance = 80;
+  controls.maxPolarAngle = Math.PI * 0.5;
+  controls.enablePan = false;
+  controls.target.set(0, 2, 0);
+
+  // Basit ışık
+  scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+
+  // Düz zemin
+  const ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(120, 120),
+    new THREE.MeshBasicMaterial({ color: 0x7caf5e }) // yeşil çimen
+  );
+  ground.rotation.x = -Math.PI / 2;
+  scene.add(ground);
+
+  // Ev ekleme fonksiyonu (çok basit, shadow yok)
+  function evEkle(x, z, renk = 0xff5555) {
+    const grup = new THREE.Group();
+
+    // Taban
+    const taban = new THREE.Mesh(
+      new THREE.BoxGeometry(8, 1, 9),
+      new THREE.MeshBasicMaterial({ color: 0xcccccc })
+    );
+    taban.position.y = 0.5;
+    grup.add(taban);
+
+    // Duvar
+    const duvar = new THREE.Mesh(
+      new THREE.BoxGeometry(7, 6, 8),
+      new THREE.MeshBasicMaterial({ color: renk })
+    );
+    duvar.position.y = 3.5;
+    grup.add(duvar);
+
+    // Çatı
+    const cati = new THREE.Mesh(
+      new THREE.ConeGeometry(7, 5, 4),
+      new THREE.MeshBasicMaterial({ color: 0x880000 })
+    );
+    cati.position.y = 7;
+    cati.rotation.y = Math.PI / 4;
+    grup.add(cati);
+
+    grup.position.set(x, 0, z);
+    scene.add(grup);
+    console.log("Ev eklendi:", x, z);
+  }
+
+  // Ağaç
+  function agacEkle(x, z) {
+    const grup = new THREE.Group();
+
+    const govde = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.2, 1.8, 7, 6),
+      new THREE.MeshBasicMaterial({ color: 0x8b4513 })
+    );
+    govde.position.y = 3.5;
+    grup.add(govde);
+
+    const yaprak = new THREE.Mesh(
+      new THREE.ConeGeometry(6, 10, 6),
+      new THREE.MeshBasicMaterial({ color: 0x228b22 })
+    );
+    yaprak.position.y = 9;
+    grup.add(yaprak);
+
+    grup.position.set(x, 0, z);
+    scene.add(grup);
+    console.log("Ağaç eklendi:", x, z);
+  }
+
+  // Köyü kur
+  evEkle(-12, -8, 0xff7777);
+  evEkle(10, -10, 0x7777ff);
+  evEkle(15, 6, 0xffaa55);
+
+  agacEkle(-18, 12);
+  agacEkle(20, -15);
+  agacEkle(-5, 18);
+
+  // Küçük gölet
+  const golet = new THREE.Mesh(
+    new THREE.CircleGeometry(9, 24),
+    new THREE.MeshBasicMaterial({ color: 0x4488ff })
+  );
+  golet.rotation.x = -Math.PI / 2;
+  golet.position.set(-4, 0.05, 14);
+  scene.add(golet);
+
+  console.log("Tüm nesneler sahneye eklendi - animate başlıyor");
+
+  function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  // Resize
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // Status güncelle
+  document.getElementById('status').innerText = "Köy hazır! Köyümü büyütmeye başla...";
 </script>
 </body>
 </html>
