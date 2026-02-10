@@ -17,8 +17,8 @@ html,body{
   position:fixed;
   top:0;left:0;right:0;
   height:48px;
-  background:rgba(20,60,40,0.85);
-  backdrop-filter:blur(12px);
+  background:rgba(15,50,35,0.9);
+  backdrop-filter:blur(14px);
   color:#fff;
   display:flex;
   align-items:center;
@@ -40,9 +40,9 @@ canvas{display:block;}
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0b2f1f);
 
-/* CAMERA */
-const camera = new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,500);
-camera.position.set(18,20,22);
+/* CAMERA (SABİT AÇI – OYUN GİBİ) */
+const camera = new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,500);
+camera.position.set(15,18,18);
 camera.lookAt(0,0,0);
 
 /* RENDERER */
@@ -52,78 +52,90 @@ renderer.setPixelRatio(Math.min(devicePixelRatio,2));
 document.body.appendChild(renderer.domElement);
 
 /* LIGHT */
-scene.add(new THREE.AmbientLight(0xffffff,0.8));
-const sun=new THREE.DirectionalLight(0xfff2cc,1);
-sun.position.set(30,40,20);
+scene.add(new THREE.AmbientLight(0xffffff,0.9));
+const sun=new THREE.DirectionalLight(0xfff1cc,1);
+sun.position.set(25,40,15);
 scene.add(sun);
 
 /* MATERIALS */
-const grass = new THREE.MeshStandardMaterial({color:0x2ecc71});
-const buildingMat = new THREE.MeshStandardMaterial({color:0xff9f1c});
-const roadMat = new THREE.MeshStandardMaterial({color:0xe67e22});
+const grass     = new THREE.MeshStandardMaterial({color:0x2ecc71});
+const forestMat = new THREE.MeshStandardMaterial({color:0x145a32});
+const rockMat   = new THREE.MeshStandardMaterial({color:0x7f8c8d});
+const waterMat  = new THREE.MeshStandardMaterial({color:0x1abc9c});
+const adminMat  = new THREE.MeshStandardMaterial({color:0xff9f1c});
+const roadMat   = new THREE.MeshStandardMaterial({color:0xe67e22});
 
-/* LAND + BUILDINGS */
+/* LAND */
 const size = 25;
 for(let x=-size/2;x<size/2;x++){
   for(let z=-size/2;z<size/2;z++){
-    // ground
-    const tile=new THREE.Mesh(
+    let mat = grass;
+
+    // forest zone
+    if(x > 5 && z < -3) mat = forestMat;
+
+    // rocky zone
+    if(x < -6 && z > 4) mat = rockMat;
+
+    // lake
+    if(x > -2 && x < 3 && z > -2 && z < 3) mat = waterMat;
+
+    const tile = new THREE.Mesh(
       new THREE.BoxGeometry(1,0.25,1),
-      grass
+      mat
     );
     tile.position.set(x,0,z);
     scene.add(tile);
-
-    // building (80%)
-    if(Math.random()<0.8){
-      const h = Math.random()*1.5+0.3;
-      const b=new THREE.Mesh(
-        new THREE.BoxGeometry(0.6,h,0.6),
-        buildingMat
-      );
-      b.position.set(x,h/2+0.25,z);
-      scene.add(b);
-    }
   }
 }
 
+/* RIVER (FROM LAKE) */
+for(let i=0;i<10;i++){
+  const river = new THREE.Mesh(
+    new THREE.BoxGeometry(1,0.22,1),
+    waterMat
+  );
+  river.position.set(2+i,0.11,2+i);
+  scene.add(river);
+}
+
+/* ADMIN BUILDING */
+const admin = new THREE.Mesh(
+  new THREE.BoxGeometry(1.8,1.8,1.8),
+  adminMat
+);
+admin.position.set(-2,1,-4);
+scene.add(admin);
+
 /* WORLD */
-const world=new THREE.Mesh(
+const world = new THREE.Mesh(
   new THREE.SphereGeometry(3,32,32),
   new THREE.MeshStandardMaterial({color:0x3498db})
 );
 world.position.set(-18,8,-18);
 scene.add(world);
 
-/* ROAD TO WORLD (CONNECTED) */
+/* ROAD TO WORLD */
 for(let i=0;i<10;i++){
-  const r=new THREE.Mesh(
+  const road = new THREE.Mesh(
     new THREE.BoxGeometry(1,0.15,1),
     roadMat
   );
-  r.position.set(-8-i,0.12,5-i);
-  scene.add(r);
+  road.position.set(-6-i,0.12,-6-i);
+  scene.add(road);
 }
 
-/* BRIDGE CONTACT */
-const bridge=new THREE.Mesh(
-  new THREE.BoxGeometry(2,0.2,2),
-  roadMat
-);
-bridge.position.set(-16,1,-16);
-scene.add(bridge);
-
-/* TOUCH MOVE */
+/* TOUCH MAP MOVE (NAVİGASYON DEĞİL) */
 let sx=0,sy=0;
 addEventListener("touchstart",e=>{
   sx=e.touches[0].clientX;
   sy=e.touches[0].clientY;
 });
 addEventListener("touchmove",e=>{
-  const dx=(e.touches[0].clientX-sx)*0.01;
-  const dy=(e.touches[0].clientY-sy)*0.01;
-  camera.position.x-=dx;
-  camera.position.z+=dy;
+  const dx=(e.touches[0].clientX-sx)*0.02;
+  const dy=(e.touches[0].clientY-sy)*0.02;
+  camera.position.x -= dx;
+  camera.position.z += dy;
   camera.lookAt(0,0,0);
   sx=e.touches[0].clientX;
   sy=e.touches[0].clientY;
