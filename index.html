@@ -1,235 +1,149 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>My Village – Digital Land</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>My Village – Digital World</title>
 
 <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  background: radial-gradient(circle at top, #0f2f1f, #06150d);
-  overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+html,body{
+  margin:0;
+  padding:0;
+  background:#06150d;
+  overflow:hidden;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
 }
-
-/* iOS liquid glass bar */
-#topBar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 48px;
-  backdrop-filter: blur(18px) saturate(180%);
-  background: rgba(255,255,255,0.08);
-  display: flex;
-  align-items: center;
-  padding-left: 16px;
-  color: #fff;
-  font-weight: 600;
-  z-index: 10;
+#topbar{
+  position:fixed;
+  top:0;left:0;right:0;
+  height:48px;
+  background:rgba(20,60,40,0.85);
+  backdrop-filter:blur(12px);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  padding-left:14px;
+  font-weight:600;
+  z-index:10;
 }
-
-/* Modal */
-#modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.45);
-  backdrop-filter: blur(12px);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 20;
-}
-
-#modalContent {
-  width: 86%;
-  max-width: 360px;
-  background: rgba(255,255,255,0.18);
-  border-radius: 20px;
-  padding: 20px;
-  color: #fff;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-}
-
-#modalContent h2 {
-  margin-top: 0;
-  color: #ffb347;
-}
-
-#closeBtn {
-  margin-top: 16px;
-  padding: 12px;
-  width: 100%;
-  border-radius: 14px;
-  border: none;
-  background: linear-gradient(135deg, #ff9f1c, #2ecc71);
-  color: #fff;
-  font-weight: 600;
-}
+canvas{display:block;}
 </style>
 </head>
 
 <body>
-
-<div id="topBar">🌍 My Village – Digital World</div>
-
-<div id="modal">
-  <div id="modalContent">
-    <h2>🏢 Dijital Arsa</h2>
-    <p>
-      Bu küp bina, My Village dijital dünyasında
-      etkileşimli bir arsayı temsil eder.
-    </p>
-    <p>
-      • 3D voxel arazi  
-      • Turuncu–yeşil tema  
-      • iOS liquid glass arayüz  
-    </p>
-    <button id="closeBtn">Kapat</button>
-  </div>
-</div>
+<div id="topbar">🌍 My Village – Digital World</div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
 
 <script>
-/* Scene */
+/* BASIC SETUP */
 const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0x06150d, 20, 120);
+scene.background = new THREE.Color(0x0b2f1f);
 
-/* Camera */
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 500);
-camera.position.set(20, 18, 20);
+const camera = new THREE.PerspectiveCamera(
+  60,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  500
+);
+camera.position.set(10,12,14);
+camera.lookAt(0,0,0);
 
-/* Renderer */
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setClearColor(0x06150d);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
 document.body.appendChild(renderer.domElement);
 
-/* Controls (Google Maps style) */
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.08;
-controls.enablePan = true;
-controls.minDistance = 8;
-controls.maxDistance = 60;
-controls.maxPolarAngle = Math.PI / 2.1;
-
-/* Lights */
-scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-const sun = new THREE.DirectionalLight(0xffe6b3, 1.1);
-sun.position.set(30, 50, 20);
+/* LIGHT */
+scene.add(new THREE.AmbientLight(0xffffff,0.8));
+const sun = new THREE.DirectionalLight(0xfff2cc,1);
+sun.position.set(20,30,10);
 scene.add(sun);
 
-/* Materials */
-const grassMat = new THREE.MeshStandardMaterial({ color: 0x2ecc71 });
-const waterMat = new THREE.MeshStandardMaterial({
-  color: 0x1abc9c,
-  transparent: true,
-  opacity: 0.75
-});
-const roadMat = new THREE.MeshStandardMaterial({ color: 0xe67e22 });
-const treeTrunkMat = new THREE.MeshStandardMaterial({ color: 0x8e5a2b });
-const treeLeafMat = new THREE.MeshStandardMaterial({ color: 0x27ae60 });
+/* MATERIALS */
+const grass = new THREE.MeshStandardMaterial({color:0x2ecc71});
+const water = new THREE.MeshStandardMaterial({color:0x1abc9c});
+const road  = new THREE.MeshStandardMaterial({color:0xe67e22});
+const build = new THREE.MeshStandardMaterial({color:0xff9f1c});
 
-/* Voxel Land */
-const landSize = 20;
-for (let x = 0; x < landSize; x++) {
-  for (let z = 0; z < landSize; z++) {
-    const cube = new THREE.Mesh(
-      new THREE.BoxGeometry(1, 1, 1),
-      grassMat
+/* LAND GRID */
+for(let x=-6;x<=6;x++){
+  for(let z=-6;z<=6;z++){
+    const tile = new THREE.Mesh(
+      new THREE.BoxGeometry(1,0.4,1),
+      grass
     );
-    cube.position.set(x - landSize/2, 0, z - landSize/2);
-    scene.add(cube);
+    tile.position.set(x,0,z);
+    scene.add(tile);
   }
 }
 
-/* River */
-for (let z = -8; z < 8; z++) {
-  const water = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 0.4, 1),
-    waterMat
+/* RIVER */
+for(let z=-6;z<=6;z++){
+  const w = new THREE.Mesh(
+    new THREE.BoxGeometry(1,0.2,1),
+    water
   );
-  water.position.set(-8, 0.2, z);
-  scene.add(water);
+  w.position.set(-6,0.1,z);
+  scene.add(w);
 }
 
-/* Road from world */
-for (let i = 0; i < 12; i++) {
-  const road = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 0.2, 1),
-    roadMat
+/* ROAD */
+for(let i=0;i<8;i++){
+  const r = new THREE.Mesh(
+    new THREE.BoxGeometry(1,0.15,1),
+    road
   );
-  road.position.set(-12 + i, 0.1, 6);
-  scene.add(road);
+  r.position.set(-10+i,0.08,5);
+  scene.add(r);
 }
 
-/* Trees */
-for (let i = 0; i < 14; i++) {
-  const trunk = new THREE.Mesh(new THREE.BoxGeometry(0.4, 1, 0.4), treeTrunkMat);
-  const leaf = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), treeLeafMat);
-  const x = Math.random() * 14 - 7;
-  const z = Math.random() * 14 - 7;
-  trunk.position.set(x, 0.5, z);
-  leaf.position.set(x, 1.5, z);
-  scene.add(trunk, leaf);
-}
-
-/* Building */
+/* BUILDING */
 const building = new THREE.Mesh(
-  new THREE.BoxGeometry(2, 2, 2),
-  new THREE.MeshStandardMaterial({ color: 0xff9f1c })
+  new THREE.BoxGeometry(2,2,2),
+  build
 );
-building.position.set(3, 1, 3);
+building.position.set(2,1,2);
 scene.add(building);
 
-/* World Sphere */
+/* WORLD */
 const world = new THREE.Mesh(
-  new THREE.SphereGeometry(3, 32, 32),
-  new THREE.MeshStandardMaterial({ color: 0x3498db })
+  new THREE.SphereGeometry(2.5,32,32),
+  new THREE.MeshStandardMaterial({color:0x3498db})
 );
-world.position.set(-20, 8, -20);
+world.position.set(-12,6,-12);
 scene.add(world);
 
-/* Raycaster */
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
+/* TOUCH CAMERA (MAP STYLE) */
+let startX=0,startY=0;
+window.addEventListener("touchstart",e=>{
+  startX=e.touches[0].clientX;
+  startY=e.touches[0].clientY;
+});
+window.addEventListener("touchmove",e=>{
+  const dx=(e.touches[0].clientX-startX)*0.01;
+  const dy=(e.touches[0].clientY-startY)*0.01;
+  camera.position.x-=dx;
+  camera.position.z+=dy;
+  camera.lookAt(0,0,0);
+  startX=e.touches[0].clientX;
+  startY=e.touches[0].clientY;
+});
 
-function onClick(e) {
-  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-  raycaster.setFromCamera(mouse, camera);
-  const hits = raycaster.intersectObjects([building]);
-  if (hits.length) {
-    document.getElementById("modal").style.display = "flex";
-  }
-}
-
-window.addEventListener("click", onClick);
-document.getElementById("closeBtn").onclick = () =>
-  document.getElementById("modal").style.display = "none";
-
-/* Animation */
-function animate() {
+/* ANIMATE */
+function animate(){
   requestAnimationFrame(animate);
-  world.rotation.y += 0.0015;
-  controls.update();
-  renderer.render(scene, camera);
+  world.rotation.y+=0.002;
+  renderer.render(scene,camera);
 }
 animate();
 
-/* Resize */
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
+/* RESIZE */
+window.addEventListener("resize",()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(window.innerWidth,window.innerHeight);
 });
 </script>
-
 </body>
 </html>
