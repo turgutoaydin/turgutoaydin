@@ -3,158 +3,1264 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>My Village – Digital World</title>
+<title>Digital Village - Ultimate Köy Haritası</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-html,body{
-  margin:0;
-  padding:0;
-  background:#06150d;
-  overflow:hidden;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
+/* RESET VE TEMEL STİLLER */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-#topbar{
-  position:fixed;
-  top:0;left:0;right:0;
-  height:48px;
-  background:rgba(15,50,35,0.9);
-  backdrop-filter:blur(14px);
-  color:#fff;
-  display:flex;
-  align-items:center;
-  padding-left:14px;
-  font-weight:600;
-  z-index:10;
+
+:root {
+  --primary: #0a291c;
+  --secondary: #1e4d3a;
+  --accent: #3a9e6f;
+  --accent-light: #5bbf8f;
+  --danger: #e74c3c;
+  --warning: #f39c12;
+  --info: #3498db;
+  --light: #f8f9fa;
+  --dark: #06150d;
+  --grass: #27ae60;
+  --forest: #145a32;
+  --water: #1abc9c;
+  --rock: #7f8c8d;
+  --road: #e67e22;
+  --building: #ff9f1c;
+  --modal-bg: rgba(6, 21, 13, 0.92);
 }
-canvas{display:block;}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--dark);
+  overflow: hidden;
+  font-family: 'Poppins', sans-serif;
+  color: var(--light);
+}
+
+/* TOP BAR */
+#topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: rgba(10, 41, 28, 0.95);
+  backdrop-filter: blur(12px);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  font-weight: 600;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(58, 158, 111, 0.3);
+}
+
+#topbar .logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.2rem;
+}
+
+#topbar .logo i {
+  color: var(--accent);
+  font-size: 1.4rem;
+}
+
+#topbar .user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+#topbar .user-info .badge {
+  background: rgba(58, 158, 111, 0.2);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  border: 1px solid rgba(58, 158, 111, 0.4);
+}
+
+/* SİDE PANEL */
+#sidebar {
+  position: fixed;
+  left: 0;
+  top: 60px;
+  width: 260px;
+  height: calc(100vh - 60px);
+  background: rgba(10, 41, 28, 0.85);
+  backdrop-filter: blur(10px);
+  z-index: 900;
+  padding: 20px;
+  overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  border-right: 1px solid rgba(58, 158, 111, 0.2);
+}
+
+#sidebar.active {
+  transform: translateX(0);
+}
+
+#sidebar h3 {
+  color: var(--accent);
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#sidebar .resource {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+#sidebar .resource:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+#sidebar .resource i {
+  margin-right: 10px;
+  color: var(--accent);
+}
+
+#sidebar .stats {
+  margin-top: 25px;
+}
+
+#sidebar .stat-item {
+  margin-bottom: 15px;
+  padding: 12px;
+  background: rgba(30, 77, 58, 0.3);
+  border-radius: 8px;
+}
+
+#sidebar .stat-item .label {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 5px;
+}
+
+#sidebar .stat-item .value {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* KÖY HARİTASI KONTEYNERİ */
+#village-container {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 60px);
+  z-index: 1;
+  cursor: grab;
+}
+
+#village-container:active {
+  cursor: grabbing;
+}
+
+/* ARAZİ BİLGİ PANELİ */
+#terrain-info {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10, 41, 28, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 15px 25px;
+  display: flex;
+  gap: 20px;
+  z-index: 800;
+  border: 1px solid rgba(58, 158, 111, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+#terrain-info.show {
+  opacity: 1;
+}
+
+#terrain-info .info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#terrain-info .info-item i {
+  color: var(--accent);
+  font-size: 1.2rem;
+}
+
+#terrain-info .info-item .label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+#terrain-info .info-item .value {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* MODAL */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--modal-bg);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal-content {
+  background: rgba(10, 41, 28, 0.95);
+  width: 90%;
+  max-width: 500px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(58, 158, 111, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.modal.active .modal-content {
+  transform: translateY(0);
+}
+
+.modal-header {
+  padding: 20px;
+  background: rgba(30, 77, 58, 0.8);
+  border-bottom: 1px solid rgba(58, 158, 111, 0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  color: white;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-header .close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal-header .close:hover {
+  color: var(--accent);
+}
+
+.modal-body {
+  padding: 25px;
+}
+
+.modal-body .coordinates {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(30, 77, 58, 0.4);
+  border-radius: 10px;
+}
+
+.modal-body .coord {
+  text-align: center;
+}
+
+.modal-body .coord .label {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 5px;
+}
+
+.modal-body .coord .value {
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: var(--accent);
+}
+
+.modal-body .terrain-type {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 12px;
+  background: rgba(30, 77, 58, 0.4);
+  border-radius: 10px;
+}
+
+.modal-body .terrain-type .type-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.modal-body .terrain-type.grass .type-icon {
+  background: var(--grass);
+}
+
+.modal-body .terrain-type.forest .type-icon {
+  background: var(--forest);
+}
+
+.modal-body .terrain-type.water .type-icon {
+  background: var(--water);
+}
+
+.modal-body .terrain-type.rock .type-icon {
+  background: var(--rock);
+}
+
+.modal-body .terrain-type .type-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.modal-body .actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.modal-body .action-btn {
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.modal-body .action-btn.build {
+  background: var(--accent);
+  color: white;
+}
+
+.modal-body .action-btn.build:hover {
+  background: var(--accent-light);
+}
+
+.modal-body .action-btn.cultivate {
+  background: var(--grass);
+  color: white;
+}
+
+.modal-body .action-btn.cultivate:hover {
+  background: #2ecc71;
+}
+
+.modal-body .action-btn.info {
+  background: var(--info);
+  color: white;
+}
+
+.modal-body .action-btn.info:hover {
+  background: #5dade2;
+}
+
+.modal-body .action-btn.demolish {
+  background: var(--danger);
+  color: white;
+}
+
+.modal-body .action-btn.demolish:hover {
+  background: #ec7063;
+}
+
+.modal-body .action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* KONTROLLER */
+#controls {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.control-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(10, 41, 28, 0.9);
+  border: 1px solid rgba(58, 158, 111, 0.4);
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  backdrop-filter: blur(5px);
+}
+
+.control-btn:hover {
+  background: rgba(30, 77, 58, 0.9);
+  transform: translateY(-3px);
+}
+
+.control-btn.active {
+  background: var(--accent);
+  color: white;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  #sidebar {
+    width: 100%;
+    transform: translateX(-100%);
+  }
+  
+  #terrain-info {
+    flex-direction: column;
+    gap: 10px;
+    bottom: 80px;
+    width: 90%;
+  }
+  
+  #controls {
+    right: 10px;
+    bottom: 10px;
+  }
+  
+  .control-btn {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .modal-content {
+    width: 95%;
+  }
+  
+  .modal-body .actions {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
 </head>
 
 <body>
-<div id="topbar">🌍 My Village – Digital World</div>
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <div class="logo">
+      <i class="fas fa-globe-europe"></i>
+      <span>Digital Village</span>
+    </div>
+    
+    <div class="user-info">
+      <div class="badge">
+        <i class="fas fa-user"></i>
+        Köy Başkanı
+      </div>
+      <div class="badge">
+        <i class="fas fa-coins"></i>
+        12.450 Altın
+      </div>
+    </div>
+  </div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+  <!-- SİDE PANEL -->
+  <div id="sidebar">
+    <h3><i class="fas fa-box-open"></i> Kaynaklar</h3>
+    
+    <div class="resource">
+      <div>
+        <i class="fas fa-wheat-awn"></i>
+        <span>Buğday</span>
+      </div>
+      <span class="value">1.245</span>
+    </div>
+    
+    <div class="resource">
+      <div>
+        <i class="fas fa-tree"></i>
+        <span>Odun</span>
+      </div>
+      <span class="value">845</span>
+    </div>
+    
+    <div class="resource">
+      <div>
+        <i class="fas fa-gem"></i>
+        <span>Taş</span>
+      </div>
+      <span class="value">520</span>
+    </div>
+    
+    <div class="resource">
+      <div>
+        <i class="fas fa-droplet"></i>
+        <span>Su</span>
+      </div>
+      <span class="value">2.140</span>
+    </div>
+    
+    <div class="stats">
+      <h3><i class="fas fa-chart-line"></i> Köy İstatistikleri</h3>
+      
+      <div class="stat-item">
+        <div class="label">Nüfus</div>
+        <div class="value">142</div>
+      </div>
+      
+      <div class="stat-item">
+        <div class="label">Gelişim Seviyesi</div>
+        <div class="value">5/10</div>
+      </div>
+      
+      <div class="stat-item">
+        <div class="label">Mutluluk</div>
+        <div class="value">89%</div>
+      </div>
+      
+      <div class="stat-item">
+        <div class="label">Keşfedilen Alan</div>
+        <div class="value">64%</div>
+      </div>
+    </div>
+  </div>
 
-<script>
-/* SCENE */
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0b2f1f);
+  <!-- KÖY HARİTASI -->
+  <div id="village-container"></div>
 
-/* CAMERA (SABİT AÇI – OYUN GİBİ) */
-const camera = new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,500);
-camera.position.set(15,18,18);
-camera.lookAt(0,0,0);
+  <!-- ARAZİ BİLGİ PANELİ -->
+  <div id="terrain-info">
+    <div class="info-item">
+      <i class="fas fa-map-marker-alt"></i>
+      <div>
+        <div class="label">Koordinat</div>
+        <div class="value" id="coord-value">X: 0, Z: 0</div>
+      </div>
+    </div>
+    
+    <div class="info-item">
+      <i class="fas fa-mountain"></i>
+      <div>
+        <div class="label">Arazi Tipi</div>
+        <div class="value" id="terrain-value">Çayır</div>
+      </div>
+    </div>
+    
+    <div class="info-item">
+      <i class="fas fa-flag"></i>
+      <div>
+        <div class="label">Durum</div>
+        <div class="value" id="status-value">Boş Arazi</div>
+      </div>
+    </div>
+  </div>
 
-/* RENDERER */
-const renderer = new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(innerWidth,innerHeight);
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-document.body.appendChild(renderer.domElement);
+  <!-- KONTROL BUTONLARI -->
+  <div id="controls">
+    <button class="control-btn" id="toggle-sidebar" title="Panel Aç/Kapat">
+      <i class="fas fa-bars"></i>
+    </button>
+    
+    <button class="control-btn" id="zoom-in" title="Yakınlaştır">
+      <i class="fas fa-search-plus"></i>
+    </button>
+    
+    <button class="control-btn" id="zoom-out" title="Uzaklaştır">
+      <i class="fas fa-search-minus"></i>
+    </button>
+    
+    <button class="control-btn" id="reset-view" title="Varsayılan Görünüm">
+      <i class="fas fa-home"></i>
+    </button>
+    
+    <button class="control-btn" id="toggle-grid" title="Izgarayı Göster/Gizle">
+      <i class="fas fa-th-large"></i>
+    </button>
+  </div>
 
-/* LIGHT */
-scene.add(new THREE.AmbientLight(0xffffff,0.9));
-const sun=new THREE.DirectionalLight(0xfff1cc,1);
-sun.position.set(25,40,15);
-scene.add(sun);
+  <!-- ARAZİ MODALI -->
+  <div class="modal" id="terrain-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-map-marked-alt"></i> Arazi Detayları</h2>
+        <button class="close">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="coordinates">
+          <div class="coord">
+            <div class="label">X Koordinatı</div>
+            <div class="value" id="modal-x">0</div>
+          </div>
+          
+          <div class="coord">
+            <div class="label">Z Koordinatı</div>
+            <div class="value" id="modal-z">0</div>
+          </div>
+          
+          <div class="coord">
+            <div class="label">Yükseklik</div>
+            <div class="value" id="modal-y">0</div>
+          </div>
+        </div>
+        
+        <div class="terrain-type grass">
+          <div class="type-icon">
+            <i class="fas fa-seedling"></i>
+          </div>
+          <div>
+            <div class="type-name">Çayır</div>
+            <div class="type-desc">Verimli tarım arazisi</div>
+          </div>
+        </div>
+        
+        <div class="actions">
+          <button class="action-btn build">
+            <i class="fas fa-hammer"></i> Bina İnşa Et
+          </button>
+          
+          <button class="action-btn cultivate">
+            <i class="fas fa-tractor"></i> Tarım Yap
+          </button>
+          
+          <button class="action-btn info">
+            <i class="fas fa-info-circle"></i> Detaylı Bilgi
+          </button>
+          
+          <button class="action-btn demolish" disabled>
+            <i class="fas fa-trash-alt"></i> Yık (Boş)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-/* MATERIALS */
-const grass     = new THREE.MeshStandardMaterial({color:0x2ecc71});
-const forestMat = new THREE.MeshStandardMaterial({color:0x145a32});
-const rockMat   = new THREE.MeshStandardMaterial({color:0x7f8c8d});
-const waterMat  = new THREE.MeshStandardMaterial({color:0x1abc9c});
-const adminMat  = new THREE.MeshStandardMaterial({color:0xff9f1c});
-const roadMat   = new THREE.MeshStandardMaterial({color:0xe67e22});
-
-/* LAND */
-const size = 25;
-for(let x=-size/2;x<size/2;x++){
-  for(let z=-size/2;z<size/2;z++){
-    let mat = grass;
-
-    // forest zone
-    if(x > 5 && z < -3) mat = forestMat;
-
-    // rocky zone
-    if(x < -6 && z > 4) mat = rockMat;
-
-    // lake
-    if(x > -2 && x < 3 && z > -2 && z < 3) mat = waterMat;
-
-    const tile = new THREE.Mesh(
-      new THREE.BoxGeometry(1,0.25,1),
-      mat
-    );
-    tile.position.set(x,0,z);
-    scene.add(tile);
+  <!-- THREE.JS SCRIPT -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+  
+  <script>
+  // SAHNE VE KAMERA
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0b2f1f);
+  
+  const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(30, 35, 30);
+  camera.lookAt(0, 0, 0);
+  
+  // RENDERER
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  document.getElementById('village-container').appendChild(renderer.domElement);
+  
+  // IŞIKLAR
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  scene.add(ambientLight);
+  
+  const directionalLight = new THREE.DirectionalLight(0xfff1cc, 0.9);
+  directionalLight.position.set(50, 100, 50);
+  directionalLight.castShadow = true;
+  directionalLight.shadow.mapSize.width = 2048;
+  directionalLight.shadow.mapSize.height = 2048;
+  scene.add(directionalLight);
+  
+  // GÖKYÜZÜ
+  const skyGeometry = new THREE.SphereGeometry(500, 32, 32);
+  const skyMaterial = new THREE.MeshBasicMaterial({
+    color: 0x87CEEB,
+    side: THREE.BackSide
+  });
+  const sky = new THREE.Mesh(skyGeometry, skyMaterial);
+  scene.add(sky);
+  
+  // MATERYALLER
+  const materials = {
+    grass: new THREE.MeshStandardMaterial({ color: 0x2ecc71, roughness: 0.8 }),
+    forest: new THREE.MeshStandardMaterial({ color: 0x145a32, roughness: 0.9 }),
+    rock: new THREE.MeshStandardMaterial({ color: 0x7f8c8d, roughness: 0.7 }),
+    water: new THREE.MeshStandardMaterial({ color: 0x1abc9c, roughness: 0.2 }),
+    road: new THREE.MeshStandardMaterial({ color: 0xe67e22, roughness: 0.8 }),
+    building: new THREE.MeshStandardMaterial({ color: 0xff9f1c, roughness: 0.6 }),
+    house1: new THREE.MeshStandardMaterial({ color: 0x9b59b6, roughness: 0.7 }),
+    house2: new THREE.MeshStandardMaterial({ color: 0x3498db, roughness: 0.7 }),
+    farm: new THREE.MeshStandardMaterial({ color: 0xf1c40f, roughness: 0.8 })
+  };
+  
+  // YÜKSEKLİK HARİTASI FONKSİYONU (DAHA DOĞAL ARAZİ)
+  function getHeight(x, z) {
+    // Perlin gürültüsü benzeri dalgalı arazi
+    const height = Math.sin(x * 0.3) * Math.cos(z * 0.2) * 1.5 +
+                   Math.sin(x * 0.1) * Math.cos(z * 0.15) * 0.7 +
+                   Math.sin(x * 0.05) * Math.cos(z * 0.08) * 0.3;
+    
+    // Dağlık alan
+    if (x < -10 && z > 8) return height + 3;
+    
+    // Ormanlık alan
+    if (x > 8 && z < -5) return height + 1;
+    
+    return Math.max(0, height);
   }
-}
-
-/* RIVER (FROM LAKE) */
-for(let i=0;i<10;i++){
-  const river = new THREE.Mesh(
-    new THREE.BoxGeometry(1,0.22,1),
-    waterMat
-  );
-  river.position.set(2+i,0.11,2+i);
-  scene.add(river);
-}
-
-/* ADMIN BUILDING */
-const admin = new THREE.Mesh(
-  new THREE.BoxGeometry(1.8,1.8,1.8),
-  adminMat
-);
-admin.position.set(-2,1,-4);
-scene.add(admin);
-
-/* WORLD */
-const world = new THREE.Mesh(
-  new THREE.SphereGeometry(3,32,32),
-  new THREE.MeshStandardMaterial({color:0x3498db})
-);
-world.position.set(-18,8,-18);
-scene.add(world);
-
-/* ROAD TO WORLD */
-for(let i=0;i<10;i++){
-  const road = new THREE.Mesh(
-    new THREE.BoxGeometry(1,0.15,1),
-    roadMat
-  );
-  road.position.set(-6-i,0.12,-6-i);
-  scene.add(road);
-}
-
-/* TOUCH MAP MOVE (NAVİGASYON DEĞİL) */
-let sx=0,sy=0;
-addEventListener("touchstart",e=>{
-  sx=e.touches[0].clientX;
-  sy=e.touches[0].clientY;
-});
-addEventListener("touchmove",e=>{
-  const dx=(e.touches[0].clientX-sx)*0.02;
-  const dy=(e.touches[0].clientY-sy)*0.02;
-  camera.position.x -= dx;
-  camera.position.z += dy;
-  camera.lookAt(0,0,0);
-  sx=e.touches[0].clientX;
-  sy=e.touches[0].clientY;
-});
-
-/* ANIMATE */
-function animate(){
-  requestAnimationFrame(animate);
-  world.rotation.y+=0.0015;
-  renderer.render(scene,camera);
-}
-animate();
-
-/* RESIZE */
-addEventListener("resize",()=>{
-  camera.aspect=innerWidth/innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth,innerHeight);
-});
-</script>
+  
+  // ARAZİ TİPİ BELİRLEME
+  function getTerrainType(x, z, height) {
+    // Göl
+    if (x > -3 && x < 5 && z > -4 && z < 4) return 'water';
+    
+    // Orman
+    if (x > 8 && z < -5 && height > 0.5) return 'forest';
+    
+    // Taşlık
+    if (x < -10 && z > 8 && height > 2) return 'rock';
+    
+    // Nehir
+    if (Math.abs(z - x) < 1.5 && x > -5 && x < 15) return 'water';
+    
+    // Yol
+    if (Math.abs(z + 5) < 0.7 && x > -15 && x < 0) return 'road';
+    if (Math.abs(x + 5) < 0.7 && z > -15 && z < 0) return 'road';
+    
+    // Çayır (varsayılan)
+    return 'grass';
+  }
+  
+  // ARAZİ OLUŞTURMA
+  const terrainSize = 32;
+  const terrainTiles = [];
+  
+  for (let x = -terrainSize/2; x < terrainSize/2; x++) {
+    for (let z = -terrainSize/2; z < terrainSize/2; z++) {
+      const height = getHeight(x, z);
+      const type = getTerrainType(x, z, height);
+      
+      let geometry;
+      let material = materials[type];
+      
+      if (type === 'water') {
+        geometry = new THREE.BoxGeometry(1, 0.1, 1);
+      } else {
+        geometry = new THREE.BoxGeometry(1, 0.3 + height * 0.2, 1);
+      }
+      
+      const tile = new THREE.Mesh(geometry, material);
+      tile.position.set(x, height * 0.2, z);
+      
+      if (type !== 'water') {
+        tile.castShadow = true;
+        tile.receiveShadow = true;
+      }
+      
+      // Arazi verilerini sakla
+      tile.userData = {
+        type: type,
+        x: x,
+        z: z,
+        height: height,
+        occupied: false
+      };
+      
+      scene.add(tile);
+      terrainTiles.push(tile);
+    }
+  }
+  
+  // BİNALAR VE YAPILAR
+  const buildings = [];
+  
+  // YÖNETİM BİNASI
+  const adminGeometry = new THREE.BoxGeometry(2, 3, 2);
+  const adminRoofGeometry = new THREE.ConeGeometry(1.5, 1.5, 4);
+  const admin = new THREE.Mesh(adminGeometry, materials.building);
+  admin.position.set(-8, 1.7, -8);
+  admin.castShadow = true;
+  admin.receiveShadow = true;
+  scene.add(admin);
+  
+  const adminRoof = new THREE.Mesh(adminRoofGeometry, materials.house2);
+  adminRoof.position.set(-8, 3.5, -8);
+  adminRoof.castShadow = true;
+  adminRoof.receiveShadow = true;
+  scene.add(adminRoof);
+  
+  buildings.push({
+    mesh: admin,
+    type: 'admin',
+    x: -8,
+    z: -8
+  });
+  
+  // EVLER
+  const housePositions = [
+    { x: -5, z: -3, type: 'house1' },
+    { x: -2, z: -6, type: 'house2' },
+    { x: 1, z: -8, type: 'house1' },
+    { x: 5, z: -2, type: 'house2' },
+    { x: 8, z: 2, type: 'house1' },
+    { x: -10, z: 2, type: 'house2' },
+    { x: -12, z: -2, type: 'house1' },
+    { x: 3, z: 10, type: 'house2' },
+  ];
+  
+  housePositions.forEach(pos => {
+    const houseGeometry = new THREE.BoxGeometry(1.2, 1.8, 1.2);
+    const houseRoofGeometry = new THREE.ConeGeometry(0.9, 1, 4);
+    
+    const house = new THREE.Mesh(houseGeometry, materials[pos.type]);
+    house.position.set(pos.x, 1, pos.z);
+    house.castShadow = true;
+    house.receiveShadow = true;
+    scene.add(house);
+    
+    const houseRoof = new THREE.Mesh(houseRoofGeometry, materials.building);
+    houseRoof.position.set(pos.x, 2.1, pos.z);
+    houseRoof.castShadow = true;
+    scene.add(houseRoof);
+    
+    buildings.push({
+      mesh: house,
+      type: 'house',
+      x: pos.x,
+      z: pos.z
+    });
+  });
+  
+  // ÇİFTLİK
+  const farmGeometry = new THREE.BoxGeometry(3, 0.5, 2);
+  const farm = new THREE.Mesh(farmGeometry, materials.farm);
+  farm.position.set(10, 0.3, -10);
+  farm.castShadow = true;
+  farm.receiveShadow = true;
+  scene.add(farm);
+  
+  buildings.push({
+    mesh: farm,
+    type: 'farm',
+    x: 10,
+    z: -10
+  });
+  
+  // DÜNYA GÖSTERGESİ
+  const worldGeometry = new THREE.SphereGeometry(2, 32, 32);
+  const worldMaterial = new THREE.MeshStandardMaterial({ 
+    color: 0x3498db,
+    emissive: 0x1a5276,
+    emissiveIntensity: 0.2
+  });
+  const world = new THREE.Mesh(worldGeometry, worldMaterial);
+  world.position.set(20, 10, 20);
+  world.castShadow = true;
+  scene.add(world);
+  
+  // AĞAÇLAR (ORMAN)
+  const treeGeometry = new THREE.ConeGeometry(0.5, 2, 8);
+  const treeTrunkGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1);
+  
+  for (let i = 0; i < 40; i++) {
+    const x = 12 + Math.random() * 10;
+    const z = -8 - Math.random() * 12;
+    
+    const treeTrunk = new THREE.Mesh(treeTrunkGeometry, materials.rock);
+    treeTrunk.position.set(x, 0.5, z);
+    treeTrunk.castShadow = true;
+    scene.add(treeTrunk);
+    
+    const treeTop = new THREE.Mesh(treeGeometry, materials.forest);
+    treeTop.position.set(x, 2, z);
+    treeTop.castShadow = true;
+    scene.add(treeTop);
+  }
+  
+  // KAYALIKLAR
+  const rockGeometry = new THREE.DodecahedronGeometry(0.4 + Math.random() * 0.3, 0);
+  
+  for (let i = 0; i < 30; i++) {
+    const x = -12 - Math.random() * 8;
+    const z = 10 + Math.random() * 8;
+    
+    const rock = new THREE.Mesh(rockGeometry, materials.rock);
+    rock.position.set(x, 0.5, z);
+    rock.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+    rock.castShadow = true;
+    scene.add(rock);
+  }
+  
+  // RAYCASTING (TIKLAMA DETAYI)
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+  
+  // TIKLAMA OLAYI
+  function onCanvasClick(event) {
+    // Fare konumunu normalleştir
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    
+    // Raycaster ayarla
+    raycaster.setFromCamera(mouse, camera);
+    
+    // Arazi ile kesişimleri kontrol et
+    const intersects = raycaster.intersectObjects(terrainTiles);
+    
+    if (intersects.length > 0) {
+      const tile = intersects[0].object;
+      const tileData = tile.userData;
+      
+      // Arazi bilgi panelini güncelle
+      document.getElementById('coord-value').textContent = `X: ${tileData.x}, Z: ${tileData.z}`;
+      
+      let terrainName = 'Çayır';
+      if (tileData.type === 'forest') terrainName = 'Orman';
+      else if (tileData.type === 'rock') terrainName = 'Taşlık';
+      else if (tileData.type === 'water') terrainName = 'Su';
+      else if (tileData.type === 'road') terrainName = 'Yol';
+      
+      document.getElementById('terrain-value').textContent = terrainName;
+      
+      // Durumu belirle
+      let status = 'Boş Arazi';
+      const buildingHere = buildings.find(b => 
+        Math.abs(b.x - tileData.x) < 0.5 && Math.abs(b.z - tileData.z) < 0.5
+      );
+      
+      if (buildingHere) {
+        if (buildingHere.type === 'admin') status = 'Yönetim Binası';
+        else if (buildingHere.type === 'house') status = 'Konut';
+        else if (buildingHere.type === 'farm') status = 'Çiftlik';
+      } else if (tileData.type === 'water') {
+        status = 'Su Kaynağı';
+      } else if (tileData.type === 'road') {
+        status = 'Yol';
+      }
+      
+      document.getElementById('status-value').textContent = status;
+      
+      // Bilgi panelini göster
+      document.getElementById('terrain-info').classList.add('show');
+      
+      // Modal verilerini güncelle
+      document.getElementById('modal-x').textContent = tileData.x;
+      document.getElementById('modal-z').textContent = tileData.z;
+      document.getElementById('modal-y').textContent = tileData.height.toFixed(2);
+      
+      // Modal arazi tipini güncelle
+      const terrainTypeElement = document.querySelector('.terrain-type');
+      terrainTypeElement.className = 'terrain-type';
+      
+      let icon = 'fas fa-seedling';
+      let typeName = 'Çayır';
+      let typeDesc = 'Verimli tarım arazisi';
+      
+      if (tileData.type === 'forest') {
+        terrainTypeElement.classList.add('forest');
+        icon = 'fas fa-tree';
+        typeName = 'Orman';
+        typeDesc = 'Odun toplanabilir alan';
+      } else if (tileData.type === 'rock') {
+        terrainTypeElement.classList.add('rock');
+        icon = 'fas fa-mountain';
+        typeName = 'Taşlık';
+        typeDesc = 'Taş çıkarılabilir alan';
+      } else if (tileData.type === 'water') {
+        terrainTypeElement.classList.add('water');
+        icon = 'fas fa-water';
+        typeName = 'Su';
+        typeDesc = 'Balıkçılık yapılabilir';
+      } else if (tileData.type === 'road') {
+        terrainTypeElement.classList.add('grass');
+        icon = 'fas fa-road';
+        typeName = 'Yol';
+        typeDesc = 'Ulaşım yolu';
+      } else {
+        terrainTypeElement.classList.add('grass');
+      }
+      
+      terrainTypeElement.innerHTML = `
+        <div class="type-icon">
+          <i class="${icon}"></i>
+        </div>
+        <div>
+          <div class="type-name">${typeName}</div>
+          <div class="type-desc">${typeDesc}</div>
+        </div>
+      `;
+      
+      // Eğer bina varsa butonları değiştir
+      const buildBtn = document.querySelector('.action-btn.build');
+      const demolishBtn = document.querySelector('.action-btn.demolish');
+      
+      if (buildingHere) {
+        buildBtn.innerHTML = '<i class="fas fa-edit"></i> Binayı Geliştir';
+        demolishBtn.disabled = false;
+        
+        if (buildingHere.type === 'admin') {
+          buildBtn.innerHTML = '<i class="fas fa-landmark"></i> Yönetim Merkezi';
+          buildBtn.disabled = true;
+        }
+      } else {
+        buildBtn.innerHTML = '<i class="fas fa-hammer"></i> Bina İnşa Et';
+        demolishBtn.disabled = true;
+      }
+      
+      // Modalı aç
+      document.getElementById('terrain-modal').classList.add('active');
+      
+      // Tıklanan araziyi vurgula
+      tile.material.emissive = new THREE.Color(0x333333);
+      tile.material.emissiveIntensity = 0.3;
+      
+      // Önceki vurgulamayı kaldır
+      terrainTiles.forEach(t => {
+        if (t !== tile) {
+          t.material.emissive = new THREE.Color(0x000000);
+          t.material.emissiveIntensity = 0;
+        }
+      });
+    }
+  }
+  
+  // MOUSE KONTROLLERİ
+  let isDragging = false;
+  let previousMousePosition = {
+    x: 0,
+    y: 0
+  };
+  
+  // Fare tıklama
+  renderer.domElement.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    previousMousePosition = {
+      x: e.clientX,
+      y: e.clientY
+    };
+  });
+  
+  // Fare hareketi
+  renderer.domElement.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    
+    const deltaX = e.clientX - previousMousePosition.x;
+    const deltaY = e.clientY - previousMousePosition.y;
+    
+    camera.position.x -= deltaX * 0.05;
+    camera.position.z -= deltaY * 0.05;
+    
+    camera.lookAt(0, 0, 0);
+    
+    previousMousePosition = {
+      x: e.clientX,
+      y: e.clientY
+    };
+  });
+  
+  // Fare bırakma
+  renderer.domElement.addEventListener('mouseup', () => {
+    isDragging = false;
+  });
+  
+  // Fare çıkışı
+  renderer.domElement.addEventListener('mouseleave', () => {
+    isDragging = false;
+  });
+  
+  // Tıklama olayı
+  renderer.domElement.addEventListener('click', onCanvasClick);
+  
+  // TOUCH KONTROLLERİ
+  let touchStartX = 0;
+  let touchStartY = 0;
+  
+  renderer.domElement.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  });
+  
+  renderer.domElement.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    
+    const deltaX = e.touches[0].clientX - touchStartX;
+    const deltaY = e.touches[0].clientY - touchStartY;
+    
+    camera.position.x -= deltaX * 0.05;
+    camera.position.z -= deltaY * 0.05;
+    
+    camera.lookAt(0, 0, 0);
+    
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  });
+  
+  renderer.domElement.addEventListener('touchend', (e) => {
+    // Dokunma ile tıklama arasındaki farkı ayırt etmek için
+    const deltaX = Math.abs(e.changedTouches[0].clientX - touchStartX);
+    const deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY);
+    
+    // Küçük hareketler tıklama olarak kabul edilir
+    if (deltaX < 10 && deltaY < 10) {
+      const clickEvent = new MouseEvent('click', {
+        clientX: e.changedTouches[0].clientX,
+        clientY: e.changedTouches[0].clientY
+      });
+      renderer.domElement.dispatchEvent(clickEvent);
+    }
+  });
+  
+  // PENCERE BOYUTU DEĞİŞİKLİĞİ
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+  
+  // KONTROL BUTONLARI
+  document.getElementById('toggle-sidebar').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('active');
+  });
+  
+  document.getElementById('zoom-in').addEventListener('click', () => {
+    camera.position.y = Math.max(10, camera.position.y - 5);
+    camera.position.x *= 0.9;
+    camera.position.z *= 0.9;
+    camera.lookAt(0, 0, 0);
+  });
+  
+  document.getElementById('zoom-out').addEventListener('click', () => {
+    camera.position.y = Math.min(100, camera.position.y + 5);
+    camera.position.x *= 1.1;
+    camera.position.z *= 1.1;
+    camera.lookAt(0, 0, 0);
+  });
+  
+  document.getElementById('reset-view').addEventListener('click', () => {
+    camera.position.set(30, 35, 30);
+    camera.lookAt(0, 0, 0);
+  });
+  
+  document.getElementById('toggle-grid').addEventListener('click', function() {
+    this.classList.toggle('active');
+    
+    // Izgara görünürlüğünü değiştir (basit bir örnek)
+    terrainTiles.forEach(tile => {
+      if (tile.userData.type === 'grass') {
+        tile.material.wireframe = !tile.material.wireframe;
+      }
+    });
+  });
+  
+  // MODAL KONTROLLERİ
+  document.querySelector('.modal .close').addEventListener('click', () => {
+    document.getElementById('terrain-modal').classList.remove('active');
+    document.getElementById('terrain-info').classList.remove('show');
+    
+    // Vurgulamayı kaldır
+    terrainTiles.forEach(t => {
+      t.material.emissive = new THREE.Color(0x000000);
+      t.material.emissiveIntensity = 0;
+    });
+  });
+  
+  // MODAL DIŞINA TIKLANDIĞINDA KAPAT
+  document.getElementById('terrain-modal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('terrain-modal')) {
+      document.getElementById('terrain-modal').classList.remove('active');
+      document.getElementById('terrain-info').classList.remove('show');
+      
+      // Vurgulamayı kaldır
+      terrainTiles.forEach(t => {
+        t.material.emissive = new THREE.Color(0x000000);
+        t.material.emissiveIntensity = 0;
+      });
+    }
+  });
+  
+  // ACTION BUTONLARI
+  document.querySelector('.action-btn.build').addEventListener('click', () => {
+    alert('Bina inşa etme özelliği aktifleştirildi! Bu alana bir bina inşa edilecek.');
+  });
+  
+  document.querySelector('.action-btn.cultivate').addEventListener('click', () => {
+    alert('Tarım yapma özelliği aktifleştirildi! Bu alanda tarım yapılacak.');
+  });
+  
+  document.querySelector('.action-btn.info').addEventListener('click', () => {
+    alert('Detaylı arazi bilgileri gösteriliyor...');
+  });
+  
+  document.querySelector('.action-btn.demolish').addEventListener('click', () => {
+    alert('Bina yıkma özelliği aktifleştirildi! Bu bina yıkılacak.');
+  });
+  
+  // ANİMASYON DÖNGÜSÜ
+  function animate() {
+    requestAnimationFrame(animate);
+    
+    // Dünya döndürme
+    world.rotation.y += 0.005;
+    
+    // Su dalgalanması
+    terrainTiles.forEach(tile => {
+      if (tile.userData.type === 'water') {
+        tile.position.y = 0.05 + Math.sin(Date.now() * 0.001 + tile.position.x) * 0.02;
+      }
+    });
+    
+    renderer.render(scene, camera);
+  }
+  
+  animate();
+  
+  // BAŞLANGIÇTA SİDEBAR'ı GÖSTER
+  setTimeout(() => {
+    document.getElementById('sidebar').classList.add('active');
+  }, 500);
+  </script>
 </body>
 </html>
