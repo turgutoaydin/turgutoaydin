@@ -36,113 +36,112 @@ canvas{display:block;}
 <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
 
 <script>
-/* BASIC SETUP */
+/* SCENE */
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0b2f1f);
 
-const camera = new THREE.PerspectiveCamera(
-  60,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  500
-);
-camera.position.set(10,12,14);
+/* CAMERA */
+const camera = new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,500);
+camera.position.set(18,20,22);
 camera.lookAt(0,0,0);
 
+/* RENDERER */
 const renderer = new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
 document.body.appendChild(renderer.domElement);
 
 /* LIGHT */
 scene.add(new THREE.AmbientLight(0xffffff,0.8));
-const sun = new THREE.DirectionalLight(0xfff2cc,1);
-sun.position.set(20,30,10);
+const sun=new THREE.DirectionalLight(0xfff2cc,1);
+sun.position.set(30,40,20);
 scene.add(sun);
 
 /* MATERIALS */
 const grass = new THREE.MeshStandardMaterial({color:0x2ecc71});
-const water = new THREE.MeshStandardMaterial({color:0x1abc9c});
-const road  = new THREE.MeshStandardMaterial({color:0xe67e22});
-const build = new THREE.MeshStandardMaterial({color:0xff9f1c});
+const buildingMat = new THREE.MeshStandardMaterial({color:0xff9f1c});
+const roadMat = new THREE.MeshStandardMaterial({color:0xe67e22});
 
-/* LAND GRID */
-for(let x=-6;x<=6;x++){
-  for(let z=-6;z<=6;z++){
-    const tile = new THREE.Mesh(
-      new THREE.BoxGeometry(1,0.4,1),
+/* LAND + BUILDINGS */
+const size = 25;
+for(let x=-size/2;x<size/2;x++){
+  for(let z=-size/2;z<size/2;z++){
+    // ground
+    const tile=new THREE.Mesh(
+      new THREE.BoxGeometry(1,0.25,1),
       grass
     );
     tile.position.set(x,0,z);
     scene.add(tile);
+
+    // building (80%)
+    if(Math.random()<0.8){
+      const h = Math.random()*1.5+0.3;
+      const b=new THREE.Mesh(
+        new THREE.BoxGeometry(0.6,h,0.6),
+        buildingMat
+      );
+      b.position.set(x,h/2+0.25,z);
+      scene.add(b);
+    }
   }
 }
 
-/* RIVER */
-for(let z=-6;z<=6;z++){
-  const w = new THREE.Mesh(
-    new THREE.BoxGeometry(1,0.2,1),
-    water
-  );
-  w.position.set(-6,0.1,z);
-  scene.add(w);
-}
+/* WORLD */
+const world=new THREE.Mesh(
+  new THREE.SphereGeometry(3,32,32),
+  new THREE.MeshStandardMaterial({color:0x3498db})
+);
+world.position.set(-18,8,-18);
+scene.add(world);
 
-/* ROAD */
-for(let i=0;i<8;i++){
-  const r = new THREE.Mesh(
+/* ROAD TO WORLD (CONNECTED) */
+for(let i=0;i<10;i++){
+  const r=new THREE.Mesh(
     new THREE.BoxGeometry(1,0.15,1),
-    road
+    roadMat
   );
-  r.position.set(-10+i,0.08,5);
+  r.position.set(-8-i,0.12,5-i);
   scene.add(r);
 }
 
-/* BUILDING */
-const building = new THREE.Mesh(
-  new THREE.BoxGeometry(2,2,2),
-  build
+/* BRIDGE CONTACT */
+const bridge=new THREE.Mesh(
+  new THREE.BoxGeometry(2,0.2,2),
+  roadMat
 );
-building.position.set(2,1,2);
-scene.add(building);
+bridge.position.set(-16,1,-16);
+scene.add(bridge);
 
-/* WORLD */
-const world = new THREE.Mesh(
-  new THREE.SphereGeometry(2.5,32,32),
-  new THREE.MeshStandardMaterial({color:0x3498db})
-);
-world.position.set(-12,6,-12);
-scene.add(world);
-
-/* TOUCH CAMERA (MAP STYLE) */
-let startX=0,startY=0;
-window.addEventListener("touchstart",e=>{
-  startX=e.touches[0].clientX;
-  startY=e.touches[0].clientY;
+/* TOUCH MOVE */
+let sx=0,sy=0;
+addEventListener("touchstart",e=>{
+  sx=e.touches[0].clientX;
+  sy=e.touches[0].clientY;
 });
-window.addEventListener("touchmove",e=>{
-  const dx=(e.touches[0].clientX-startX)*0.01;
-  const dy=(e.touches[0].clientY-startY)*0.01;
+addEventListener("touchmove",e=>{
+  const dx=(e.touches[0].clientX-sx)*0.01;
+  const dy=(e.touches[0].clientY-sy)*0.01;
   camera.position.x-=dx;
   camera.position.z+=dy;
   camera.lookAt(0,0,0);
-  startX=e.touches[0].clientX;
-  startY=e.touches[0].clientY;
+  sx=e.touches[0].clientX;
+  sy=e.touches[0].clientY;
 });
 
 /* ANIMATE */
 function animate(){
   requestAnimationFrame(animate);
-  world.rotation.y+=0.002;
+  world.rotation.y+=0.0015;
   renderer.render(scene,camera);
 }
 animate();
 
 /* RESIZE */
-window.addEventListener("resize",()=>{
-  camera.aspect=window.innerWidth/window.innerHeight;
+addEventListener("resize",()=>{
+  camera.aspect=innerWidth/innerHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth,window.innerHeight);
+  renderer.setSize(innerWidth,innerHeight);
 });
 </script>
 </body>
