@@ -5,177 +5,134 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>My Village • Harita</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin:0; padding:0; box-sizing:border-box; }
     html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
+      width:100%; height:100%; overflow:hidden;
       font-family: system-ui, -apple-system, sans-serif;
-      background: #0f1e0f;
-      color: #f0e8d0;
-      touch-action: none;           /* mobil kaydırma daha düzgün */
-    }
-
-    #app {
-      height: 100dvh;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      background: radial-gradient(circle at 30% 70%, #1e3a1e, #0d1a0d);
-    }
-
-    header {
-      background: linear-gradient(to bottom, #2a3f2a, #1a2a1a);
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 2px solid #4a6c3f77;
-      box-shadow: 0 3px 12px #0008;
-      z-index: 30;
-    }
-
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      background: linear-gradient(90deg, #e8d5a3, #f0e0b8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .tool-bar {
-      position: relative;
-      z-index: 20;
-      background: rgba(20, 30, 18, 0.88);
-      backdrop-filter: blur(10px);
-      border-top: 1px solid #4a6c3f66;
-      padding: 10px 12px;
-      overflow-x: auto;
-      white-space: nowrap;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-
-    .tool-bar::-webkit-scrollbar { display: none; }
-
-    .tool-item {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 0 10px;
-      padding: 8px 12px;
-      border-radius: 16px;
-      background: rgba(60, 80, 50, 0.4);
-      border: 1px solid #5a7a4f44;
-      color: #e8dab0;
-      font-size: 0.72rem;
-      font-weight: 600;
-      min-width: 68px;
-      transition: all 0.12s;
-      user-select: none;
-    }
-
-    .tool-item:active {
-      transform: scale(0.94);
-      background: rgba(90, 110, 80, 0.7);
-      border-color: #8aa66f;
-    }
-
-    .tool-emoji {
-      font-size: 1.9rem;
-      margin-bottom: 4px;
-      filter: drop-shadow(0 2px 4px #0006);
-    }
-
-    .map-container {
-      position: relative;
-      overflow: hidden;
-      background: #1e3320;
-    }
-
-    canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
+      background:#0b150b; color:#f0e8d0;
       touch-action: none;
     }
 
-    .hud-bottom-left {
-      position: absolute;
-      bottom: 90px;
-      left: 12px;
-      background: rgba(10, 18, 10, 0.82);
-      backdrop-filter: blur(8px);
-      padding: 8px 14px;
-      border-radius: 30px;
-      font-size: 0.82rem;
-      border: 1px solid #5a7a4f66;
-      box-shadow: 0 3px 12px #0007;
-      pointer-events: none;
-      z-index: 15;
+    #app {
+      height:100dvh; display:grid;
+      grid-template-rows: auto auto 1fr;
+      background:radial-gradient(circle at 40% 60%, #1a331a, #0a120a);
+    }
+
+    header {
+      background:linear-gradient(to bottom, rgba(35,55,35,0.95), rgba(25,40,25,0.9));
+      backdrop-filter: blur(12px);
+      padding:14px 18px;
+      display:flex; align-items:center; justify-content:center;
+      border-bottom:2px solid #4a6c3f44;
+      box-shadow:0 4px 16px #000a;
+      z-index:30;
+      position:relative;
+    }
+
+    h1 {
+      font-size:1.7rem; font-weight:800; letter-spacing:2px;
+      background:linear-gradient(90deg, #f0d8a0, #ffe8b8);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      text-shadow:0 2px 6px #0008;
+    }
+
+    .tool-bar {
+      background:rgba(20,35,20,0.85);
+      backdrop-filter:blur(14px);
+      padding:12px 10px;
+      overflow-x:auto; white-space:nowrap;
+      border-bottom:1px solid #5a7a4f33;
+      scrollbar-width:none;
+      z-index:25;
+    }
+    .tool-bar::-webkit-scrollbar { display:none; }
+
+    .tool-item {
+      display:inline-flex; flex-direction:column; align-items:center;
+      min-width:82px; padding:12px 16px; margin:0 8px;
+      border-radius:50px; /* oval liquid glass */
+      background:rgba(70,100,70,0.25);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(120,160,100,0.4);
+      box-shadow:
+        inset 0 4px 12px rgba(255,255,255,0.15),
+        inset 0 -4px 12px rgba(0,0,0,0.3),
+        0 8px 20px rgba(0,0,0,0.5);
+      color:#f0e8c0; font-size:0.78rem; font-weight:700;
+      transition:all 0.15s; user-select:none;
+    }
+    .tool-item:active {
+      transform:scale(0.92) translateY(2px);
+      box-shadow:
+        inset 0 4px 12px rgba(255,255,255,0.1),
+        inset 0 -4px 12px rgba(0,0,0,0.5),
+        0 4px 10px rgba(0,0,0,0.6);
+    }
+
+    .tool-emoji {
+      font-size:2.4rem; margin-bottom:6px;
+      filter:drop-shadow(0 4px 8px #0009);
+      text-shadow:0 2px 4px #000;
+    }
+
+    .map-container {
+      position:relative; overflow:hidden;
+      background:#162816;
+    }
+
+    canvas { display:block; width:100%; height:100%; touch-action:none; }
+
+    .hud {
+      position:absolute; bottom:80px; left:14px;
+      background:rgba(10,20,10,0.85); backdrop-filter:blur(10px);
+      padding:9px 16px; border-radius:40px;
+      font-size:0.84rem; font-weight:600;
+      border:1px solid #5a7a4f55; box-shadow:0 4px 14px #0008;
+      pointer-events:none; z-index:15;
     }
 
     .fab-container {
-      position: absolute;
-      bottom: 110px;
-      right: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      z-index: 25;
+      position:absolute; bottom:90px; right:14px;
+      display:flex; flex-direction:column; gap:10px; z-index:25;
     }
 
     .fab {
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      background: linear-gradient(145deg, #4a6c3f, #2e4a28);
-      border: 2px solid #8aa66f;
-      color: #f0e8c0;
-      font-size: 1.8rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 5px 0 #1e2f18, 0 8px 16px #0008;
-      transition: all 0.1s;
+      width:48px; height:48px; border-radius:50%;
+      background:linear-gradient(145deg, rgba(60,90,60,0.9), rgba(40,60,40,0.9));
+      backdrop-filter:blur(8px);
+      border:2px solid rgba(130,170,110,0.6);
+      color:#f8f0d0; font-size:1.6rem;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:
+        inset 0 3px 8px rgba(255,255,255,0.2),
+        0 6px 12px rgba(0,0,0,0.6);
+      transition:all 0.12s;
     }
-
     .fab:active {
-      transform: translateY(3px);
-      box-shadow: 0 2px 0 #1e2f18, 0 8px 16px #0006;
+      transform:translateY(3px) scale(0.95);
+      box-shadow:
+        inset 0 3px 8px rgba(255,255,255,0.1),
+        0 3px 6px rgba(0,0,0,0.7);
     }
 
     @media (orientation: landscape) {
-      .tool-bar {
-        padding: 6px 10px;
-      }
-      .tool-item {
-        min-width: 60px;
-        margin: 0 6px;
-      }
-      .tool-emoji { font-size: 1.7rem; }
+      .tool-item { min-width:72px; padding:10px 14px; margin:0 6px; }
+      .tool-emoji { font-size:2.1rem; }
     }
   </style>
 </head>
 <body>
 
 <div id="app">
-  <header>
-    <h1>🪴 MY VILLAGE</h1>
-    <div>🌾</div>
-  </header>
+  <header><h1>🌾 MY VILLAGE</h1></header>
+
+  <div class="tool-bar" id="tools"></div>
 
   <div class="map-container">
     <canvas id="c"></canvas>
-    <div class="hud-bottom-left" id="info">Zoom: 100% • Kaydır</div>
+    <div class="hud" id="info">Zoom: 100% • Kaydır & Yakınlaştır</div>
   </div>
-
-  <div class="tool-bar" id="tools"></div>
 
   <div class="fab-container">
     <div class="fab" id="zoomIn">+</div>
@@ -186,45 +143,51 @@
 
 <script>
 const canvas = document.getElementById('c');
-const ctx    = canvas.getContext('2d');
-const info   = document.getElementById('info');
+const ctx = canvas.getContext('2d');
+const info = document.getElementById('info');
 
-// ----------------------- KONFIG -----------------------
-const WORLD_W = 2400;
-const WORLD_H = 2400;
+const WORLD_W = 2600;
+const WORLD_H = 2600;
 
-let camX = 600;
-let camY = 800;
-let zoom = 0.70;
+let camX = 800;
+let camY = 900;
+let zoom = 0.65;
 
-const MIN_ZOOM = 0.4;
-const MAX_ZOOM = 2.4;
+const MIN_ZOOM = 0.35;
+const MAX_ZOOM = 2.6;
 
-// ----------------------- İÇERİK -----------------------
+// Daha zengin içerik – orman, odun, maden detayları eklendi
 const items = [
-  {emoji:'🏛️',  label:'Köy Merkezi',   x:780,  y:620, size:48, color:'#e8b923'},
-  {emoji:'🏡',   label:'Halk Evi',      x:480,  y:980, size:36, color:'#c89f6e'},
-  {emoji:'🏠',   label:'Yeni Ev',       x:620,  y:1100,size:36, color:'#c89f6e'},
-  {emoji:'🌽',   label:'Mısır Tarlası', x:320,  y:480, size:44, color:'#6b8e23'},
-  {emoji:'🌾',   label:'Buğday',        x:1400, y:720, size:44, color:'#d4a017'},
-  {emoji:'⚡',    label:'Güneş Paneli',  x:1680, y:480, size:40, color:'#ffdd33'},
-  {emoji:'⛏️',   label:'Maden',         x:1320, y:1480,size:44, color:'#7a4a2e'},
-  {emoji:'🐄',   label:'Çiftlik',       x:1580, y:340, size:48, color:'#b86f2e'},
-  {emoji:'💧',   label:'Su Kuyusu',     x:420,  y:280, size:40, color:'#3a8da8'},
-  {emoji:'🌳',   label:'Meşe',          x:900,  y:200, size:52, color:'#2e6b3e'},
-  {emoji:'🌲',   label:'Çam',           x:200,  y:1600,size:48, color:'#385f2e'},
+  {emoji:'🏛️🏘️', label:'Köy Merkezi',   x:900, y:780,  size:56, color:'#e8b923'},
+  {emoji:'🏡🏠',   label:'Halk Evleri',   x:620, y:1120, size:48, color:'#d4a86a'},
+  {emoji:'🏠🏡',   label:'Yeni Evler',    x:1080,y:920,  size:48, color:'#d4a86a'},
+  {emoji:'🌽🌻',   label:'Mısır & Ayçiçeği', x:400,y:600, size:52, color:'#8bac3a'},
+  {emoji:'🌾🚜',   label:'Buğday Tarlası', x:1600,y:820, size:52, color:'#b89f2a'},
+  {emoji:'☀️⚡',   label:'Güneş Panelleri',x:1800,y:520, size:50, color:'#ffdd33'},
+  {emoji:'⛏️🪨⛰️', label:'Maden Ocağı',   x:1400,y:1600,size:58, color:'#8b5a3c'},
+  {emoji:'🪵🪓',   label:'Odun Deposu',   x:1200,y:1400,size:50, color:'#8b6f47'},
+  {emoji:'🐄🐑🐖', label:'Büyük Çiftlik', x:1700,y:400, size:56, color:'#c47f3a'},
+  {emoji:'💧⛲',   label:'Su Kaynağı',    x:500, y:320, size:48, color:'#3a9dcf'},
+  {emoji:'🌲🌳🌲', label:'Yoğun Orman',   x:200, y:1800,size:60, color:'#2e6b3e'},
+  {emoji:'🌳🌲🌳', label:'Odun Toplama Alanı', x:300,y:1600,size:58, color:'#385f2e'},
+  {emoji:'🪨⛏️',  label:'Taş Ocağı',     x:1600,y:1500,size:52, color:'#7a6b5a'},
 ];
 
 const roads = [
-  {x1:300,y1:600, x2:1100,y2:600, w:28, c:'#6d4c3a'},
-  {x1:700,y1:400, x2:700,y2:1200,w:24, c:'#8b6a4a'},
-  {x1:1200,y1:300,x2:1800,y2:300,w:26, c:'#7a5a3e'},
+  {x1:400,y1:800, x2:1400,y2:800, w:32, c:'#7a5f44'},
+  {x1:800,y1:500, x2:800,y2:1400,w:30, c:'#8b6a4f'},
+  {x1:1300,y1:300,x2:1900,y2:900,w:28, c:'#7a5f44'},
+  {x1:200,y1:1600,x2:600,y2:1800,w:26, c:'#6b503a'},
 ];
 
-// ----------------------- ÇİZİM -----------------------
+const forests = [
+  {x:100, y:1500, w:600, h:500}, // büyük orman alanı
+  {x:1800,y:100, w:400, h:300},
+];
+
 function resize() {
-  canvas.width  = window.innerWidth;
-  canvas.height = window.innerHeight - 140; // header + toolbar yaklaşık
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight - 160; // header + toolbar
   draw();
 }
 
@@ -236,17 +199,16 @@ function worldToScreen(wx, wy) {
 }
 
 function draw() {
-  ctx.fillStyle = '#1e3a1e';
+  // Arka plan – daha derin yeşil
+  ctx.fillStyle = '#142614';
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
-  // hafif çim doku
-  ctx.fillStyle = '#2a4a2a';
-  for (let i = -canvas.width; i < canvas.width*2; i += 80) {
-    for (let j = -canvas.height; j < canvas.height*2; j += 80) {
-      if ((i+j) % 160 < 80) {
-        ctx.globalAlpha = 0.4;
-        ctx.fillRect(i,j,40,40);
-      }
+  // Hafif çim dokusu + gölge hissi
+  ctx.globalAlpha = 0.3;
+  for (let i = -100; i < canvas.width+100; i += 60) {
+    for (let j = -100; j < canvas.height+100; j += 60) {
+      ctx.fillStyle = (i+j)%120 ? '#1e3a1e' : '#2a4a2a';
+      ctx.fillRect(i,j,40,40);
     }
   }
   ctx.globalAlpha = 1;
@@ -256,53 +218,70 @@ function draw() {
   ctx.scale(zoom, zoom);
   ctx.translate(-camX, -camY);
 
-  // yollar
-  roads.forEach(r => {
-    ctx.lineWidth = r.w;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = r.c;
-    ctx.beginPath();
-    ctx.moveTo(r.x1, r.y1);
-    ctx.lineTo(r.x2, r.y2);
-    ctx.stroke();
+  // Orman alanları (yeşil dolgu + ağaçlar)
+  forests.forEach(f => {
+    ctx.fillStyle = '#1e3a1e';
+    ctx.fillRect(f.x, f.y, f.w, f.h);
+    // Rastgele ağaç hissi
+    for (let i=0; i<30; i++) {
+      const tx = f.x + Math.random()*f.w;
+      const ty = f.y + Math.random()*f.h;
+      ctx.font = `${48 + Math.random()*20}px sans-serif`;
+      ctx.fillText(Math.random()>0.5?'🌲':'🌳', tx, ty);
+    }
   });
 
-  // öğeler
+  // Yollar – daha 3D his (gölge + kenar)
+  roads.forEach(r => {
+    ctx.lineWidth = r.w + 6;
+    ctx.strokeStyle = '#4a3c2e';
+    ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(r.x1,r.y1); ctx.lineTo(r.x2,r.y2); ctx.stroke();
+
+    ctx.lineWidth = r.w;
+    ctx.strokeStyle = r.c;
+    ctx.beginPath(); ctx.moveTo(r.x1,r.y1); ctx.lineTo(r.x2,r.y2); ctx.stroke();
+  });
+
+  // Öğeler – daha büyük emoji + gölge + etiket arkaplanı
   items.forEach(it => {
-    const s = it.size || 36;
-    ctx.font = `bold ${s}px system-ui, sans-serif`;
+    const s = it.size * 1.1;
+    ctx.font = `bold ${s}px sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.shadowColor = 'black';
-    ctx.shadowBlur = 6;
-    ctx.fillStyle = it.color || '#f0e8d0';
+    ctx.shadowColor = '#000';
+    ctx.shadowBlur = 12;
+    ctx.shadowOffsetX = 4;
+    ctx.shadowOffsetY = 4;
+    ctx.fillStyle = it.color;
     ctx.fillText(it.emoji, it.x, it.y);
 
-    // etiket (sadece yakınken gösterilebilir ama şimdilik hep)
-    ctx.font = `600 ${18}px system-ui`;
-    ctx.fillStyle = 'rgba(0,0,0,0.6)';
-    ctx.fillRect(it.x - 60, it.y + 22, 120, 28);
-    ctx.fillStyle = '#f8e9c0';
-    ctx.fillText(it.label, it.x, it.y + 36);
+    // Etiket – oval glass
+    ctx.font = `700 20px system-ui`;
+    const txt = it.label;
+    const metrics = ctx.measureText(txt);
+    const pw = metrics.width + 32;
+    ctx.fillStyle = 'rgba(20,40,20,0.7)';
+    ctx.roundRect(it.x - pw/2, it.y + 32, pw, 32, 20);
+    ctx.fill();
+    ctx.fillStyle = '#f8f0d0';
+    ctx.shadowBlur = 6;
+    ctx.fillText(txt, it.x, it.y + 48);
   });
 
   ctx.restore();
 
-  // HUD güncelle
-  info.textContent = `Zoom: ${Math.round(zoom*100)}% • Kaydır`;
+  info.textContent = `Zoom: ${Math.round(zoom*100)}% • Kaydır & Pinch`;
 }
 
-// ----------------------- KONTROLLER -----------------------
 let isDragging = false;
 let startX, startY, startCamX, startCamY;
 
 function pointerDown(e) {
   isDragging = true;
   const p = e.touches ? e.touches[0] : e;
-  startX = p.clientX;
-  startY = p.clientY;
-  startCamX = camX;
-  startCamY = camY;
+  startX = p.clientX; startY = p.clientY;
+  startCamX = camX; startCamY = camY;
 }
 
 function pointerMove(e) {
@@ -317,23 +296,21 @@ function pointerMove(e) {
   draw();
 }
 
-function pointerUp() {
-  isDragging = false;
-}
+function pointerUp() { isDragging = false; }
 
 function clampCamera() {
-  const viewW = canvas.width  / zoom;
+  const viewW = canvas.width / zoom;
   const viewH = canvas.height / zoom;
   camX = Math.max(viewW/2, Math.min(camX, WORLD_W - viewW/2));
   camY = Math.max(viewH/2, Math.min(camY, WORLD_H - viewH/2));
 }
 
 function zoomAt(delta, mx, my) {
-  const wx = camX + (mx - canvas.width/2)  / zoom;
+  const wx = camX + (mx - canvas.width/2) / zoom;
   const wy = camY + (my - canvas.height/2) / zoom;
   zoom *= (1 + delta);
   zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
-  camX = wx - (mx - canvas.width/2)  / zoom;
+  camX = wx - (mx - canvas.width/2) / zoom;
   camY = wy - (my - canvas.height/2) / zoom;
   clampCamera();
   draw();
@@ -341,60 +318,54 @@ function zoomAt(delta, mx, my) {
 
 canvas.addEventListener('pointerdown', pointerDown);
 window.addEventListener('pointermove', pointerMove);
-window.addEventListener('pointerup',   pointerUp);
+window.addEventListener('pointerup', pointerUp);
 window.addEventListener('pointercancel', pointerUp);
 
-// wheel (mouse) ve pinch (mobil) için
 canvas.addEventListener('wheel', e => {
   e.preventDefault();
-  const delta = -Math.sign(e.deltaY) * 0.12;
+  const delta = -Math.sign(e.deltaY) * 0.15;
   zoomAt(delta, e.offsetX, e.offsetY);
 }, {passive:false});
 
-// pinch zoom (mobil)
+// Pinch zoom
 let prevDist = 0;
 canvas.addEventListener('touchmove', e => {
   if (e.touches.length === 2) {
     e.preventDefault();
     const t1 = e.touches[0], t2 = e.touches[1];
-    const dist = Math.hypot(
-      t1.clientX - t2.clientX,
-      t1.clientY - t2.clientY
-    );
+    const dist = Math.hypot(t1.clientX-t2.clientX, t1.clientY-t2.clientY);
     if (prevDist > 0) {
-      const delta = (dist - prevDist) / 800;
+      const delta = (dist - prevDist)/700;
       const mx = (t1.clientX + t2.clientX)/2;
       const my = (t1.clientY + t2.clientY)/2;
-      zoomAt(delta * 2, mx, my);
+      zoomAt(delta*2.5, mx, my);
     }
     prevDist = dist;
   }
 }, {passive:false});
-
 canvas.addEventListener('touchend', () => prevDist = 0);
 
-// butonlar
-document.getElementById('zoomIn').onclick  = () => zoomAt(0.18, canvas.width/2, canvas.height/2);
-document.getElementById('zoomOut').onclick = () => zoomAt(-0.18, canvas.width/2, canvas.height/2);
-document.getElementById('home').onclick    = () => { zoom=0.7; camX=600; camY=800; draw(); };
+// Butonlar
+document.getElementById('zoomIn').onclick  = () => zoomAt(0.2, canvas.width/2, canvas.height/2);
+document.getElementById('zoomOut').onclick = () => zoomAt(-0.2, canvas.width/2, canvas.height/2);
+document.getElementById('home').onclick    = () => { zoom=0.65; camX=800; camY=900; draw(); };
 
-// tool-bar oluştur
+// Tool-bar – oval glass butonlar, daha renkli iconlar
 const toolsDiv = document.getElementById('tools');
-items.slice(0,8).forEach(it => {   // ilk 8 taneyi gösterelim
+items.forEach(it => {
   const el = document.createElement('div');
   el.className = 'tool-item';
-  el.innerHTML = `<span class="tool-emoji">${it.emoji}</span>${it.label.split(' ')[0]}`;
+  el.innerHTML = `<span class="tool-emoji">${it.emoji}</span><span>${it.label.split(' ')[0]}</span>`;
   el.onclick = () => {
     camX = it.x;
     camY = it.y;
-    zoom = 1.4;
+    zoom = 1.6;
     clampCamera();
     draw();
   };
   toolsDiv.appendChild(el);
 });
 
-// başlangıç
 window.addEventListener('resize', resize);
 resize();
 draw();
