@@ -2,8 +2,8 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Köyüm · Benim Köy Haritam</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Köyüm · Tam Ekran Canvas Harita</title>
   <style>
     * {
       margin: 0;
@@ -11,482 +11,544 @@
       box-sizing: border-box;
     }
 
-    body {
-      background: linear-gradient(145deg, #2e5c3b 0%, #1f3b2c 100%);
-      font-family: 'Segoe UI', 'Roboto', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 30px 20px;
-    }
-
-    .harita-kaplama {
-      max-width: 1100px;
+    body, html {
       width: 100%;
-      background: #d9c8a9;
-      background-image: radial-gradient(circle at 30% 40%, #c7b18b 2px, transparent 2px), 
-                        radial-gradient(circle at 70% 85%, #b89f7a 1px, transparent 2px);
-      background-size: 40px 40px, 30px 30px;
-      border-radius: 48px 48px 32px 32px;
-      box-shadow: 0 25px 35px rgba(0,0,0,0.6), inset 0 1px 8px rgba(255,255,200,0.3);
-      padding: 25px 30px 35px;
-      border: 6px solid #5e4e3c;
-      position: relative;
-    }
-
-    /* Başlık ve lejant */
-    .koy-baslik {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      background: rgba(60, 45, 30, 0.7);
-      backdrop-filter: blur(4px);
-      padding: 12px 22px;
-      border-radius: 60px;
-      color: #ffefcf;
-      border: 2px solid #efd6a8;
-      box-shadow: inset 0 -2px 0 #3f2e1e;
-    }
-
-    .koy-baslik h1 {
-      font-size: 2.1rem;
-      letter-spacing: 6px;
-      font-weight: 700;
-      text-shadow: 3px 3px 0 #3a281e, 5px 5px 0 #00000055;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .lejant {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      background: #fef6e6cc;
-      padding: 8px 20px;
-      border-radius: 50px;
-      color: #2c3e2b;
-      font-weight: 600;
-      backdrop-filter: blur(2px);
-      font-size: 0.85rem;
-    }
-
-    .lejant span {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .lejant i {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border-radius: 4px;
-    }
-
-    /* HARTA ANA KARE */
-    .village-map {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 11;
-      background: #9bba7a;
-      background-image: 
-        linear-gradient(45deg, #86a56a 15%, transparent 15%),
-        linear-gradient(-45deg, #7f9d62 20%, transparent 20%);
-      background-size: 50px 50px, 60px 60px;
-      border-radius: 28px;
-      border: 8px solid #6b4f38;
-      box-shadow: inset 0 0 0 2px #baa07a, inset 0 0 25px #3a552b;
+      height: 100%;
       overflow: hidden;
-      margin-bottom: 10px;
+      background: #0a1f0e;
+      font-family: 'Segoe UI', 'Roboto', sans-serif;
     }
 
-    /* tüm mutlak konumlu öğeler */
-    .map-item {
-      position: absolute;
+    /* Tam ekran harita kapsayıcı */
+    .map-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, #1d4d1d, #0e2b0e);
+      box-shadow: inset 0 0 60px rgba(0,0,0,0.7);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+    }
+
+    canvas:active {
+      cursor: grabbing;
+    }
+
+    /* Kontrol paneli - cam gibi, modern */
+    .controls {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
       display: flex;
-      flex-direction: column;
+      gap: 18px;
+      background: rgba(20, 25, 20, 0.75);
+      backdrop-filter: blur(12px);
+      padding: 18px 26px;
+      border-radius: 60px;
+      border: 2px solid rgba(255, 235, 140, 0.6);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 4px rgba(255,255,200,0.3);
+      z-index: 100;
+    }
+
+    .ctrl-btn {
+      background: rgba(70, 60, 40, 0.9);
+      border: none;
+      color: #ffe9ae;
+      font-size: 2rem;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
       align-items: center;
       justify-content: center;
-      filter: drop-shadow(4px 8px 6px #00000050);
-      cursor: help;
-      transition: transform 0.15s ease, filter 0.2s;
-    }
-
-    .map-item:hover {
-      transform: scale(1.07);
-      filter: drop-shadow(6px 12px 8px black);
-      z-index: 200 !important;
-    }
-
-    /* sembol stilleri */
-    .sembol {
-      font-size: 2.4rem;
-      line-height: 1;
-      text-shadow: 2px 6px 6px black, 0 0 12px #fffbe3;
-    }
-
-    .etiket {
-      background: #2d281cee;
-      color: #f7f1cf;
-      padding: 4px 12px;
-      border-radius: 40px;
-      font-size: 0.8rem;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 6px 0 #2a2a1c, 0 8px 16px black;
       font-weight: bold;
-      letter-spacing: 1px;
-      border: 1px solid #ffe19b;
-      box-shadow: inset 0 1px 2px rgba(255,255,200,0.7), 0 3px 4px black;
-      white-space: nowrap;
-      backdrop-filter: blur(2px);
-      margin-top: 2px;
+      border: 1px solid #efd99b;
     }
 
-    /* yollar, nehir, detay */
-    .yol {
-      position: absolute;
-      background: #6d5c4c;
-      box-shadow: 0 -2px 0 #4a3c2e, inset 0 2px 5px #947c60;
-      border-radius: 30px;
-      opacity: 0.85;
-      z-index: 10;
+    .ctrl-btn:hover {
+      background: #9f8b5c;
+      color: white;
+      transform: scale(1.08);
+      border-color: #fff6cf;
     }
 
-    .yol-anayol {
-      height: 14px;
-      width: 70%;
-      top: 40%;
-      left: 15%;
-      background: #7e6b57;
-      box-shadow: 0 4px 6px #2d2d2d;
-      border: 1px solid #ad9b81;
+    .ctrl-btn:active {
+      transform: translateY(6px);
+      box-shadow: 0 2px 0 #2a2a1c, 0 8px 16px black;
     }
 
-    .yol-tali {
-      width: 12px;
-      height: 35%;
-      top: 30%;
-      left: 48%;
-      background: #8f7a64;
-      transform: rotate(5deg);
-      border: 1px solid #b8a181;
+    /* Lejant - sol üst, yarı saydam */
+    .legend {
+      position: fixed;
+      top: 30px;
+      left: 30px;
+      background: rgba(10, 18, 8, 0.8);
+      backdrop-filter: blur(6px);
+      color: #fff5dd;
+      padding: 22px 28px;
+      border-radius: 32px;
+      border-left: 12px solid #c2a144;
+      box-shadow: 0 10px 30px black;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      z-index: 100;
+      border: 1px solid #e6c873;
+      max-width: 260px;
     }
 
-    .dere {
-      position: absolute;
-      width: 38%;
-      height: 8px;
-      background: #368dad;
-      bottom: 22%;
-      right: 8%;
-      border-radius: 40% 20% 80% 20%;
-      box-shadow: inset 0 2px 6px #a7d8e6, 0 3px 4px #1f4b5e;
-      border-bottom: 2px solid #c4e6f1;
-      opacity: 0.9;
-      transform: rotate(-3deg);
-      z-index: 12;
+    .legend h2 {
+      margin-bottom: 14px;
+      font-size: 1.9rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #ffecb3;
+      text-shadow: 2px 2px 0 #4f3e1e;
     }
 
-    .dere:after {
-      content: "";
-      position: absolute;
-      width: 30px;
-      height: 30px;
-      background: #368dad70;
-      border-radius: 50%;
-      top: -12px;
-      left: 60px;
-      box-shadow: 0 0 20px #8ecfdf;
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+      font-size: 1.2rem;
     }
 
-    /* çit / tarla sınırı */
-    .tarla-sinir {
-      position: absolute;
-      border: 2px dashed #b2946b;
-      background: #ccdd9970;
-      backdrop-filter: blur(1px);
-      border-radius: 16px;
-      z-index: 15;
+    .legend-symbol {
+      font-size: 1.9rem;
+      width: 40px;
+      text-align: center;
+      filter: drop-shadow(2px 6px 4px black);
     }
 
-    /* özel pozisyonlar */
-    .koop {
-      left: 12%;
-      top: 18%;
-      z-index: 30;
-    }
-
-    .evler {
-      left: 26%;
-      top: 58%;
-      z-index: 35;
-    }
-    .ev2 {
-      left: 33%;
-      top: 68%;
-    }
-    .ev3 {
-      left: 19%;
-      top: 72%;
-    }
-
-    .ciftlik {
-      left: 68%;
-      top: 20%;
-      z-index: 40;
-    }
-
-    .elektrik {
-      left: 81%;
-      top: 62%;
-      z-index: 38;
-    }
-
-    .maden {
-      left: 55%;
-      top: 78%;
-      z-index: 45;
-    }
-
-    .arazi {
-      left: 8%;
-      top: 40%;
-      z-index: 20;
-    }
-
-    .mera {
-      left: 72%;
-      top: 45%;
-    }
-
-    .ahır {
-      left: 61%;
-      top: 12%;
-    }
-
-    .ruzgar {
-      left: 88%;
-      top: 15%;
-    }
-
-    /* farklı sembol renkleri vs */
-    .sari {
-      color: #ffe87c;
-      text-shadow: 0 0 10px orange, 2px 5px 6px black;
-    }
-
-    .yesil {
+    .coord-info {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
       color: #c3f2a5;
-      text-shadow: 0 0 8px #3f8040, 2px 4px 6px #1f331a;
-    }
-
-    .kahve {
-      color: #e6bf8c;
-    }
-
-    /* ayarlamalar */
-    .footer-note {
-      text-align: right;
-      margin-top: 18px;
-      color: #f0eace;
-      font-style: italic;
-      text-shadow: 2px 2px 2px #2b422b;
+      padding: 14px 26px;
+      border-radius: 50px;
+      font-size: 1.1rem;
       font-weight: 600;
-      padding-right: 12px;
+      border: 1px solid #a7d48b;
+      letter-spacing: 2px;
+      z-index: 100;
+      box-shadow: 0 6px 14px black;
+    }
+
+    .footer-note {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(30, 20, 10, 0.8);
+      color: #ffddaa;
+      padding: 12px 28px;
+      border-radius: 60px;
+      font-size: 1.1rem;
+      backdrop-filter: blur(5px);
+      border: 1px solid #fecb6e;
+      box-shadow: 0 0 30px black;
+      z-index: 110;
+      pointer-events: none;
     }
 
     @media (max-width: 700px) {
-      .koy-baslik {
-        flex-direction: column;
-        align-items: start;
-        gap: 12px;
-      }
-      .sembol {
-        font-size: 2rem;
-      }
+      .controls { bottom: 20px; right: 20px; padding: 12px; gap: 12px; }
+      .ctrl-btn { width: 56px; height: 56px; font-size: 1.8rem; }
+      .legend { padding: 14px; top: 15px; left: 15px; }
     }
   </style>
 </head>
 <body>
-<div class="harita-kaplama">
-  
-  <!-- başlık ve lejant (my village ruhu) -->
-  <div class="koy-baslik">
-    <h1>
-      <span>🌾</span> MY VİLLAGE
-    </h1>
-    <div class="lejant">
-      <span><i style="background:#c46210;"></i> Köy Merkezi</span>
-      <span><i style="background:#ac7339;"></i> Halk Evleri</span>
-      <span><i style="background:#6b8e23;"></i> Tarım Arazisi</span>
-      <span><i style="background:#f0b00a;"></i> Elektrik</span>
-      <span><i style="background:#7a3b2e;"></i> Maden Ocağı</span>
-      <span><i style="background:#b86f2e;"></i> Çiftlik</span>
+  <div class="map-container">
+    <!-- Canvas: tam ekran, görsel odaklı, interaktif köy haritası -->
+    <canvas id="villageCanvas" width="1600" height="1200"></canvas>
+
+    <!-- Yakınlaştırma / Uzaklaştırma ve navigasyon butonları -->
+    <div class="controls">
+      <button class="ctrl-btn" id="zoomInBtn">+</button>
+      <button class="ctrl-btn" id="zoomOutBtn">−</button>
+      <button class="ctrl-btn" id="resetBtn">⟲</button>
     </div>
+
+    <!-- Lejant - efsane -->
+    <div class="legend">
+      <h2>🌾 MY VILLAGE</h2>
+      <div class="legend-item"><span class="legend-symbol">🏛️🏘️</span> Köy Merkezi</div>
+      <div class="legend-item"><span class="legend-symbol">🏠🏡</span> Halk Evleri</div>
+      <div class="legend-item"><span class="legend-symbol">🌽🌻🌾</span> Tarım Arazisi</div>
+      <div class="legend-item"><span class="legend-symbol">⚡🔋🌞</span> Elektrik Kaynağı</div>
+      <div class="legend-item"><span class="legend-symbol">⛏️🪨</span> Maden Ocağı</div>
+      <div class="legend-item"><span class="legend-symbol">🐄🚜🌾</span> Çiftlik / Ahır</div>
+      <div class="legend-item"><span class="legend-symbol">💧⛲</span> Su Kaynağı</div>
+      <div class="legend-item"><span class="legend-symbol">🌬️⚡</span> Rüzgar Türbini</div>
+    </div>
+
+    <!-- Koordinat & yakınlaştırma bilgisi -->
+    <div class="coord-info" id="coordDisplay">📍 Harita: Kaydır & Yakınlaştır</div>
+
+    <!-- Güzel bir köy sloganı -->
+    <div class="footer-note">🧑‍🌾 Benim Köyüm — Maden, Elektrik, Çiftlik, Tarım, Evler 🏞️</div>
   </div>
 
-  <!-- ★ ANA HARITA ALANI ★ -->
-  <div class="village-map">
+  <script>
+    (function() {
+      const canvas = document.getElementById('villageCanvas');
+      const ctx = canvas.getContext('2d');
 
-    <!-- **** YOLLAR ve DOĞAL ÖGELER **** -->
-    <div class="yol yol-anayol" style="top: 42%; left: 12%; width: 48%;"></div>
-    <div class="yol yol-anayol" style="top: 62%; left: 20%; width: 35%; height: 12px; background: #6a4f3a;"></div>
-    <div class="yol yol-tali" style="top: 30%; left: 58%; height: 28%; width: 10px; background: #8f7b62;"></div>
-    <div class="yol" style="top: 70%; left: 45%; width: 18%; height: 10px; background: #9c856c; transform: rotate(25deg);"></div>
-    
-    <!-- dere / su kaynağı -->
-    <div class="dere" style="bottom: 18%; right: 6%; width: 32%;"></div>
-    <div class="dere" style="bottom: 10%; right: 18%; width: 18%; height: 6px; background: #479fb1; transform: rotate(10deg);"></div>
-    
-    <!-- tarla sınırları – dekoratif tarım deseni -->
-    <div class="tarla-sinir" style="left: 6%; top: 35%; width: 16%; height: 18%; border: 3px dotted #6e542b; background: #b1cf7a30;"></div>
-    <div class="tarla-sinir" style="left: 74%; top: 42%; width: 15%; height: 16%; border: 2px dashed #8b7a46; background: #acc77a40;"></div>
+      // ----- HARİTA BOYUTU (sanal dünya) -----
+      const MAP_WIDTH = 2400;
+      const MAP_HEIGHT = 1800;
 
-    <!-- ****************************************************************** -->
-    *** KÖYÜMÜN ÖĞELERİ – HER BİRİ BİR SEMBOL VE ETİKET İLE ***
-    <!-- ****************************************************************** -->
+      // ----- KAMERA DEĞİŞKENLERİ (navigasyon) -----
+      let offsetX = 0;          // sol üst köşenin haritadaki X konumu
+      let offsetY = 0;          // sol üst köşenin haritadaki Y konumu
+      let zoom = 0.8;          // başlangıç zoom seviyesi
 
-    <!-- 1) KÖY MERKEZİ – meydan / kahve / muhtar -->
-    <div class="map-item" style="left: 13%; top: 18%;">
-      <span class="sembol sari">🏛️🏘️</span>
-      <span class="etiket" style="background: #8b4513ee;">KÖY MERKEZİ</span>
-    </div>
+      // Sürükleme değişkenleri
+      let isDragging = false;
+      let dragStartX = 0, dragStartY = 0;
+      let dragOffsetX = 0, dragOffsetY = 0;
 
-    <!-- 2) HALK EVLERİ (3 farklı konum) -->
-    <div class="map-item" style="left: 24%; top: 60%;">
-      <span class="sembol kahve">🏠</span>
-      <span class="etiket" style="background: #5f4c3bee;">HALK EVİ</span>
-    </div>
-    <div class="map-item" style="left: 32%; top: 70%;">
-      <span class="sembol kahve">🏠</span>
-      <span class="etiket" style="background: #5f4c3bee;">HALK EVİ</span>
-    </div>
-    <div class="map-item" style="left: 18%; top: 73%;">
-      <span class="sembol kahve">🏡</span>
-      <span class="etiket" style="background: #5f4c3bee;">HALK EVİ</span>
-    </div>
-    <div class="map-item" style="left: 39%; top: 50%;">
-        <span class="sembol kahve">🏚️</span>
-        <span class="etiket" style="background: #5f4c3bee;">ESKİ EV</span>
-    </div>
+      // Canvas boyutları (pencere boyutu)
+      let canvasWidth = window.innerWidth;
+      let canvasHeight = window.innerHeight;
 
-    <!-- 3) TARIM ARAZİSİ – geniş alan, buğday, sebze -->
-    <div class="map-item" style="left: 6%; top: 41%; z-index: 25;">
-      <span class="sembol yesil">🌽🌻🌾</span>
-      <span class="etiket" style="background: #3e5a2bee;">TARIM ARAZİSİ</span>
-    </div>
-    <!-- ikinci tarım alanı -->
-    <div class="map-item" style="left: 74%; top: 48%;">
-      <span class="sembol yesil">🌿🥕🌽</span>
-      <span class="etiket" style="background: #3e5a2bee;">BAHÇELER</span>
-    </div>
+      // ----- YAKINLAŞTIRMA AYARLARI -----
+      const MIN_ZOOM = 0.4;
+      const MAX_ZOOM = 2.2;
+      const ZOOM_STEP = 0.15;
 
-    <!-- 4) ELEKTRİK KAYNAĞI (trafo, güneş paneli? ya da elektrik direği) -->
-    <div class="map-item" style="left: 82%; top: 62%;">
-      <span class="sembol" style="color: #ffe066;">⚡🔋🌞</span>
-      <span class="etiket" style="background: #5e4b3cee;">ELEKTRİK KAYNAĞI</span>
-    </div>
-    <!-- bir elektrik direği daha -->
-    <div class="map-item" style="left: 55%; top: 34%;">
-        <span class="sembol" style="color: #fced70;">⚡🗼</span>
-        <span class="etiket" style="background: #5e4b3cee;">TRAFO</span>
-    </div>
+      // ----- HARİTA ÖĞELERİ (POI - ilgi noktaları) -----
+      const villageItems = [
+        // Köy Merkezi (ana odak)
+        { type: 'center', x: 520, y: 380, symbol: '🏛️🏘️', label: 'KÖY MERKEZİ', color: '#c46210' },
+        // Halk Evleri (çok sayıda)
+        { type: 'house', x: 380, y: 720, symbol: '🏠', label: 'HALK EVİ', color: '#ac7339' },
+        { type: 'house', x: 490, y: 820, symbol: '🏠', label: 'HALK EVİ', color: '#ac7339' },
+        { type: 'house', x: 270, y: 790, symbol: '🏡', label: 'HALK EVİ', color: '#ac7339' },
+        { type: 'house', x: 610, y: 650, symbol: '🏚️', label: 'ESKİ EV', color: '#8b6b4d' },
+        { type: 'house', x: 730, y: 570, symbol: '🏠', label: 'HALK EVİ', color: '#ac7339' },
+        { type: 'house', x: 210, y: 530, symbol: '🏡', label: 'KÖY EVİ', color: '#ac7339' },
+        // Tarım Arazileri
+        { type: 'farmland', x: 200, y: 430, symbol: '🌽🌻🌾', label: 'TARIM ARAZİSİ', color: '#6b8e23' },
+        { type: 'farmland', x: 1150, y: 700, symbol: '🌿🥕🌽', label: 'BAHÇELER', color: '#5a7a2a' },
+        { type: 'farmland', x: 900, y: 380, symbol: '🌾🚜', label: 'BUĞDAY TARLASI', color: '#6b8e23' },
+        { type: 'farmland', x: 1600, y: 500, symbol: '🌱🌽', label: 'FİDELİK', color: '#3a653a' },
+        // Elektrik Kaynağı
+        { type: 'power', x: 1400, y: 930, symbol: '⚡🔋🌞', label: 'ELEKTRİK KAYNAĞI', color: '#f0b00a' },
+        { type: 'power', x: 950, y: 430, symbol: '⚡🗼', label: 'TRAFO', color: '#e6b422' },
+        { type: 'power', x: 1780, y: 280, symbol: '💨🌬️⚡', label: 'RÜZGAR TÜRBİNİ', color: '#b0d0ff' },
+        // Maden Ocağı
+        { type: 'mine', x: 1050, y: 1240, symbol: '⛏️🪨🛒', label: 'MADEN OCAĞI', color: '#7a3b2e' },
+        { type: 'mine', x: 870, y: 1350, symbol: '⚒️⛰️', label: 'OCAK', color: '#6b4a3c' },
+        { type: 'mine', x: 1250, y: 1180, symbol: '⛏️🪨', label: 'MADEN GİRİŞİ', color: '#7a3b2e' },
+        // Çiftlik
+        { type: 'farm', x: 1320, y: 360, symbol: '🐄🐑🚜', label: 'ÇİFTLİK', color: '#b86f2e' },
+        { type: 'farm', x: 1120, y: 190, symbol: '🐎🐔🌾', label: 'AHIR & KÜMES', color: '#a5652c' },
+        { type: 'farm', x: 1520, y: 450, symbol: '🐖🌽', label: 'BESİ ÇİFTLİĞİ', color: '#b86f2e' },
+        // Su Kaynağı / Pompa
+        { type: 'water', x: 1830, y: 1150, symbol: '💧⚙️', label: 'SU POMPASI', color: '#368dad' },
+        { type: 'water', x: 240, y: 210, symbol: '⛲🧺', label: 'KÖY ÇEŞMESİ', color: '#2e8b8b' },
+        // Ekstra: Köy Odası / Camii
+        { type: 'other', x: 780, y: 280, symbol: '🕌📚', label: 'KÖY ODASI', color: '#9c7c5d' },
+        { type: 'other', x: 1880, y: 820, symbol: '🏫', label: 'OKUL', color: '#b38b6d' },
+      ];
 
-    <!-- 5) MADEN OCAĞI – taş, kömür, maden -->
-    <div class="map-item" style="left: 56%; top: 78%;">
-      <span class="sembol" style="color: #4a3c31;">⛏️🪨🛒</span>
-      <span class="etiket" style="background: #3a2c1eee;">MADEN OCAĞI</span>
-    </div>
-    <!-- ek maden işçisi vb -->
-    <div class="map-item" style="left: 48%; top: 82%;">
-        <span class="sembol" style="color: #6b5843;">⚒️⛰️</span>
-        <span class="etiket" style="background: #3a2c1eee;">OCAK</span>
-    </div>
+      // ----- YOLLAR (çizgisel vektörler) -----
+      const roads = [
+        { x1: 200, y1: 500, x2: 900, y2: 500, width: 20, color: '#7e6b57' },
+        { x1: 500, y1: 300, x2: 500, y2: 900, width: 18, color: '#6a4f3a' },
+        { x1: 900, y1: 200, x2: 900, y2: 700, width: 16, color: '#8f7a64' },
+        { x1: 1200, y1: 400, x2: 1700, y2: 400, width: 20, color: '#7e6b57' },
+        { x1: 1400, y1: 150, x2: 1400, y2: 600, width: 16, color: '#8b715a' },
+        { x1: 300, y1: 1100, x2: 1300, y2: 1100, width: 18, color: '#6a4f3a' },
+        { x1: 80, y1: 800, x2: 380, y2: 800, width: 14, color: '#8f7a64' },
+      ];
 
-    <!-- 6) ÇİFTLİK – ahır, hayvan, saman -->
-    <div class="map-item" style="left: 67%; top: 18%;">
-      <span class="sembol" style="color: #eac784;">🐄🐑🚜</span>
-      <span class="etiket" style="background: #8b5e3cee;">ÇİFTLİK</span>
-    </div>
-    <!-- ikinci çiftlik / besi -->
-    <div class="map-item" style="left: 59%; top: 9%;">
-        <span class="sembol" style="color: #eac784;">🐎🐔🌾</span>
-        <span class="etiket" style="background: #8b5e3cee;">AHIR & KÜMES</span>
-    </div>
+      // ----- DERELER / SU YOLLARI -----
+      const rivers = [
+        { x1: 1500, y1: 800, x2: 2000, y2: 950, width: 12, color: '#368dad' },
+        { x1: 400, y1: 1400, x2: 800, y2: 1200, width: 14, color: '#479fb1' },
+        { x1: 1800, y1: 1000, x2: 2100, y2: 1150, width: 10, color: '#368dad' },
+      ];
 
-    <!-- 7) ekstra – köy camii / okul gibi hissiyat, ama merkez var, yine de koyunsa my village şirin olsun -->
-    <div class="map-item" style="left: 45%; top: 22%;">
-        <span class="sembol" style="color: #ffe2b0;">🕌📚</span>
-        <span class="etiket" style="background: #636363ee;">KÖY ODASI</span>
-    </div>
-    
-    <!-- 8) TARLA ve HAYVANLAR - çiftlikle bütünleşik ayrıca bir tarım arazisi daha -->
-    <div class="map-item" style="left: 16%; top: 84%;">
-        <span class="sembol yesil">🌱🚜</span>
-        <span class="etiket" style="background: #3a653a;">FİDELİK</span>
-    </div>
+      // ----- TARLA SINIRLARI (dekoratif) -----
+      const fieldBounds = [
+        { x: 150, y: 350, w: 300, h: 220, color: '#b2946b' },
+        { x: 1100, y: 600, w: 350, h: 230, color: '#a8895a' },
+        { x: 800, y: 300, w: 280, h: 180, color: '#9c854e' },
+        { x: 1550, y: 420, w: 300, h: 200, color: '#b2946b' },
+      ];
 
-    <!-- 9) SU KAYNAĞI / Elektrik ile ilgili (Baraj gibi) -->
-    <div class="map-item" style="left: 90%; top: 76%;">
-        <span class="sembol" style="color: #6ad4e6;">💧⚙️</span>
-        <span class="etiket" style="background: #1a5b6e;">SU POMPASI</span>
-    </div>
+      // ----- YARDIMCI FONKSİYON: harita koordinatlarını canvas koordinatına dönüştür -----
+      function worldToScreen(worldX, worldY) {
+        const screenX = (worldX - offsetX) * zoom;
+        const screenY = (worldY - offsetY) * zoom;
+        return { x: screenX, y: screenY };
+      }
 
-    <!-- 10) Biraz daha maden ocaklarına yakın tepecik -->
-    <div class="map-item" style="left: 52%; top: 68%;">
-        <span class="sembol" style="color: #8e7c6a;">🪨⛏️</span>
-        <span class="etiket" style="background: #4a3d2e;">MADEN GİRİŞİ</span>
-    </div>
+      // ----- Canvas'ı yeniden çiz (tamamen görsel odaklı) -----
+      function drawMap() {
+        // Arkaplan: yeşil doku
+        ctx.fillStyle = '#6f8c5d';
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-    <!-- DEKORATİF: rüzgar gülü / elektrik ile ilgili -->
-    <div class="map-item" style="left: 88%; top: 12%;">
-        <span class="sembol" style="color: #e9f2f0;">💨🌬️⚡</span>
-        <span class="etiket" style="background: #3e504bee;">RÜZGAR TÜRBİNİ</span>
-    </div>
-
-    <!-- ve geleneksel köy kuyusu / çeşme -->
-    <div class="map-item" style="left: 5%; top: 15%;">
-        <span class="sembol" style="color: #aac7db;">⛲🧺</span>
-        <span class="etiket" style="background: #2e5e5e;">KÖY ÇEŞMESİ</span>
-    </div>
-
-  </div> <!-- village-map sonu -->
-
-  <!-- dipnot - güzel bir mesaj -->
-  <div class="footer-note">
-    🧑‍🌾👩‍🌾 Benim köyüm — halk evleri, maden, elektrik, tarım, çiftlik... 🌳🛤️
-  </div>
-</div> <!-- harita-kaplama sonu -->
-
-<!-- küçük js interaktif ipucu -->
-<script>
-  (function() {
-    // Tüm map-item öğelerine tıklanabilir bilgi ekle (opsiyonel dostane mesaj)
-    const items = document.querySelectorAll('.map-item');
-    items.forEach((item, index) => {
-      item.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const etiket = this.querySelector('.etiket');
-        if (etiket) {
-          const isim = etiket.innerText;
-          alert(`📍 ${isim} — burası köyümün güzel bir parçası.`);
+        // Çim dokusu (hafif desen)
+        ctx.fillStyle = '#7fa065';
+        for (let i = 0; i < canvasWidth; i += 40) {
+          for (let j = 0; j < canvasHeight; j += 40) {
+            ctx.fillStyle = (i + j) % 80 === 0 ? '#6f8c5d' : '#7fa065';
+            ctx.fillRect(i, j, 20, 20);
+          }
         }
-      });
-    });
 
-    // harita arkaplanına tıklanırsa genel mesaj
-    const harita = document.querySelector('.village-map');
-    if (harita) {
-      harita.addEventListener('click', function(e) {
-        if (e.target === harita || e.target.classList.contains('village-map') || e.target.classList.contains('yol') || e.target.classList.contains('dere')) {
-          alert('🌄 My Village: Hoş geldin! Köy haritası üzerinde gezin, simgelere tıkla.');
+        // Tarla sınırları (dashed) - dünya koordinatlarında
+        ctx.save();
+        ctx.translate(-offsetX * zoom, -offsetY * zoom);
+        ctx.scale(zoom, zoom);
+
+        // Dashed tarla sınırları
+        ctx.lineWidth = 3 / zoom;
+        ctx.setLineDash([8 / zoom, 10 / zoom]);
+        fieldBounds.forEach(field => {
+          ctx.strokeStyle = field.color;
+          ctx.fillStyle = '#b1cf7a30';
+          ctx.fillRect(field.x, field.y, field.w, field.h);
+          ctx.strokeRect(field.x, field.y, field.w, field.h);
+        });
+
+        // Yollar (düz, kalın)
+        ctx.setLineDash([]);
+        roads.forEach(road => {
+          ctx.beginPath();
+          ctx.moveTo(road.x1, road.y1);
+          ctx.lineTo(road.x2, road.y2);
+          ctx.strokeStyle = road.color;
+          ctx.lineWidth = road.width;
+          ctx.lineCap = 'round';
+          ctx.stroke();
+          // yol kenarları
+          ctx.strokeStyle = '#4a3c2e';
+          ctx.lineWidth = road.width + 2;
+          ctx.stroke();
+        });
+
+        // Dereler (mavi)
+        rivers.forEach(river => {
+          ctx.beginPath();
+          ctx.moveTo(river.x1, river.y1);
+          ctx.lineTo(river.x2, river.y2);
+          ctx.strokeStyle = river.color;
+          ctx.lineWidth = river.width;
+          ctx.stroke();
+          ctx.strokeStyle = '#c4e6f1';
+          ctx.lineWidth = river.width - 2;
+          ctx.stroke();
+        });
+
+        // ----- TÜM KÖY ÖĞELERİNİ ÇİZ (sembol + etiket) -----
+        ctx.font = `bold ${26 / zoom}px "Segoe UI", "Roboto", sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.shadowColor = 'black';
+        ctx.shadowBlur = 8 / zoom;
+        ctx.shadowOffsetX = 3 / zoom;
+        ctx.shadowOffsetY = 3 / zoom;
+
+        villageItems.forEach(item => {
+          // Sembolü çiz
+          ctx.font = `${32 / zoom}px "Segoe UI", "Roboto", sans-serif`;
+          ctx.fillStyle = item.color || '#fffbe3';
+          ctx.fillText(item.symbol, item.x, item.y - 28 / zoom);
+
+          // Etiket arkaplanı
+          ctx.font = `bold ${18 / zoom}px "Segoe UI", "Roboto", sans-serif`;
+          ctx.shadowBlur = 8 / zoom;
+          ctx.fillStyle = '#2d281cee';
+          ctx.shadowColor = 'black';
+          const labelWidth = ctx.measureText(item.label).width + 22 / zoom;
+          const labelHeight = 28 / zoom;
+          ctx.fillRect(item.x - labelWidth/2, item.y - 8 / zoom, labelWidth, labelHeight);
+
+          // Etiket yazısı
+          ctx.fillStyle = '#f7f1cf';
+          ctx.shadowBlur = 6 / zoom;
+          ctx.fillText(item.label, item.x, item.y + 12 / zoom);
+        });
+
+        // Ekstra dekor: küçük ağaçlar, çalılar (köy hissi)
+        ctx.font = `${28 / zoom}px "Segoe UI"`;
+        ctx.fillStyle = '#3c6e47';
+        for (let i = 0; i < 30; i++) {
+          let x = 100 + i * 70 + (i % 3) * 40;
+          let y = 1300 + i * 20;
+          ctx.fillText('🌲', x, y);
         }
-      });
-    }
-  })();
-</script>
+        for (let i = 0; i < 20; i++) {
+          ctx.fillText('🌳', 200 + i * 90, 1600);
+        }
 
+        ctx.restore(); // scale geri al
+      }
+
+      // ----- KAMERA KISITLAMALARI (harita dışına çıkma) -----
+      function clampCamera() {
+        const maxOffsetX = MAP_WIDTH - canvasWidth / zoom;
+        const maxOffsetY = MAP_HEIGHT - canvasHeight / zoom;
+        offsetX = Math.max(0, Math.min(offsetX, maxOffsetX));
+        offsetY = Math.max(0, Math.min(offsetY, maxOffsetY));
+
+        // Zoom limitleri
+        zoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom));
+      }
+
+      // ----- Canvas boyutlarını pencereye göre ayarla -----
+      function resizeCanvas() {
+        canvasWidth = window.innerWidth;
+        canvasHeight = window.innerHeight;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        clampCamera();
+        drawMap();
+        updateCoordText();
+      }
+
+      // ----- Koordinat bilgisini güncelle -----
+      function updateCoordText() {
+        const zoomPercent = Math.round(zoom * 100);
+        const coordDiv = document.getElementById('coordDisplay');
+        coordDiv.innerHTML = `📍 Kamera: X: ${Math.round(offsetX)} | Y: ${Math.round(offsetY)} | Zoom: %${zoomPercent}`;
+      }
+
+      // ----- SÜRÜKLEME (pan) -----
+      function onMouseDown(e) {
+        isDragging = true;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        dragOffsetX = offsetX;
+        dragOffsetY = offsetY;
+        canvas.style.cursor = 'grabbing';
+      }
+
+      function onMouseMove(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+
+        const dx = e.clientX - dragStartX;
+        const dy = e.clientY - dragStartY;
+
+        offsetX = dragOffsetX - dx / zoom;
+        offsetY = dragOffsetY - dy / zoom;
+
+        clampCamera();
+        drawMap();
+        updateCoordText();
+      }
+
+      function onMouseUp(e) {
+        isDragging = false;
+        canvas.style.cursor = 'grab';
+      }
+
+      // ----- YAKINLAŞTIRMA (zoom) imleç pozisyonuna göre -----
+      function zoomAt(zoomDelta, mouseX, mouseY) {
+        const worldX = offsetX + mouseX / zoom;
+        const worldY = offsetY + mouseY / zoom;
+
+        zoom *= (1 + zoomDelta);
+        zoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom));
+
+        offsetX = worldX - mouseX / zoom;
+        offsetY = worldY - mouseY / zoom;
+
+        clampCamera();
+        drawMap();
+        updateCoordText();
+      }
+
+      // ----- fare tekerleği zoom -----
+      function onWheel(e) {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const delta = -Math.sign(e.deltaY) * 0.1;
+        zoomAt(delta, mouseX, mouseY);
+      }
+
+      // ----- butonlar ile zoom ve reset -----
+      function zoomIn() {
+        zoomAt(0.15, canvasWidth/2, canvasHeight/2);
+      }
+      function zoomOut() {
+        zoomAt(-0.15, canvasWidth/2, canvasHeight/2);
+      }
+      function resetView() {
+        zoom = 0.8;
+        offsetX = 400;
+        offsetY = 300;
+        clampCamera();
+        drawMap();
+        updateCoordText();
+      }
+
+      // ----- Canvas tıklama: öğe seç (görsel geri bildirim) -----
+      function onCanvasClick(e) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const worldX = offsetX + mouseX / zoom;
+        const worldY = offsetY + mouseY / zoom;
+
+        // Yakın öğeyi bul
+        let found = null;
+        for (let item of villageItems) {
+          const dx = (item.x - worldX) * zoom;
+          const dy = (item.y - 30 - worldY) * zoom; // sembol merkezi
+          if (Math.hypot(dx, dy) < 40) {
+            found = item;
+            break;
+          }
+        }
+
+        if (found) {
+          alert(`📍 ${found.label}\n${found.symbol}  — Burası köyümün kalbi.`);
+        } else {
+          alert('🌄 My Village: Hoş geldin! Haritayı sürükle, yakınlaştır, ögelere tıkla.');
+        }
+      }
+
+      // ----- EVENT LİSTENERS -----
+      window.addEventListener('resize', resizeCanvas);
+
+      canvas.addEventListener('mousedown', onMouseDown);
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+      canvas.addEventListener('wheel', onWheel, { passive: false });
+      canvas.addEventListener('click', onCanvasClick);
+
+      // butonlar
+      document.getElementById('zoomInBtn').addEventListener('click', zoomIn);
+      document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
+      document.getElementById('resetBtn').addEventListener('click', resetView);
+
+      // başlangıç
+      offsetX = 400;
+      offsetY = 300;
+      resizeCanvas();
+    })();
+  </script>
 </body>
 </html>
