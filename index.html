@@ -6,51 +6,60 @@
     <title>HAB Adventure - Hot Air Balloon</title>
     <style>
         body { 
-            margin: 0; padding: 0; overflow: hidden; background: linear-gradient(to bottom, #87CEEB, #98D8E8); 
+            margin: 0; padding: 0; overflow: hidden; 
+            background: linear-gradient(to bottom, #87CEEB, #4A90E2, #2C5AA0); 
             font-family: Arial, sans-serif; 
         }
         #gameContainer { position: relative; width: 100vw; height: 100vh; }
         #ui {
-            position: absolute; top: 20px; left: 20px; color: white; font-size: 24px; font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5); z-index: 100;
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            color: white; font-size: 28px; font-weight: bold; text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7); z-index: 100;
         }
         #gameOver {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.8); color: white; padding: 30px; border-radius: 20px;
-            text-align: center; display: none; z-index: 200;
+            background: rgba(0,0,0,0.9); color: white; padding: 40px; border-radius: 25px;
+            text-align: center; display: none; z-index: 200; backdrop-filter: blur(10px);
         }
         button { 
-            background: #FF6B35; color: white; border: none; padding: 15px 30px; 
-            font-size: 20px; border-radius: 10px; cursor: pointer; margin: 10px;
+            background: linear-gradient(45deg, #FF6B35, #F7931E); color: white; border: none; 
+            padding: 18px 40px; font-size: 22px; border-radius: 15px; cursor: pointer; 
+            margin: 15px; box-shadow: 0 8px 20px rgba(255,107,53,0.4);
+            transition: all 0.3s;
         }
-        button:hover { background: #FF8C42; }
+        button:hover { transform: scale(1.05); box-shadow: 0 12px 30px rgba(255,107,53,0.6); }
+        button:active { transform: scale(0.98); }
         canvas { display: block; }
+        #instructions {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            color: rgba(255,255,255,0.9); font-size: 18px; text-align: center;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
 <body>
     <div id="gameContainer">
         <div id="ui">
-            <div>Puan: <span id="score">0</span></div>
-            <div>Yükseklik: <span id="height">0</span>m</div>
+            <div>🏆 <span id="score">0</span></div>
+            <div>📏 <span id="height">0</span>m</div>
         </div>
+        <div id="instructions">👆 Dokun ve tut = YÜKSEL | Bırak = ALÇAL</div>
         <div id="gameOver">
             <h1>🎈 BALON PATLADI! 🎈</h1>
-            <p>Puanın: <span id="finalScore">0</span></p>
-            <button onclick="restartGame()">Yeniden Başla</button>
+            <p>En Yüksek Puan: <span id="finalScore">0</span></p>
+            <button onclick="restartGame()">🚀 YENİDEN BAŞLA</button>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         // === OYUN DEĞİŞKENLERİ ===
-        let scene, camera, renderer, balloon, obstacles = [], particles = [];
-        let gameSpeed = 0.2, score = 0, height = 0;
+        let scene, camera, renderer, balloon, obstacles = [], clouds = [], particles = [];
+        let gameSpeed = 0.3, score = 0, height = 0, bestScore = localStorage.getItem('habBest') || 0;
         let gameRunning = false, gameOver = false;
-        let lanes = [-2, 0, 2]; // 3 şerit
-        let currentLane = 1; // Orta şerit
-        let balloonHeight = 0; // Yükseklik kontrolü
-        let windDirection = 0; // Rüzgar yönü (-1 sol, 1 sağ)
-        let touchStartY = 0, touchStartX = 0;
+        let balloonHeight = 0, liftForce = 0, isLifting = false;
+        let tunnelMode = false, tunnelHeight = 0;
+        let touchActive = false;
 
         // === BAŞLAT ===
         init();
@@ -59,27 +68,32 @@
         function init() {
             // Scene
             scene = new THREE.Scene();
-            scene.fog = new THREE.Fog(0x87CEEB, 50, 300);
+            scene.fog = new THREE.FogExp2(0x87CEEB, 0.008);
 
             // Camera
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 5, 10);
+            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 2000);
+            camera.position.set(0, 8, 15);
 
             // Renderer
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setClearColor(0x87CEEB, 1);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             document.getElementById('gameContainer').appendChild(renderer.domElement);
 
             // Işıklar
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
             scene.add(ambientLight);
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(1, 1, 0.5);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(5, 10, 5);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
             scene.add(directionalLight);
 
-            // Gökyüzü gradient
-            const skyGeometry = new THREE.SphereGeometry(500, 32, 32);
+            // Gökyüzü shader
+            const skyGeometry = new THREE.SphereGeometry(800, 32, 32);
             const skyMaterial = new THREE.ShaderMaterial({
                 vertexShader: `
                     varying vec3 vWorldPosition;
@@ -94,8 +108,10 @@
                     void main() {
                         vec3 dir = normalize(vWorldPosition);
                         float t = 0.5 * (dir.y + 1.0);
-                        vec3 skyColor = mix(vec3(0.2, 0.5, 1.0), vec3(0.7, 0.9, 1.0), t);
-                        gl_FragColor = vec4(skyColor, 1.0);
+                        vec3 skyColor1 = vec3(0.2, 0.4, 0.8);
+                        vec3 skyColor2 = vec3(0.7, 0.9, 1.0);
+                        vec3 color = mix(skyColor1, skyColor2, t);
+                        gl_FragColor = vec4(color, 1.0);
                     }
                 `,
                 side: THREE.BackSide
@@ -103,143 +119,152 @@
             scene.add(new THREE.Mesh(skyGeometry, skyMaterial));
 
             createBalloon();
-            createGround();
+            createMountains();
             setupControls();
-            startGame();
         }
 
         // === SICAK HAVA BALONU ===
         function createBalloon() {
             const balloonGroup = new THREE.Group();
+            balloonGroup.castShadow = true;
 
             // Balon gövdesi
-            const balloonGeometry = new THREE.SphereGeometry(2, 16, 12);
+            const balloonGeometry = new THREE.SphereGeometry(2.2, 20, 16);
             const balloonMaterial = new THREE.MeshLambertMaterial({ 
                 color: 0xFF6B9D,
-                transparent: true, opacity: 0.9
+                transparent: true, opacity: 0.95
             });
             const balloonMesh = new THREE.Mesh(balloonGeometry, balloonMaterial);
+            balloonMesh.castShadow = true;
             balloonGroup.add(balloonMesh);
 
-            // Ateş efekti
-            const fireGeometry = new THREE.ConeGeometry(0.8, 2, 8);
+            // Balon detayları
+            const bandGeometry = new THREE.TorusGeometry(2.1, 0.1, 8, 20);
+            const bandMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
+            const band = new THREE.Mesh(bandGeometry, bandMaterial);
+            band.rotation.x = Math.PI / 2;
+            balloonGroup.add(band);
+
+            // Ateş efekti (animasyonlu)
+            const fireGeometry = new THREE.ConeGeometry(0.9, 2.2, 12);
             const fireMaterial = new THREE.MeshBasicMaterial({ 
                 color: 0xFF4500,
-                transparent: true, opacity: 0.7
+                transparent: true, opacity: 0.8
             });
             const fire = new THREE.Mesh(fireGeometry, fireMaterial);
-            fire.position.y = -2.2;
+            fire.position.y = -2.3;
             balloonGroup.add(fire);
+            balloonGroup.userData.fire = fire;
 
             // Sepet
-            const basketGeometry = new THREE.BoxGeometry(1.5, 0.8, 1.5);
-            const basketMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+            const basketGeometry = new THREE.CylinderGeometry(0.8, 0.8, 1.2, 8);
+            const basketMaterial = new THREE.MeshLambertMaterial({ 
+                color: 0x8B4513, 
+                flatShading: true 
+            });
             const basket = new THREE.Mesh(basketGeometry, basketMaterial);
-            basket.position.y = -3;
+            basket.position.y = -3.3;
+            basket.castShadow = true;
             balloonGroup.add(basket);
 
             balloon = balloonGroup;
             scene.add(balloon);
         }
 
-        // === ZEMİN VE DAĞLAR ===
-        function createGround() {
-            // Sonsuz zemin
-            const groundGeometry = new THREE.PlaneGeometry(100, 1000);
-            const groundMaterial = new THREE.MeshLambertMaterial({ color: 0x90EE90 });
-            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-            ground.rotation.x = -Math.PI / 2;
-            ground.position.y = -10;
-            scene.add(ground);
+        // === DAĞLAR VE MAĞARALAR ===
+        function createMountains() {
+            // Uzak dağlar
+            for (let i = 0; i < 20; i++) {
+                const mountain = new THREE.Mesh(
+                    new THREE.ConeGeometry(15 + Math.random() * 10, 30 + Math.random() * 20, 8),
+                    new THREE.MeshLambertMaterial({ 
+                        color: new THREE.Color().setHSL(0.1, 0.3 + Math.random() * 0.2, 0.4) 
+                    })
+                );
+                mountain.position.set(
+                    (Math.random() - 0.5) * 200,
+                    -15,
+                    -100 - i * 25
+                );
+                mountain.scale.y = 0.6 + Math.random() * 0.4;
+                scene.add(mountain);
+            }
         }
 
-        // === ENGELLER (Kaya/Dağ) ===
+        // === TUNNEL/MAĞARA OLUŞTUR ===
+        function createTunnel() {
+            tunnelMode = true;
+            tunnelHeight = balloon.position.y;
+            
+            const tunnelGroup = new THREE.Group();
+            
+            // Tunnel duvarları
+            const wallGeometry = new THREE.CylinderGeometry(8, 10, 80, 12, 1, true);
+            const wallMaterial = new THREE.MeshLambertMaterial({ 
+                color: 0x4A4A4A,
+                transparent: true, opacity: 0.9
+            });
+            const tunnelWall = new THREE.Mesh(wallGeometry, wallMaterial);
+            tunnelWall.rotation.x = Math.PI / 2;
+            tunnelWall.position.y = tunnelHeight;
+            tunnelWall.position.z = -60;
+            tunnelGroup.add(tunnelWall);
+
+            // Tunnel içi ışık
+            const tunnelLight = new THREE.PointLight(0x88CCFF, 1, 100);
+            tunnelLight.position.set(0, tunnelHeight, -30);
+            tunnelGroup.add(tunnelLight);
+
+            obstacles.push(tunnelGroup);
+            scene.add(tunnelGroup);
+        }
+
+        // === ENGELLER (Kaya/Dikmeler) ===
         function createObstacle() {
             const obstacle = new THREE.Group();
-            const rockGeometry = new THREE.DodecahedronGeometry(1.5 + Math.random() * 2, 1);
+            obstacle.castShadow = true;
+            
+            const sizes = [1.5, 2.2, 1.8];
+            const size = sizes[Math.floor(Math.random() * sizes.length)];
+            
+            const rockGeometry = new THREE.DodecahedronGeometry(size, 1);
             const rockMaterial = new THREE.MeshLambertMaterial({ 
-                color: new THREE.Color().setHSL(0.1, 0.5, 0.4 + Math.random() * 0.2)
+                color: new THREE.Color().setHSL(0.08, 0.6, 0.35 + Math.random() * 0.2)
             });
             const rock = new THREE.Mesh(rockGeometry, rockMaterial);
-            rock.position.y = -8 + Math.random() * 4;
-
+            rock.position.y = tunnelMode ? tunnelHeight + (Math.random() - 0.5) * 6 : -5 + Math.random() * 8;
+            
             obstacle.add(rock);
-            obstacle.position.set(lanes[Math.floor(Math.random() * 3)], rock.position.y, -50);
+            obstacle.position.set((Math.random() - 0.5) * 8, rock.position.y, -60);
             obstacles.push(obstacle);
             scene.add(obstacle);
         }
 
-        // === PARTİKÜL EFEKTLERİ ===
-        function createParticles() {
-            const particleGeometry = new THREE.BufferGeometry();
-            const particleCount = 100;
-            const positions = new Float32Array(particleCount * 3);
-            for (let i = 0; i < particleCount * 3; i += 3) {
-                positions[i] = (Math.random() - 0.5) * 100;
-                positions[i + 1] = Math.random() * 50;
-                positions[i + 2] = (Math.random() - 0.5) * 100 - 100;
-            }
-            particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-            const particleMaterial = new THREE.PointsMaterial({
-                color: 0xFFFFFF,
-                size: 0.1,
-                transparent: true,
-                opacity: 0.6
-            });
-            const particlesSystem = new THREE.Points(particleGeometry, particleMaterial);
-            particles.push(particlesSystem);
-            scene.add(particlesSystem);
-        }
-
         // === KONTROLLER ===
         function setupControls() {
-            // Dokunmatik
+            // Dokunmatik - SADECE YÜKSEL/ALÇAL
             renderer.domElement.addEventListener('touchstart', onTouchStart, { passive: false });
             renderer.domElement.addEventListener('touchend', onTouchEnd, { passive: false });
 
-            // Klavye (test için)
+            // Klavye test
             document.addEventListener('keydown', (e) => {
-                if (!gameRunning) return;
-                if (e.code === 'ArrowLeft') moveLane(-1);
-                if (e.code === 'ArrowRight') moveLane(1);
-                if (e.code === 'ArrowUp') balloonHeight += 0.3;
-                if (e.code === 'ArrowDown') balloonHeight -= 0.3;
+                if (e.code === 'Space') isLifting = true;
+            });
+            document.addEventListener('keyup', (e) => {
+                if (e.code === 'Space') isLifting = false;
             });
         }
 
         function onTouchStart(e) {
             e.preventDefault();
-            const touch = e.touches[0];
-            touchStartX = touch.clientX;
-            touchStartY = touch.clientY;
+            touchActive = true;
+            isLifting = true;
         }
 
         function onTouchEnd(e) {
             e.preventDefault();
-            if (!gameRunning) return;
-            
-            const touch = e.changedTouches[0];
-            const deltaX = touch.clientX - touchStartX;
-            const deltaY = touchStartY - touch.clientY; // Yukarı swipe pozitif
-
-            // Sol/Sağ şerit değiştirme
-            if (Math.abs(deltaX) > 50) {
-                moveLane(deltaX > 0 ? 1 : -1);
-            }
-            // Yukarı/Aşağı yükseklik
-            else if (Math.abs(deltaY) > 30) {
-                balloonHeight += deltaY * 0.0005;
-            }
-            // Tap = hızlan/yüksel
-            else {
-                balloonHeight += 0.2;
-            }
-        }
-
-        function moveLane(direction) {
-            currentLane += direction;
-            currentLane = Math.max(0, Math.min(2, currentLane));
+            touchActive = false;
+            isLifting = false;
         }
 
         // === OYUN BAŞLAT ===
@@ -248,19 +273,39 @@
             gameOver = false;
             score = 0;
             height = 0;
-            gameSpeed = 0.2;
+            gameSpeed = 0.3;
             balloonHeight = 0;
-            currentLane = 1;
+            tunnelMode = false;
             obstacles = [];
-            particles = [];
-            createParticles();
+            clouds = [];
+            createClouds();
         }
 
         function restartGame() {
             document.getElementById('gameOver').style.display = 'none';
             obstacles.forEach(obs => scene.remove(obs));
-            particles.forEach(p => scene.remove(p));
+            clouds.forEach(c => scene.remove(c));
             startGame();
+        }
+
+        // === BULUTLAR ===
+        function createClouds() {
+            for (let i = 0; i < 15; i++) {
+                const cloudGeometry = new THREE.SphereGeometry(3 + Math.random() * 2, 8, 6);
+                const cloudMaterial = new THREE.MeshLambertMaterial({
+                    color: 0xFFFFFF,
+                    transparent: true,
+                    opacity: 0.7
+                });
+                const cloud = new THREE.Mesh(cloudGeometry, cloudMaterial);
+                cloud.position.set(
+                    (Math.random() - 0.5) * 100,
+                    15 + Math.random() * 20,
+                    -100 - Math.random() * 200
+                );
+                clouds.push(cloud);
+                scene.add(cloud);
+            }
         }
 
         // === ANA OYUN LÖÖP ===
@@ -268,11 +313,15 @@
             requestAnimationFrame(animate);
 
             if (!gameRunning) {
+                // Balon ateş animasyonu
+                if (balloon && balloon.userData.fire) {
+                    balloon.userData.fire.rotation.z += 0.2;
+                    balloon.userData.fire.scale.setScalar(0.8 + Math.sin(Date.now() * 0.01) * 0.2);
+                }
                 renderer.render(scene, camera);
                 return;
             }
 
-            // Oyun mekaniği
             updateGame();
             checkCollisions();
             updateCamera();
@@ -281,43 +330,53 @@
         }
 
         function updateGame() {
-            // Balon pozisyonu
-            balloon.position.x = THREE.MathUtils.lerp(balloon.position.x, lanes[currentLane], 0.1);
-            balloon.position.y = 2 + balloonHeight;
-            balloonHeight *= 0.95; // Yavaş yavaş düşüş
-            balloon.position.y = Math.max(-2, balloon.position.y); // Minimum yükseklik
-
-            // Rüzgar efekti (balonu hafif iter)
-            windDirection = Math.sin(Date.now() * 0.001) * 0.02;
-            balloon.position.x += windDirection;
-
-            // Hız artışı
-            gameSpeed += 0.0001;
+            // Rüzgar = otomatik ileri hareket (SUBWAY SURFERS)
             height += gameSpeed;
-            score = Math.floor(height / 10);
+            score = Math.floor(height / 5);
+            gameSpeed += 0.00015;
 
-            // UI güncelle
+            // Lift mekaniği
+            liftForce = isLifting ? 0.35 : 0;
+            balloonHeight += liftForce - 0.12; // Sürtünme
+            balloonHeight = Math.max(-8, Math.min(25, balloonHeight));
+            balloon.position.y = 2 + balloonHeight;
+
+            // Balon hafif sallanma
+            balloon.rotation.z = Math.sin(Date.now() * 0.003 + balloonHeight * 0.1) * 0.1;
+            balloon.position.x = Math.sin(height * 0.02) * 0.5;
+
+            // UI
             document.getElementById('score').textContent = score;
             document.getElementById('height').textContent = Math.floor(height);
 
-            // Engeller spawn
-            if (Math.random() < 0.02 + gameSpeed * 0.01) {
+            // Tunnel spawn (her 500m'de bir)
+            if (Math.floor(height) % 500 < 5 && height > 100 && !tunnelMode) {
+                createTunnel();
+            }
+
+            // Engeller
+            if (Math.random() < 0.025 + gameSpeed * 0.008) {
                 createObstacle();
             }
 
-            // Engelleri hareket ettir
-            obstacles.forEach((obs, index) => {
-                obs.position.z += gameSpeed * 2;
-                if (obs.position.z > 20) {
+            // Objeleri hareket ettir
+            obstacles.forEach((obs, i) => {
+                obs.position.z += gameSpeed * 3;
+                obs.rotation.y += 0.01;
+                if (obs.position.z > 25) {
                     scene.remove(obs);
-                    obstacles.splice(index, 1);
+                    obstacles.splice(i, 1);
+                    if (tunnelMode) tunnelMode = false;
                 }
             });
 
-            // Partiküller
-            particles.forEach(p => {
-                p.rotation.y += 0.001;
-                p.position.z += gameSpeed * 0.5;
+            // Bulutlar
+            clouds.forEach(cloud => {
+                cloud.position.z += gameSpeed * 0.8;
+                if (cloud.position.z > 30) {
+                    cloud.position.z = -200;
+                    cloud.position.x = (Math.random() - 0.5) * 100;
+                }
             });
         }
 
@@ -327,32 +386,41 @@
             for (let obs of obstacles) {
                 const obsBox = new THREE.Box3().setFromObject(obs);
                 if (balloonBox.intersectsBox(obsBox)) {
-                    gameOver = true;
-                    document.getElementById('finalScore').textContent = score;
-                    document.getElementById('gameOver').style.display = 'block';
-                    gameRunning = false;
-                    break;
+                    endGame();
+                    return;
                 }
             }
         }
 
+        function endGame() {
+            gameRunning = false;
+            gameOver = true;
+            if (score > bestScore) {
+                bestScore = score;
+                localStorage.setItem('habBest', bestScore);
+            }
+            document.getElementById('finalScore').textContent = bestScore;
+            document.getElementById('gameOver').style.display = 'block';
+        }
+
         function updateCamera() {
-            camera.position.x = THREE.MathUtils.lerp(camera.position.x, balloon.position.x * 0.3, 0.05);
-            camera.position.y = balloon.position.y + 8;
-            camera.position.z = balloon.position.z + 12;
+            camera.position.x = THREE.MathUtils.lerp(camera.position.x, balloon.position.x * 0.4, 0.08);
+            camera.position.y = THREE.MathUtils.lerp(camera.position.y, balloon.position.y + 6, 0.1);
+            camera.position.z = balloon.position.z + 18;
             camera.lookAt(balloon.position);
         }
 
-        // === MOBİL UYUMLULUĞU ===
+        // Resize
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // Oyun başlarken dokunma ile başlat
+        // İlk dokunuşla başla
         renderer.domElement.addEventListener('touchstart', () => {
-            if (!gameRunning && !gameOver) startGame();
+            document.getElementById('instructions').style.display = 'none';
+            if (!gameRunning) startGame();
         }, { once: true });
     </script>
 </body>
