@@ -1,396 +1,205 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eTourGood • Türkiye Turizminin Küresel Pazaryeri</title>
+    <title>eTourGood - Coming Soon</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:wght@700&amp;display=swap');
-        
-        :root {
-            --orange: #f97316;
-        }
-        
-        .tail-container {
-            font-family: 'Inter', system_ui, sans-serif;
-        }
-        
-        .logo-font {
-            font-family: 'Playfair Display', sans-serif;
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #050505;
+            font-family: 'Inter', sans-serif;
         }
 
-        /* Liquid Glassmorphism */
-        .glass {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(251, 146, 60, 0.2);
-            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
-        }
-
-        /* 3D Floating Balloons */
-        .balloon {
+        #bg-canvas {
             position: absolute;
-            animation: float 25s infinite linear;
-            filter: drop-shadow(0 10px 30px rgba(249, 115, 22, 0.5));
-            z-index: 10;
-            opacity: 0.85;
-        }
-        
-        .balloon:nth-child(2) { animation-delay: -8s; left: 15%; }
-        .balloon:nth-child(3) { animation-delay: -15s; left: 35%; scale: 0.75; }
-        .balloon:nth-child(4) { animation-delay: -22s; left: 60%; scale: 1.15; }
-        .balloon:nth-child(5) { animation-delay: -4s; left: 80%; scale: 0.85; }
-
-        @keyframes float {
-            0% {
-                transform: translateY(120vh) rotate(-8deg) perspective(800px) rotateX(15deg);
-            }
-            100% {
-                transform: translateY(-120vh) rotate(12deg) perspective(800px) rotateX(-15deg);
-            }
-        }
-
-        .hero-bg {
-            background: linear-gradient(135deg, #1e2937 0%, #0f172a 100%);
-        }
-        
-        .hero-bg::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 50% 30%, rgba(249, 115, 22, 0.15) 0%, transparent 70%);
-            z-index: 1;
-        }
-        
-        .nav-link {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .nav-link:hover {
-            color: #fb923c;
-            transform: translateY(-2px);
-        }
-        
-        .section-header {
-            position: relative;
-        }
-        
-        .section-header::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
+            top: 0;
             left: 0;
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(to right, #f97316, #fb923c);
-            border-radius: 9999px;
+            z-index: -1;
+        }
+
+        /* 3D Card Hover Effects */
+        .perspective-container {
+            perspective: 1000px;
+        }
+
+        .card-3d {
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-3d:hover {
+            transform: translateY(-10px) rotateX(5deg) rotateY(-5deg);
+            box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.5),
+                        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+        }
+
+        .content-3d {
+            transform: translateZ(30px);
+        }
+
+        /* Glassmorphism for the main container */
+        .glass-panel {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            backdrop-filter: blur(8px);
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
     </style>
 </head>
-<body class="tail-container bg-slate-950 text-slate-200 overflow-x-hidden">
-    <!-- NAV -->
-    <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-orange-500/20">
-        <div class="max-w-screen-2xl mx-auto px-8 py-5 flex items-center justify-between">
-            <div class="flex items-center gap-x-3">
-                <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-white font-bold text-3xl shadow-xl">🇹🇷</div>
-                <div>
-                    <span class="logo-font text-3xl font-bold tracking-tighter text-white">eTourGood</span>
-                </div>
-            </div>
+<body class="text-white min-h-screen flex items-center justify-center">
+
+    <canvas id="bg-canvas"></canvas>
+
+    <main class="container mx-auto px-4 z-10 relative" x-data="{ email: '', submitted: false }">
+        <div class="text-center max-w-4xl mx-auto mb-16 content-3d">
+            <h1 class="text-6xl md:text-8xl font-extrabold tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
+                eTourGood
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-300 font-light tracking-wide">
+                The Next Generation of Global Travel is Arriving Soon.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto perspective-container">
             
-            <div class="hidden md:flex items-center gap-x-8 text-sm font-medium">
-                <a href="#hakkinda" class="nav-link">Hakkımızda</a>
-                <a href="#tedarikci" class="nav-link">Tedarikçiler İçin</a>
-                <a href="#iletisim" class="nav-link">İletişim</a>
-            </div>
-            
-            <a href="https://wa.me/905336124402" target="_blank"
-               class="flex items-center gap-x-2 bg-orange-500 hover:bg-orange-600 transition-all text-white px-6 py-3 rounded-3xl font-semibold text-sm shadow-lg shadow-orange-500/30">
-                <i class="fab fa-whatsapp text-lg"></i>
-                <span>WhatsApp</span>
-            </a>
-        </div>
-    </nav>
-
-    <!-- HERO with 3D BALLOONS -->
-    <section class="hero-bg min-h-screen flex items-center relative overflow-hidden">
-        <!-- Background Image (Kapadokya vibe) -->
-        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4')] bg-cover bg-center brightness-75"></div>
-        <div class="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-950/40 to-slate-950/90"></div>
-
-        <!-- Floating 3D Balloons -->
-        <div class="balloon" style="left: 8%; bottom: -20%; width: 90px;">
-            <svg viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M100 40 Q50 80 50 140 Q50 200 100 240 Q150 200 150 140 Q150 80 100 40" fill="#f97316"/>
-                <path d="M100 240 L95 270 L105 270 Z" fill="#f97316"/>
-                <circle cx="80" cy="110" r="12" fill="#1e2937" fill-opacity="0.3"/>
-                <circle cx="120" cy="105" r="10" fill="#fff" fill-opacity="0.4"/>
-            </svg>
-        </div>
-        <div class="balloon" style="left: 22%; bottom: -30%; width: 110px;">
-            <svg viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M100 40 Q50 80 50 140 Q50 200 100 240 Q150 200 150 140 Q150 80 100 40" fill="#64748b"/>
-                <path d="M100 240 L95 270 L105 270 Z" fill="#64748b"/>
-            </svg>
-        </div>
-        <div class="balloon" style="left: 42%; bottom: -15%; width: 75px;">
-            <svg viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M100 40 Q50 80 50 140 Q50 200 100 240 Q150 200 150 140 Q150 80 100 40" fill="#fb923c"/>
-                <path d="M100 240 L95 270 L105 270 Z" fill="#fb923c"/>
-            </svg>
-        </div>
-        <div class="balloon" style="left: 68%; bottom: -40%; width: 95px;">
-            <svg viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M100 40 Q50 80 50 140 Q50 200 100 240 Q150 200 150 140 Q150 80 100 40" fill="#f97316"/>
-                <path d="M100 240 L95 270 L105 270 Z" fill="#f97316"/>
-            </svg>
-        </div>
-        <div class="balloon" style="left: 85%; bottom: -25%; width: 65px;">
-            <svg viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M100 40 Q50 80 50 140 Q50 200 100 240 Q150 200 150 140 Q150 80 100 40" fill="#64748b"/>
-                <path d="M100 240 L95 270 L105 270 Z" fill="#64748b"/>
-            </svg>
-        </div>
-
-        <div class="max-w-screen-2xl mx-auto px-8 pt-24 relative z-20">
-            <div class="max-w-3xl">
-                <div class="inline-flex items-center gap-x-2 bg-white/10 backdrop-blur-md px-5 py-2 rounded-3xl text-orange-300 text-sm font-medium mb-6">
-                    <div class="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-                    YAKINDA BAŞLIYOR
-                </div>
-                
-                <h1 class="text-7xl md:text-8xl font-bold leading-none tracking-tighter logo-font text-white mb-4">
-                    TÜRKİYE<br>TURİZMİNİN<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-400">KÜRESEL EVİ</span>
-                </h1>
-                
-                <p class="text-2xl text-slate-300 max-w-lg mb-10">
-                    Seyahat acenteleri ve oteller için uluslararası pazaryeri. 
-                    Kapadokya’dan Ege’ye, İstanbul’dan Antalya’ya… 
-                    En iyi deneyimler, havalimanı transferleri ve global turistler tek platformda.
-                </p>
-
-                <div class="flex flex-wrap gap-4">
-                    <a href="#tedarikci" 
-                       class="group flex-1 md:flex-none bg-white text-slate-900 hover:bg-amber-100 transition-all font-semibold text-lg px-10 py-6 rounded-3xl flex items-center justify-center gap-x-3">
-                        TEDARİKÇİ OL
-                        <span class="text-3xl group-hover:rotate-12 transition-transform">💰</span>
-                    </a>
-                    
-                    <a href="https://wa.me/905336124402" target="_blank"
-                       class="flex-1 md:flex-none glass border border-orange-400 hover:border-orange-300 text-white font-semibold text-lg px-10 py-6 rounded-3xl flex items-center justify-center gap-x-3 transition-all">
-                        HEMEN WHATSAPP
-                    </a>
-                </div>
-
-                <div class="mt-12 flex items-center gap-x-8 text-xs uppercase tracking-widest">
-                    <div class="flex items-center gap-x-2">
-                        <i class="fas fa-plane text-orange-400"></i>
-                        <span>Havalimanı Transferi</span>
+            <div class="card-3d rounded-2xl p-8 flex flex-col items-center text-center">
+                <div class="content-3d w-full">
+                    <div class="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center mb-6 mx-auto border border-blue-500/50">
+                        <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <div class="h-px w-8 bg-orange-400/30"></div>
-                    <div class="flex items-center gap-x-2">
-                        <i class="fas fa-hot-tub text-orange-400"></i>
-                        <span>Özel Turlar</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Scroll indicator -->
-        <div class="absolute bottom-12 left-1/2 flex flex-col items-center gap-y-1 text-xs tracking-widest text-slate-400">
-            <span>Aşağı kaydır</span>
-            <div class="w-px h-12 bg-gradient-to-b from-transparent via-slate-400 to-transparent"></div>
-        </div>
-
-        <!-- Trust bar -->
-        <div class="absolute bottom-8 right-8 glass px-8 py-4 rounded-3xl hidden lg:flex items-center gap-x-8 text-sm">
-            <div class="flex items-center gap-x-5">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/2560px-Google_2015_logo.svg.png" alt="Google" class="h-5 opacity-70">
-                <span class="font-medium">etourgood.com</span>
-            </div>
-            <div class="h-5 w-px bg-white/20"></div>
-            <a href="https://www.tripadvisor.com.tr/Attraction_Review-g293974-d22555182-Reviews-Etourgood_com-Istanbul.html" target="_blank" class="flex items-center gap-x-2 hover:text-orange-300 transition-colors">
-                <i class="fas fa-star text-amber-400"></i>
-                <span class="font-medium">4.8/5 • Tripadvisor</span>
-            </a>
-        </div>
-    </section>
-
-    <!-- ABOUT SECTION -->
-    <section id="hakkinda" class="py-28 bg-slate-950 relative">
-        <div class="max-w-screen-2xl mx-auto px-8 grid md:grid-cols-12 gap-16">
-            <div class="md:col-span-5">
-                <div class="sticky top-28">
-                    <span class="uppercase text-orange-400 text-sm font-medium tracking-[3px]">Türkiye Turizmi 2.0</span>
-                    <h2 class="text-5xl font-bold text-white mt-3 leading-none">Viator benzeri ama %100 Türk, %100 profesyonel.</h2>
-                    <div class="h-px w-16 bg-orange-400 mt-8"></div>
-                </div>
-            </div>
-            
-            <div class="md:col-span-7 space-y-12 text-lg">
-                <div class="glass rounded-3xl p-10">
-                    <p class="text-slate-300 leading-relaxed">
-                        eTourGood, Türkiye’deki seyahat acenteleri ve otellerin uluslararası pazardaki en güçlü ortağıdır. 
-                        Global turistlere Kapadokya balon turlarından, özel yat gezilerine, havalimanı transferlerinden butik otel konaklamalarına kadar her şeyi tek tıkla sunuyoruz.
-                    </p>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="glass rounded-3xl p-8">
-                        <div class="text-orange-400 text-5xl mb-4">🌍</div>
-                        <h3 class="font-semibold text-2xl mb-2">Küresel Erişim</h3>
-                        <p class="text-slate-400">Avrupa, Amerika, Asya’dan milyonlarca gezgin doğrudan sizin tur ve hizmetlerinizi keşfedecek.</p>
-                    </div>
-                    <div class="glass rounded-3xl p-8">
-                        <div class="text-orange-400 text-5xl mb-4">💸</div>
-                        <h3 class="font-semibold text-2xl mb-2">Ekstra Kazanç</h3>
-                        <p class="text-slate-400">Her rezervasyonda %15-30 daha fazla gelir. Komisyon yok, sadece kazanç!</p>
-                    </div>
-                </div>
-                
-                <div class="glass rounded-3xl p-10 flex flex-col md:flex-row gap-8 items-start">
-                    <div>
-                        <span class="block text-xs uppercase mb-1 text-slate-400">Özel Hizmet</span>
-                        <h3 class="font-semibold text-3xl">Havalimanı Transferleri</h3>
-                        <p class="mt-4 text-slate-300">İstanbul Havalimanı, Antalya, İzmir, Dalaman… Profesyonel araç filosuyla 7/24 hizmetinizde.</p>
-                    </div>
-                    <div class="md:ml-auto text-7xl text-orange-400/30">✈️</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- TEDARİKÇİ SECTION -->
-    <section id="tedarikci" class="py-28 bg-slate-900">
-        <div class="max-w-screen-2xl mx-auto px-8">
-            <div class="text-center mb-16">
-                <span class="px-6 py-2 bg-orange-500/10 text-orange-400 rounded-3xl text-sm font-medium">TEDARİKÇİLER İÇİN</span>
-                <h2 class="text-5xl font-bold mt-4">Kazancınız bizim işimiz.</h2>
-            </div>
-            
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Card 1 -->
-                <div class="glass rounded-3xl p-8 transition-all hover:scale-[1.03]">
-                    <div class="h-2 w-12 bg-orange-500 rounded-full mb-8"></div>
-                    <h3 class="text-3xl font-semibold mb-4">Global Pazaryeri</h3>
-                    <ul class="space-y-4 text-slate-300">
-                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> 50+ ülkede görünürlük</li>
-                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> Anında rezervasyon sistemi</li>
-                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> SEO + Google entegrasyonu</li>
-                    </ul>
-                </div>
-                
-                <!-- Card 2 -->
-                <div class="glass rounded-3xl p-8 transition-all hover:scale-[1.03]">
-                    <div class="h-2 w-12 bg-orange-500 rounded-full mb-8"></div>
-                    <h3 class="text-3xl font-semibold mb-4">Kolay Entegrasyon</h3>
-                    <ul class="space-y-4 text-slate-300">
-                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> API bağlantısı (5 dk)</li>
-                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> Kendi panelinizde yönetim</li>
-                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> Mobil onaylı ödemeler</li>
-                    </ul>
-                </div>
-                
-                <!-- Card 3 -->
-                <div class="glass rounded-3xl p-8 transition-all hover:scale-[1.03]">
-                    <div class="h-2 w-12 bg-orange-500 rounded-full mb-8"></div>
-                    <h3 class="text-3xl font-semibold mb-4">Destek &amp; Pazarlama</h3>
-                    <ul class="space-y-4 text-slate-300">
-                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> 7/24 Türkçe destek</li>
-                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> Sosyal medya promosyonu</li>
-                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> Tripadvisor &amp; Google entegrasyonu</li>
+                    <h2 class="text-2xl font-bold mb-4 text-white">For Travelers</h2>
+                    <ul class="text-gray-400 space-y-3 text-left w-full max-w-xs mx-auto">
+                        <li class="flex items-center"><span class="text-blue-400 mr-2">✦</span> Seamless & Secure Bookings</li>
+                        <li class="flex items-center"><span class="text-blue-400 mr-2">✦</span> Discover Unique, Curated Experiences</li>
+                        <li class="flex items-center"><span class="text-blue-400 mr-2">✦</span> Unbeatable Value & Transparent Pricing</li>
                     </ul>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- CONTACT / FOOTER -->
-    <footer id="iletisim" class="bg-black py-20 border-t border-slate-800">
-        <div class="max-w-screen-2xl mx-auto px-8">
-            <div class="grid md:grid-cols-12 gap-16">
-                <div class="md:col-span-5">
-                    <div class="flex items-center gap-x-3 mb-6">
-                        <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-500 rounded-3xl flex items-center justify-center text-4xl">🇹🇷</div>
-                        <span class="logo-font text-5xl font-bold text-white tracking-tighter">eTourGood</span>
+            <div class="card-3d rounded-2xl p-8 flex flex-col items-center text-center">
+                <div class="content-3d w-full">
+                    <div class="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mb-6 mx-auto border border-emerald-500/50">
+                        <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                     </div>
-                    <p class="text-slate-400 max-w-xs">
-                        Türkiye’nin en yeni turizm pazaryeri. 2026’da birlikte uçuyoruz!
-                    </p>
-                    
-                    <div class="mt-12 flex flex-wrap gap-4">
-                        <a href="mailto:support@etourgood.com" class="glass px-6 py-3 rounded-3xl flex items-center gap-x-3 hover:bg-orange-500/10 transition-all">
-                            <i class="fas fa-envelope"></i>
-                            <span>support@etourgood.com</span>
-                        </a>
-                        <a href="https://wa.me/905336124402" target="_blank" class="glass px-6 py-3 rounded-3xl flex items-center gap-x-3 hover:bg-orange-500/10 transition-all">
-                            <i class="fab fa-whatsapp"></i>
-                            <span>+90 533 612 44 02</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="md:col-span-3">
-                    <h4 class="font-medium text-orange-400 mb-6">BİZİ TAKİP ET</h4>
-                    <div class="grid grid-cols-2 gap-y-5 text-lg">
-                        <a href="https://instagram.com/etourgood" target="_blank" class="flex items-center gap-x-3 hover:text-orange-300 transition-colors"><i class="fab fa-instagram"></i> Instagram</a>
-                        <a href="https://tiktok.com/@etourgood" target="_blank" class="flex items-center gap-x-3 hover:text-orange-300 transition-colors"><i class="fab fa-tiktok"></i> TikTok</a>
-                        <a href="https://youtube.com/@etourgood" target="_blank" class="flex items-center gap-x-3 hover:text-orange-300 transition-colors"><i class="fab fa-youtube"></i> YouTube</a>
-                        <a href="https://x.com/etourgood" target="_blank" class="flex items-center gap-x-3 hover:text-orange-300 transition-colors"><i class="fab fa-x-twitter"></i> X (Twitter)</a>
-                        <a href="https://pinterest.com/etourgood" target="_blank" class="flex items-center gap-x-3 hover:text-orange-300 transition-colors"><i class="fab fa-pinterest"></i> Pinterest</a>
-                        <a href="https://t.me/etourgood" target="_blank" class="flex items-center gap-x-3 hover:text-orange-300 transition-colors"><i class="fab fa-telegram"></i> Telegram</a>
-                    </div>
-                </div>
-                
-                <div class="md:col-span-4">
-                    <div class="glass rounded-3xl p-8">
-                        <h4 class="font-medium mb-6">Hemen Katıl</h4>
-                        <p class="text-sm text-slate-400 mb-6">Yakında lansmanımızla ilgili ilk haberi almak ister misin?</p>
-                        
-                        <div class="flex">
-                            <input type="email" id="email" placeholder="E-posta adresin" 
-                                   class="bg-slate-900 border border-slate-700 focus:border-orange-400 rounded-l-3xl px-6 py-4 flex-1 outline-none text-sm">
-                            <button onclick="subscribe()" 
-                                    class="bg-orange-500 hover:bg-orange-600 px-8 rounded-r-3xl font-medium transition-colors">
-                                GÖNDER
-                            </button>
-                        </div>
-                        
-                        <div class="mt-8 pt-8 border-t border-slate-700 text-xs flex justify-between items-center">
-                            <a href="https://www.tripadvisor.com.tr/Attraction_Review-g293974-d22555182-Reviews-Etourgood_com-Istanbul.html" target="_blank" class="flex items-center gap-x-2 hover:text-white transition-colors">
-                                <i class="fas fa-external-link-alt"></i>
-                                <span>Tripadvisor’da İncele</span>
-                            </a>
-                            <span class="text-slate-500">© 2026 eTourGood</span>
-                        </div>
-                    </div>
+                    <h2 class="text-2xl font-bold mb-4 text-white">For Suppliers</h2>
+                    <ul class="text-gray-400 space-y-3 text-left w-full max-w-xs mx-auto">
+                        <li class="flex items-center"><span class="text-emerald-400 mr-2">✦</span> Expand Your Global Reach</li>
+                        <li class="flex items-center"><span class="text-emerald-400 mr-2">✦</span> Zero Hidden Fees or Commissions</li>
+                        <li class="flex items-center"><span class="text-emerald-400 mr-2">✦</span> Advanced Smart Management Dashboard</li>
+                    </ul>
                 </div>
             </div>
+
         </div>
-    </footer>
+
+        <div class="mt-16 max-w-md mx-auto glass-panel p-6 rounded-2xl content-3d">
+            <p class="text-sm text-gray-400 mb-4 text-center">Be the first to know when we launch.</p>
+            <form @submit.prevent="submitted = true" class="flex flex-col sm:flex-row gap-3">
+                <input type="email" x-model="email" required placeholder="Enter your email address" class="flex-1 bg-black/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors">
+                <button type="submit" class="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500 text-white font-semibold py-3 px-6 rounded-lg transition-all transform hover:scale-105">
+                    Notify Me
+                </button>
+            </form>
+            <div x-show="submitted" x-transition class="mt-4 text-emerald-400 text-sm text-center font-medium">
+                Thank you! You've been added to our waitlist.
+            </div>
+        </div>
+    </main>
 
     <script>
-        // Tailwind script
-        tailwind.config = {
-            content: [],
-            theme: {
-                extend: {}
-            }
-        }
+        const canvas = document.getElementById('bg-canvas');
+        const scene = new THREE.Scene();
         
-        function subscribe() {
-            const email = document.getElementById('email').value;
-            if (email) {
-                alert('Teşekkürler! eTourGood lansman haberleri için ' + email + ' adresine bildirim göndereceğiz 🚀');
-                document.getElementById('email').value = '';
-            }
-        }
+        // Add subtle fog to the scene for depth
+        scene.fog = new THREE.FogExp2(0x050505, 0.001);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
         
-        // Scroll animation for balloons (already CSS)
-        console.log('%c eTourGood Coming Soon Page – Profesyonel olarak hazırlandı ❤️', 'color:#f97316; font-family:monospace');
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        // Create particles (representing nodes/destinations in a network)
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 1500;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for(let i = 0; i < particlesCount * 3; i++) {
+            // Spread particles across a wide area
+            posArray[i] = (Math.random() - 0.5) * 20;
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.02,
+            color: 0x4ade80, // Emerald color matching the theme
+            transparent: true,
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        camera.position.z = 3;
+
+        // Mouse interaction logic
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - windowHalfX);
+            mouseY = (event.clientY - windowHalfY);
+        });
+
+        // Animation Loop
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+
+            targetX = mouseX * 0.001;
+            targetY = mouseY * 0.001;
+
+            // Slow rotation of the particle system
+            particlesMesh.rotation.y += 0.001;
+            particlesMesh.rotation.x += 0.0005;
+
+            // Mouse parallax effect
+            particlesMesh.rotation.y += 0.05 * (targetX - particlesMesh.rotation.y);
+            particlesMesh.rotation.x += 0.05 * (targetY - particlesMesh.rotation.x);
+
+            // Subtle wave effect based on time
+            particlesMesh.position.y = Math.sin(elapsedTime * 0.5) * 0.1;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Handle Window Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
     </script>
 </body>
 </html>
