@@ -3,203 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eTourGood - Coming Soon</title>
+    <title>eTourGood • Turkey Tourism Marketplace • Coming Soon</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:wght@700&amp;display=swap');
+        
         body {
             margin: 0;
-            overflow: hidden;
+            overflow-x: hidden;
             background-color: #050505;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+        
+        .logo-font {
+            font-family: 'Playfair Display', sans-serif;
         }
 
         #bg-canvas {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             z-index: -1;
+            width: 100%;
+            height: 100%;
         }
 
-        /* 3D Card Hover Effects */
-        .perspective-container {
-            perspective: 1000px;
-        }
-
+        /* Liquid Glass + 3D Card */
         .card-3d {
-            transition: transform 0.3s ease-out, box-shadow 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             transform-style: preserve-3d;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(251, 146, 60, 0.25);
         }
-
+        
         .card-3d:hover {
-            transform: translateY(-10px) rotateX(5deg) rotateY(-5deg);
-            box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.5),
-                        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+            transform: translateY(-12px) rotateX(8deg) rotateY(-8deg) scale(1.02);
+            box-shadow: 0 30px 60px -15px rgba(249, 115, 22, 0.4),
+                        inset 0 0 0 1px rgba(251, 146, 60, 0.3);
         }
-
+        
         .content-3d {
-            transform: translateZ(30px);
+            transform: translateZ(40px);
         }
 
-        /* Glassmorphism for the main container */
         .glass-panel {
-            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-            backdrop-filter: blur(8px);
-            border-top: 1px solid rgba(255,255,255,0.1);
+            background: linear-gradient(145deg, rgba(15,23,42,0.85) 0%, rgba(15,23,42,0.65) 100%);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(251, 146, 60, 0.2);
+        }
+
+        /* Mobile Portrait Optimizations */
+        @media (max-width: 640px) {
+            .hero-text {
+                font-size: 2.25rem;
+                line-height: 1.1;
+            }
+            .card-3d {
+                margin-bottom: 1.5rem;
+            }
+        }
+        
+        .service-dot {
+            animation: pulse 2s infinite;
         }
     </style>
 </head>
-<body class="text-white min-h-screen flex items-center justify-center">
+<body class="text-white min-h-screen flex flex-col">
 
     <canvas id="bg-canvas"></canvas>
 
-    <main class="container mx-auto px-4 z-10 relative" x-data="{ email: '', submitted: false }">
-        <div class="text-center max-w-4xl mx-auto mb-16 content-3d">
-            <h1 class="text-6xl md:text-8xl font-extrabold tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
-                eTourGood
-            </h1>
-            <p class="text-xl md:text-2xl text-gray-300 font-light tracking-wide">
-                The Next Generation of Global Travel is Arriving Soon.
-            </p>
+    <!-- NAV -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-orange-400/20 py-5">
+        <div class="max-w-screen-2xl mx-auto px-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-gradient-to-br from-orange-500 to-amber-400 rounded-2xl flex items-center justify-center text-3xl shadow-xl">🇹🇷</div>
+                <span class="logo-font text-3xl font-bold tracking-tighter">eTourGood</span>
+            </div>
+            <a href="https://wa.me/905336124402" target="_blank"
+               class="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 px-6 py-3 rounded-3xl text-sm font-semibold transition-all">
+                <i class="fab fa-whatsapp"></i>
+                <span class="hidden sm:inline">WhatsApp</span>
+            </a>
         </div>
+    </nav>
 
-        <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto perspective-container">
+    <main class="flex-1 flex items-center justify-center pt-24 pb-12 px-6 relative z-10" x-data="{ email: '', submitted: false }">
+        <div class="max-w-5xl w-full mx-auto">
             
-            <div class="card-3d rounded-2xl p-8 flex flex-col items-center text-center">
-                <div class="content-3d w-full">
-                    <div class="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center mb-6 mx-auto border border-blue-500/50">
-                        <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <!-- HERO -->
+            <div class="text-center mb-16 content-3d">
+                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-5 py-2 rounded-3xl text-orange-300 text-xs font-medium tracking-[2px] mb-6">
+                    <div class="w-2 h-2 bg-orange-500 rounded-full service-dot"></div>
+                    COMING SOON — 2026
+                </div>
+                
+                <h1 class="hero-text text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter logo-font bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-amber-300 to-orange-400 mb-4">
+                    TURKEY'S<br>GLOBAL<br>TOURISM<br>MARKETPLACE
+                </h1>
+                
+                <p class="max-w-lg mx-auto text-lg md:text-xl text-slate-300 font-light">
+                    Travel agencies &amp; hotels: Sign up free.<br>
+                    List Tours • Activities • Hotels • Airport Transfers.<br>
+                    Sell directly to the world.
+                </p>
+            </div>
+
+            <!-- TWO CARDS - Stacks perfectly on mobile portrait -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                
+                <!-- FOR TRAVELERS -->
+                <div class="card-3d rounded-3xl p-8 md:p-10 flex flex-col items-center text-center h-full">
+                    <div class="content-3d w-full">
+                        <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-orange-500/20 border border-orange-400/40 flex items-center justify-center">
+                            <i class="fas fa-plane text-3xl text-orange-400"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold mb-6 text-white">For Travelers</h2>
+                        <ul class="text-slate-300 space-y-5 text-left max-w-xs mx-auto">
+                            <li class="flex items-start gap-3"><span class="text-orange-400 mt-1 text-xl">✦</span> Authentic Turkey experiences</li>
+                            <li class="flex items-start gap-3"><span class="text-orange-400 mt-1 text-xl">✦</span> Tours, activities &amp; hotels</li>
+                            <li class="flex items-start gap-3"><span class="text-orange-400 mt-1 text-xl">✦</span> 24/7 airport transfers</li>
+                            <li class="flex items-start gap-3"><span class="text-orange-400 mt-1 text-xl">✦</span> Best prices, direct booking</li>
+                        </ul>
                     </div>
-                    <h2 class="text-2xl font-bold mb-4 text-white">For Travelers</h2>
-                    <ul class="text-gray-400 space-y-3 text-left w-full max-w-xs mx-auto">
-                        <li class="flex items-center"><span class="text-blue-400 mr-2">✦</span> Seamless & Secure Bookings</li>
-                        <li class="flex items-center"><span class="text-blue-400 mr-2">✦</span> Discover Unique, Curated Experiences</li>
-                        <li class="flex items-center"><span class="text-blue-400 mr-2">✦</span> Unbeatable Value & Transparent Pricing</li>
-                    </ul>
+                </div>
+
+                <!-- FOR SUPPLIERS -->
+                <div class="card-3d rounded-3xl p-8 md:p-10 flex flex-col items-center text-center h-full">
+                    <div class="content-3d w-full">
+                        <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center">
+                            <i class="fas fa-store text-3xl text-amber-400"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold mb-6 text-white">For Suppliers</h2>
+                        <ul class="text-slate-300 space-y-5 text-left max-w-xs mx-auto">
+                            <li class="flex items-start gap-3"><span class="text-amber-400 mt-1 text-xl">✦</span> Free signup • Global reach</li>
+                            <li class="flex items-start gap-3"><span class="text-amber-400 mt-1 text-xl">✦</span> Sell your tours &amp; transfers worldwide</li>
+                            <li class="flex items-start gap-3"><span class="text-amber-400 mt-1 text-xl">✦</span> No hidden fees • Higher earnings</li>
+                            <li class="flex items-start gap-3"><span class="text-amber-400 mt-1 text-xl">✦</span> Simple dashboard • Fast payouts</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
-            <div class="card-3d rounded-2xl p-8 flex flex-col items-center text-center">
-                <div class="content-3d w-full">
-                    <div class="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mb-6 mx-auto border border-emerald-500/50">
-                        <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                    </div>
-                    <h2 class="text-2xl font-bold mb-4 text-white">For Suppliers</h2>
-                    <ul class="text-gray-400 space-y-3 text-left w-full max-w-xs mx-auto">
-                        <li class="flex items-center"><span class="text-emerald-400 mr-2">✦</span> Expand Your Global Reach</li>
-                        <li class="flex items-center"><span class="text-emerald-400 mr-2">✦</span> Zero Hidden Fees or Commissions</li>
-                        <li class="flex items-center"><span class="text-emerald-400 mr-2">✦</span> Advanced Smart Management Dashboard</li>
-                    </ul>
+            <!-- NEWSLETTER + CONTACT BAR -->
+            <div class="mt-16 max-w-lg mx-auto glass-panel rounded-3xl p-8 md:p-10 content-3d">
+                <p class="text-slate-400 text-center text-sm mb-6">Be the first to know when we launch</p>
+                
+                <form @submit.prevent="submitted = true" class="flex flex-col sm:flex-row gap-3">
+                    <input type="email" x-model="email" required 
+                           placeholder="your@email.com" 
+                           class="flex-1 bg-slate-950 border border-slate-700 focus:border-orange-400 rounded-2xl px-6 py-4 text-sm outline-none transition-all">
+                    <button type="submit"
+                            class="bg-gradient-to-r from-orange-500 to-amber-400 hover:from-orange-600 hover:to-amber-500 font-semibold py-4 px-10 rounded-2xl transition-all active:scale-95">
+                        NOTIFY ME
+                    </button>
+                </form>
+                
+                <div x-show="submitted" x-transition class="mt-5 text-emerald-400 text-center text-sm font-medium flex items-center justify-center gap-2">
+                    <i class="fas fa-check-circle"></i>
+                    Thank you! You're on the list 🚀
                 </div>
-            </div>
 
-        </div>
-
-        <div class="mt-16 max-w-md mx-auto glass-panel p-6 rounded-2xl content-3d">
-            <p class="text-sm text-gray-400 mb-4 text-center">Be the first to know when we launch.</p>
-            <form @submit.prevent="submitted = true" class="flex flex-col sm:flex-row gap-3">
-                <input type="email" x-model="email" required placeholder="Enter your email address" class="flex-1 bg-black/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors">
-                <button type="submit" class="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500 text-white font-semibold py-3 px-6 rounded-lg transition-all transform hover:scale-105">
-                    Notify Me
-                </button>
-            </form>
-            <div x-show="submitted" x-transition class="mt-4 text-emerald-400 text-sm text-center font-medium">
-                Thank you! You've been added to our waitlist.
+                <!-- CONTACT INFO -->
+                <div class="mt-10 pt-8 border-t border-orange-400/20 text-xs">
+                    <div class="grid grid-cols-2 gap-y-6">
+                        <a href="mailto:support@etourgood.com" class="flex items-center gap-3 hover:text-orange-300 transition-colors">
+                            <i class="fas fa-envelope text-orange-400"></i>
+                            <span>support@etourgood.com</span>
+                        </a>
+                        <a href="https://wa.me/905336124402" target="_blank" class="flex items-center gap-3 hover:text-orange-300 transition-colors">
+                            <i class="fab fa-whatsapp text-orange-400"></i>
+                            <span>+90 533 612 44 02</span>
+                        </a>
+                        <a href="https://t.me/etourgood" target="_blank" class="flex items-center gap-3 hover:text-orange-300 transition-colors">
+                            <i class="fab fa-telegram text-orange-400"></i>
+                            <span>@etourgood</span>
+                        </a>
+                        <a href="https://www.tripadvisor.com.tr/Attraction_Review-g293974-d22555182-Reviews-Etourgood_com-Istanbul.html" target="_blank" class="flex items-center gap-3 hover:text-orange-300 transition-colors">
+                            <i class="fas fa-star text-amber-400"></i>
+                            <span>Tripadvisor • 4.8/5</span>
+                        </a>
+                    </div>
+                    
+                    <!-- Google -->
+                    <div class="mt-8 flex justify-center">
+                        <a href="https://share.google/Y2D4TJ1853DhY2Uwq" target="_blank"
+                           class="inline-flex items-center gap-2 text-[10px] tracking-widest bg-white/5 hover:bg-white/10 px-5 py-2 rounded-3xl transition-all">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/2560px-Google_2015_logo.svg.png" alt="Google" class="h-4 opacity-75">
+                            <span class="font-medium text-slate-300">etourgood.com</span>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
 
+    <!-- SOCIAL FOOTER -->
+    <footer class="py-8 text-center text-xs text-slate-400 border-t border-orange-400/10">
+        <div class="max-w-screen-2xl mx-auto px-6 flex flex-wrap justify-center gap-x-8 gap-y-4">
+            <a href="https://instagram.com/etourgood" target="_blank" class="hover:text-orange-300 transition-colors">Instagram</a>
+            <a href="https://tiktok.com/@etourgood" target="_blank" class="hover:text-orange-300 transition-colors">TikTok</a>
+            <a href="https://youtube.com/@etourgood" target="_blank" class="hover:text-orange-300 transition-colors">YouTube</a>
+            <a href="https://x.com/etourgood" target="_blank" class="hover:text-orange-300 transition-colors">X</a>
+            <a href="https://pinterest.com/etourgood" target="_blank" class="hover:text-orange-300 transition-colors">Pinterest</a>
+        </div>
+        <div class="mt-6 text-[10px] opacity-60">© 2026 eTourGood • Turkey Tourism Marketplace</div>
+    </footer>
+
     <script>
+        // Tailwind script
+        tailwind.config = {
+            content: [],
+            theme: { extend: {} }
+        }
+
+        // THREE.JS BACKGROUND - Orange Turkey theme
         const canvas = document.getElementById('bg-canvas');
         const scene = new THREE.Scene();
-        
-        // Add subtle fog to the scene for depth
-        scene.fog = new THREE.FogExp2(0x050505, 0.001);
+        scene.fog = new THREE.FogExp2(0x050505, 0.0018);
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
         
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        // Create particles (representing nodes/destinations in a network)
-        const particlesGeometry = new THREE.BufferGeometry();
-        const particlesCount = 1500;
+        // Particles
+        const particlesCount = 2200;
         const posArray = new Float32Array(particlesCount * 3);
-
         for(let i = 0; i < particlesCount * 3; i++) {
-            // Spread particles across a wide area
-            posArray[i] = (Math.random() - 0.5) * 20;
+            posArray[i] = (Math.random() - 0.5) * 28;
         }
 
+        const particlesGeometry = new THREE.BufferGeometry();
         particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
 
         const particlesMaterial = new THREE.PointsMaterial({
-            size: 0.02,
-            color: 0x4ade80, // Emerald color matching the theme
+            size: 0.035,
+            color: 0xf97316,           // TURUNCU
             transparent: true,
-            opacity: 0.8,
+            opacity: 0.75,
             blending: THREE.AdditiveBlending
         });
 
         const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
         scene.add(particlesMesh);
 
-        camera.position.z = 3;
+        camera.position.z = 4.5;
 
-        // Mouse interaction logic
-        let mouseX = 0;
-        let mouseY = 0;
-        let targetX = 0;
-        let targetY = 0;
+        // Mouse parallax
+        let mouseX = 0, mouseY = 0;
         const windowHalfX = window.innerWidth / 2;
         const windowHalfY = window.innerHeight / 2;
 
-        document.addEventListener('mousemove', (event) => {
-            mouseX = (event.clientX - windowHalfX);
-            mouseY = (event.clientY - windowHalfY);
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - windowHalfX) * 0.0008;
+            mouseY = (e.clientY - windowHalfY) * 0.0008;
         });
 
-        // Animation Loop
         const clock = new THREE.Clock();
 
         function animate() {
             requestAnimationFrame(animate);
-            const elapsedTime = clock.getElapsedTime();
+            const t = clock.getElapsedTime();
 
-            targetX = mouseX * 0.001;
-            targetY = mouseY * 0.001;
-
-            // Slow rotation of the particle system
-            particlesMesh.rotation.y += 0.001;
-            particlesMesh.rotation.x += 0.0005;
-
-            // Mouse parallax effect
-            particlesMesh.rotation.y += 0.05 * (targetX - particlesMesh.rotation.y);
-            particlesMesh.rotation.x += 0.05 * (targetY - particlesMesh.rotation.x);
-
-            // Subtle wave effect based on time
-            particlesMesh.position.y = Math.sin(elapsedTime * 0.5) * 0.1;
+            particlesMesh.rotation.y = t * 0.012 + mouseX;
+            particlesMesh.rotation.x = Math.sin(t * 0.2) * 0.03 + mouseY;
 
             renderer.render(scene, camera);
         }
-
         animate();
 
-        // Handle Window Resize
+        // Resize handler (mobile friendly)
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
+
+        console.log('%c eTourGood • Turkey Tourism Marketplace • 2026 🚀', 'color:#f97316; font-family:monospace; font-size:12px');
     </script>
 </body>
 </html>
