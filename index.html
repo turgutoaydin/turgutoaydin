@@ -2,567 +2,395 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>HAB Adventure 4.20 β ULTIMATE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eTourGood • Türkiye Turizminin Küresel Pazaryeri</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
-        body { margin:0; padding:0; overflow:hidden; background:#0a1f3d; font-family:'Segoe UI',sans-serif; }
-        #gameContainer { position:relative; width:100vw; height:100vh; }
-        #ui {
-            position:absolute; top:20px; left:50%; transform:translateX(-50%);
-            color:#fff; font-size:32px; font-weight:900; text-align:center; z-index:100;
-            text-shadow:0 4px 15px rgba(0,0,0,0.6); letter-spacing:2px;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:wght@700&amp;display=swap');
+        
+        :root {
+            --orange: #f97316;
         }
-        #height { font-size:22px; opacity:0.9; }
-        #instructions {
-            position:absolute; bottom:40px; left:50%; transform:translateX(-50%);
-            color:rgba(255,255,255,0.85); font-size:20px; font-weight:600;
-            background:rgba(0,0,0,0.3); padding:12px 30px; border-radius:50px;
-            backdrop-filter:blur(12px); z-index:100;
+        
+        .tail-container {
+            font-family: 'Inter', system_ui, sans-serif;
         }
-        #gameOver {
-            position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-            background:rgba(10,15,35,0.95); color:#fff; padding:50px 60px; border-radius:30px;
-            text-align:center; display:none; z-index:200; backdrop-filter:blur(20px);
-            box-shadow:0 0 80px rgba(255,107,53,0.6);
+        
+        .logo-font {
+            font-family: 'Playfair Display', sans-serif;
         }
-        #gameOver h1 { font-size:42px; margin:0 0 20px; text-shadow:0 0 20px #FF6B35; }
-        button {
-            background:linear-gradient(45deg,#FF6B35,#FF9F1C); color:#fff; border:none;
-            padding:18px 50px; font-size:24px; font-weight:700; border-radius:50px;
-            cursor:pointer; margin-top:20px; box-shadow:0 10px 30px rgba(255,107,53,0.5);
-            transition:all 0.3s;
+
+        /* Liquid Glassmorphism */
+        .glass {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(251, 146, 60, 0.2);
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
         }
-        button:hover { transform:scale(1.08); box-shadow:0 15px 40px rgba(255,107,53,0.7); }
-        canvas { display:block; }
+
+        /* 3D Floating Balloons */
+        .balloon {
+            position: absolute;
+            animation: float 25s infinite linear;
+            filter: drop-shadow(0 10px 30px rgba(249, 115, 22, 0.5));
+            z-index: 10;
+            opacity: 0.85;
+        }
+        
+        .balloon:nth-child(2) { animation-delay: -8s; left: 15%; }
+        .balloon:nth-child(3) { animation-delay: -15s; left: 35%; scale: 0.75; }
+        .balloon:nth-child(4) { animation-delay: -22s; left: 60%; scale: 1.15; }
+        .balloon:nth-child(5) { animation-delay: -4s; left: 80%; scale: 0.85; }
+
+        @keyframes float {
+            0% {
+                transform: translateY(120vh) rotate(-8deg) perspective(800px) rotateX(15deg);
+            }
+            100% {
+                transform: translateY(-120vh) rotate(12deg) perspective(800px) rotateX(-15deg);
+            }
+        }
+
+        .hero-bg {
+            background: linear-gradient(135deg, #1e2937 0%, #0f172a 100%);
+        }
+        
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 30%, rgba(249, 115, 22, 0.15) 0%, transparent 70%);
+            z-index: 1;
+        }
+        
+        .nav-link {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .nav-link:hover {
+            color: #fb923c;
+            transform: translateY(-2px);
+        }
+        
+        .section-header {
+            position: relative;
+        }
+        
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(to right, #f97316, #fb923c);
+            border-radius: 9999px;
+        }
     </style>
 </head>
-<body>
-    <div id="gameContainer">
-        <div id="ui">
-            <div>🏆 <span id="score">0</span></div>
-            <div id="height">📏 0m</div>
+<body class="tail-container bg-slate-950 text-slate-200 overflow-x-hidden">
+    <!-- NAV -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-orange-500/20">
+        <div class="max-w-screen-2xl mx-auto px-8 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-x-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center text-white font-bold text-3xl shadow-xl">🇹🇷</div>
+                <div>
+                    <span class="logo-font text-3xl font-bold tracking-tighter text-white">eTourGood</span>
+                </div>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-x-8 text-sm font-medium">
+                <a href="#hakkinda" class="nav-link">Hakkımızda</a>
+                <a href="#tedarikci" class="nav-link">Tedarikçiler İçin</a>
+                <a href="#iletisim" class="nav-link">İletişim</a>
+            </div>
+            
+            <a href="https://wa.me/905336124402" target="_blank"
+               class="flex items-center gap-x-2 bg-orange-500 hover:bg-orange-600 transition-all text-white px-6 py-3 rounded-3xl font-semibold text-sm shadow-lg shadow-orange-500/30">
+                <i class="fab fa-whatsapp text-lg"></i>
+                <span>WhatsApp</span>
+            </a>
         </div>
-        <div id="instructions">👆 DOKUN VE TUT = YÜKSEL 🔥 | Bırak = YAVAŞ ALÇAL</div>
-        <div id="gameOver">
-            <h1>🎈 BALON PATLADI! 🎈</h1>
-            <p style="font-size:28px;margin:10px 0;">En İyi: <span id="finalScore">0</span>m</p>
-            <button onclick="restartGame()">🚀 YENİDEN BAŞLA</button>
-        </div>
-    </div>
+    </nav>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <!-- HERO with 3D BALLOONS -->
+    <section class="hero-bg min-h-screen flex items-center relative overflow-hidden">
+        <!-- Background Image (Kapadokya vibe) -->
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4')] bg-cover bg-center brightness-75"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-950/40 to-slate-950/90"></div>
+
+        <!-- Floating 3D Balloons -->
+        <div class="balloon" style="left: 8%; bottom: -20%; width: 90px;">
+            <svg viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100 40 Q50 80 50 140 Q50 200 100 240 Q150 200 150 140 Q150 80 100 40" fill="#f97316"/>
+                <path d="M100 240 L95 270 L105 270 Z" fill="#f97316"/>
+                <circle cx="80" cy="110" r="12" fill="#1e2937" fill-opacity="0.3"/>
+                <circle cx="120" cy="105" r="10" fill="#fff" fill-opacity="0.4"/>
+            </svg>
+        </div>
+        <div class="balloon" style="left: 22%; bottom: -30%; width: 110px;">
+            <svg viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100 40 Q50 80 50 140 Q50 200 100 240 Q150 200 150 140 Q150 80 100 40" fill="#64748b"/>
+                <path d="M100 240 L95 270 L105 270 Z" fill="#64748b"/>
+            </svg>
+        </div>
+        <div class="balloon" style="left: 42%; bottom: -15%; width: 75px;">
+            <svg viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100 40 Q50 80 50 140 Q50 200 100 240 Q150 200 150 140 Q150 80 100 40" fill="#fb923c"/>
+                <path d="M100 240 L95 270 L105 270 Z" fill="#fb923c"/>
+            </svg>
+        </div>
+        <div class="balloon" style="left: 68%; bottom: -40%; width: 95px;">
+            <svg viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100 40 Q50 80 50 140 Q50 200 100 240 Q150 200 150 140 Q150 80 100 40" fill="#f97316"/>
+                <path d="M100 240 L95 270 L105 270 Z" fill="#f97316"/>
+            </svg>
+        </div>
+        <div class="balloon" style="left: 85%; bottom: -25%; width: 65px;">
+            <svg viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100 40 Q50 80 50 140 Q50 200 100 240 Q150 200 150 140 Q150 80 100 40" fill="#64748b"/>
+                <path d="M100 240 L95 270 L105 270 Z" fill="#64748b"/>
+            </svg>
+        </div>
+
+        <div class="max-w-screen-2xl mx-auto px-8 pt-24 relative z-20">
+            <div class="max-w-3xl">
+                <div class="inline-flex items-center gap-x-2 bg-white/10 backdrop-blur-md px-5 py-2 rounded-3xl text-orange-300 text-sm font-medium mb-6">
+                    <div class="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                    YAKINDA BAŞLIYOR
+                </div>
+                
+                <h1 class="text-7xl md:text-8xl font-bold leading-none tracking-tighter logo-font text-white mb-4">
+                    TÜRKİYE<br>TURİZMİNİN<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-400">KÜRESEL EVİ</span>
+                </h1>
+                
+                <p class="text-2xl text-slate-300 max-w-lg mb-10">
+                    Seyahat acenteleri ve oteller için uluslararası pazaryeri. 
+                    Kapadokya’dan Ege’ye, İstanbul’dan Antalya’ya… 
+                    En iyi deneyimler, havalimanı transferleri ve global turistler tek platformda.
+                </p>
+
+                <div class="flex flex-wrap gap-4">
+                    <a href="#tedarikci" 
+                       class="group flex-1 md:flex-none bg-white text-slate-900 hover:bg-amber-100 transition-all font-semibold text-lg px-10 py-6 rounded-3xl flex items-center justify-center gap-x-3">
+                        TEDARİKÇİ OL
+                        <span class="text-3xl group-hover:rotate-12 transition-transform">💰</span>
+                    </a>
+                    
+                    <a href="https://wa.me/905336124402" target="_blank"
+                       class="flex-1 md:flex-none glass border border-orange-400 hover:border-orange-300 text-white font-semibold text-lg px-10 py-6 rounded-3xl flex items-center justify-center gap-x-3 transition-all">
+                        HEMEN WHATSAPP
+                    </a>
+                </div>
+
+                <div class="mt-12 flex items-center gap-x-8 text-xs uppercase tracking-widest">
+                    <div class="flex items-center gap-x-2">
+                        <i class="fas fa-plane text-orange-400"></i>
+                        <span>Havalimanı Transferi</span>
+                    </div>
+                    <div class="h-px w-8 bg-orange-400/30"></div>
+                    <div class="flex items-center gap-x-2">
+                        <i class="fas fa-hot-tub text-orange-400"></i>
+                        <span>Özel Turlar</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-12 left-1/2 flex flex-col items-center gap-y-1 text-xs tracking-widest text-slate-400">
+            <span>Aşağı kaydır</span>
+            <div class="w-px h-12 bg-gradient-to-b from-transparent via-slate-400 to-transparent"></div>
+        </div>
+
+        <!-- Trust bar -->
+        <div class="absolute bottom-8 right-8 glass px-8 py-4 rounded-3xl hidden lg:flex items-center gap-x-8 text-sm">
+            <div class="flex items-center gap-x-5">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/2560px-Google_2015_logo.svg.png" alt="Google" class="h-5 opacity-70">
+                <span class="font-medium">etourgood.com</span>
+            </div>
+            <div class="h-5 w-px bg-white/20"></div>
+            <a href="https://www.tripadvisor.com.tr/Attraction_Review-g293974-d22555182-Reviews-Etourgood_com-Istanbul.html" target="_blank" class="flex items-center gap-x-2 hover:text-orange-300 transition-colors">
+                <i class="fas fa-star text-amber-400"></i>
+                <span class="font-medium">4.8/5 • Tripadvisor</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="hakkinda" class="py-28 bg-slate-950 relative">
+        <div class="max-w-screen-2xl mx-auto px-8 grid md:grid-cols-12 gap-16">
+            <div class="md:col-span-5">
+                <div class="sticky top-28">
+                    <span class="uppercase text-orange-400 text-sm font-medium tracking-[3px]">Türkiye Turizmi 2.0</span>
+                    <h2 class="text-5xl font-bold text-white mt-3 leading-none">Viator benzeri ama %100 Türk, %100 profesyonel.</h2>
+                    <div class="h-px w-16 bg-orange-400 mt-8"></div>
+                </div>
+            </div>
+            
+            <div class="md:col-span-7 space-y-12 text-lg">
+                <div class="glass rounded-3xl p-10">
+                    <p class="text-slate-300 leading-relaxed">
+                        eTourGood, Türkiye’deki seyahat acenteleri ve otellerin uluslararası pazardaki en güçlü ortağıdır. 
+                        Global turistlere Kapadokya balon turlarından, özel yat gezilerine, havalimanı transferlerinden butik otel konaklamalarına kadar her şeyi tek tıkla sunuyoruz.
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="glass rounded-3xl p-8">
+                        <div class="text-orange-400 text-5xl mb-4">🌍</div>
+                        <h3 class="font-semibold text-2xl mb-2">Küresel Erişim</h3>
+                        <p class="text-slate-400">Avrupa, Amerika, Asya’dan milyonlarca gezgin doğrudan sizin tur ve hizmetlerinizi keşfedecek.</p>
+                    </div>
+                    <div class="glass rounded-3xl p-8">
+                        <div class="text-orange-400 text-5xl mb-4">💸</div>
+                        <h3 class="font-semibold text-2xl mb-2">Ekstra Kazanç</h3>
+                        <p class="text-slate-400">Her rezervasyonda %15-30 daha fazla gelir. Komisyon yok, sadece kazanç!</p>
+                    </div>
+                </div>
+                
+                <div class="glass rounded-3xl p-10 flex flex-col md:flex-row gap-8 items-start">
+                    <div>
+                        <span class="block text-xs uppercase mb-1 text-slate-400">Özel Hizmet</span>
+                        <h3 class="font-semibold text-3xl">Havalimanı Transferleri</h3>
+                        <p class="mt-4 text-slate-300">İstanbul Havalimanı, Antalya, İzmir, Dalaman… Profesyonel araç filosuyla 7/24 hizmetinizde.</p>
+                    </div>
+                    <div class="md:ml-auto text-7xl text-orange-400/30">✈️</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEDARİKÇİ SECTION -->
+    <section id="tedarikci" class="py-28 bg-slate-900">
+        <div class="max-w-screen-2xl mx-auto px-8">
+            <div class="text-center mb-16">
+                <span class="px-6 py-2 bg-orange-500/10 text-orange-400 rounded-3xl text-sm font-medium">TEDARİKÇİLER İÇİN</span>
+                <h2 class="text-5xl font-bold mt-4">Kazancınız bizim işimiz.</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="glass rounded-3xl p-8 transition-all hover:scale-[1.03]">
+                    <div class="h-2 w-12 bg-orange-500 rounded-full mb-8"></div>
+                    <h3 class="text-3xl font-semibold mb-4">Global Pazaryeri</h3>
+                    <ul class="space-y-4 text-slate-300">
+                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> 50+ ülkede görünürlük</li>
+                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> Anında rezervasyon sistemi</li>
+                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> SEO + Google entegrasyonu</li>
+                    </ul>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="glass rounded-3xl p-8 transition-all hover:scale-[1.03]">
+                    <div class="h-2 w-12 bg-orange-500 rounded-full mb-8"></div>
+                    <h3 class="text-3xl font-semibold mb-4">Kolay Entegrasyon</h3>
+                    <ul class="space-y-4 text-slate-300">
+                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> API bağlantısı (5 dk)</li>
+                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> Kendi panelinizde yönetim</li>
+                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> Mobil onaylı ödemeler</li>
+                    </ul>
+                </div>
+                
+                <!-- Card 3 -->
+                <div class="glass rounded-3xl p-8 transition-all hover:scale-[1.03]">
+                    <div class="h-2 w-12 bg-orange-500 rounded-full mb-8"></div>
+                    <h3 class="text-3xl font-semibold mb-4">Destek &amp; Pazarlama</h3>
+                    <ul class="space-y-4 text-slate-300">
+                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> 7/24 Türkçe destek</li>
+                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> Sosyal medya promosyonu</li>
+                        <li class="flex items-start gap-x-3"><span class="text-emerald-400 mt-1">✓</span> Tripadvisor &amp; Google entegrasyonu</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT / FOOTER -->
+    <footer id="iletisim" class="bg-black py-20 border-t border-slate-800">
+        <div class="max-w-screen-2xl mx-auto px-8">
+            <div class="grid md:grid-cols-12 gap-16">
+                <div class="md:col-span-5">
+                    <div class="flex items-center gap-x-3 mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-500 rounded-3xl flex items-center justify-center text-4xl">🇹🇷</div>
+                        <span class="logo-font text-5xl font-bold text-white tracking-tighter">eTourGood</span>
+                    </div>
+                    <p class="text-slate-400 max-w-xs">
+                        Türkiye’nin en yeni turizm pazaryeri. 2026’da birlikte uçuyoruz!
+                    </p>
+                    
+                    <div class="mt-12 flex flex-wrap gap-4">
+                        <a href="mailto:support@etourgood.com" class="glass px-6 py-3 rounded-3xl flex items-center gap-x-3 hover:bg-orange-500/10 transition-all">
+                            <i class="fas fa-envelope"></i>
+                            <span>support@etourgood.com</span>
+                        </a>
+                        <a href="https://wa.me/905336124402" target="_blank" class="glass px-6 py-3 rounded-3xl flex items-center gap-x-3 hover:bg-orange-500/10 transition-all">
+                            <i class="fab fa-whatsapp"></i>
+                            <span>+90 533 612 44 02</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="md:col-span-3">
+                    <h4 class="font-medium text-orange-400 mb-6">BİZİ TAKİP ET</h4>
+                    <div class="grid grid-cols-2 gap-y-5 text-lg">
+                        <a href="https://instagram.com/etourgood" target="_blank" class="flex items-center gap-x-3 hover:text-orange-300 transition-colors"><i class="fab fa-instagram"></i> Instagram</a>
+                        <a href="https://tiktok.com/@etourgood" target="_blank" class="flex items-center gap-x-3 hover:text-orange-300 transition-colors"><i class="fab fa-tiktok"></i> TikTok</a>
+                        <a href="https://youtube.com/@etourgood" target="_blank" class="flex items-center gap-x-3 hover:text-orange-300 transition-colors"><i class="fab fa-youtube"></i> YouTube</a>
+                        <a href="https://x.com/etourgood" target="_blank" class="flex items-center gap-x-3 hover:text-orange-300 transition-colors"><i class="fab fa-x-twitter"></i> X (Twitter)</a>
+                        <a href="https://pinterest.com/etourgood" target="_blank" class="flex items-center gap-x-3 hover:text-orange-300 transition-colors"><i class="fab fa-pinterest"></i> Pinterest</a>
+                        <a href="https://t.me/etourgood" target="_blank" class="flex items-center gap-x-3 hover:text-orange-300 transition-colors"><i class="fab fa-telegram"></i> Telegram</a>
+                    </div>
+                </div>
+                
+                <div class="md:col-span-4">
+                    <div class="glass rounded-3xl p-8">
+                        <h4 class="font-medium mb-6">Hemen Katıl</h4>
+                        <p class="text-sm text-slate-400 mb-6">Yakında lansmanımızla ilgili ilk haberi almak ister misin?</p>
+                        
+                        <div class="flex">
+                            <input type="email" id="email" placeholder="E-posta adresin" 
+                                   class="bg-slate-900 border border-slate-700 focus:border-orange-400 rounded-l-3xl px-6 py-4 flex-1 outline-none text-sm">
+                            <button onclick="subscribe()" 
+                                    class="bg-orange-500 hover:bg-orange-600 px-8 rounded-r-3xl font-medium transition-colors">
+                                GÖNDER
+                            </button>
+                        </div>
+                        
+                        <div class="mt-8 pt-8 border-t border-slate-700 text-xs flex justify-between items-center">
+                            <a href="https://www.tripadvisor.com.tr/Attraction_Review-g293974-d22555182-Reviews-Etourgood_com-Istanbul.html" target="_blank" class="flex items-center gap-x-2 hover:text-white transition-colors">
+                                <i class="fas fa-external-link-alt"></i>
+                                <span>Tripadvisor’da İncele</span>
+                            </a>
+                            <span class="text-slate-500">© 2026 eTourGood</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <script>
-        // ================================================
-        // HAB ADVENTURE 4.20 β ULTIMATE — GROK SIGNATURE
-        // ================================================
-        let scene, camera, renderer, balloon, particles = [], collectibles = [], obstacles = [];
-        let gameSpeed = 0.35, score = 0, height = 0, bestScore = localStorage.getItem('habUltimateBest') || 0;
-        let gameRunning = false, gameOverFlag = false;
-        let balloonVelY = 0, lift = 0, isTouching = false;
-        let windX = 0, windGustTimer = 0;
-        let tunnelActive = false, tunnelY = 0;
-
-        const lanes = [-6, -2, 2, 6]; // 4 şerit daha gerçekçi
-        let currentX = 0;
-
-        init();
-        animate();
-
-        function init() {
-            scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0xA0C4FF, 0.0035);
-
-            camera = new THREE.PerspectiveCamera(68, window.innerWidth / window.innerHeight, 0.1, 2000);
-            camera.position.set(0, 12, 22);
-
-            renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setClearColor(0xA0C4FF);
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            document.getElementById('gameContainer').appendChild(renderer.domElement);
-
-            // Gerçekçi ışıklandırma
-            const hemiLight = new THREE.HemisphereLight(0xB0E0FF, 0x4A6B3A, 0.75);
-            scene.add(hemiLight);
-            const sunLight = new THREE.DirectionalLight(0xFFF7E6, 1.2);
-            sunLight.position.set(50, 80, 30);
-            sunLight.castShadow = true;
-            sunLight.shadow.mapSize.width = 4096;
-            sunLight.shadow.mapSize.height = 4096;
-            sunLight.shadow.camera.near = 10;
-            sunLight.shadow.camera.far = 500;
-            sunLight.shadow.camera.left = -80;
-            sunLight.shadow.camera.right = 80;
-            sunLight.shadow.camera.top = 80;
-            sunLight.shadow.camera.bottom = -80;
-            scene.add(sunLight);
-
-            createUltimateSky();
-            createUltimateBalloon();
-            createProceduralGround();
-            createDistantMountains();
-
-            setupControls();
-        }
-
-        function createUltimateSky() {
-            const skyGeo = new THREE.SphereGeometry(1200, 64, 64);
-            const skyMat = new THREE.ShaderMaterial({
-                vertexShader: `varying vec3 vPos; void main(){ vPos=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
-                fragmentShader: `
-                    varying vec3 vPos;
-                    void main(){
-                        float h = normalize(vPos).y;
-                        vec3 top = vec3(0.4,0.7,1.0);
-                        vec3 bot = vec3(0.9,0.95,1.0);
-                        vec3 color = mix(bot, top, h*0.5+0.5);
-                        gl_FragColor = vec4(color,1.0);
-                    }
-                `,
-                side: THREE.BackSide
-            });
-            scene.add(new THREE.Mesh(skyGeo, skyMat));
-        }
-
-        function createUltimateBalloon() {
-            balloon = new THREE.Group();
-            balloon.castShadow = true;
-
-            // Ana balon (daha yuvarlak + hafif basık)
-            const balGeo = new THREE.SphereGeometry(3.2, 32, 24);
-            const balMat = new THREE.MeshPhongMaterial({
-                color: 0xFF2D55,
-                shininess: 10,
-                specular: 0xFFFFFF,
-                transparent: true,
-                opacity: 0.97
-            });
-            const balMesh = new THREE.Mesh(balGeo, balMat);
-            balloon.add(balMesh);
-
-            // Renkli şeritler (3D görünüm)
-            for (let i = 0; i < 5; i++) {
-                const band = new THREE.Mesh(
-                    new THREE.TorusGeometry(3.15, 0.12, 8, 32),
-                    new THREE.MeshPhongMaterial({ color: 0xFFFFFF, shininess: 30 })
-                );
-                band.rotation.x = Math.PI / 2;
-                band.position.y = -1.2 + i * 1.1;
-                balloon.add(band);
-            }
-
-            // Ateş + duman partikül sistemi
-            balloon.userData.fireParticles = [];
-            balloon.userData.smokeParticles = [];
-            for (let i = 0; i < 18; i++) {
-                const p = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.15 + Math.random()*0.2, 6, 6),
-                    new THREE.MeshBasicMaterial({ color: Math.random() > 0.5 ? 0xFF5500 : 0xFFAA00 })
-                );
-                p.userData.life = 1;
-                balloon.add(p);
-                balloon.userData.fireParticles.push(p);
-            }
-            for (let i = 0; i < 12; i++) {
-                const s = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.3, 6, 6),
-                    new THREE.MeshBasicMaterial({ color: 0xCCCCCC, transparent:true, opacity:0.4 })
-                );
-                s.userData.life = 1;
-                balloon.add(s);
-                balloon.userData.smokeParticles.push(s);
-            }
-
-            // Sepet
-            const basket = new THREE.Mesh(
-                new THREE.BoxGeometry(2.1, 1.4, 2.1),
-                new THREE.MeshPhongMaterial({ color: 0x5C3A1F, shininess:5 })
-            );
-            basket.position.y = -4.8;
-            basket.castShadow = true;
-            balloon.add(basket);
-
-            // 8 adet gerçekçi ip (Line + Cylinder)
-            const ropeMat = new THREE.MeshPhongMaterial({ color: 0x3A2F1F });
-            for (let i = 0; i < 8; i++) {
-                const rope = new THREE.Mesh(
-                    new THREE.CylinderGeometry(0.04, 0.04, 4.2, 5),
-                    ropeMat
-                );
-                const angle = (i / 8) * Math.PI * 2;
-                rope.position.set(Math.cos(angle)*1.4, -2.6, Math.sin(angle)*1.4);
-                rope.rotation.set(0, angle, 0.8);
-                balloon.add(rope);
-            }
-
-            scene.add(balloon);
-        }
-
-        function createProceduralGround() {
-            const ground = new THREE.Mesh(
-                new THREE.PlaneGeometry(400, 2000),
-                new THREE.MeshPhongMaterial({ color: 0x3A7A2E, shininess:2 })
-            );
-            ground.rotation.x = -Math.PI / 2;
-            ground.position.y = -12;
-            ground.receiveShadow = true;
-            scene.add(ground);
-        }
-
-        function createDistantMountains() {
-            for (let i = 0; i < 35; i++) {
-                const h = 25 + Math.random() * 45;
-                const m = new THREE.Mesh(
-                    new THREE.ConeGeometry(18 + Math.random() * 22, h, 7),
-                    new THREE.MeshPhongMaterial({ color: 0x2C4A3A })
-                );
-                m.position.set((Math.random()-0.5)*220, h/2 - 18, -80 - i*38);
-                m.castShadow = true;
-                scene.add(m);
+        // Tailwind script
+        tailwind.config = {
+            content: [],
+            theme: {
+                extend: {}
             }
         }
-
-        // ====================== ENGELLER & TOPLANABİLİRLER ======================
-        function createRock() {
-            const rock = new THREE.Group();
-            const geo = new THREE.DodecahedronGeometry(2.8 + Math.random()*1.6, 1);
-            // Gerçekçi şekil bozma
-            const verts = geo.attributes.position.array;
-            for (let i = 0; i < verts.length; i += 3) {
-                verts[i]   += (Math.random()-0.5)*1.2;
-                verts[i+1] += (Math.random()-0.5)*1.4;
-                verts[i+2] += (Math.random()-0.5)*1.1;
-            }
-            geo.attributes.position.needsUpdate = true;
-            const mat = new THREE.MeshPhongMaterial({ color: 0x555555 + Math.random()*0x222222, shininess:3 });
-            const mesh = new THREE.Mesh(geo, mat);
-            mesh.castShadow = true;
-            rock.add(mesh);
-            rock.userData.type = 'rock';
-            return rock;
-        }
-
-        function createTree() {
-            const tree = new THREE.Group();
-            // Gövde
-            const trunk = new THREE.Mesh(
-                new THREE.CylinderGeometry(0.8, 1.2, 7, 8),
-                new THREE.MeshPhongMaterial({ color: 0x3F2A1D })
-            );
-            trunk.position.y = -4;
-            trunk.castShadow = true;
-            tree.add(trunk);
-            // Yaprak katmanları
-            for (let i = 0; i < 4; i++) {
-                const foliage = new THREE.Mesh(
-                    new THREE.ConeGeometry(4 - i*0.6, 6, 9),
-                    new THREE.MeshPhongMaterial({ color: 0x1E4A2E })
-                );
-                foliage.position.y = 1 + i*2.5;
-                foliage.castShadow = true;
-                tree.add(foliage);
-            }
-            tree.userData.type = 'tree';
-            return tree;
-        }
-
-        function createBird() {
-            const bird = new THREE.Group();
-            const body = new THREE.Mesh(new THREE.SphereGeometry(0.7, 8, 8), new THREE.MeshPhongMaterial({color:0x222222}));
-            bird.add(body);
-            const wingL = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 0.8), new THREE.MeshPhongMaterial({color:0x444444, side:THREE.DoubleSide}));
-            wingL.position.set(-0.9,0,0);
-            wingL.rotation.z = 0.6;
-            bird.add(wingL);
-            bird.userData.wingL = wingL;
-            bird.userData.wingPhase = Math.random()*Math.PI*2;
-            bird.userData.type = 'bird';
-            return bird;
-        }
-
-        function createStalactite() {
-            const s = new THREE.Mesh(
-                new THREE.ConeGeometry(1.2 + Math.random()*1.4, 6 + Math.random()*7, 7),
-                new THREE.MeshPhongMaterial({ color: 0x666666 })
-            );
-            s.rotation.x = Math.PI;
-            s.castShadow = true;
-            s.userData.type = 'stal';
-            return s;
-        }
-
-        function createCoin() {
-            const coin = new THREE.Mesh(
-                new THREE.TorusGeometry(1.2, 0.4, 8, 24),
-                new THREE.MeshPhongMaterial({ color: 0xFFDD44, emissive: 0xFFAA00, shininess: 100 })
-            );
-            coin.rotation.x = Math.PI / 2;
-            coin.userData.type = 'coin';
-            coin.userData.spin = 0;
-            return coin;
-        }
-
-        // ====================== SPAWN ======================
-        function spawnObstacle() {
-            let obs;
-            const rand = Math.random();
-            if (tunnelActive) {
-                obs = createStalactite();
-                obs.position.y = tunnelY + 14 + Math.random()*8;
-            } else if (rand < 0.35) {
-                obs = createRock();
-                obs.position.y = -9 + Math.random()*4;
-            } else if (rand < 0.7) {
-                obs = createTree();
-                obs.position.y = -11;
-            } else {
-                obs = createBird();
-                obs.position.y = 5 + Math.random()*18;
-            }
-            obs.position.z = -120;
-            obs.position.x = (Math.random()-0.5)*18;
-            obstacles.push(obs);
-            scene.add(obs);
-        }
-
-        function spawnCoin() {
-            const c = createCoin();
-            c.position.set((Math.random()-0.5)*16, 3 + Math.random()*22, -90);
-            collectibles.push(c);
-            scene.add(c);
-        }
-
-        function spawnTunnel() {
-            tunnelActive = true;
-            tunnelY = balloon.position.y + (Math.random()-0.5)*6;
-            // Tunnel duvarları (basit ama etkili)
-            const wallMat = new THREE.MeshPhongMaterial({ color: 0x3A3A4A, shininess:2 });
-            const left = new THREE.Mesh(new THREE.BoxGeometry(2, 40, 90), wallMat);
-            left.position.set(-14, tunnelY, -45);
-            const right = left.clone();
-            right.position.x = 14;
-            scene.add(left); scene.add(right);
-            obstacles.push(left, right);
-
-            // 8-10 stalactite + stalagmite
-            for (let i = 0; i < 9; i++) {
-                const top = createStalactite();
-                top.position.set(-8 + Math.random()*16, tunnelY + 16, -30 - i*8);
-                scene.add(top);
-                obstacles.push(top);
-
-                const bot = createStalactite();
-                bot.rotation.x = 0;
-                bot.position.set(-8 + Math.random()*16, tunnelY - 16, -30 - i*8);
-                scene.add(bot);
-                obstacles.push(bot);
+        
+        function subscribe() {
+            const email = document.getElementById('email').value;
+            if (email) {
+                alert('Teşekkürler! eTourGood lansman haberleri için ' + email + ' adresine bildirim göndereceğiz 🚀');
+                document.getElementById('email').value = '';
             }
         }
-
-        // ====================== KONTROLLER ======================
-        function setupControls() {
-            const canvas = renderer.domElement;
-            canvas.addEventListener('touchstart', e => { e.preventDefault(); isTouching = true; });
-            canvas.addEventListener('touchend',   e => { e.preventDefault(); isTouching = false; });
-            canvas.addEventListener('mousedown',  () => isTouching = true);
-            canvas.addEventListener('mouseup',    () => isTouching = false);
-
-            // Klavye
-            document.addEventListener('keydown', e => { if(e.code==='Space') isTouching = true; });
-            document.addEventListener('keyup',   e => { if(e.code==='Space') isTouching = false; });
-        }
-
-        function startGame() {
-            gameRunning = true;
-            gameOverFlag = false;
-            score = 0; height = 0; gameSpeed = 0.35;
-            balloonVelY = 0; lift = 0; currentX = 0;
-            windX = 0;
-            tunnelActive = false;
-            obstacles.forEach(o => scene.remove(o)); obstacles = [];
-            collectibles.forEach(c => scene.remove(c)); collectibles = [];
-            balloon.position.set(0, 8, 0);
-            document.getElementById('instructions').style.display = 'none';
-        }
-
-        function restartGame() {
-            document.getElementById('gameOver').style.display = 'none';
-            startGame();
-        }
-
-        function endGame() {
-            gameRunning = false;
-            gameOverFlag = true;
-            if (score > bestScore) {
-                bestScore = score;
-                localStorage.setItem('habUltimateBest', bestScore);
-            }
-            document.getElementById('finalScore').textContent = bestScore;
-            document.getElementById('gameOver').style.display = 'block';
-
-            // Patlama efekti
-            for (let i = 0; i < 80; i++) {
-                const p = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.4 + Math.random()*1.2, 6, 6),
-                    new THREE.MeshBasicMaterial({ color: Math.random() > 0.5 ? 0xFF3300 : 0xFFAA00 })
-                );
-                p.position.copy(balloon.position);
-                p.userData.vel = new THREE.Vector3((Math.random()-0.5)*1.2, Math.random()*1.8 + 0.5, (Math.random()-0.5)*0.6);
-                p.userData.life = 60;
-                scene.add(p);
-                particles.push(p);
-            }
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-
-            if (gameRunning) updateGame();
-            else if (balloon) {
-                // Idle ateş animasyonu
-                balloon.userData.fireParticles.forEach(p => {
-                    p.position.y = -3.5 + Math.sin(Date.now()/80 + p.id||0)*0.6;
-                    p.scale.setScalar(0.6 + Math.random()*0.6);
-                });
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        function updateGame() {
-            // Fizik (gerçekçi balon)
-            lift = isTouching ? 0.48 : 0;
-            balloonVelY += (lift - 0.085) * 0.9; // Yerçekimi + kaldırma
-            balloonVelY *= 0.96; // Hava direnci
-            height += gameSpeed;
-            balloon.position.y += balloonVelY;
-
-            // Yükseklik sınırları
-            if (balloon.position.y < -6) { balloon.position.y = -6; balloonVelY = 0.6; }
-            if (balloon.position.y > 38) { balloon.position.y = 38; balloonVelY = -0.8; }
-
-            // Doğal sallanma + rüzgar
-            windGustTimer++;
-            if (windGustTimer > 110) {
-                windX = (Math.random()-0.5)*0.9;
-                windGustTimer = 0;
-            }
-            currentX += windX * 0.3;
-            balloon.position.x = currentX + Math.sin(height*0.018)*1.4;
-
-            // Balon rotasyonu
-            balloon.rotation.z = balloonVelY * -0.07 + Math.sin(height*0.04)*0.09;
-
-            // Ateş ve duman animasyonu
-            const fireP = balloon.userData.fireParticles;
-            fireP.forEach((p,i) => {
-                p.position.y = balloon.position.y - 4.2 + Math.random()*0.6 - balloonVelY*0.6;
-                p.position.x = balloon.position.x + (Math.random()-0.5)*1.2;
-                p.scale.setScalar(0.6 + Math.sin(Date.now()/40 + i)*0.6);
-            });
-            balloon.userData.smokeParticles.forEach((p,i) => {
-                p.position.y += 0.12;
-                p.position.x += (Math.random()-0.5)*0.05;
-                p.scale.setScalar(p.scale.x * 0.96);
-                p.material.opacity = p.userData.life-- * 0.025;
-                if (p.userData.life < 0) p.userData.life = 35;
-            });
-
-            // UI
-            score = Math.floor(height * 1.8);
-            document.getElementById('score').textContent = score;
-            document.getElementById('height').textContent = `📏 ${Math.floor(height)}m`;
-
-            // Zorluk artışı
-            if (height > 800 && gameSpeed < 1.1) gameSpeed += 0.0002;
-
-            // Spawn
-            if (Math.random() < 0.035 + gameSpeed*0.012) spawnObstacle();
-            if (Math.random() < 0.018 && height > 120) spawnCoin();
-            if (Math.floor(height) % 620 < 8 && height > 200 && !tunnelActive) spawnTunnel();
-
-            // Objeleri ilerlet
-            for (let i = obstacles.length-1; i >= 0; i--) {
-                const o = obstacles[i];
-                o.position.z += gameSpeed * 4.2;
-                if (o.userData.type === 'bird') {
-                    o.position.y += Math.sin(height*0.2 + o.userData.wingPhase)*0.08;
-                    o.userData.wingL.rotation.z = 0.6 + Math.sin(height*0.35)*0.9;
-                }
-                if (o.userData.type === 'coin') o.rotation.z += 0.1; // Spin yok, coin ayrı
-
-                if (o.position.z > 35) {
-                    scene.remove(o);
-                    obstacles.splice(i,1);
-                    if (tunnelActive && o.position.z > 20) tunnelActive = false;
-                }
-            }
-
-            // Collectibles
-            for (let i = collectibles.length-1; i >= 0; i--) {
-                const c = collectibles[i];
-                c.position.z += gameSpeed * 4.2;
-                c.rotation.z += 0.12;
-                if (c.position.z > 25) { scene.remove(c); collectibles.splice(i,1); continue; }
-
-                const dx = c.position.x - balloon.position.x;
-                const dy = c.position.y - balloon.position.y;
-                const dz = c.position.z - balloon.position.z;
-                if (dx*dx + dy*dy + dz*dz < 18) {
-                    // Toplandı!
-                    score += 120;
-                    scene.remove(c);
-                    collectibles.splice(i,1);
-                    // Parlama partikülü
-                    for (let k=0; k<12; k++) {
-                        const star = new THREE.Mesh(new THREE.SphereGeometry(0.3), new THREE.MeshBasicMaterial({color:0xFFFF88}));
-                        star.position.copy(c.position);
-                        star.userData.vel = new THREE.Vector3((Math.random()-0.5)*2, Math.random()*3, (Math.random()-0.5)*1);
-                        star.userData.life = 35;
-                        scene.add(star);
-                        particles.push(star);
-                    }
-                }
-            }
-
-            // Collision
-            const balBox = new THREE.Sphere(balloon.position, 3.4);
-            for (let obs of obstacles) {
-                const obsBox = new THREE.Box3().setFromObject(obs);
-                if (balBox.intersectsBox(obsBox)) {
-                    endGame();
-                    return;
-                }
-            }
-
-            // Partikül temizliği
-            for (let i = particles.length-1; i >= 0; i--) {
-                const p = particles[i];
-                p.position.add(p.userData.vel || new THREE.Vector3(0,0,0));
-                p.userData.life--;
-                p.scale.multiplyScalar(0.96);
-                if (p.userData.life <= 0) { scene.remove(p); particles.splice(i,1); }
-            }
-
-            // Kamera (cinematic)
-            camera.position.x = THREE.MathUtils.lerp(camera.position.x, balloon.position.x * 0.35, 0.12);
-            camera.position.y = THREE.MathUtils.lerp(camera.position.y, balloon.position.y + 11 + balloonVelY*2, 0.08);
-            camera.position.z = balloon.position.z + 26;
-            camera.lookAt(balloon.position.x*0.6, balloon.position.y + 4, balloon.position.z - 10);
-        }
-
-        // Resize
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        // İlk dokunuşla başla
-        renderer.domElement.addEventListener('touchstart', () => {
-            if (!gameRunning && !gameOverFlag) startGame();
-        }, { once: true });
+        
+        // Scroll animation for balloons (already CSS)
+        console.log('%c eTourGood Coming Soon Page – Profesyonel olarak hazırlandı ❤️', 'color:#f97316; font-family:monospace');
     </script>
 </body>
 </html>
