@@ -1,293 +1,218 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eTourGood • Turkey Tourism Marketplace • Coming Soon</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:wght@700&amp;display=swap');
-        
-        body {
-            margin: 0;
-            overflow-x: hidden;
-            background-color: #050505;
-            font-family: 'Inter', system-ui, sans-serif;
-        }
-        
-        .logo-font {
-            font-family: 'Playfair Display', sans-serif;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Korkut Aydın - Profesyonel Rehber Rezervasyon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Flatpickr CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-        #bg-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: -1;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Liquid Glass + 3D Card */
-        .card-3d {
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            transform-style: preserve-3d;
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(251, 146, 60, 0.25);
-        }
-        
-        .card-3d:hover {
-            transform: translateY(-12px) rotateX(8deg) rotateY(-8deg) scale(1.02);
-            box-shadow: 0 30px 60px -15px rgba(249, 115, 22, 0.4),
-                        inset 0 0 0 1px rgba(251, 146, 60, 0.3);
-        }
-        
-        .content-3d {
-            transform: translateZ(40px);
-        }
-
-        .glass-panel {
-            background: linear-gradient(145deg, rgba(15,23,42,0.85) 0%, rgba(15,23,42,0.65) 100%);
-            backdrop-filter: blur(24px);
-            border: 1px solid rgba(251, 146, 60, 0.2);
-        }
-
-        /* Mobile Portrait Optimizations */
-        @media (max-width: 640px) {
-            .hero-text {
-                font-size: 2.25rem;
-                line-height: 1.1;
-            }
-            .card-3d {
-                margin-bottom: 1.5rem;
-            }
-        }
-        
-        .service-dot {
-            animation: pulse 2s infinite;
-        }
-    </style>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #fff8e1 0%, #ffe0b2 100%);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .container { max-width: 500px; margin: 0 auto; padding: 20px 16px; flex:1; }
+    header {
+      text-align: center;
+      padding: 40px 0 24px;
+      background: linear-gradient(135deg, #ff6d00, #f65100);
+      color: white;
+      border-radius: 0 0 32px 32px;
+      box-shadow: 0 10px 30px rgba(255,109,0,0.3);
+    }
+    header h1 { font-size: 2.2rem; font-weight:700; margin-bottom:8px; }
+    header p { font-size:1.1rem; opacity:0.95; }
+    .badges { margin:16px 0; display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
+    .badge {
+      background:rgba(255,255,255,0.3);
+      padding:8px 16px;
+      border-radius:30px;
+      font-size:0.95rem;
+      font-weight:500;
+    }
+    .section {
+      background:white;
+      border-radius:20px;
+      padding:28px 24px;
+      margin:24px 0;
+      box-shadow:0 8px 25px rgba(0,0,0,0.1);
+    }
+    .section h2 {
+      color:#e65100;
+      font-size:1.5rem;
+      margin-bottom:20px;
+      border-bottom:4px solid #fff0e0;
+      padding-bottom:10px;
+    }
+    label { display:block; font-weight:600; color:#555; margin:12px 0 6px; font-size:1.05rem; }
+    select, input[type="text"], input[type="number"] {
+      width:100%;
+      padding:14px;
+      border:2px solid #ffab91;
+      border-radius:12px;
+      font-size:1.05rem;
+      background:#fffaf0;
+      transition: border 0.2s;
+    }
+    select:focus, input:focus { border-color:#ff6d00; outline:none; }
+    .price-summary {
+      background:#fff8e1;
+      padding:20px;
+      border-radius:16px;
+      margin:20px 0;
+      text-align:center;
+    }
+    .price-summary h3 { color:#d84315; font-size:1.8rem; margin:8px 0; }
+    .price-summary small { color:#666; }
+    .btn {
+      display:block;
+      width:100%;
+      padding:18px;
+      margin:20px 0;
+      background:linear-gradient(135deg, #ff6d00, #f65100);
+      color:white;
+      font-size:1.3rem;
+      font-weight:600;
+      border:none;
+      border-radius:14px;
+      cursor:pointer;
+      box-shadow:0 8px 25px rgba(255,109,0,0.4);
+      transition:all 0.25s;
+    }
+    .btn:hover {
+      transform:translateY(-3px);
+      box-shadow:0 12px 35px rgba(255,109,0,0.5);
+    }
+    .info { font-size:0.95rem; color:#555; line-height:1.6; margin-top:16px; }
+    .footer-note {
+      text-align:center;
+      font-size:0.9rem;
+      color:#777;
+      margin:40px 0 60px;
+    }
+  </style>
 </head>
-<body class="text-white min-h-screen flex flex-col">
+<body>
 
-    <canvas id="bg-canvas"></canvas>
+  <header>
+    <h1>Korkut Aydın</h1>
+    <p>Profesyonel Turist Rehberi</p>
+    <div class="badges">
+      <span class="badge">İngilizce & Türkçe Uzman</span>
+      <span class="badge">10+ Yıl Deneyim</span>
+      <span class="badge">⭐ 4.9 Müşteri Puanı</span>
+    </div>
+  </header>
 
-    <!-- NAV -->
-    <nav class="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-orange-400/20 py-5">
-        <div class="max-w-screen-2xl mx-auto px-6 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-gradient-to-br from-orange-500 to-amber-400 rounded-2xl flex items-center justify-center text-3xl shadow-xl">🇹🇷</div>
-                <span class="logo-font text-3xl font-bold tracking-tighter">eTourGood</span>
-            </div>
-            <a href="https://wa.me/905336124402" target="_blank"
-               class="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 px-6 py-3 rounded-3xl text-sm font-semibold transition-all">
-                <i class="fab fa-whatsapp"></i>
-                <span class="hidden sm:inline">WhatsApp</span>
-            </a>
-        </div>
-    </nav>
+  <div class="container">
 
-    <main class="flex-1 flex items-center justify-center pt-24 pb-12 px-6 relative z-10" x-data="{ email: '', submitted: false }">
-        <div class="max-w-5xl w-full mx-auto">
-            
-            <!-- HERO -->
-            <div class="text-center mb-16 content-3d">
-                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-5 py-2 rounded-3xl text-orange-300 text-xs font-medium tracking-[2px] mb-6">
-                    <div class="w-2 h-2 bg-orange-500 rounded-full service-dot"></div>
-                    COMING SOON — 2026
-                </div>
-                
-                <h1 class="hero-text text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter logo-font bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-amber-300 to-orange-400 mb-4">
-                    TURKEY'S<br>GLOBAL<br>TOURISM<br>MARKETPLACE
-                </h1>
-                
-                <p class="max-w-lg mx-auto text-lg md:text-xl text-slate-300 font-light">
-                    Travel agencies &amp; hotels: Sign up free.<br>
-                    List Tours • Activities • Hotels • Airport Transfers.<br>
-                    Sell directly to the world.
-                </p>
-            </div>
+    <form id="rezForm">
 
-            <!-- TWO CARDS - Stacks perfectly on mobile portrait -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                
-                <!-- FOR TRAVELERS -->
-                <div class="card-3d rounded-3xl p-8 md:p-10 flex flex-col items-center text-center h-full">
-                    <div class="content-3d w-full">
-                        <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-orange-500/20 border border-orange-400/40 flex items-center justify-center">
-                            <i class="fas fa-plane text-3xl text-orange-400"></i>
-                        </div>
-                        <h2 class="text-3xl font-bold mb-6 text-white">For Travelers</h2>
-                        <ul class="text-slate-300 space-y-5 text-left max-w-xs mx-auto">
-                            <li class="flex items-start gap-3"><span class="text-orange-400 mt-1 text-xl">✦</span> Authentic Turkey experiences</li>
-                            <li class="flex items-start gap-3"><span class="text-orange-400 mt-1 text-xl">✦</span> Tours, activities &amp; hotels</li>
-                            <li class="flex items-start gap-3"><span class="text-orange-400 mt-1 text-xl">✦</span> 24/7 airport transfers</li>
-                            <li class="flex items-start gap-3"><span class="text-orange-400 mt-1 text-xl">✦</span> Best prices, direct booking</li>
-                        </ul>
-                    </div>
-                </div>
+      <div class="section">
+        <h2>1. Hizmet Türü Seçin</h2>
+        <label for="dil">Dil Seçimi:</label>
+        <select id="dil" onchange="updatePrices()">
+          <option value="yabanci">Yabancı Dil (English, etc.)</option>
+          <option value="turkce">Türkçe</option>
+        </select>
 
-                <!-- FOR SUPPLIERS -->
-                <div class="card-3d rounded-3xl p-8 md:p-10 flex flex-col items-center text-center h-full">
-                    <div class="content-3d w-full">
-                        <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center">
-                            <i class="fas fa-store text-3xl text-amber-400"></i>
-                        </div>
-                        <h2 class="text-3xl font-bold mb-6 text-white">For Suppliers</h2>
-                        <ul class="text-slate-300 space-y-5 text-left max-w-xs mx-auto">
-                            <li class="flex items-start gap-3"><span class="text-amber-400 mt-1 text-xl">✦</span> Free signup • Global reach</li>
-                            <li class="flex items-start gap-3"><span class="text-amber-400 mt-1 text-xl">✦</span> Sell your tours &amp; transfers worldwide</li>
-                            <li class="flex items-start gap-3"><span class="text-amber-400 mt-1 text-xl">✦</span> No hidden fees • Higher earnings</li>
-                            <li class="flex items-start gap-3"><span class="text-amber-400 mt-1 text-xl">✦</span> Simple dashboard • Fast payouts</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+        <label for="hizmet">Rezervasyon Kategorisi (Bakanlık 2026 Taban + %13):</label>
+        <select id="hizmet" onchange="updatePrices()">
+          <option value="gunluk">Günlük Tur (Tam Gün)</option>
+          <option value="transfer">Transfer (Havalimanı/Otel)</option>
+          <option value="gece">Gece Turu</option>
+          <option value="paket">Paket Tur (2-3 Günlük)</option>
+          <option value="aylik">Aylık Rehberlik</option>
+        </select>
+      </div>
 
-            <!-- NEWSLETTER + CONTACT BAR -->
-            <div class="mt-16 max-w-lg mx-auto glass-panel rounded-3xl p-8 md:p-10 content-3d">
-                <p class="text-slate-400 text-center text-sm mb-6">Be the first to know when we launch</p>
-                
-                <form @submit.prevent="submitted = true" class="flex flex-col sm:flex-row gap-3">
-                    <input type="email" x-model="email" required 
-                           placeholder="your@email.com" 
-                           class="flex-1 bg-slate-950 border border-slate-700 focus:border-orange-400 rounded-2xl px-6 py-4 text-sm outline-none transition-all">
-                    <button type="submit"
-                            class="bg-gradient-to-r from-orange-500 to-amber-400 hover:from-orange-600 hover:to-amber-500 font-semibold py-4 px-10 rounded-2xl transition-all active:scale-95">
-                        NOTIFY ME
-                    </button>
-                </form>
-                
-                <div x-show="submitted" x-transition class="mt-5 text-emerald-400 text-center text-sm font-medium flex items-center justify-center gap-2">
-                    <i class="fas fa-check-circle"></i>
-                    Thank you! You're on the list 🚀
-                </div>
+      <div class="section">
+        <h2>2. Tarih ve Detaylar</h2>
+        <label for="tarih">Tur Tarihi:</label>
+        <input type="text" id="tarih" placeholder="Tarih seçin" required>
 
-                <!-- CONTACT INFO -->
-                <div class="mt-10 pt-8 border-t border-orange-400/20 text-xs">
-                    <div class="grid grid-cols-2 gap-y-6">
-                        <a href="mailto:support@etourgood.com" class="flex items-center gap-3 hover:text-orange-300 transition-colors">
-                            <i class="fas fa-envelope text-orange-400"></i>
-                            <span>support@etourgood.com</span>
-                        </a>
-                        <a href="https://wa.me/905336124402" target="_blank" class="flex items-center gap-3 hover:text-orange-300 transition-colors">
-                            <i class="fab fa-whatsapp text-orange-400"></i>
-                            <span>+90 533 612 44 02</span>
-                        </a>
-                        <a href="https://t.me/etourgood" target="_blank" class="flex items-center gap-3 hover:text-orange-300 transition-colors">
-                            <i class="fab fa-telegram text-orange-400"></i>
-                            <span>@etourgood</span>
-                        </a>
-                        <a href="https://www.tripadvisor.com.tr/Attraction_Review-g293974-d22555182-Reviews-Etourgood_com-Istanbul.html" target="_blank" class="flex items-center gap-3 hover:text-orange-300 transition-colors">
-                            <i class="fas fa-star text-amber-400"></i>
-                            <span>Tripadvisor • 4.8/5</span>
-                        </a>
-                    </div>
-                    
-                    <!-- Google -->
-                    <div class="mt-8 flex justify-center">
-                        <a href="https://share.google/Y2D4TJ1853DhY2Uwq" target="_blank"
-                           class="inline-flex items-center gap-2 text-[10px] tracking-widest bg-white/5 hover:bg-white/10 px-5 py-2 rounded-3xl transition-all">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/2560px-Google_2015_logo.svg.png" alt="Google" class="h-4 opacity-75">
-                            <span class="font-medium text-slate-300">etourgood.com</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+        <label for="kisi">Kişi Sayısı:</label>
+        <input type="number" id="kisi" min="1" value="1" required>
 
-    <!-- SOCIAL FOOTER -->
-    <footer class="py-8 text-center text-xs text-slate-400 border-t border-orange-400/10">
-        <div class="max-w-screen-2xl mx-auto px-6 flex flex-wrap justify-center gap-x-8 gap-y-4">
-            <a href="https://instagram.com/etourgood" target="_blank" class="hover:text-orange-300 transition-colors">Instagram</a>
-            <a href="https://tiktok.com/@etourgood" target="_blank" class="hover:text-orange-300 transition-colors">TikTok</a>
-            <a href="https://youtube.com/@etourgood" target="_blank" class="hover:text-orange-300 transition-colors">YouTube</a>
-            <a href="https://x.com/etourgood" target="_blank" class="hover:text-orange-300 transition-colors">X</a>
-            <a href="https://pinterest.com/etourgood" target="_blank" class="hover:text-orange-300 transition-colors">Pinterest</a>
-        </div>
-        <div class="mt-6 text-[10px] opacity-60">© 2026 eTourGood • Turkey Tourism Marketplace</div>
-    </footer>
+        <p class="info">Not: Müsaitlik takvimi rehberle eş zamanlı kontrol edilir. Seçtiğiniz tarih için hemen teyit alınır.</p>
+      </div>
 
-    <script>
-        // Tailwind script
-        tailwind.config = {
-            content: [],
-            theme: { extend: {} }
-        }
+      <div class="price-summary" id="fiyatOzeti">
+        <h3>Toplam Tutar: <span id="toplamFiyat">— TL</span></h3>
+        <small>(%13 platform ücreti dahil • KDV hariç • Rehber faturası + Platform faturası)</small>
+      </div>
 
-        // THREE.JS BACKGROUND - Orange Turkey theme
-        const canvas = document.getElementById('bg-canvas');
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x050505, 0.0018);
+      <button type="button" class="btn" onclick="rezervasyonYap()">Rezervasyon Talebi Gönder</button>
 
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    </form>
 
-        // Particles
-        const particlesCount = 2200;
-        const posArray = new Float32Array(particlesCount * 3);
-        for(let i = 0; i < particlesCount * 3; i++) {
-            posArray[i] = (Math.random() - 0.5) * 28;
-        }
+    <div class="footer-note">
+      Fiyatlar Bakanlık 2026 taban ücretlerine göre hesaplanır.<br>
+      Rehber faturayı keser, %13 hizmet bedeli platform tarafından faturalandırılır.
+    </div>
 
-        const particlesGeometry = new THREE.BufferGeometry();
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+  </div>
 
-        const particlesMaterial = new THREE.PointsMaterial({
-            size: 0.035,
-            color: 0xf97316,           // TURUNCU
-            transparent: true,
-            opacity: 0.75,
-            blending: THREE.AdditiveBlending
-        });
+  <script>
+    // Flatpickr takvim başlat
+    flatpickr("#tarih", {
+      dateFormat: "d.m.Y",
+      minDate: "today",
+      locale: { firstDayOfWeek: 1 } // Pazartesi başlasın
+    });
 
-        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-        scene.add(particlesMesh);
+    // Bakanlık taban ücretleri (2026 resmi rakamlar)
+    const tabanUcretler = {
+      gunluk: { yabanci: 5566, turkce: 3897 },
+      transfer: { yabanci: 2790, turkce: 1953 },
+      gece: { yabanci: 2790, turkce: 1953 },
+      paket: { yabanci: 6708, turkce: 4696 },
+      aylik: { yabanci: 55620, turkce: 38934 }
+    };
 
-        camera.position.z = 4.5;
+    function updatePrices() {
+      const dil = document.getElementById('dil').value;
+      const hizmet = document.getElementById('hizmet').value;
+      const kisi = parseInt(document.getElementById('kisi').value) || 1;
 
-        // Mouse parallax
-        let mouseX = 0, mouseY = 0;
-        const windowHalfX = window.innerWidth / 2;
-        const windowHalfY = window.innerHeight / 2;
+      const taban = tabanUcretler[hizmet][dil];
+      const platformKomisyon = taban * 0.13;
+      const toplam = Math.round((taban + platformKomisyon) * kisi);
 
-        document.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX - windowHalfX) * 0.0008;
-            mouseY = (e.clientY - windowHalfY) * 0.0008;
-        });
+      document.getElementById('toplamFiyat').textContent = toplam.toLocaleString('tr-TR') + ' TL';
+    }
 
-        const clock = new THREE.Clock();
+    // Sayfa yüklendiğinde ilk fiyatı göster
+    window.onload = updatePrices;
 
-        function animate() {
-            requestAnimationFrame(animate);
-            const t = clock.getElapsedTime();
+    // Rezervasyon butonu (demo alert)
+    function rezervasyonYap() {
+      const hizmet = document.getElementById('hizmet').options[document.getElementById('hizmet').selectedIndex].text;
+      const tarih = document.getElementById('tarih').value;
+      const kisi = document.getElementById('kisi').value;
+      const fiyat = document.getElementById('toplamFiyat').textContent;
 
-            particlesMesh.rotation.y = t * 0.012 + mouseX;
-            particlesMesh.rotation.x = Math.sin(t * 0.2) * 0.03 + mouseY;
+      if (!tarih) {
+        alert('Lütfen tarih seçin!');
+        return;
+      }
 
-            renderer.render(scene, camera);
-        }
-        animate();
+      alert(`Rezervasyon Talebiniz Alındı!\n\nHizmet: ${hizmet}\nTarih: ${tarih}\nKişi: ${kisi}\nToplam: ${fiyat}\n\nEn kısa sürede Korkut Aydın'dan teyit gelecek. Teşekkürler! 📅`);
+    }
 
-        // Resize handler (mobile friendly)
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+    // Kişi sayısı değişince fiyat güncelle
+    document.getElementById('kisi').addEventListener('input', updatePrices);
+  </script>
 
-        console.log('%c eTourGood • Turkey Tourism Marketplace • 2026 🚀', 'color:#f97316; font-family:monospace; font-size:12px');
-    </script>
 </body>
 </html>
