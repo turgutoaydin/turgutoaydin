@@ -1,218 +1,412 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Korkut Aydın - Profesyonel Rehber Rezervasyon</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Flatpickr CDN -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dijital Telgraf • Turizm</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap');
+        
+        :root {
+            --orange: #f97316;
+        }
+        
+        .tail-container {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .header-font {
+            font-family: 'Playfair Display', serif;
+        }
 
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #fff8e1 0%, #ffe0b2 100%);
-      color: #333;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    .container { max-width: 500px; margin: 0 auto; padding: 20px 16px; flex:1; }
-    header {
-      text-align: center;
-      padding: 40px 0 24px;
-      background: linear-gradient(135deg, #ff6d00, #f65100);
-      color: white;
-      border-radius: 0 0 32px 32px;
-      box-shadow: 0 10px 30px rgba(255,109,0,0.3);
-    }
-    header h1 { font-size: 2.2rem; font-weight:700; margin-bottom:8px; }
-    header p { font-size:1.1rem; opacity:0.95; }
-    .badges { margin:16px 0; display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
-    .badge {
-      background:rgba(255,255,255,0.3);
-      padding:8px 16px;
-      border-radius:30px;
-      font-size:0.95rem;
-      font-weight:500;
-    }
-    .section {
-      background:white;
-      border-radius:20px;
-      padding:28px 24px;
-      margin:24px 0;
-      box-shadow:0 8px 25px rgba(0,0,0,0.1);
-    }
-    .section h2 {
-      color:#e65100;
-      font-size:1.5rem;
-      margin-bottom:20px;
-      border-bottom:4px solid #fff0e0;
-      padding-bottom:10px;
-    }
-    label { display:block; font-weight:600; color:#555; margin:12px 0 6px; font-size:1.05rem; }
-    select, input[type="text"], input[type="number"] {
-      width:100%;
-      padding:14px;
-      border:2px solid #ffab91;
-      border-radius:12px;
-      font-size:1.05rem;
-      background:#fffaf0;
-      transition: border 0.2s;
-    }
-    select:focus, input:focus { border-color:#ff6d00; outline:none; }
-    .price-summary {
-      background:#fff8e1;
-      padding:20px;
-      border-radius:16px;
-      margin:20px 0;
-      text-align:center;
-    }
-    .price-summary h3 { color:#d84315; font-size:1.8rem; margin:8px 0; }
-    .price-summary small { color:#666; }
-    .btn {
-      display:block;
-      width:100%;
-      padding:18px;
-      margin:20px 0;
-      background:linear-gradient(135deg, #ff6d00, #f65100);
-      color:white;
-      font-size:1.3rem;
-      font-weight:600;
-      border:none;
-      border-radius:14px;
-      cursor:pointer;
-      box-shadow:0 8px 25px rgba(255,109,0,0.4);
-      transition:all 0.25s;
-    }
-    .btn:hover {
-      transform:translateY(-3px);
-      box-shadow:0 12px 35px rgba(255,109,0,0.5);
-    }
-    .info { font-size:0.95rem; color:#555; line-height:1.6; margin-top:16px; }
-    .footer-note {
-      text-align:center;
-      font-size:0.9rem;
-      color:#777;
-      margin:40px 0 60px;
-    }
-  </style>
+        .chat-bg {
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(249, 115, 22, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(249, 115, 22, 0.03) 0%, transparent 50%);
+        }
+
+        .message-received {
+            background-color: #f1f5f9;
+            border-bottom-left-radius: 2px;
+        }
+
+        .message-sent {
+            background-color: #f97316;
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        .telegram-stamp {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            transform: rotate(12deg);
+            border: 3px double #f97316;
+            color: #f97316;
+            font-size: 10px;
+            padding: 2px 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .mobile-frame {
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            border: 12px solid #1f2937;
+            border-radius: 48px;
+            max-height: 100vh;
+            overflow: hidden;
+        }
+
+        .chat-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: #f97316 #f1f5f9;
+        }
+    </style>
 </head>
-<body>
+<body class="tail-container bg-slate-950 flex items-center justify-center min-h-screen p-4">
+    <!-- Mobil Çerçeve (iPhone benzeri) -->
+    <div class="mobile-frame w-full max-w-[380px] bg-white h-[760px] flex flex-col overflow-hidden relative">
+        
+        <!-- HEADER - Resmi Telgraf Stili -->
+        <div class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-5 py-4 flex items-center gap-3 shadow-md">
+            <button onclick="goBack()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </button>
+            
+            <div class="flex-1 flex items-center gap-3">
+                <!-- Avatar -->
+                <div class="w-9 h-9 bg-white rounded-2xl flex items-center justify-center text-2xl shadow-inner">
+                    📜
+                </div>
+                <div>
+                    <div class="header-font text-lg font-bold tracking-tight">DİJİTAL TELGRAF</div>
+                    <div class="text-[10px] uppercase tracking-[1px] opacity-90 -mt-1">Resmi Belge • Turizm Sitesi</div>
+                </div>
+            </div>
 
-  <header>
-    <h1>Korkut Aydın</h1>
-    <p>Profesyonel Turist Rehberi</p>
-    <div class="badges">
-      <span class="badge">İngilizce & Türkçe Uzman</span>
-      <span class="badge">10+ Yıl Deneyim</span>
-      <span class="badge">⭐ 4.9 Müşteri Puanı</span>
+            <!-- Alıcı / Gönderen Bilgisi -->
+            <div class="text-right text-xs">
+                <div class="font-medium">Kullanıcı2</div>
+                <div class="opacity-75 text-[10px]">username1 → username2</div>
+            </div>
+        </div>
+
+        <!-- OFFICIAL INFO BAR (Mail'e benzeyen başlık) -->
+        <div class="bg-slate-100 border-b border-slate-200 px-5 py-2 text-[10px] flex justify-between items-center text-slate-500">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-envelope text-orange-500"></i>
+                <span class="font-medium">Resmi Telgraf No: TG-2026-0347</span>
+            </div>
+            <div class="flex items-center gap-4 text-[10px]">
+                <span class="flex items-center gap-1">
+                    <i class="fas fa-clock"></i> 
+                    01 Mart 2026
+                </span>
+                <span class="px-2 py-0.5 bg-white rounded border text-orange-600 font-medium">OKUNDU</span>
+            </div>
+        </div>
+
+        <!-- CHAT ALANI -->
+        <div id="chat-container" 
+             class="chat-bg flex-1 overflow-y-auto chat-scroll p-5 space-y-6 relative">
+            
+            <!-- Telgraf Kağıdı Damgası -->
+            <div class="telegram-stamp header-font">TELEGRAM</div>
+
+            <!-- Mesaj 1 - Alınan -->
+            <div class="flex justify-start">
+                <div class="max-w-[78%]">
+                    <div class="message-received px-4 py-3 rounded-3xl rounded-tl-none text-slate-700 text-[15px]">
+                        Merhaba username2,<br>
+                        Antalya 5 yıldızlı otel paketi için fiyat teklifi gönderebilir misiniz?
+                    </div>
+                    <div class="flex items-center gap-2 mt-1 text-[10px] text-slate-400 px-1">
+                        <span>14:22</span>
+                        <span class="text-emerald-500">✓✓</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mesaj 2 - Gönderilen (dosya ekli) -->
+            <div class="flex justify-end">
+                <div class="max-w-[78%]">
+                    <div class="message-sent px-4 py-3 rounded-3xl rounded-tr-none">
+                        <div class="text-white text-[15px]">
+                            Tabii! Ekli dosyada detaylı teklif var.
+                        </div>
+                        
+                        <!-- Dosya Ekli -->
+                        <div onclick="previewAttachment(this)" 
+                             class="mt-3 bg-white/20 backdrop-blur-sm rounded-2xl p-3 flex items-center gap-3 cursor-pointer hover:bg-white/30 transition">
+                            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-2xl shadow">
+                                📄
+                            </div>
+                            <div class="flex-1 text-xs">
+                                <div class="font-medium text-white">antalya-5yildiz-teklif.pdf</div>
+                                <div class="text-white/70">2.4 MB • PDF</div>
+                            </div>
+                            <i class="fas fa-download text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex justify-end items-center gap-2 mt-1 text-[10px] text-orange-200 px-1">
+                        <span>14:23</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mesaj 3 - Alınan (görsel ekli) -->
+            <div class="flex justify-start">
+                <div class="max-w-[78%]">
+                    <div class="message-received px-4 py-3 rounded-3xl rounded-tl-none text-slate-700 text-[15px]">
+                        Teşekkürler! Görseli de ekledim, odalar bu şekilde.
+                    </div>
+                    
+                    <!-- Görsel Ekli -->
+                    <div onclick="previewAttachment(this)" 
+                         class="mt-3 rounded-3xl overflow-hidden shadow-sm border border-slate-200 cursor-pointer">
+                        <img src="https://picsum.photos/id/1015/800/600" 
+                             alt="Otel Odası Görseli"
+                             class="w-full h-auto object-cover">
+                    </div>
+                    
+                    <div class="flex items-center gap-2 mt-1 text-[10px] text-slate-400 px-1">
+                        <span>14:25</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mesaj 4 - Gönderilen -->
+            <div class="flex justify-end">
+                <div class="max-w-[78%]">
+                    <div class="message-sent px-4 py-3 rounded-3xl rounded-tr-none text-[15px]">
+                        Harika görünüyor! Rezervasyon için yarın sabah 09:00’da arayabilir miyim?
+                    </div>
+                    <div class="flex justify-end items-center gap-2 mt-1 text-[10px] text-orange-200 px-1">
+                        <span>14:27</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dinamik mesajlar buraya eklenecek -->
+            <div id="messages"></div>
+        </div>
+
+        <!-- INPUT ALANI - Mail gibi temiz -->
+        <div class="bg-white border-t border-slate-200 px-4 py-3 flex items-center gap-2">
+            <!-- Ek dosya butonu -->
+            <button onclick="attachFile()" 
+                    class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-orange-500 transition text-2xl">
+                <i class="fas fa-paperclip"></i>
+            </button>
+
+            <!-- Mesaj input -->
+            <div class="flex-1 relative">
+                <input id="message-input" 
+                       type="text" 
+                       placeholder="Dijital telgrafınızı yazın..."
+                       onkeydown="if(event.key === 'Enter') sendMessage()"
+                       class="w-full bg-slate-100 border border-transparent focus:border-orange-300 rounded-3xl py-3 px-5 text-sm outline-none transition">
+            </div>
+
+            <!-- Gönder butonu -->
+            <button onclick="sendMessage()" 
+                    class="w-10 h-10 bg-orange-500 hover:bg-orange-600 transition rounded-2xl flex items-center justify-center text-white shadow">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+
+        <!-- Alt bilgi - Resmi uyarı -->
+        <div class="text-[9px] text-center py-1.5 bg-slate-50 text-slate-400 border-t">
+            Bu telgraf resmi evrak niteliğindedir • Turizm Sitesi © 2026
+        </div>
     </div>
-  </header>
 
-  <div class="container">
-
-    <form id="rezForm">
-
-      <div class="section">
-        <h2>1. Hizmet Türü Seçin</h2>
-        <label for="dil">Dil Seçimi:</label>
-        <select id="dil" onchange="updatePrices()">
-          <option value="yabanci">Yabancı Dil (English, etc.)</option>
-          <option value="turkce">Türkçe</option>
-        </select>
-
-        <label for="hizmet">Rezervasyon Kategorisi (Bakanlık 2026 Taban + %13):</label>
-        <select id="hizmet" onchange="updatePrices()">
-          <option value="gunluk">Günlük Tur (Tam Gün)</option>
-          <option value="transfer">Transfer (Havalimanı/Otel)</option>
-          <option value="gece">Gece Turu</option>
-          <option value="paket">Paket Tur (2-3 Günlük)</option>
-          <option value="aylik">Aylık Rehberlik</option>
-        </select>
-      </div>
-
-      <div class="section">
-        <h2>2. Tarih ve Detaylar</h2>
-        <label for="tarih">Tur Tarihi:</label>
-        <input type="text" id="tarih" placeholder="Tarih seçin" required>
-
-        <label for="kisi">Kişi Sayısı:</label>
-        <input type="number" id="kisi" min="1" value="1" required>
-
-        <p class="info">Not: Müsaitlik takvimi rehberle eş zamanlı kontrol edilir. Seçtiğiniz tarih için hemen teyit alınır.</p>
-      </div>
-
-      <div class="price-summary" id="fiyatOzeti">
-        <h3>Toplam Tutar: <span id="toplamFiyat">— TL</span></h3>
-        <small>(%13 platform ücreti dahil • KDV hariç • Rehber faturası + Platform faturası)</small>
-      </div>
-
-      <button type="button" class="btn" onclick="rezervasyonYap()">Rezervasyon Talebi Gönder</button>
-
-    </form>
-
-    <div class="footer-note">
-      Fiyatlar Bakanlık 2026 taban ücretlerine göre hesaplanır.<br>
-      Rehber faturayı keser, %13 hizmet bedeli platform tarafından faturalandırılır.
+    <!-- Modal - Ek dosya önizleme -->
+    <div id="preview-modal" 
+         onclick="if(event.target.id==='preview-modal') closePreview()"
+         class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="bg-white rounded-3xl max-w-sm w-full mx-4 overflow-hidden">
+            <div id="modal-content" class="p-4"></div>
+            <div class="border-t p-4 flex justify-end">
+                <button onclick="closePreview()" 
+                        class="px-6 py-2 text-slate-500 hover:bg-slate-100 rounded-2xl transition">
+                    Kapat
+                </button>
+            </div>
+        </div>
     </div>
 
-  </div>
+    <script>
+        // Tailwind script
+        function initTailwind() {
+            // Zaten CDN ile yüklü
+        }
 
-  <script>
-    // Flatpickr takvim başlat
-    flatpickr("#tarih", {
-      dateFormat: "d.m.Y",
-      minDate: "today",
-      locale: { firstDayOfWeek: 1 } // Pazartesi başlasın
-    });
+        // Mesaj ekleme fonksiyonu
+        function addMessage(text, isSent = true, attachment = null) {
+            const container = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex ${isSent ? 'justify-end' : 'justify-start'} message-item`;
+            
+            let html = `
+                <div class="max-w-[78%]">
+                    <div class="${isSent ? 'message-sent' : 'message-received'} px-4 py-3 rounded-3xl ${isSent ? 'rounded-tr-none' : 'rounded-tl-none'} text-[15px]">
+            `;
+            
+            if (text) {
+                html += `<div>${text}</div>`;
+            }
+            
+            if (attachment) {
+                if (attachment.type === 'image') {
+                    html += `
+                        <div onclick="previewAttachment(this)" class="mt-3 rounded-3xl overflow-hidden shadow-sm border border-slate-200 cursor-pointer">
+                            <img src="${attachment.url}" alt="Ek Görsel" class="w-full h-auto object-cover">
+                        </div>
+                    `;
+                } else if (attachment.type === 'file') {
+                    html += `
+                        <div onclick="previewAttachment(this)" 
+                             class="mt-3 bg-white/20 backdrop-blur-sm rounded-2xl p-3 flex items-center gap-3 cursor-pointer hover:bg-white/30 transition">
+                            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-2xl shadow">📎</div>
+                            <div class="flex-1 text-xs">
+                                <div class="font-medium ${isSent ? 'text-white' : 'text-slate-700'}">${attachment.name}</div>
+                                <div class="${isSent ? 'text-white/70' : 'text-slate-400'}">${attachment.size}</div>
+                            </div>
+                            <i class="fas fa-download ${isSent ? 'text-white' : 'text-orange-500'} text-xl"></i>
+                        </div>
+                    `;
+                }
+            }
+            
+            html += `</div>`;
+            
+            // Zaman damgası
+            const time = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+            html += `
+                <div class="flex ${isSent ? 'justify-end' : 'justify-start'} items-center gap-2 mt-1 text-[10px] ${isSent ? 'text-orange-200' : 'text-slate-400'} px-1">
+                    <span>${time}</span>
+                </div>
+            </div>`;
+            
+            messageDiv.innerHTML = html;
+            container.appendChild(messageDiv);
+            
+            // Otomatik scroll
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
 
-    // Bakanlık taban ücretleri (2026 resmi rakamlar)
-    const tabanUcretler = {
-      gunluk: { yabanci: 5566, turkce: 3897 },
-      transfer: { yabanci: 2790, turkce: 1953 },
-      gece: { yabanci: 2790, turkce: 1953 },
-      paket: { yabanci: 6708, turkce: 4696 },
-      aylik: { yabanci: 55620, turkce: 38934 }
-    };
+        // Mesaj gönderme
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            addMessage(text, true);
+            input.value = '';
+            
+            // Simüle edilmiş cevap (2 saniye sonra)
+            setTimeout(() => {
+                const replies = [
+                    "Anlaşıldı, hemen işleme alıyorum.",
+                    "Teşekkürler! Başka bir sorunuz var mı?",
+                    "Rezervasyon sistemine kaydedildi."
+                ];
+                const randomReply = replies[Math.floor(Math.random() * replies.length)];
+                addMessage(randomReply, false);
+            }, 1200);
+        }
 
-    function updatePrices() {
-      const dil = document.getElementById('dil').value;
-      const hizmet = document.getElementById('hizmet').value;
-      const kisi = parseInt(document.getElementById('kisi').value) || 1;
+        // Dosya ekleme (simüle)
+        function attachFile() {
+            const options = [
+                { type: 'file', name: 'teklif-detay-2026.pdf', size: '1.8 MB' },
+                { type: 'image', url: 'https://picsum.photos/id/1016/800/600', name: 'otel-gorseli.jpg' }
+            ];
+            
+            const random = options[Math.floor(Math.random() * options.length)];
+            
+            if (random.type === 'image') {
+                addMessage(null, true, { type: 'image', url: random.url });
+            } else {
+                addMessage('Dosya eklendi:', true, { 
+                    type: 'file', 
+                    name: random.name, 
+                    size: random.size 
+                });
+            }
+        }
 
-      const taban = tabanUcretler[hizmet][dil];
-      const platformKomisyon = taban * 0.13;
-      const toplam = Math.round((taban + platformKomisyon) * kisi);
+        // Ek önizleme modalı
+        function previewAttachment(el) {
+            const modal = document.getElementById('preview-modal');
+            const content = document.getElementById('modal-content');
+            
+            // Eğer resim ise
+            if (el.querySelector('img')) {
+                const imgSrc = el.querySelector('img').src;
+                content.innerHTML = `
+                    <div class="text-center">
+                        <img src="${imgSrc}" class="rounded-2xl mx-auto max-h-[420px] shadow-xl">
+                        <p class="mt-4 text-sm text-slate-500">Örnek otel odası görseli • Ekli dosya</p>
+                    </div>
+                `;
+            } 
+            // Dosya ise
+            else {
+                content.innerHTML = `
+                    <div class="flex flex-col items-center py-8">
+                        <div class="w-20 h-20 bg-orange-100 text-orange-500 rounded-3xl flex items-center justify-center text-6xl mb-6">📄</div>
+                        <h3 class="font-semibold text-xl">antalya-5yildiz-teklif.pdf</h3>
+                        <p class="text-slate-400 mt-1">2.4 MB • PDF Dosyası</p>
+                        <div class="mt-10 bg-orange-50 text-orange-600 px-8 py-3 rounded-2xl text-sm font-medium flex items-center gap-2">
+                            <i class="fas fa-download"></i>
+                            İNDİR (Simüle)
+                        </div>
+                    </div>
+                `;
+            }
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
 
-      document.getElementById('toplamFiyat').textContent = toplam.toLocaleString('tr-TR') + ' TL';
-    }
+        function closePreview() {
+            const modal = document.getElementById('preview-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
 
-    // Sayfa yüklendiğinde ilk fiyatı göster
-    window.onload = updatePrices;
+        function goBack() {
+            alert('📜 Geri dönülüyor... (Gerçek uygulamada Django yönlendirmesi olacak)');
+        }
 
-    // Rezervasyon butonu (demo alert)
-    function rezervasyonYap() {
-      const hizmet = document.getElementById('hizmet').options[document.getElementById('hizmet').selectedIndex].text;
-      const tarih = document.getElementById('tarih').value;
-      const kisi = document.getElementById('kisi').value;
-      const fiyat = document.getElementById('toplamFiyat').textContent;
+        // Klavyeden Enter ile gönderme
+        document.getElementById('message-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
 
-      if (!tarih) {
-        alert('Lütfen tarih seçin!');
-        return;
-      }
-
-      alert(`Rezervasyon Talebiniz Alındı!\n\nHizmet: ${hizmet}\nTarih: ${tarih}\nKişi: ${kisi}\nToplam: ${fiyat}\n\nEn kısa sürede Korkut Aydın'dan teyit gelecek. Teşekkürler! 📅`);
-    }
-
-    // Kişi sayısı değişince fiyat güncelle
-    document.getElementById('kisi').addEventListener('input', updatePrices);
-  </script>
-
+        // Sayfa yüklendiğinde örnek mesaj ekle ve scroll
+        window.onload = function() {
+            // Tailwind init
+            initTailwind();
+            
+            // İlk yüklemede otomatik scroll
+            const chat = document.getElementById('chat-container');
+            chat.scrollTop = chat.scrollHeight;
+            
+            console.log('%c✅ Dijital Telgraf Chat Arayüzü hazır! Django Channels WebSocket ile bağlayabilirsiniz.', 'color:#f97316; font-family:monospace');
+        };
+    </script>
 </body>
 </html>
