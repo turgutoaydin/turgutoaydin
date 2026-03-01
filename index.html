@@ -2,341 +2,566 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dijital Telgraf • Resmi Yazışma</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>eFaks · eLetter · mobil dikey</title>
+    <!-- Font Awesome 6 (ücretsiz) simgeler için -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap');
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+        }
+
+        /* TURUNCU - GRI renk paleti */
         :root {
-            --orange: #f97316;
-        }
-        
-        .tail-container {
-            font-family: 'Inter', system_ui, sans-serif;
-        }
-        
-        .header-font {
-            font-family: 'Playfair Display', serif;
-        }
-
-        .email-bg {
-            background: #f8f9fa;
-            background-image: 
-                linear-gradient(rgba(249, 115, 22, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(249, 115, 22, 0.04) 1px, transparent 1px);
-            background-size: 30px 30px;
+            --orange-primary: #f15a24;   /* ana turuncu */
+            --orange-light: #fef2e9;      /* çok açık turuncu (arka plan vurgu) */
+            --orange-soft: #ff8a5c;        /* yumuşak turuncu */
+            --gray-deep: #212121;           /* koyu gri - yazılar */
+            --gray-mid: #5f5f5f;             /* orta gri */
+            --gray-light: #e0e0e0;           /* çizgi / ayraç */
+            --gray-bg: #f5f5f5;               /* ana arka plan */
+            --white: #ffffff;
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        .message-card {
-            border-left: 4px solid #f97316;
-            background: white;
-            box-shadow: 0 4px 15px -3px rgb(249 115 22 / 0.1);
+        body {
+            background-color: var(--gray-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 12px 0 20px 0;
         }
 
-        .mobile-frame {
-            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.3);
-            border: 14px solid #1f2937;
-            border-radius: 52px;
-            max-height: 100vh;
+        /* mobil dikey ana kart (max genişlik telefon) */
+        .mobile-container {
+            width: 100%;
+            max-width: 400px;   /* tipik dikey mobil genişlik */
+            background-color: var(--white);
+            border-radius: 28px 28px 20px 20px;
+            box-shadow: var(--shadow-sm);
             overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.02);
+            margin: 8px 0;
         }
 
-        .official-stamp {
-            position: absolute;
-            top: 85px;
-            right: 25px;
-            transform: rotate(-8deg);
-            border: 4px double #f97316;
-            color: #f97316;
-            font-size: 11px;
-            padding: 6px 18px;
-            font-weight: 900;
-            letter-spacing: 3px;
-            opacity: 0.12;
-            pointer-events: none;
-            z-index: 10;
+        /* ----- header (turuncu + gri vurgu) ----- */
+        .app-header {
+            background-color: var(--orange-primary);
+            padding: 18px 18px 14px 18px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
+
+        .app-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .app-title i {
+            font-size: 1.6rem;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+        }
+
+        .app-badge {
+            background-color: var(--gray-deep);
+            color: var(--orange-light);
+            padding: 5px 10px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .user-quick-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgba(0,0,0,0.08);
+            padding: 10px 12px;
+            border-radius: 30px;
+            margin-top: 4px;
+        }
+
+        /* username = email temsili = telefon temsili (tek alan) */
+        .user-id-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--white);
+            color: var(--gray-deep);
+            padding: 6px 14px 6px 10px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .user-id-display i {
+            color: var(--orange-primary);
+            font-size: 0.9rem;
+        }
+
+        .company-badge {
+            background-color: var(--gray-deep);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .company-badge i {
+            color: var(--orange-primary);
+        }
+
+        /* ----- içerik alanı (metin editörü + ekler) ----- */
+        .content-card {
+            padding: 18px 16px 16px 16px;
+            border-bottom: 1px solid var(--gray-light);
+            background-color: var(--white);
+        }
+
+        /* konu satırı */
+        .subject-line {
+            background-color: var(--orange-light);
+            padding: 12px 16px;
+            border-radius: 50px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid rgba(241, 90, 36, 0.15);
+        }
+
+        .subject-line i {
+            color: var(--orange-primary);
+            font-size: 1.1rem;
+        }
+
+        .subject-line input {
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            font-weight: 500;
+            width: 100%;
+            color: var(--gray-deep);
+            placeholder
+        }
+
+        .subject-line input::placeholder {
+            color: var(--gray-mid);
+            opacity: 0.7;
+            font-weight: 400;
+        }
+
+        /* metin editörü (zengin metin görünümlü) */
+        .editor-area {
+            background-color: var(--white);
+            border: 1px solid var(--gray-light);
+            border-radius: 24px;
+            padding: 14px 16px;
+            min-height: 170px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+            margin-bottom: 18px;
+        }
+
+        .editor-toolbar-mini {
+            display: flex;
+            gap: 18px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--gray-light);
+            color: var(--gray-mid);
+        }
+
+        .editor-toolbar-mini i {
+            font-size: 1.2rem;
+            color: var(--gray-mid);
+        }
+
+        .editor-toolbar-mini i:hover { color: var(--orange-primary); }
+
+        .editor-content {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--gray-deep);
+            outline: none;
+            min-height: 100px;
+        }
+
+        .editor-content p {
+            margin-bottom: 6px;
+        }
+
+        .editor-content [contenteditable="true"] {
+            outline: none;
+        }
+
+        .placeholder-text {
+            color: #a0a0a0;
+            user-select: none;
+        }
+
+        /* dosya / belge / resim ekleme alanı (temsili) */
+        .attach-section {
+            background-color: var(--gray-bg);
+            border-radius: 20px;
+            padding: 16px 14px;
+            margin-top: 10px;
+            border: 1px solid var(--gray-light);
+        }
+
+        .attach-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--orange-primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+
+        .attach-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .attach-item {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 10px 14px;
+            border-radius: 40px;
+            gap: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            border: 1px solid #f0f0f0;
+        }
+
+        .attach-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 30px;
+            background-color: var(--orange-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--orange-primary);
+        }
+
+        .attach-details {
+            flex: 1;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--gray-deep);
+        }
+
+        .attach-details span {
+            font-size: 0.7rem;
+            color: var(--gray-mid);
+            display: block;
+        }
+
+        .attach-item i.fa-chevron-right {
+            color: var(--orange-primary);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .add-attach-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background-color: transparent;
+            border: 1px dashed var(--orange-primary);
+            border-radius: 50px;
+            padding: 12px;
+            margin-top: 12px;
+            color: var(--orange-primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.1s ease;
+        }
+
+        .add-attach-btn i {
+            font-size: 1.1rem;
+        }
+
+        /* firma adına yazılan e-posta / e-faks (kayıtlı şirket) */
+        .company-footer {
+            background-color: var(--gray-deep);
+            color: white;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 30px 30px 0 0;
+            margin-top: 6px;
+        }
+
+        .company-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .company-name {
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .company-name i {
+            color: var(--orange-primary);
+        }
+
+        .company-email {
+            font-size: 0.7rem;
+            color: #b0b0b0;
+            letter-spacing: 0.2px;
+        }
+
+        .send-button {
+            background-color: var(--orange-primary);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 5px 12px rgba(241, 90, 36, 0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .send-button i {
+            font-size: 1rem;
+        }
+
+        /* alt menü benzeri sekme (faks/dijital mail) */
+        .tab-navigation {
+            display: flex;
+            background-color: white;
+            padding: 6px 10px;
+            border-radius: 40px;
+            margin: 12px 16px 6px 16px;
+            border: 1px solid var(--gray-light);
+        }
+
+        .tab-item {
+            flex: 1;
+            text-align: center;
+            padding: 10px 0;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-mid);
+            transition: all 0.1s;
+        }
+
+        .tab-item.active {
+            background-color: var(--orange-primary);
+            color: white;
+        }
+
+        .tab-item i {
+            margin-right: 5px;
+        }
+
+        /* dummy mesajlar / username=email=telefon temsili */
+        .hint-text {
+            padding: 8px 16px 2px 16px;
+            font-size: 0.7rem;
+            color: var(--gray-mid);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hint-text i {
+            color: var(--orange-primary);
+        }
+
+        /* responsive touch */
+        button, .attach-item, .add-attach-btn, .tab-item {
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .add-attach-btn:active {
+            background-color: var(--orange-light);
+        }
+
+        .send-button:active {
+            background-color: #d94410;
+            transform: scale(0.97);
+        }
+
     </style>
 </head>
-<body class="tail-container bg-slate-950 flex items-center justify-center min-h-screen p-4">
-    
-    <!-- Mobil Çerçeve -->
-    <div class="mobile-frame w-full max-w-[380px] bg-white h-[760px] flex flex-col overflow-hidden relative">
-        
-        <!-- ÜST BAR - Resmi Telgraf -->
-        <div class="bg-gradient-to-r from-orange-700 to-orange-600 text-white px-5 py-4 flex items-center gap-3">
-            <button onclick="goBack()" class="w-9 h-9 flex items-center justify-center rounded-2xl hover:bg-white/20">
-                <i class="fas fa-arrow-left text-2xl"></i>
-            </button>
-            <div class="flex-1 text-center">
-                <span class="header-font text-2xl tracking-tighter font-bold">DİJİTAL TELGRAF</span>
+<body>
+    <!-- mobil dikey container - faksın dijital versiyonu / eLetter -->
+    <div class="mobile-container">
+
+        <!-- header: username = email = telefon (tek temsil) -->
+        <div class="app-header">
+            <div class="app-header-top">
+                <div class="app-title">
+                    <i class="fas fa-fax"></i> 
+                    <span>eFaks · eLetter</span>
+                </div>
+                <div class="app-badge">
+                    <i class="fas fa-shield-alt"></i> güvenli
+                </div>
             </div>
-            <div class="text-xs text-right">
-                <div class="font-medium">TG-2026-0347</div>
-                <div class="text-[10px] opacity-80">Resmi Evrak</div>
+
+            <!-- user-info: username/email/telefon aynı kişi -->
+            <div class="user-quick-info">
+                <div class="user-id-display">
+                    <i class="fas fa-user-circle"></i>
+                    <span>ahmet.demir</span>
+                    <i class="fas fa-circle" style="font-size: 0.3rem; color:var(--orange-primary);"></i>
+                    <span style="font-weight:400;">@efaks.net</span>
+                </div>
+                <div class="company-badge">
+                    <i class="fas fa-building"></i>
+                    <span>DEMİR A.Ş.</span>
+                </div>
+            </div>
+            <!-- küçük hatırlatma: bu email/telefon aynı username -->
+            <div style="display: flex; gap:8px; margin-top: 4px; padding-left: 6px;">
+                <span style="background:rgba(255,255,255,0.1); padding:3px 10px; border-radius: 40px; font-size:0.6rem;"><i class="fas fa-envelope"></i> a.demir@efaks.net</span>
+                <span style="background:rgba(255,255,255,0.1); padding:3px 10px; border-radius: 40px; font-size:0.6rem;"><i class="fas fa-phone-alt"></i> +90 532 111 22 33</span>
             </div>
         </div>
 
-        <!-- E-POSTA ÜST BİLGİLERİ (Kurumsal Mail Tarzı) -->
-        <div class="bg-white border-b border-slate-200 px-6 py-5 text-sm">
-            <div class="flex justify-between items-start">
-                <div>
-                    <div class="flex items-center gap-2 text-slate-500 text-xs mb-1">
-                        <i class="fas fa-user"></i>
-                        <span class="font-medium">GÖNDEREN</span>
+        <!-- sekme navigasyonu: fax / dijital mail görünümü -->
+        <div class="tab-navigation">
+            <div class="tab-item active"><i class="fas fa-edit"></i> Yeni eFaks</div>
+            <div class="tab-item"><i class="fas fa-folder-open"></i> Gelenler</div>
+            <div class="tab-item"><i class="fas fa-paper-plane"></i> Giden</div>
+        </div>
+
+        <!-- ana içerik - metin editörü / konu / dosya ekleri -->
+        <div class="content-card">
+            <!-- konu satırı -->
+            <div class="subject-line">
+                <i class="fas fa-heading"></i>
+                <input type="text" placeholder="Konu (örn: Sözleşme revizyonu)" value="Teklif - 2026/03">
+            </div>
+
+            <!-- metin editörü (zengin içerik) -->
+            <div class="editor-area">
+                <div class="editor-toolbar-mini">
+                    <i class="fas fa-bold"></i>
+                    <i class="fas fa-italic"></i>
+                    <i class="fas fa-underline"></i>
+                    <i class="fas fa-list-ul"></i>
+                    <i class="fas fa-list-ol"></i>
+                    <i class="fas fa-link"></i>
+                </div>
+                <div class="editor-content" contenteditable="true">
+                    <p><b>Sayın Yetkili,</b></p>
+                    <p>Ekteki dosyalarda şirketimize ait güncel teklif ve teknik resimler yer almaktadır. Dijital faks ortamında iletilmiştir.  </p>
+                    <p>Bilgilerinize sunarız. <br> <span style="color: var(--orange-primary);">#eLetter #dijitalfaks</span></p>
+                </div>
+            </div>
+
+            <!-- dosya / belge / resim eklenebilir alan (temsili) -->
+            <div class="attach-section">
+                <div class="attach-header">
+                    <i class="fas fa-paperclip"></i> Ekler (belge/resim/dosya)
+                </div>
+                <div class="attach-list">
+                    <!-- eklenmiş dosya 1 -->
+                    <div class="attach-item">
+                        <div class="attach-icon"><i class="fas fa-file-pdf"></i></div>
+                        <div class="attach-details">
+                            teklif_2026-03.pdf <span>PDF · 2.4 MB</span>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
                     </div>
-                    <div class="font-semibold">@username1</div>
-                </div>
-                
-                <div class="text-right">
-                    <div class="flex items-center gap-2 text-slate-500 text-xs mb-1 justify-end">
-                        <span class="font-medium">ALICI</span>
-                        <i class="fas fa-user"></i>
+                    <!-- eklenmiş resim -->
+                    <div class="attach-item">
+                        <div class="attach-icon"><i class="fas fa-image"></i></div>
+                        <div class="attach-details">
+                            teknik_resim_proje.jpg <span>JPG · 4.1 MB</span>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
                     </div>
-                    <div class="font-semibold">@username2</div>
-                </div>
-            </div>
-
-            <div class="my-4 border-t border-dashed border-slate-300"></div>
-
-            <div>
-                <span class="text-xs font-medium text-slate-500">KONU:</span>
-                <span class="font-medium ml-2 text-slate-800">Antalya 5 Yıldızlı Otel Paketi Teklifi</span>
-            </div>
-
-            <div class="flex justify-between mt-3 text-[11px] text-slate-400">
-                <div>01 Mart 2026 • 14:22</div>
-                <div class="flex items-center gap-2">
-                    <span class="bg-emerald-100 text-emerald-600 px-3 py-1 rounded-3xl text-[10px] font-medium">OKUNDU</span>
-                    <span class="px-2 py-0.5 bg-orange-100 text-orange-600 rounded text-[10px]">RESMİ</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- ANA İÇERİK ALANI - E-posta Gövdesi + Thread -->
-        <div id="thread-container" 
-             class="email-bg flex-1 overflow-y-auto p-6 space-y-7 text-slate-700 text-[15px] leading-relaxed">
-            
-            <!-- İlk Telgraf (Orijinal Mesaj) -->
-            <div class="message-card p-6 rounded-3xl">
-                <div class="flex items-center justify-between text-xs text-slate-400 mb-4">
-                    <span class="font-medium">@username1</span>
-                    <span>01.03.2026 - 14:22</span>
-                </div>
-                <p>Merhaba @username2,</p>
-                <p class="mt-3">Antalya'daki 5 yıldızlı otel paketi için detaylı fiyat teklifinizi rica ediyorum. 8 kişilik grup için 7 gece konaklama + yarım pansiyon dahil olacak şekilde hazırlayabilir misiniz?</p>
-                <p class="mt-3">Saygılarımla,<br><strong>@username1</strong></p>
-            </div>
-
-            <!-- Cevap 1 -->
-            <div class="message-card p-6 rounded-3xl">
-                <div class="flex items-center justify-between text-xs text-slate-400 mb-4">
-                    <span class="font-medium">@username2</span>
-                    <span>01.03.2026 - 14:23</span>
-                </div>
-                <p>Merhaba @username1,</p>
-                <p class="mt-3">Tabii ki. Ekli dosyada detaylı teklif ve fiyat listesini bulabilirsiniz.</p>
-                
-                <!-- Ek Dosya -->
-                <div onclick="previewAttachment(this)" 
-                     class="mt-6 bg-slate-50 border border-slate-200 rounded-2xl p-4 flex items-center gap-4 cursor-pointer hover:border-orange-300 transition">
-                    <i class="fas fa-file-pdf text-3xl text-red-500"></i>
-                    <div class="flex-1">
-                        <div class="font-medium text-slate-700">antalya-5yildiz-teklif-2026.pdf</div>
-                        <div class="text-xs text-slate-400">2.4 MB • PDF</div>
+                    <!-- word belgesi -->
+                    <div class="attach-item">
+                        <div class="attach-icon"><i class="fas fa-file-word"></i></div>
+                        <div class="attach-details">
+                            sozlesme_taslagi.docx <span>DOCX · 1.2 MB</span>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
                     </div>
-                    <i class="fas fa-download text-orange-500"></i>
                 </div>
-            </div>
-
-            <!-- Cevap 2 + Görsel -->
-            <div class="message-card p-6 rounded-3xl">
-                <div class="flex items-center justify-between text-xs text-slate-400 mb-4">
-                    <span class="font-medium">@username1</span>
-                    <span>01.03.2026 - 14:25</span>
+                <!-- yeni dosya ekle butonu (temsili) -->
+                <div class="add-attach-btn">
+                    <i class="fas fa-plus-circle"></i> Dosya, belge veya resim ekle
                 </div>
-                <p>Teşekkür ederim! Odaların görsellerini de gönderebilir misiniz?</p>
-                
-                <!-- Ek Görsel -->
-                <div onclick="previewAttachment(this)" 
-                     class="mt-6 rounded-3xl overflow-hidden border border-slate-200 cursor-pointer shadow">
-                    <img src="https://picsum.photos/id/1015/800/520" 
-                         alt="Otel Odası" class="w-full">
-                </div>
-            </div>
-
-            <!-- Dinamik thread mesajları buraya gelecek -->
-            <div id="thread-messages"></div>
-
-        </div>
-
-        <!-- YANIT YAZMA ALANI - Kurumsal Mail Tarzı -->
-        <div class="bg-white border-t border-slate-200 p-4">
-            <textarea id="reply-text" 
-                      rows="3"
-                      placeholder="Cevabınızı buraya yazın... (Resmi dil kullanınız)"
-                      class="w-full resize-none border border-slate-200 focus:border-orange-400 rounded-3xl px-5 py-4 text-sm outline-none"></textarea>
-            
-            <div class="flex items-center justify-between mt-3">
-                <!-- Ek ekle -->
-                <button onclick="attachFile()" 
-                        class="flex items-center gap-2 text-slate-400 hover:text-orange-500 transition text-sm font-medium">
-                    <i class="fas fa-paperclip"></i>
-                    <span>Dosya / Görsel Ekle</span>
-                </button>
-                
-                <!-- Gönder butonu -->
-                <button onclick="sendReply()" 
-                        class="bg-orange-500 hover:bg-orange-600 transition text-white px-8 py-3 rounded-3xl flex items-center gap-2 font-medium shadow">
-                    <i class="fas fa-paper-plane"></i>
-                    TELGRAF GÖNDER
-                </button>
             </div>
         </div>
 
-        <!-- Alt resmi uyarı -->
-        <div class="text-[10px] text-center py-3 bg-slate-50 text-slate-400 border-t">
-            Bu dijital telgraf resmi evrak niteliğindedir • Turizm Sitesi © 2026 • Tüm hakları saklıdır
+        <!-- Kayıtlı şirket adına yazma alanı / eposta formatı (firma gönderimi) -->
+        <div class="company-footer">
+            <div class="company-info">
+                <div class="company-name">
+                    <i class="fas fa-registered"></i> DEMİR A.Ş. (kayıtlı)
+                </div>
+                <div class="company-email">
+                    <i class="far fa-envelope"></i> fatura@demir.com · vergi: 1234567890
+                </div>
+                <div style="font-size: 0.6rem; color: #999; margin-top: 4px;">
+                    <i class="fas fa-fax"></i> eFaks: 0212 444 55 66 · eLetter
+                </div>
+            </div>
+            <!-- gönder butonu (turuncu) -->
+            <div class="send-button">
+                <i class="fas fa-paper-plane"></i> GÖNDER
+            </div>
         </div>
 
-        <!-- Resmi Damga -->
-        <div class="official-stamp header-font">TELEGRAM</div>
-    </div>
+        <!-- alt bilgi: username = telefon = email (tekrar vurgu) -->
+        <div class="hint-text">
+            <i class="fas fa-info-circle"></i> 
+            <span>Şu an <strong>ahmet.demir (532 111 22 33 / a.demir@efaks.net)</strong> olarak işlem yapıyorsunuz. Firma: Demir A.Ş.</span>
+        </div>
 
-    <!-- Önizleme Modal -->
-    <div id="preview-modal" onclick="if(event.target.id==='preview-modal') closePreview()" 
-         class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-        <div onclick="event.stopImmediatePropagation()" 
-             class="bg-white max-w-sm w-full mx-4 rounded-3xl overflow-hidden">
-            <div id="modal-content" class="p-6"></div>
-            <div class="p-4 border-t flex justify-end">
-                <button onclick="closePreview()" class="px-8 py-3 text-slate-500 hover:bg-slate-100 rounded-3xl">Kapat</button>
-            </div>
+        <!-- son mesaj: turuncu gri detay -->
+        <div style="padding: 10px 18px 18px 18px; font-size: 0.7rem; color: var(--gray-mid); display: flex; gap: 12px; border-top: 1px solid var(--gray-light); margin-top: 6px;">
+            <span><i class="fas fa-check-circle" style="color: var(--orange-primary);"></i> eFaks dijital</span>
+            <span><i class="fas fa-clock"></i> 1 Mart 2026</span>
+            <span><i class="fas fa-shield-alt"></i> uçtan uca</span>
         </div>
     </div>
-
-    <script>
-        function addReply(text, isFromMe = true, attachment = null) {
-            const container = document.getElementById('thread-messages');
-            const div = document.createElement('div');
-            div.className = `message-card p-6 rounded-3xl ${isFromMe ? 'bg-orange-50 border-orange-200' : ''}`;
-            
-            const time = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-            const sender = isFromMe ? '@username2' : '@username1';
-            
-            let html = `
-                <div class="flex items-center justify-between text-xs text-slate-400 mb-4">
-                    <span class="font-medium">${sender}</span>
-                    <span>01.03.2026 - ${time}</span>
-                </div>
-                <div class="prose text-slate-700">${text}</div>
-            `;
-            
-            if (attachment) {
-                if (attachment.type === 'pdf') {
-                    html += `
-                        <div onclick="previewAttachment(this)" class="mt-6 bg-slate-50 border border-slate-200 rounded-2xl p-4 flex items-center gap-4 cursor-pointer">
-                            <i class="fas fa-file-pdf text-3xl text-red-500"></i>
-                            <div class="flex-1">
-                                <div class="font-medium">${attachment.name}</div>
-                                <div class="text-xs text-slate-400">${attachment.size}</div>
-                            </div>
-                            <i class="fas fa-download text-orange-500"></i>
-                        </div>
-                    `;
-                } else if (attachment.type === 'image') {
-                    html += `
-                        <div onclick="previewAttachment(this)" class="mt-6 rounded-3xl overflow-hidden border border-slate-200 cursor-pointer shadow">
-                            <img src="${attachment.url}" class="w-full">
-                        </div>
-                    `;
-                }
-            }
-            
-            div.innerHTML = html;
-            container.appendChild(div);
-            
-            // Scroll aşağı
-            const scrollArea = document.getElementById('thread-container');
-            scrollArea.scrollTop = scrollArea.scrollHeight;
-        }
-
-        function sendReply() {
-            const textarea = document.getElementById('reply-text');
-            const text = textarea.value.trim();
-            if (!text) return;
-            
-            addReply(text, true);
-            textarea.value = '';
-            
-            // Simüle cevap
-            setTimeout(() => {
-                const replies = [
-                    "Anlaşıldı, işlem başlatıldı.",
-                    "Teşekkür ederim. Başka bir isteğiniz var mı?",
-                    "Rezervasyon sistemine kaydedildi."
-                ];
-                addReply(replies[Math.floor(Math.random() * replies.length)], false);
-            }, 1300);
-        }
-
-        function attachFile() {
-            const types = [
-                { type: 'pdf', name: 'teklif-detay-2026.pdf', size: '2.4 MB' },
-                { type: 'image', url: 'https://picsum.photos/id/1016/800/520' }
-            ];
-            const random = types[Math.floor(Math.random() * types.length)];
-            addReply("Ek dosya eklendi:", true, random);
-        }
-
-        function previewAttachment(el) {
-            const modal = document.getElementById('preview-modal');
-            const content = document.getElementById('modal-content');
-            
-            if (el.querySelector('img')) {
-                const src = el.querySelector('img').src;
-                content.innerHTML = `
-                    <img src="${src}" class="rounded-3xl w-full">
-                    <p class="text-center text-xs text-slate-400 mt-4">Ekli görsel • Dijital Telgraf</p>
-                `;
-            } else {
-                content.innerHTML = `
-                    <div class="text-center py-8">
-                        <i class="fas fa-file-pdf text-8xl text-red-400"></i>
-                        <h3 class="mt-6 font-semibold text-xl">antalya-5yildiz-teklif-2026.pdf</h3>
-                        <p class="text-slate-400 mt-1">2.4 MB</p>
-                        <div onclick="alert('İndirme simüle edildi ✓')" 
-                             class="mt-8 mx-auto bg-orange-100 text-orange-600 w-fit px-10 py-4 rounded-3xl font-medium cursor-pointer flex items-center gap-2">
-                            <i class="fas fa-download"></i> İNDİR
-                        </div>
-                    </div>
-                `;
-            }
-            
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function closePreview() {
-            const modal = document.getElementById('preview-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function goBack() {
-            alert('📜 Telgraf listesine dönülüyor...');
-        }
-
-        // Sayfa yüklendiğinde
-        window.onload = () => {
-            console.log('%c✅ Kurumsal Dijital Telgraf arayüzü yüklendi! Django Channels ile gerçek zamanlı ekleyebilirsiniz.', 'color:#f97316; font-size:13px');
-            
-            // İlk scroll
-            const container = document.getElementById('thread-container');
-            container.scrollTop = container.scrollHeight;
-        };
-    </script>
+    <!-- tasarım mobil dikey mail / faks, turuncu gri tema. username=email=telefon. Dosya ekleme temsili mevcut -->
 </body>
 </html>
