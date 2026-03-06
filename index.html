@@ -1,567 +1,451 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>eFaks · eLetter · mobil dikey</title>
-    <!-- Font Awesome 6 (ücretsiz) simgeler için -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazing Turkiye - Ödeme Formu</title>
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
-        }
-
-        /* TURUNCU - GRI renk paleti */
-        :root {
-            --orange-primary: #f15a24;   /* ana turuncu */
-            --orange-light: #fef2e9;      /* çok açık turuncu (arka plan vurgu) */
-            --orange-soft: #ff8a5c;        /* yumuşak turuncu */
-            --gray-deep: #212121;           /* koyu gri - yazılar */
-            --gray-mid: #5f5f5f;             /* orta gri */
-            --gray-light: #e0e0e0;           /* çizgi / ayraç */
-            --gray-bg: #f5f5f5;               /* ana arka plan */
-            --white: #ffffff;
-            --shadow-sm: 0 4px 12px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.05);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
-            background-color: var(--gray-bg);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
+            background: linear-gradient(135deg, #2d2d2d 0%, #404040 100%);
             min-height: 100vh;
-            padding: 12px 0 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
         }
 
-        /* mobil dikey ana kart (max genişlik telefon) */
-        .mobile-container {
+        .container {
+            max-width: 1200px;
             width: 100%;
-            max-width: 400px;   /* tipik dikey mobil genişlik */
-            background-color: var(--white);
-            border-radius: 28px 28px 20px 20px;
-            box-shadow: var(--shadow-sm);
+            background-color: #f5f3f0;  /* gri-turuncu tonunda açık zemin */
+            border-radius: 40px 40px 30px 30px;
+            box-shadow: 0 30px 50px rgba(0,0,0,0.3);
             overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.02);
-            margin: 8px 0;
+            border: 1px solid #d6bc9c;
         }
 
-        /* ----- header (turuncu + gri vurgu) ----- */
-        .app-header {
-            background-color: var(--orange-primary);
-            padding: 18px 18px 14px 18px;
+        /* Header - Turuncu ağırlıklı */
+        .header {
+            background: linear-gradient(145deg, #e67e22 0%, #d35400 100%);
+            padding: 2rem 2.5rem;
             color: white;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            border-bottom: 5px solid #b64900;
         }
 
-        .app-header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .app-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1.5rem;
-            font-weight: 600;
-            letter-spacing: -0.3px;
-        }
-
-        .app-title i {
-            font-size: 1.6rem;
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
-        }
-
-        .app-badge {
-            background-color: var(--gray-deep);
-            color: var(--orange-light);
-            padding: 5px 10px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-        }
-
-        .user-quick-info {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: rgba(0,0,0,0.08);
-            padding: 10px 12px;
-            border-radius: 30px;
-            margin-top: 4px;
-        }
-
-        /* username = email temsili = telefon temsili (tek alan) */
-        .user-id-display {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background-color: var(--white);
-            color: var(--gray-deep);
-            padding: 6px 14px 6px 10px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .user-id-display i {
-            color: var(--orange-primary);
-            font-size: 0.9rem;
-        }
-
-        .company-badge {
-            background-color: var(--gray-deep);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 40px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .company-badge i {
-            color: var(--orange-primary);
-        }
-
-        /* ----- içerik alanı (metin editörü + ekler) ----- */
-        .content-card {
-            padding: 18px 16px 16px 16px;
-            border-bottom: 1px solid var(--gray-light);
-            background-color: var(--white);
-        }
-
-        /* konu satırı */
-        .subject-line {
-            background-color: var(--orange-light);
-            padding: 12px 16px;
-            border-radius: 50px;
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border: 1px solid rgba(241, 90, 36, 0.15);
-        }
-
-        .subject-line i {
-            color: var(--orange-primary);
-            font-size: 1.1rem;
-        }
-
-        .subject-line input {
-            background: transparent;
-            border: none;
-            outline: none;
-            font-size: 1rem;
-            font-weight: 500;
-            width: 100%;
-            color: var(--gray-deep);
-            placeholder
-        }
-
-        .subject-line input::placeholder {
-            color: var(--gray-mid);
-            opacity: 0.7;
-            font-weight: 400;
-        }
-
-        /* metin editörü (zengin metin görünümlü) */
-        .editor-area {
-            background-color: var(--white);
-            border: 1px solid var(--gray-light);
-            border-radius: 24px;
-            padding: 14px 16px;
-            min-height: 170px;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
-            margin-bottom: 18px;
-        }
-
-        .editor-toolbar-mini {
-            display: flex;
-            gap: 18px;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px dashed var(--gray-light);
-            color: var(--gray-mid);
-        }
-
-        .editor-toolbar-mini i {
-            font-size: 1.2rem;
-            color: var(--gray-mid);
-        }
-
-        .editor-toolbar-mini i:hover { color: var(--orange-primary); }
-
-        .editor-content {
-            font-size: 0.95rem;
-            line-height: 1.5;
-            color: var(--gray-deep);
-            outline: none;
-            min-height: 100px;
-        }
-
-        .editor-content p {
-            margin-bottom: 6px;
-        }
-
-        .editor-content [contenteditable="true"] {
-            outline: none;
-        }
-
-        .placeholder-text {
-            color: #a0a0a0;
-            user-select: none;
-        }
-
-        /* dosya / belge / resim ekleme alanı (temsili) */
-        .attach-section {
-            background-color: var(--gray-bg);
-            border-radius: 20px;
-            padding: 16px 14px;
-            margin-top: 10px;
-            border: 1px solid var(--gray-light);
-        }
-
-        .attach-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--orange-primary);
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 12px;
-        }
-
-        .attach-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .attach-item {
-            display: flex;
-            align-items: center;
-            background: white;
-            padding: 10px 14px;
-            border-radius: 40px;
-            gap: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            border: 1px solid #f0f0f0;
-        }
-
-        .attach-icon {
-            width: 34px;
-            height: 34px;
-            border-radius: 30px;
-            background-color: var(--orange-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--orange-primary);
-        }
-
-        .attach-details {
-            flex: 1;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--gray-deep);
-        }
-
-        .attach-details span {
-            font-size: 0.7rem;
-            color: var(--gray-mid);
-            display: block;
-        }
-
-        .attach-item i.fa-chevron-right {
-            color: var(--orange-primary);
-            font-size: 0.9rem;
-            opacity: 0.7;
-        }
-
-        .add-attach-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background-color: transparent;
-            border: 1px dashed var(--orange-primary);
-            border-radius: 50px;
-            padding: 12px;
-            margin-top: 12px;
-            color: var(--orange-primary);
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: 0.1s ease;
-        }
-
-        .add-attach-btn i {
-            font-size: 1.1rem;
-        }
-
-        /* firma adına yazılan e-posta / e-faks (kayıtlı şirket) */
-        .company-footer {
-            background-color: var(--gray-deep);
-            color: white;
-            padding: 16px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-radius: 30px 30px 0 0;
-            margin-top: 6px;
-        }
-
-        .company-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .company-name {
+        .header h1 {
+            font-size: 2.2rem;
             font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.2rem;
+        }
+
+        .header .tour-code {
+            font-size: 1.3rem;
+            background: rgba(0,0,0,0.2);
+            display: inline-block;
+            padding: 0.3rem 1.2rem;
+            border-radius: 50px;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .greeting {
             font-size: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            margin-top: 1rem;
+            opacity: 0.95;
+            font-style: italic;
         }
 
-        .company-name i {
-            color: var(--orange-primary);
+        /* İçerik Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.8rem;
+            padding: 2.5rem;
+            background-color: #f5f3f0;
         }
 
-        .company-email {
-            font-size: 0.7rem;
-            color: #b0b0b0;
-            letter-spacing: 0.2px;
+        @media (max-width: 850px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
-        .send-button {
-            background-color: var(--orange-primary);
-            border: none;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 40px;
+        /* Kartlar - Gri tonları */
+        .info-card {
+            background: #ffffffde;
+            border-radius: 28px;
+            padding: 1.8rem 2rem;
+            box-shadow: 0 8px 18px rgba(100, 70, 40, 0.12);
+            border: 1px solid #e0d6c8;
+            backdrop-filter: blur(2px);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
             font-weight: 600;
-            font-size: 1rem;
+            color: #a45200;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px dashed #d6bc9c;
+            padding-bottom: 0.5rem;
             display: flex;
             align-items: center;
-            gap: 8px;
-            box-shadow: 0 5px 12px rgba(241, 90, 36, 0.3);
-            border: 1px solid rgba(255,255,255,0.2);
+            gap: 0.5rem;
         }
 
-        .send-button i {
+        .card-title i {
+            color: #e67e22;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #ece2d5;
             font-size: 1rem;
         }
 
-        /* alt menü benzeri sekme (faks/dijital mail) */
-        .tab-navigation {
-            display: flex;
-            background-color: white;
-            padding: 6px 10px;
-            border-radius: 40px;
-            margin: 12px 16px 6px 16px;
-            border: 1px solid var(--gray-light);
+        .detail-row:last-child {
+            border-bottom: none;
         }
 
-        .tab-item {
-            flex: 1;
-            text-align: center;
-            padding: 10px 0;
+        .detail-label {
+            font-weight: 500;
+            color: #5f4e3a;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .highlight {
+            background: #fef0df;
+            padding: 0.2rem 0.8rem;
             border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--gray-mid);
-            transition: all 0.1s;
+            color: #b64900;
+            font-weight: 700;
         }
 
-        .tab-item.active {
-            background-color: var(--orange-primary);
+        /* ödeme kısmı */
+        .payment-breakdown {
+            background: #eae3d8;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .payment-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.8rem 0;
+            font-size: 1.1rem;
+        }
+
+        .payment-item.total {
+            border-top: 2px solid #bc9b6b;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            font-weight: 700;
+            color: #1e2b37;
+        }
+
+        .orange-badge {
+            background: #e67e22;
             color: white;
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
         }
 
-        .tab-item i {
-            margin-right: 5px;
+        /* tablo */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.2rem 0;
+            border-radius: 18px;
+            border: 1px solid #ddd2c2;
         }
 
-        /* dummy mesajlar / username=email=telefon temsili */
-        .hint-text {
-            padding: 8px 16px 2px 16px;
-            font-size: 0.7rem;
-            color: var(--gray-mid);
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            font-size: 0.85rem;
+        }
+
+        th {
+            background: #bc9b6b;  /* turuncu-kahve */
+            color: white;
+            padding: 10px 6px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        td {
+            padding: 8px 6px;
+            border-bottom: 1px solid #ddd2c2;
+            text-align: center;
+            color: #2f2f2f;
+        }
+
+        tr:nth-child(even) {
+            background-color: #faf7f2;
+        }
+
+        tr:hover {
+            background-color: #faeeda;
+        }
+
+        /* Form alanı */
+        .payment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #7b5a38;
+            font-size: 0.95rem;
+        }
+
+        .form-group input, .form-group select {
+            padding: 0.9rem 1.2rem;
+            border-radius: 50px;
+            border: 2px solid #ddd2c2;
+            background-color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: #e67e22;
+        }
+
+        .deposit-note {
+            background: #dde0e2;  /* gri */
+            padding: 1rem 1.5rem;
+            border-radius: 60px;
+            color: #1e2b37;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 0.7rem;
+            border: 1px solid #bc9b6b;
         }
 
-        .hint-text i {
-            color: var(--orange-primary);
+        .deposit-note i {
+            color: #d35400;
+            font-size: 1.3rem;
         }
 
-        /* responsive touch */
-        button, .attach-item, .add-attach-btn, .tab-item {
+        .btn-pay {
+            background: #e67e22;
+            border: none;
+            padding: 1rem;
+            border-radius: 60px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: white;
             cursor: pointer;
-            transition: 0.15s;
+            transition: all 0.2s;
+            border-bottom: 4px solid #b64900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
         }
 
-        .add-attach-btn:active {
-            background-color: var(--orange-light);
+        .btn-pay:hover {
+            background: #d35400;
+            transform: translateY(-2px);
+            border-bottom-width: 6px;
         }
 
-        .send-button:active {
-            background-color: #d94410;
-            transform: scale(0.97);
+        .secure-badge {
+            text-align: center;
+            color: #5f5f5f;
+            margin-top: 1rem;
+            font-size: 0.85rem;
         }
 
+        .footer-note {
+            background-color: #2d2d2d;
+            color: #e0d6c8;
+            text-align: center;
+            padding: 1.2rem;
+            font-size: 0.9rem;
+            border-top: 2px solid #bc9b6b;
+        }
     </style>
 </head>
 <body>
-    <!-- mobil dikey container - faksın dijital versiyonu / eLetter -->
-    <div class="mobile-container">
-
-        <!-- header: username = email = telefon (tek temsil) -->
-        <div class="app-header">
-            <div class="app-header-top">
-                <div class="app-title">
-                    <i class="fas fa-fax"></i> 
-                    <span>eFaks · eLetter</span>
-                </div>
-                <div class="app-badge">
-                    <i class="fas fa-shield-alt"></i> güvenli
-                </div>
-            </div>
-
-            <!-- user-info: username/email/telefon aynı kişi -->
-            <div class="user-quick-info">
-                <div class="user-id-display">
-                    <i class="fas fa-user-circle"></i>
-                    <span>ahmet.demir</span>
-                    <i class="fas fa-circle" style="font-size: 0.3rem; color:var(--orange-primary);"></i>
-                    <span style="font-weight:400;">@efaks.net</span>
-                </div>
-                <div class="company-badge">
-                    <i class="fas fa-building"></i>
-                    <span>DEMİR A.Ş.</span>
-                </div>
-            </div>
-            <!-- küçük hatırlatma: bu email/telefon aynı username -->
-            <div style="display: flex; gap:8px; margin-top: 4px; padding-left: 6px;">
-                <span style="background:rgba(255,255,255,0.1); padding:3px 10px; border-radius: 40px; font-size:0.6rem;"><i class="fas fa-envelope"></i> a.demir@efaks.net</span>
-                <span style="background:rgba(255,255,255,0.1); padding:3px 10px; border-radius: 40px; font-size:0.6rem;"><i class="fas fa-phone-alt"></i> +90 532 111 22 33</span>
+    <div class="container">
+        <!-- HEADER - TURUNCU -->
+        <div class="header">
+            <h1>Amazing Turkiye <i class="fas fa-map-marked-alt" style="margin-left: 10px;"></i></h1>
+            <div class="tour-code">ETG001424007</div>
+            <div class="greeting">
+                <i class="fas fa-envelope-open-text"></i> 
+                Dear Traveller,<br> 
+                Thank you for approving etourgood for your upcoming experience in Turkey.
             </div>
         </div>
 
-        <!-- sekme navigasyonu: fax / dijital mail görünümü -->
-        <div class="tab-navigation">
-            <div class="tab-item active"><i class="fas fa-edit"></i> Yeni eFaks</div>
-            <div class="tab-item"><i class="fas fa-folder-open"></i> Gelenler</div>
-            <div class="tab-item"><i class="fas fa-paper-plane"></i> Giden</div>
-        </div>
-
-        <!-- ana içerik - metin editörü / konu / dosya ekleri -->
-        <div class="content-card">
-            <!-- konu satırı -->
-            <div class="subject-line">
-                <i class="fas fa-heading"></i>
-                <input type="text" placeholder="Konu (örn: Sözleşme revizyonu)" value="Teklif - 2026/03">
-            </div>
-
-            <!-- metin editörü (zengin içerik) -->
-            <div class="editor-area">
-                <div class="editor-toolbar-mini">
-                    <i class="fas fa-bold"></i>
-                    <i class="fas fa-italic"></i>
-                    <i class="fas fa-underline"></i>
-                    <i class="fas fa-list-ul"></i>
-                    <i class="fas fa-list-ol"></i>
-                    <i class="fas fa-link"></i>
+        <!-- MAIN CONTENT (GRİ-TURUNCU TON) -->
+        <div class="content-grid">
+            <!-- SOL KISIM: PAKET DETAYLARI + TABLO -->
+            <div class="info-card" style="grid-column: span 1;">
+                <div class="card-title"><i class="fas fa-suitcase-rolling"></i> Package Details</div>
+                
+                <div class="detail-row">
+                    <span class="detail-label"><i class="fas fa-tag"></i> Tour Package:</span>
+                    <span class="detail-value">3-11 Apr Mesopotamia</span>
                 </div>
-                <div class="editor-content" contenteditable="true">
-                    <p><b>Sayın Yetkili,</b></p>
-                    <p>Ekteki dosyalarda şirketimize ait güncel teklif ve teknik resimler yer almaktadır. Dijital faks ortamında iletilmiştir.  </p>
-                    <p>Bilgilerinize sunarız. <br> <span style="color: var(--orange-primary);">#eLetter #dijitalfaks</span></p>
+                <div class="detail-row">
+                    <span class="detail-label"><i class="fas fa-barcode"></i> Package Code:</span>
+                    <span class="detail-value">ETG001424007</span>
                 </div>
-            </div>
+                <div class="detail-row">
+                    <span class="detail-label"><i class="fas fa-dollar-sign"></i> Currency:</span>
+                    <span class="detail-value">USD</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label"><i class="fas fa-calendar-times"></i> Offer Last Date:</span>
+                    <span class="detail-value highlight">01.03.2026</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label"><i class="fas fa-user-friends"></i> Guest Capacity:</span>
+                    <span class="detail-value">1 Person</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label"><i class="fas fa-wallet"></i> Per Person Budget:</span>
+                    <span class="detail-value"><strong>4.930,00 $</strong></span>
+                </div>
 
-            <!-- dosya / belge / resim eklenebilir alan (temsili) -->
-            <div class="attach-section">
-                <div class="attach-header">
-                    <i class="fas fa-paperclip"></i> Ekler (belge/resim/dosya)
-                </div>
-                <div class="attach-list">
-                    <!-- eklenmiş dosya 1 -->
-                    <div class="attach-item">
-                        <div class="attach-icon"><i class="fas fa-file-pdf"></i></div>
-                        <div class="attach-details">
-                            teklif_2026-03.pdf <span>PDF · 2.4 MB</span>
-                        </div>
-                        <i class="fas fa-chevron-right"></i>
+                <!-- ÖDEME PLANI (KAPORA %25) -->
+                <div class="payment-breakdown">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.7rem;">
+                        <span><i class="fas fa-credit-card" style="color:#a45200;"></i> <strong>Ödeme Planı</strong></span>
+                        <span class="orange-badge">%25 KAPORA</span>
                     </div>
-                    <!-- eklenmiş resim -->
-                    <div class="attach-item">
-                        <div class="attach-icon"><i class="fas fa-image"></i></div>
-                        <div class="attach-details">
-                            teknik_resim_proje.jpg <span>JPG · 4.1 MB</span>
-                        </div>
-                        <i class="fas fa-chevron-right"></i>
+                    <div class="payment-item">
+                        <span>💰 %25 Bugün ödenecek kapora:</span>
+                        <span><strong>1.232,50 USD</strong></span>
                     </div>
-                    <!-- word belgesi -->
-                    <div class="attach-item">
-                        <div class="attach-icon"><i class="fas fa-file-word"></i></div>
-                        <div class="attach-details">
-                            sozlesme_taslagi.docx <span>DOCX · 1.2 MB</span>
-                        </div>
-                        <i class="fas fa-chevron-right"></i>
+                    <div class="payment-item">
+                        <span>⏳ Kalan (%75) tur başlangıcında:</span>
+                        <span><strong>3.697,50 USD</strong></span>
+                    </div>
+                    <div class="payment-item total">
+                        <span>Toplam Tur Bedeli:</span>
+                        <span>4.930,00 USD</span>
                     </div>
                 </div>
-                <!-- yeni dosya ekle butonu (temsili) -->
-                <div class="add-attach-btn">
-                    <i class="fas fa-plus-circle"></i> Dosya, belge veya resim ekle
+
+                <!-- GÜNLÜK TUR TABLOSU (Kısa gösterim, ilk 3 satır + scroll) -->
+                <div class="card-title" style="margin-top: 1.2rem;"><i class="fas fa-calendar-day"></i> Günlük Program (Özet)</div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Gün</th><th>Tarih</th><th>Şehir</th><th>Otel</th><th>Not</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>03.04.2026</td><td>Diyarbakır → Mardin</td><td>HH Babil Konağı</td><td>TK2606 10:25</td></tr>
+                            <tr><td>2</td><td>04.04.2026</td><td>Mardin</td><td>HH Babil Konağı</td><td>-</td></tr>
+                            <tr><td>3</td><td>05.04.2026</td><td>Mardin</td><td>HH Babil Konağı</td><td>Dara</td></tr>
+                            <tr><td>4</td><td>06.04.2026</td><td>Şanlıurfa</td><td>El Ruha Hotel</td><td>Göbeklitepe</td></tr>
+                            <tr><td>5</td><td>07.04.2026</td><td>Şanlıurfa</td><td>El Ruha Hotel</td><td>Halfeti</td></tr>
+                            <tr><td>6</td><td>08.04.2026</td><td>Nemrut</td><td>Hotel Euphrat</td><td>Nemrut Sunset</td></tr>
+                            <tr><td>7</td><td>09.04.2026</td><td>Nemrut</td><td>Hotel Euphrat</td><td>Sunrise</td></tr>
+                            <tr><td>8</td><td>10.04.2026</td><td>Gaziantep</td><td>Double Tree Hilton</td><td>Zeugma</td></tr>
+                            <tr><td>9</td><td>11.04.2026</td><td>Gaziantep</td><td>-</td><td>TK2255 12:30</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="font-size:0.8rem; text-align:right; color:#8f6f4a;"><i class="far fa-clock"></i> Detaylı program yukarıda</div>
+            </div>
+
+            <!-- SAĞ KISIM: ÖDEME FORMU + OPSİYONLAR -->
+            <div class="info-card">
+                <div class="card-title"><i class="fas fa-lock"></i> Güvenli Ödeme Formu</div>
+                <div class="payment-form">
+                    <div class="form-group">
+                        <label><i class="far fa-credit-card"></i> Kart Üzerindeki İsim</label>
+                        <input type="text" placeholder="Ad Soyad (ör: MEHMET YILMAZ)">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="far fa-credit-card"></i> Kart Numarası</label>
+                        <input type="text" placeholder="1234 5678 9012 3456" maxlength="19">
+                    </div>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Son Kullanma (AA/YY)</label>
+                            <input type="text" placeholder="AA/YY">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>CVC/CVV</label>
+                            <input type="text" placeholder="123">
+                        </div>
+                    </div>
+
+                    <!-- Ödenecek Tutar (kapora sabit) -->
+                    <div class="deposit-note">
+                        <i class="fas fa-coins"></i>
+                        <span>Bugün ödenecek kapora (%25): <strong style="font-size: 1.3rem;">1.232,50 USD</strong></span>
+                    </div>
+
+                    <!-- Vade/farklı seçenek simülasyonu -->
+                    <select style="padding: 0.9rem; border-radius: 50px; background: white; border: 2px solid #ddd2c2;">
+                        <option>Taksit seçeneği (tek çekim - kapora)</option>
+                        <option>2 taksit (kapora bugün, kalan tura kadar)</option>
+                        <option>Peşin (tüm tur bedeli) - 4.930 USD</option>
+                    </select>
+
+                    <!-- Ödeme Butonu -->
+                    <button class="btn-pay"><i class="fab fa-cc-visa"></i> <i class="fab fa-cc-mastercard"></i>   ÖDEMEYİ TAMAMLA</button>
+                    <div class="secure-badge">
+                        <i class="fas fa-shield-alt"></i> 256-bit SSL ile güvendedir
+                    </div>
+                </div>
+
+                <!-- Ekstra not: Tur başlangıcı ödemesi -->
+                <div style="margin-top: 2rem; background-color: #eae3d8; border-radius: 20px; padding: 1.2rem;">
+                    <i class="fas fa-info-circle" style="color: #b64900;"></i> 
+                    <span style="color: #2d2d2d;">Kalan bakiye (<strong>3.697,50 USD</strong>) tur başlangıcında (03.04.2026) ödenecektir. Kapora yatırıldıktan sonra rezervasyon kesinleşir.</span>
                 </div>
             </div>
         </div>
 
-        <!-- Kayıtlı şirket adına yazma alanı / eposta formatı (firma gönderimi) -->
-        <div class="company-footer">
-            <div class="company-info">
-                <div class="company-name">
-                    <i class="fas fa-registered"></i> DEMİR A.Ş. (kayıtlı)
-                </div>
-                <div class="company-email">
-                    <i class="far fa-envelope"></i> fatura@demir.com · vergi: 1234567890
-                </div>
-                <div style="font-size: 0.6rem; color: #999; margin-top: 4px;">
-                    <i class="fas fa-fax"></i> eFaks: 0212 444 55 66 · eLetter
-                </div>
-            </div>
-            <!-- gönder butonu (turuncu) -->
-            <div class="send-button">
-                <i class="fas fa-paper-plane"></i> GÖNDER
-            </div>
-        </div>
-
-        <!-- alt bilgi: username = telefon = email (tekrar vurgu) -->
-        <div class="hint-text">
-            <i class="fas fa-info-circle"></i> 
-            <span>Şu an <strong>ahmet.demir (532 111 22 33 / a.demir@efaks.net)</strong> olarak işlem yapıyorsunuz. Firma: Demir A.Ş.</span>
-        </div>
-
-        <!-- son mesaj: turuncu gri detay -->
-        <div style="padding: 10px 18px 18px 18px; font-size: 0.7rem; color: var(--gray-mid); display: flex; gap: 12px; border-top: 1px solid var(--gray-light); margin-top: 6px;">
-            <span><i class="fas fa-check-circle" style="color: var(--orange-primary);"></i> eFaks dijital</span>
-            <span><i class="fas fa-clock"></i> 1 Mart 2026</span>
-            <span><i class="fas fa-shield-alt"></i> uçtan uca</span>
+        <!-- FOOTER (GRİ TON) -->
+        <div class="footer-note">
+            <i class="fas fa-route"></i> Amazing Turkiye - Mesopotamia Tour  |  ETG001424007  |  İletişim: info@etourgood.com
         </div>
     </div>
-    <!-- tasarım mobil dikey mail / faks, turuncu gri tema. username=email=telefon. Dosya ekleme temsili mevcut -->
+
+    <!-- Küçük uyarı: Bu bir taslak ödeme simülasyonudur, gerçek işlem yapılmaz. -->
+    <div style="position: fixed; bottom: 10px; right: 10px; background: #2d2d2d; color: #d6bc9c; padding: 0.4rem 1rem; border-radius: 60px; font-size: 0.8rem; opacity:0.7;">
+        ⚡ turuncu/gri ton - kapora formu
+    </div>
 </body>
 </html>
