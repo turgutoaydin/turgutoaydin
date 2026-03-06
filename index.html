@@ -3,449 +3,449 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amazing Turkiye - Ödeme Formu</title>
-    <!-- Font Awesome Icons -->
+    <title>Payment Receipt · USDT Deposit</title>
+    <!-- Font Awesome (icons) & html2pdf (library) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', 'Segoe UI', Roboto, -apple-system, sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #2d2d2d 0%, #404040 100%);
+            background: linear-gradient(145deg, #373737 0%, #4f4a45 100%);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
         }
 
-        .container {
-            max-width: 1200px;
+        /* ana belge kartı - resmî evrak görünümü */
+        .document-card {
+            max-width: 880px;
             width: 100%;
-            background-color: #f5f3f0;  /* gri-turuncu tonunda açık zemin */
-            border-radius: 40px 40px 30px 30px;
-            box-shadow: 0 30px 50px rgba(0,0,0,0.3);
+            background: #fcf8f2;  /* kirli beyaz / resmî kağıt tonu */
+            border-radius: 32px 32px 24px 24px;
+            box-shadow: 0 30px 50px rgba(0,0,0,0.5);
             overflow: hidden;
-            border: 1px solid #d6bc9c;
+            border: 1px solid #b48c5c;
+            margin-bottom: 2rem;
         }
 
-        /* Header - Turuncu ağırlıklı */
-        .header {
-            background: linear-gradient(145deg, #e67e22 0%, #d35400 100%);
-            padding: 2rem 2.5rem;
-            color: white;
-            border-bottom: 5px solid #b64900;
+        /* header - turuncu + gri resmî mühür havası */
+        .receipt-header {
+            background: linear-gradient(165deg, #b86b1f 0%, #9a4b0e 100%);
+            padding: 1.8rem 2.5rem;
+            color: #fef6e6;
+            border-bottom: 6px solid #6a3e0b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-        .header h1 {
-            font-size: 2.2rem;
+        .header-left h1 {
+            font-size: 2.4rem;
             font-weight: 700;
             letter-spacing: -0.5px;
-            margin-bottom: 0.2rem;
+            line-height: 1.2;
         }
 
-        .header .tour-code {
-            font-size: 1.3rem;
-            background: rgba(0,0,0,0.2);
-            display: inline-block;
-            padding: 0.3rem 1.2rem;
-            border-radius: 50px;
-            margin-top: 0.5rem;
-            font-weight: 500;
+        .header-left h1 i {
+            margin-right: 12px;
+            color: #ffd89c;
         }
 
-        .greeting {
-            font-size: 1rem;
-            margin-top: 1rem;
-            opacity: 0.95;
-            font-style: italic;
-        }
-
-        /* İçerik Grid */
-        .content-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.8rem;
-            padding: 2.5rem;
-            background-color: #f5f3f0;
-        }
-
-        @media (max-width: 850px) {
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Kartlar - Gri tonları */
-        .info-card {
-            background: #ffffffde;
-            border-radius: 28px;
-            padding: 1.8rem 2rem;
-            box-shadow: 0 8px 18px rgba(100, 70, 40, 0.12);
-            border: 1px solid #e0d6c8;
-            backdrop-filter: blur(2px);
-        }
-
-        .card-title {
-            font-size: 1.4rem;
+        .badge-official {
+            background-color: #2d2d2d;
+            color: #e0b984;
+            padding: 0.3rem 1.5rem;
+            border-radius: 60px;
             font-weight: 600;
-            color: #a45200;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px dashed #d6bc9c;
-            padding-bottom: 0.5rem;
+            font-size: 1rem;
+            border: 2px solid #c99d64;
+            letter-spacing: 1px;
+        }
+
+        .header-right {
+            background: rgba(0,0,0,0.3);
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            border: 1px solid #efb87e;
+        }
+
+        /* içerik */
+        .receipt-body {
+            padding: 2.2rem 2.5rem;
+            color: #2d2a24;
+        }
+
+        .watermark {
+            opacity: 0.1;
+            font-size: 7rem;
+            font-weight: 900;
+            position: absolute;
+            transform: rotate(-5deg);
+            pointer-events: none;
+            z-index: 0;
+            color: #b48c5c;
+        }
+
+        .official-stamp {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            border-bottom: 2px dashed #bda175;
+            padding-bottom: 1.2rem;
+        }
+
+        .ref-row {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            font-size: 0.95rem;
+            background: #efe5d7;
+            padding: 0.8rem 1.5rem;
+            border-radius: 40px;
+            margin-bottom: 2rem;
+            border: 1px solid #c5aa82;
+        }
+
+        .ref-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .card-title i {
-            color: #e67e22;
+        .ref-item i {
+            color: #b45f1b;
         }
 
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #ece2d5;
-            font-size: 1rem;
+        /* ödeme tablosu - resmî */
+        .payment-statement {
+            background: #ffffff;
+            border: 2px solid #ac8f68;
+            border-radius: 28px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: inset 0 0 0 1px #ffeacf, 0 8px 20px rgba(110, 70, 30, 0.2);
         }
 
-        .detail-row:last-child {
-            border-bottom: none;
-        }
-
-        .detail-label {
-            font-weight: 500;
-            color: #5f4e3a;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .detail-value {
+        .payment-title {
+            font-size: 1.7rem;
             font-weight: 600;
-            color: #2c3e50;
+            color: #5f3506;
+            border-left: 12px solid #d47f2a;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: -0.2px;
         }
 
-        .highlight {
-            background: #fef0df;
-            padding: 0.2rem 0.8rem;
-            border-radius: 30px;
-            color: #b64900;
-            font-weight: 700;
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem 2rem;
         }
 
-        /* ödeme kısmı */
-        .payment-breakdown {
-            background: #eae3d8;
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin: 1.5rem 0 1rem;
-        }
-
-        .payment-item {
+        .detail-item {
+            border-bottom: 1px solid #e1cfb5;
+            padding-bottom: 0.6rem;
             display: flex;
             justify-content: space-between;
-            margin: 0.8rem 0;
+        }
+
+        .detail-item .label {
+            font-weight: 600;
+            color: #5d4a32;
+            display: flex;
+            gap: 0.4rem;
+            align-items: center;
+        }
+
+        .detail-item .value {
+            font-weight: 700;
+            color: #0e2b24;
+            background: #f1e7da;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+        }
+
+        .value.highlight {
+            background: #f1c9a3;
+            color: #632f00;
             font-size: 1.1rem;
         }
 
-        .payment-item.total {
-            border-top: 2px solid #bc9b6b;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            font-weight: 700;
-            color: #1e2b37;
-        }
-
-        .orange-badge {
-            background: #e67e22;
-            color: white;
-            padding: 0.3rem 1.2rem;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        /* tablo */
-        .table-wrapper {
-            overflow-x: auto;
-            margin: 1.2rem 0;
-            border-radius: 18px;
-            border: 1px solid #ddd2c2;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: white;
-            font-size: 0.85rem;
-        }
-
-        th {
-            background: #bc9b6b;  /* turuncu-kahve */
-            color: white;
-            padding: 10px 6px;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        td {
-            padding: 8px 6px;
-            border-bottom: 1px solid #ddd2c2;
-            text-align: center;
-            color: #2f2f2f;
-        }
-
-        tr:nth-child(even) {
-            background-color: #faf7f2;
-        }
-
-        tr:hover {
-            background-color: #faeeda;
-        }
-
-        /* Form alanı */
-        .payment-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .form-group label {
-            font-weight: 600;
-            color: #7b5a38;
-            font-size: 0.95rem;
-        }
-
-        .form-group input, .form-group select {
-            padding: 0.9rem 1.2rem;
-            border-radius: 50px;
-            border: 2px solid #ddd2c2;
-            background-color: white;
-            font-size: 1rem;
-            outline: none;
-            transition: border 0.2s;
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            border-color: #e67e22;
-        }
-
-        .deposit-note {
-            background: #dde0e2;  /* gri */
-            padding: 1rem 1.5rem;
+        /* USDT vurgu */
+        .usdt-box {
+            background: #2f3e46;
+            color: #f6e9d9;
+            padding: 1.2rem 2rem;
             border-radius: 60px;
-            color: #1e2b37;
-            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 0.7rem;
-            border: 1px solid #bc9b6b;
+            justify-content: space-between;
+            margin: 1.5rem 0 0.5rem;
+            border: 2px solid #ce984b;
+            font-size: 1.2rem;
         }
 
-        .deposit-note i {
-            color: #d35400;
-            font-size: 1.3rem;
+        .usdt-box i {
+            font-size: 2rem;
+            color: #fbb44b;
         }
 
-        .btn-pay {
-            background: #e67e22;
+        .signature-area {
+            display: flex;
+            justify-content: space-between;
+            margin: 3rem 0 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #bda175;
+        }
+
+        .signature-item {
+            text-align: center;
+            width: 200px;
+        }
+
+        .signature-line {
+            border-bottom: 2px solid #7b5c38;
+            margin: 0.5rem 0;
+            height: 30px;
+        }
+
+        .stamp {
+            font-family: 'Courier New', monospace;
+            color: #aa4e1c;
+            font-weight: 800;
+            font-size: 1.1rem;
+            transform: rotate(-3deg);
+            background: #fdebd0;
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            border: 1px dashed #aa4e1c;
+        }
+
+        .footer-official {
+            background-color: #e7dac8;
+            padding: 1.2rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #32281d;
+            border-top: 2px solid #ac8f68;
+        }
+
+        /* buton alanı */
+        .action-button {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0 2rem;
+        }
+
+        .btn-pdf {
+            background: #c1651e;
             border: none;
-            padding: 1rem;
-            border-radius: 60px;
-            font-size: 1.3rem;
+            padding: 1.2rem 3.5rem;
+            border-radius: 80px;
+            font-size: 1.6rem;
             font-weight: bold;
             color: white;
             cursor: pointer;
-            transition: all 0.2s;
-            border-bottom: 4px solid #b64900;
-            display: flex;
+            transition: 0.2s;
+            border-bottom: 5px solid #81480f;
+            box-shadow: 0 15px 30px -10px #271e13;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 0.7rem;
+            gap: 1rem;
         }
 
-        .btn-pay:hover {
-            background: #d35400;
-            transform: translateY(-2px);
-            border-bottom-width: 6px;
+        .btn-pdf:hover {
+            background: #a34f10;
+            transform: scale(1.02);
+            border-bottom-width: 7px;
         }
 
-        .secure-badge {
+        .small-note {
+            color: #cfcfcf;
             text-align: center;
-            color: #5f5f5f;
-            margin-top: 1rem;
-            font-size: 0.85rem;
-        }
-
-        .footer-note {
-            background-color: #2d2d2d;
-            color: #e0d6c8;
-            text-align: center;
-            padding: 1.2rem;
+            margin-top: 0.5rem;
             font-size: 0.9rem;
-            border-top: 2px solid #bc9b6b;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- HEADER - TURUNCU -->
-        <div class="header">
-            <h1>Amazing Turkiye <i class="fas fa-map-marked-alt" style="margin-left: 10px;"></i></h1>
-            <div class="tour-code">ETG001424007</div>
-            <div class="greeting">
-                <i class="fas fa-envelope-open-text"></i> 
-                Dear Traveller,<br> 
-                Thank you for approving etourgood for your upcoming experience in Turkey.
+    <!-- PDF'nin kaynağı: bu kart html2pdf ile yakalanacak -->
+    <div id="receiptDocument" class="document-card">
+        <!-- Üst resmî başlık -->
+        <div class="receipt-header">
+            <div class="header-left">
+                <h1><i class="fas fa-scroll"></i> AMAZING TURKIYE</h1>
+                <div style="display: flex; gap: 15px; margin-top: 8px;">
+                    <span class="badge-official"><i class="fas fa-check-circle"></i> OFFICIAL RECEIPT</span>
+                    <span class="badge-official" style="background:#804d1f;">CRYPTO · USDT</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <i class="fas fa-qrcode"></i> ETG · 001424007
             </div>
         </div>
 
-        <!-- MAIN CONTENT (GRİ-TURUNCU TON) -->
-        <div class="content-grid">
-            <!-- SOL KISIM: PAKET DETAYLARI + TABLO -->
-            <div class="info-card" style="grid-column: span 1;">
-                <div class="card-title"><i class="fas fa-suitcase-rolling"></i> Package Details</div>
-                
-                <div class="detail-row">
-                    <span class="detail-label"><i class="fas fa-tag"></i> Tour Package:</span>
-                    <span class="detail-value">3-11 Apr Mesopotamia</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label"><i class="fas fa-barcode"></i> Package Code:</span>
-                    <span class="detail-value">ETG001424007</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label"><i class="fas fa-dollar-sign"></i> Currency:</span>
-                    <span class="detail-value">USD</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label"><i class="fas fa-calendar-times"></i> Offer Last Date:</span>
-                    <span class="detail-value highlight">01.03.2026</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label"><i class="fas fa-user-friends"></i> Guest Capacity:</span>
-                    <span class="detail-value">1 Person</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label"><i class="fas fa-wallet"></i> Per Person Budget:</span>
-                    <span class="detail-value"><strong>4.930,00 $</strong></span>
-                </div>
-
-                <!-- ÖDEME PLANI (KAPORA %25) -->
-                <div class="payment-breakdown">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.7rem;">
-                        <span><i class="fas fa-credit-card" style="color:#a45200;"></i> <strong>Ödeme Planı</strong></span>
-                        <span class="orange-badge">%25 KAPORA</span>
-                    </div>
-                    <div class="payment-item">
-                        <span>💰 %25 Bugün ödenecek kapora:</span>
-                        <span><strong>1.232,50 USD</strong></span>
-                    </div>
-                    <div class="payment-item">
-                        <span>⏳ Kalan (%75) tur başlangıcında:</span>
-                        <span><strong>3.697,50 USD</strong></span>
-                    </div>
-                    <div class="payment-item total">
-                        <span>Toplam Tur Bedeli:</span>
-                        <span>4.930,00 USD</span>
-                    </div>
-                </div>
-
-                <!-- GÜNLÜK TUR TABLOSU (Kısa gösterim, ilk 3 satır + scroll) -->
-                <div class="card-title" style="margin-top: 1.2rem;"><i class="fas fa-calendar-day"></i> Günlük Program (Özet)</div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr><th>Gün</th><th>Tarih</th><th>Şehir</th><th>Otel</th><th>Not</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>1</td><td>03.04.2026</td><td>Diyarbakır → Mardin</td><td>HH Babil Konağı</td><td>TK2606 10:25</td></tr>
-                            <tr><td>2</td><td>04.04.2026</td><td>Mardin</td><td>HH Babil Konağı</td><td>-</td></tr>
-                            <tr><td>3</td><td>05.04.2026</td><td>Mardin</td><td>HH Babil Konağı</td><td>Dara</td></tr>
-                            <tr><td>4</td><td>06.04.2026</td><td>Şanlıurfa</td><td>El Ruha Hotel</td><td>Göbeklitepe</td></tr>
-                            <tr><td>5</td><td>07.04.2026</td><td>Şanlıurfa</td><td>El Ruha Hotel</td><td>Halfeti</td></tr>
-                            <tr><td>6</td><td>08.04.2026</td><td>Nemrut</td><td>Hotel Euphrat</td><td>Nemrut Sunset</td></tr>
-                            <tr><td>7</td><td>09.04.2026</td><td>Nemrut</td><td>Hotel Euphrat</td><td>Sunrise</td></tr>
-                            <tr><td>8</td><td>10.04.2026</td><td>Gaziantep</td><td>Double Tree Hilton</td><td>Zeugma</td></tr>
-                            <tr><td>9</td><td>11.04.2026</td><td>Gaziantep</td><td>-</td><td>TK2255 12:30</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div style="font-size:0.8rem; text-align:right; color:#8f6f4a;"><i class="far fa-clock"></i> Detaylı program yukarıda</div>
+        <!-- İçerik gövdesi -->
+        <div class="receipt-body">
+            <!-- Referans ve tarih satırı -->
+            <div class="ref-row">
+                <span class="ref-item"><i class="fas fa-hashtag"></i> Reference: <strong>ETG/USDT/2026-001</strong></span>
+                <span class="ref-item"><i class="far fa-calendar-alt"></i> Issue date: <strong>06 March 2026</strong></span>
+                <span class="ref-item"><i class="fas fa-globe"></i> Status: <strong style="color:#117711;">PAID · SETTLED</strong></span>
             </div>
 
-            <!-- SAĞ KISIM: ÖDEME FORMU + OPSİYONLAR -->
-            <div class="info-card">
-                <div class="card-title"><i class="fas fa-lock"></i> Güvenli Ödeme Formu</div>
-                <div class="payment-form">
-                    <div class="form-group">
-                        <label><i class="far fa-credit-card"></i> Kart Üzerindeki İsim</label>
-                        <input type="text" placeholder="Ad Soyad (ör: MEHMET YILMAZ)">
-                    </div>
-                    <div class="form-group">
-                        <label><i class="far fa-credit-card"></i> Kart Numarası</label>
-                        <input type="text" placeholder="1234 5678 9012 3456" maxlength="19">
-                    </div>
-                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                        <div class="form-group" style="flex: 1;">
-                            <label>Son Kullanma (AA/YY)</label>
-                            <input type="text" placeholder="AA/YY">
-                        </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>CVC/CVV</label>
-                            <input type="text" placeholder="123">
-                        </div>
-                    </div>
+            <!-- ANA İFADE: %25 KAPORA USDT İLE ÖDENMİŞTİR -->
+            <div style="text-align: center; margin: 20px 0 10px;">
+                <span style="background: #9f653b; color: #ffeacd; padding: 0.5rem 2.5rem; border-radius: 60px; font-weight: 600; letter-spacing: 1px;"><i class="fas fa-check-double"></i> 25% DEPOSIT PAID BY USDT TRANSFER  <i class="fas fa-check-double"></i></span>
+            </div>
+            
+            <!-- Ödeme detayları resmî tablo -->
+            <div class="payment-statement">
+                <div class="payment-title">
+                    <i class="fas fa-file-invoice-dollar" style="margin-right: 15px;"></i> CRYPTO PAYMENT CONFIRMATION
+                </div>
 
-                    <!-- Ödenecek Tutar (kapora sabit) -->
-                    <div class="deposit-note">
-                        <i class="fas fa-coins"></i>
-                        <span>Bugün ödenecek kapora (%25): <strong style="font-size: 1.3rem;">1.232,50 USD</strong></span>
+                <div class="detail-grid">
+                    <div class="detail-item"><span class="label"><i class="fas fa-user-tie"></i> Payer:</span> <span class="value">ETOURGOOD TRAVEL LTD</span></div>
+                    <div class="detail-item"><span class="label"><i class="fas fa-building"></i> Beneficiary:</span> <span class="value">AMAZING TURKIYE DMC</span></div>
+                    <div class="detail-item"><span class="label"><i class="fas fa-tag"></i> Tour package:</span> <span class="value">3-11 Apr Mesopotamia</span></div>
+                    <div class="detail-item"><span class="label"><i class="fas fa-barcode"></i> Package code:</span> <span class="value">ETG001424007</span></div>
+                    <div class="detail-item"><span class="label"><i class="fas fa-user"></i> Guest:</span> <span class="value">1 Person</span></div>
+                    <div class="detail-item"><span class="label"><i class="fas fa-wallet"></i> Total tour cost:</span> <span class="value">4,930.00 USD</span></div>
+                </div>
+
+                <!-- ÇİZGİYLE AYRILMIŞ %25 KAPORA -->
+                <hr style="margin: 2rem 0 1rem; border: 2px solid #bda175;">
+
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div style="font-size: 1.4rem; font-weight: 700; color: #1e4a4a;"><i class="fas fa-percent"></i> 25% DEPOSIT · PAID TODAY</div>
+                    <div style="background: #2a6230; color: white; padding: 0.5rem 1.8rem; border-radius: 40px; font-weight: 600;"><i class="fas fa-coins"></i> 1,232.50 USD</div>
+                </div>
+
+                <!-- USDT TRANSFER BİLGİSİ - çok net -->
+                <div class="usdt-box">
+                    <span><i class="fab fa-tether"></i> <strong>USDT (TRC-20)</strong> transfer</span>
+                    <span style="font-family: monospace; background: #1e2a2e; padding: 0.3rem 1.5rem; border-radius: 30px;">TxID: 0x3f7a...c9e4b2</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem;">
+                    <div>
+                        <span class="label"><i class="fas fa-clock"></i> Transfer date:</span> 
+                        <span class="value" style="background:transparent; font-weight:600;">06 March 2026, 14:32 UTC+3</span>
                     </div>
-
-                    <!-- Vade/farklı seçenek simülasyonu -->
-                    <select style="padding: 0.9rem; border-radius: 50px; background: white; border: 2px solid #ddd2c2;">
-                        <option>Taksit seçeneği (tek çekim - kapora)</option>
-                        <option>2 taksit (kapora bugün, kalan tura kadar)</option>
-                        <option>Peşin (tüm tur bedeli) - 4.930 USD</option>
-                    </select>
-
-                    <!-- Ödeme Butonu -->
-                    <button class="btn-pay"><i class="fab fa-cc-visa"></i> <i class="fab fa-cc-mastercard"></i>   ÖDEMEYİ TAMAMLA</button>
-                    <div class="secure-badge">
-                        <i class="fas fa-shield-alt"></i> 256-bit SSL ile güvendedir
+                    <div>
+                        <span class="label"><i class="fas fa-check-shield"></i> Confirmed:</span> 
+                        <span class="value" style="background:#c7e0c7;">12 block confirmations</span>
+                    </div>
+                    <div>
+                        <span class="label"><i class="fas fa-credit-card"></i> From wallet:</span> 
+                        <span class="value" style="font-size:0.8rem;">TXYZ...ab3d</span>
+                    </div>
+                    <div>
+                        <span class="label"><i class="fas fa-arrow-right"></i> To wallet:</span> 
+                        <span class="value" style="font-size:0.8rem;">AMZG...w91k</span>
                     </div>
                 </div>
 
-                <!-- Ekstra not: Tur başlangıcı ödemesi -->
-                <div style="margin-top: 2rem; background-color: #eae3d8; border-radius: 20px; padding: 1.2rem;">
-                    <i class="fas fa-info-circle" style="color: #b64900;"></i> 
-                    <span style="color: #2d2d2d;">Kalan bakiye (<strong>3.697,50 USD</strong>) tur başlangıcında (03.04.2026) ödenecektir. Kapora yatırıldıktan sonra rezervasyon kesinleşir.</span>
+                <!-- AÇIKLAMA: KALAN TUR BAŞLANGICINDA ÖDENECEK -->
+                <div style="margin-top: 2rem; background: #ede3d6; border-radius: 40px; padding: 1rem 2rem; border-left: 8px solid #bd7320;">
+                    <i class="fas fa-info-circle" style="color:#b45f1b;"></i> 
+                    <strong>Remaining balance (75% · 3,697.50 USD) shall be paid at tour start on 03.04.2026.</strong> 
+                    This document serves as proof of deposit.
                 </div>
+            </div>
+
+            <!-- imza ve mühür bölümü (resmî evrak) -->
+            <div class="signature-area">
+                <div class="signature-item">
+                    <div class="signature-line"></div>
+                    <div><i class="fas fa-pen"></i> Authorized signatory</div>
+                    <div style="font-size:0.8rem; color:#4b3d2d;">Amazing Turkiye Finance</div>
+                </div>
+                <div class="signature-item">
+                    <div class="stamp"><i class="fas fa-stamp"></i> * RECEIVED *</div>
+                    <div style="font-size:1rem;">06.03.2026</div>
+                    <div style="font-size:0.8rem;">wet stamp / crypto seal</div>
+                </div>
+                <div class="signature-item">
+                    <div class="signature-line" style="border-bottom: 2px dotted;"></div>
+                    <div><i class="fas fa-user-check"></i> Confirmed by etourgood</div>
+                </div>
+            </div>
+
+            <!-- dip not - unique belge no -->
+            <div style="text-align: right; font-family: monospace; color: #8f7352;">
+                <i class="fas fa-fingerprint"></i> DOC-ID: TR/ETG/25USD-1232.50/2026
             </div>
         </div>
 
-        <!-- FOOTER (GRİ TON) -->
-        <div class="footer-note">
-            <i class="fas fa-route"></i> Amazing Turkiye - Mesopotamia Tour  |  ETG001424007  |  İletişim: info@etourgood.com
+        <!-- alt bilgi resmî kayıt -->
+        <div class="footer-official">
+            <i class="fas fa-globe-asia"></i> Amazing Turkiye · Official Payment Receipt · ETG001424007 · 
+            <strong>25% deposit paid by USDT (Tether) – non-refundable deposit.</strong>
         </div>
     </div>
 
-    <!-- Küçük uyarı: Bu bir taslak ödeme simülasyonudur, gerçek işlem yapılmaz. -->
-    <div style="position: fixed; bottom: 10px; right: 10px; background: #2d2d2d; color: #d6bc9c; padding: 0.4rem 1rem; border-radius: 60px; font-size: 0.8rem; opacity:0.7;">
-        ⚡ turuncu/gri ton - kapora formu
+    <!-- PDF İNDİRME BUTONU -->
+    <div class="action-button">
+        <button class="btn-pdf" id="downloadPdfBtn">
+            <i class="fas fa-file-pdf"></i> Download as PDF (Official Receipt)
+        </button>
+    </div>
+    <div class="small-note">
+        <i class="fas fa-lock"></i> Click the button → generates a formal document in English with USDT payment proof.
+    </div>
+
+    <script>
+        (function() {
+            const element = document.getElementById('receiptDocument');
+            const btn = document.getElementById('downloadPdfBtn');
+
+            // Hafif pdf ayarları – resmî evrak stili
+            const opt = {
+                margin:        [0.5, 0.5, 0.5, 0.5], // top, right, bottom, left (units in inches)
+                filename:     'AmazingTurkiye_USDT_Deposit_ETG001424007.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, letterRendering: true, useCORS: true, logging: false },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' } // A4 gibi resmî
+            };
+
+            btn.addEventListener('click', function() {
+                // Kullanıcıya görsel geri bildirim
+                btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Generating PDF...';
+                btn.disabled = true;
+
+                // html2pdf ile export
+                html2pdf().set(opt).from(element).save().then(() => {
+                    // buton eski haline dönsün
+                    btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download as PDF (Official Receipt)';
+                    btn.disabled = false;
+                }).catch((error) => {
+                    console.error('PDF hatası:', error);
+                    btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Try again';
+                    btn.disabled = false;
+                });
+            });
+        })();
+    </script>
+
+    <!-- yedek mesaj -->
+    <div style="color:#b9a998; margin-top:1rem; max-width:800px; text-align:center; font-size:0.9rem; border-top:1px solid #5f5346; padding-top:1rem;">
+        ⚡ This is an official payment receipt. The 25% deposit (1,232.50 USD) has been fully settled via <strong>USDT transfer</strong> on 06 March 2026. 
+        The remaining balance will be collected at tour start.  •  For any dispute, this document is legally binding.
     </div>
 </body>
 </html>
