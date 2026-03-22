@@ -1,773 +1,96 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Kapadokya Balon Macerası</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background: #1a3c2c;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            font-family: 'Segoe UI', 'Quicksand', system-ui, -apple-system, 'Poppins', sans-serif;
-            touch-action: manipulation;
-        }
-
-        /* Dikey mobil oyun container */
-        .game-container {
-            position: relative;
-            width: 100%;
-            max-width: 450px;
-            height: 100vh;
-            max-height: 800px;
-            background: #c4e0fa;
-            overflow: hidden;
-            box-shadow: 0 0 30px rgba(0,0,0,0.3);
-            border-radius: 0;
-            cursor: pointer;
-        }
-
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: block;
-            background: linear-gradient(145deg, #e8d9b0 0%, #cbbf7a 100%);
-            touch-action: none;
-        }
-
-        /* UI panel - mobil dostu */
-        .ui-panel {
-            position: absolute;
-            bottom: 15px;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            padding: 12px 16px;
-            z-index: 20;
-            pointer-events: none;
-        }
-
-        .fuel-gauge {
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px);
-            border-radius: 40px;
-            padding: 6px 12px;
-            color: white;
-            font-weight: bold;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            pointer-events: auto;
-            border: 1px solid #ffd966;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-
-        .fuel-icon {
-            font-size: 1.3rem;
-        }
-
-        .fuel-bar {
-            width: 70px;
-            height: 8px;
-            background: #4a2e1e;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .fuel-fill {
-            width: 100%;
-            height: 100%;
-            background: #f5b042;
-            transition: width 0.1s linear;
-            border-radius: 10px;
-        }
-
-        .controls {
-            display: flex;
-            gap: 20px;
-            background: rgba(0,0,0,0.55);
-            backdrop-filter: blur(12px);
-            padding: 12px 20px;
-            border-radius: 60px;
-            pointer-events: auto;
-            border: 1px solid rgba(255,215,120,0.6);
-        }
-
-        .ctrl-btn {
-            background: #ffb347;
-            border: none;
-            width: 60px;
-            padding: 10px 0;
-            border-radius: 100px;
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #2c1a0c;
-            text-align: center;
-            cursor: pointer;
-            box-shadow: 0 5px 0 #a35c1a;
-            transition: 0.05s linear;
-            touch-action: manipulation;
-            font-family: monospace;
-        }
-
-        .ctrl-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 2px 0 #a35c1a;
-        }
-
-        .wind-indicator {
-            position: absolute;
-            top: 20px;
-            right: 16px;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(5px);
-            padding: 6px 14px;
-            border-radius: 30px;
-            color: #ffefc0;
-            font-weight: bold;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 20;
-            pointer-events: none;
-            font-family: monospace;
-            letter-spacing: 1px;
-        }
-
-        .wind-arrow {
-            font-size: 1.2rem;
-        }
-
-        .restart-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 30;
-            flex-direction: column;
-            gap: 20px;
-            pointer-events: auto;
-        }
-
-        .restart-btn {
-            background: #ffaa44;
-            border: none;
-            padding: 14px 28px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            border-radius: 60px;
-            color: #2c1a0c;
-            box-shadow: 0 4px 0 #8b4c1a;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        .game-over-text {
-            color: white;
-            font-size: 2rem;
-            text-shadow: 2px 2px 0 #000;
-            background: rgba(0,0,0,0.5);
-            padding: 8px 24px;
-            border-radius: 60px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        @media (max-width: 500px) {
-            .ctrl-btn {
-                width: 55px;
-                font-size: 1.5rem;
-            }
-            .fuel-gauge {
-                font-size: 0.7rem;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Balloon Game</title>
+<script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
+<style>
+body { margin:0; }
+</style>
 </head>
 <body>
-<div class="game-container" id="gameContainer">
-    <canvas id="gameCanvas" width="450" height="800"></canvas>
-
-    <div class="ui-panel">
-        <div class="fuel-gauge">
-            <span class="fuel-icon">⛽</span>
-            <div class="fuel-bar">
-                <div class="fuel-fill" id="fuelFill"></div>
-            </div>
-            <span id="fuelPercent">100%</span>
-        </div>
-        <div class="controls">
-            <button class="ctrl-btn" id="leftBtn">◀ SOL</button>
-            <button class="ctrl-btn" id="gasBtn">🔥 GAZ</button>
-            <button class="ctrl-btn" id="rightBtn">SAĞ ▶</button>
-        </div>
-    </div>
-
-    <div class="wind-indicator" id="windIndicator">
-        <span>🌬️ RÜZGAR</span>
-        <span class="wind-arrow" id="windArrow">➡️</span>
-        <span id="windSpeed">0.0</span>
-    </div>
-
-    <div id="gameOverlay" class="restart-overlay hidden">
-        <div class="game-over-text" id="overlayMsg">OYUN BİTTİ</div>
-        <button class="restart-btn" id="restartBtn">🎈 YENİDEN UÇUŞ</button>
-    </div>
-</div>
 
 <script>
-    (function(){
-        // Canvas
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
 
-        // Boyutlandırma (mobil dikey)
-        function resizeCanvas() {
-            const container = document.getElementById('gameContainer');
-            const w = container.clientWidth;
-            const h = container.clientHeight;
-            canvas.width = w;
-            canvas.height = h;
+const config = {
+    type: Phaser.AUTO,
+    width: 360,
+    height: 640,
+    physics: {
+        default: 'arcade',
+        arcade: { gravity: { y: 200 } }
+    },
+    scene: {
+        preload,
+        create,
+        update
+    }
+};
+
+let balloon;
+let cursors;
+let gas = 100;
+let wind = 30;
+
+const game = new Phaser.Game(config);
+
+function preload() {
+    this.load.image('balloon', 'https://labs.phaser.io/assets/sprites/hotairballoon.png');
+    this.load.image('bird', 'https://labs.phaser.io/assets/sprites/bird.png');
+}
+
+function create() {
+
+    balloon = this.physics.add.sprite(180, 500, 'balloon');
+    balloon.setCollideWorldBounds(true);
+
+    cursors = this.input.keyboard.createCursorKeys();
+
+    // Kuşlar
+    this.birds = this.physics.add.group();
+
+    this.time.addEvent({
+        delay: 2000,
+        loop: true,
+        callback: () => {
+            let bird = this.birds.create(Phaser.Math.Between(0, 360), 0, 'bird');
+            bird.setVelocityY(100);
         }
-        resizeCanvas();
-        window.addEventListener('resize', () => { resizeCanvas(); });
+    });
 
-        // --- Oyun Parametreleri ---
-        let balloon = {
-            x: 0, y: 0,        // merkez
-            radius: 18,
-            vx: 0, vy: 0,
-            fuel: 100.0,       // max 100
-            alive: true,
-            gasActive: false    // gaz butonu aktif mi (yükselme)
-        };
+    this.physics.add.collider(balloon, this.birds, () => {
+        alert("Patladın!");
+        location.reload();
+    });
 
-        let wind = {
-            direction: 1,      // 1: sağa, -1: sola
-            strength: 1.2     // rüzgar şiddeti (px/frame)
-        };
+}
 
-        // Engeller: Dağlar (sağ ve sol kenarlık)
-        let mountains = [];    // { side: 'left' veya 'right', y: üstten başlangıç y, height: yükseklik, width: sabit genişlik, active: true }
-        // periyodik dağ üretimi
-        let mountainTimer = 0;
-        const MOUNTAIN_GAP_FRAMES = 90;  // 1.5 sn 60fps
-        const MOUNTAIN_WIDTH = 48;
-        const LEFT_MOUNTAIN_X = 12;      // sol kenar offset
-        const RIGHT_MOUNTAIN_X_OFFSET = null; // sağ kenar: canvas.width - MOUNTAIN_WIDTH - 8
+function update() {
 
-        // Kuşlar dizisi
-        let birds = [];
-        let birdSpawnCounter = 0;
-        const BIRD_SPAWN_RATE = 55;      // frame
+    // Rüzgar etkisi
+    balloon.setVelocityX(wind);
 
-        // Oyun döngüsü
-        let animationId = null;
-        let gameRunning = true;
+    // Sol sağ kontrol
+    if (cursors.left.isDown) {
+        balloon.setVelocityX(-150);
+    } else if (cursors.right.isDown) {
+        balloon.setVelocityX(150);
+    }
 
-        // Kontroller
-        let leftPressed = false;
-        let rightPressed = false;
-        let gasPressed = false;
+    // Gaz (yukarı çıkış)
+    if (cursors.up.isDown && gas > 0) {
+        balloon.setVelocityY(-200);
+        gas -= 0.3;
+    }
 
-        // UI elementleri
-        const fuelFillDiv = document.getElementById('fuelFill');
-        const fuelPercentSpan = document.getElementById('fuelPercent');
-        const windArrowSpan = document.getElementById('windArrow');
-        const windSpeedSpan = document.getElementById('windSpeed');
-        const gameOverlay = document.getElementById('gameOverlay');
-        const overlayMsg = document.getElementById('overlayMsg');
-        const restartBtn = document.getElementById('restartBtn');
+    // Gaz biterse düş
+    if (gas <= 0) {
+        balloon.setVelocityY(300);
+    }
 
-        // --- Yardımcı fonksiyonlar ---
-        function updateFuelUI() {
-            let percent = Math.max(0, balloon.fuel);
-            let fillPercent = (percent / 100) * 100;
-            fuelFillDiv.style.width = fillPercent + '%';
-            fuelPercentSpan.innerText = Math.floor(percent) + '%';
-            if(balloon.fuel <= 15) fuelFillDiv.style.backgroundColor = "#e34d4d";
-            else fuelFillDiv.style.backgroundColor = "#f5b042";
-        }
+}
 
-        function updateWindUI() {
-            let dirText = wind.direction === 1 ? '➡️' : '⬅️';
-            windArrowSpan.innerText = dirText;
-            windSpeedSpan.innerText = wind.strength.toFixed(1);
-        }
-
-        // Rüzgar rastgele değişimi (zamanla yön ve şiddet)
-        let windChangeCounter = 0;
-        function updateWindDynamics() {
-            windChangeCounter++;
-            if(windChangeCounter > 180) { // ~3 saniyede bir
-                windChangeCounter = 0;
-                // rüzgar yönü değişebilir (0.3 ihtimal)
-                if(Math.random() < 0.35) {
-                    wind.direction *= -1;
-                }
-                // şiddet 0.6 ~ 2.4 arası
-                let newStrength = 0.8 + Math.random() * 1.8;
-                wind.strength = parseFloat(newStrength.toFixed(2));
-                updateWindUI();
-            }
-        }
-
-        // --- Çarpışma ve sınırlar ---
-        function checkCollisions() {
-            if(!balloon.alive) return true;
-
-            const balX = balloon.x;
-            const balY = balloon.y;
-            const rad = balloon.radius;
-
-            // 1) Kuşlarla çarpışma
-            for(let i=0; i<birds.length; i++) {
-                const b = birds[i];
-                const dx = balX - b.x;
-                const dy = balY - b.y;
-                const dist = Math.hypot(dx, dy);
-                if(dist < rad + b.radius) {
-                    // patlama!
-                    balloon.alive = false;
-                    gameRunning = false;
-                    showGameOver("💥 Kuşa Çarptı! Balon Patladı!");
-                    return false;
-                }
-            }
-
-            // 2) Dağ engelleri (sol ve sağ duvar tipi dağlar)
-            for(let m of mountains) {
-                if(!m.active) continue;
-                let mountX, mountW = MOUNTAIN_WIDTH;
-                if(m.side === 'left') {
-                    mountX = LEFT_MOUNTAIN_X;
-                } else {
-                    mountX = canvas.width - MOUNTAIN_WIDTH - 8;
-                }
-                // dağ dikdörtgen alanı (yuvarlak dağlar ama çarpma bounding box)
-                const mountTop = m.y;
-                const mountBottom = m.y + m.height;
-                // balonun çemberi ile dağ dikdörtgen çarpışması (basit yaklaşım)
-                if(balX + rad > mountX && balX - rad < mountX + MOUNTAIN_WIDTH) {
-                    if(balY + rad > mountTop && balY - rad < mountBottom) {
-                        balloon.alive = false;
-                        gameRunning = false;
-                        showGameOver("🗻 Dağa Çarptın! Balon Patladı!");
-                        return false;
-                    }
-                }
-            }
-
-            // 3) Ekran üst/alt sınırı (gaz ve alçalma limiti)
-            // Üst sınır: 40px (balon patlar yerine çarpma)
-            if(balY - rad <= 15) {
-                balloon.alive = false;
-                gameRunning = false;
-                showGameOver("🏔️ Çok Yükseldin! Kayalara Çarptın!");
-                return false;
-            }
-            // Alt sınır: yere düşme (ölüm)
-            if(balY + rad >= canvas.height - 10) {
-                balloon.alive = false;
-                gameRunning = false;
-                showGameOver("⬇️ Balon Yere Çakıldı!");
-                return false;
-            }
-
-            return true;
-        }
-
-        function showGameOver(msg) {
-            if(!gameRunning) return;
-            gameRunning = false;
-            overlayMsg.innerText = msg;
-            gameOverlay.classList.remove('hidden');
-        }
-
-        // Gaz tüketimi ve hareket
-        function applyMovement() {
-            if(!balloon.alive) return;
-
-            // 1) Rüzgar etkisi (sabit yatay hız)
-            let windEffectX = wind.direction * wind.strength;
-            balloon.vx = windEffectX;
-
-            // 2) Kullanıcı yönlendirme: butonlar anlık itme (her basışta bir miktar itme)
-            // Sol ve sağ butonlar -> anlık yatay hız ekler (rüzgara karşı hareket)
-            let manualForce = 0;
-            if(leftPressed) manualForce = -2.6;
-            if(rightPressed) manualForce = 2.6;
-            // rüzgarın tersi yönüne basmak mantığı: oyuncu rüzgar yönünün tersine hamle yapabilir.
-            balloon.vx += manualForce;
-            // sınırla max yatay hız
-            if(balloon.vx > 5) balloon.vx = 5;
-            if(balloon.vx < -5) balloon.vx = -5;
-
-            // 3) Dikey hareket: gaz aktifse yükselir, değilse alçalır (yerçekimi ve kaldırma)
-            const LIFT_FORCE = -1.4;     // yukarı
-            const GRAVITY = 0.9;         // aşağı
-            if(gasPressed && balloon.fuel > 0) {
-                balloon.vy = LIFT_FORCE;
-                // gaz tüketimi (sabit her frame)
-                balloon.fuel = Math.max(0, balloon.fuel - 0.28);
-                updateFuelUI();
-                if(balloon.fuel <= 0) {
-                    // gaz bitti, oyun bitmeli balon düşer
-                    balloon.alive = false;
-                    gameRunning = false;
-                    showGameOver("⛽ GAZ BİTTİ! Balon Düştü...");
-                    return;
-                }
-            } else {
-                // gaz kesik -> alçalma
-                balloon.vy = GRAVITY;
-                // gaz kesikte yakıt tüketimi yok
-            }
-
-            // 4) Pozisyon güncelleme
-            balloon.x += balloon.vx;
-            balloon.y += balloon.vy;
-
-            // sol/sağ duvar sınırları (dağlarla çarpışma öncesi kenardan dönmez, ama canvas dışına çıkmasın)
-            if(balloon.x - balloon.radius < 8) balloon.x = 8 + balloon.radius;
-            if(balloon.x + balloon.radius > canvas.width - 8) balloon.x = canvas.width - 8 - balloon.radius;
-
-            // dikey sınırlar (çarpma tam kontrolde)
-            if(balloon.y - balloon.radius < 20) balloon.y = 20 + balloon.radius;
-            if(balloon.y + balloon.radius > canvas.height - 15) balloon.y = canvas.height - 15 - balloon.radius;
-        }
-
-        // --- Dağ üretme (sağ ve sol dağlar değişik yükseklik) ---
-        function spawnMountain() {
-            const side = Math.random() < 0.5 ? 'left' : 'right';
-            let yPos = canvas.height - 30;   // dağlar tabandan yükselecek şekilde
-            let height = 55 + Math.random() * 75;   // 55-130 arası
-            // dağların başlangıç y'si alt kısımda (yerden yukarı)
-            let startY = canvas.height - height - 5;
-            mountains.push({
-                side: side,
-                y: startY,
-                height: height,
-                active: true,
-                life: 1
-            });
-            // çok fazla dağ olmaması için temizle
-            if(mountains.length > 6) mountains.shift();
-        }
-
-        // --- Kuş Üretimi (anime tarzı kuşlar)---
-        function spawnBird() {
-            let radiusBird = 10 + Math.random() * 5;
-            let birdY = 70 + Math.random() * (canvas.height - 180);
-            let birdX = (Math.random() < 0.5) ? -30 : canvas.width + 30;
-            let vxBird = (birdX < 0) ? 1.5 + Math.random() * 1.2 : -1.5 - Math.random() * 1.2;
-            birds.push({
-                x: birdX,
-                y: birdY,
-                radius: radiusBird,
-                vx: vxBird,
-                vy: (Math.random() - 0.5) * 0.5,
-                color: `hsl(${35 + Math.random() * 30}, 70%, 60%)`
-            });
-        }
-
-        function updateWorld() {
-            if(!gameRunning) return;
-
-            // Gaz bitmeden sürekli update
-            if(balloon.fuel <= 0 && balloon.alive) {
-                balloon.alive = false;
-                gameRunning = false;
-                showGameOver("⛽ GAZ BİTTİ! Balon Düştü.");
-                return;
-            }
-
-            // Rüzgar dinamik
-            updateWindDynamics();
-            applyMovement();
-            if(!checkCollisions()) return;
-
-            // Kuş güncelleme
-            for(let i=0; i<birds.length; i++) {
-                birds[i].x += birds[i].vx;
-                birds[i].y += birds[i].vy;
-                if(birds[i].x + birds[i].radius < -50 || birds[i].x - birds[i].radius > canvas.width + 50) {
-                    birds.splice(i,1);
-                    i--;
-                }
-            }
-            // Kuş spawn
-            birdSpawnCounter++;
-            if(birdSpawnCounter > BIRD_SPAWN_RATE && birds.length < 7) {
-                birdSpawnCounter = 0;
-                spawnBird();
-            }
-
-            // Dağ güncelleme: dağlar sabit konumda; sadece periyodik ekleme
-            mountainTimer++;
-            if(mountainTimer > MOUNTAIN_GAP_FRAMES) {
-                mountainTimer = 0;
-                spawnMountain();
-            }
-            // Dağları temizleme (ekran dışı kalmayan dağlar, ama dağlar alt sabit; çok yüksekteki dağlar? aktif kalır, ama silme mantığı yok çok olursa shift)
-            while(mountains.length > 9) mountains.shift();
-        }
-
-        // --- Çizim: Anime / Kapadokya stili ---
-        function drawBackground() {
-            // Gökyüzü gradyanı
-            const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            grad.addColorStop(0, "#ffd89b");
-            grad.addColorStop(0.6, "#f7b45a");
-            ctx.fillStyle = grad;
-            ctx.fillRect(0,0,canvas.width,canvas.height);
-
-            // Uzak peri bacaları
-            ctx.fillStyle = "#ac8e5c";
-            for(let i=0;i<12;i++) {
-                let x = 30 + i*40 + (Date.now()*0.01)%70;
-                let h = 45+Math.sin(i)*25;
-                ctx.beginPath();
-                ctx.rect(x-10, canvas.height-60-h, 18, h);
-                ctx.fill();
-            }
-            // Zemin
-            ctx.fillStyle = "#b97f44";
-            ctx.fillRect(0,canvas.height-42,canvas.width,48);
-            ctx.fillStyle = "#8b5a2b";
-            for(let i=0;i<15;i++) {
-                ctx.beginPath();
-                ctx.moveTo(i*35, canvas.height-42);
-                ctx.lineTo(i*35+18, canvas.height-58);
-                ctx.lineTo(i*35-18, canvas.height-58);
-                ctx.fill();
-            }
-        }
-
-        function drawMountains() {
-            for(let m of mountains) {
-                let xPos = (m.side === 'left') ? LEFT_MOUNTAIN_X : canvas.width - MOUNTAIN_WIDTH - 8;
-                let yTop = m.y;
-                let heightM = m.height;
-                ctx.fillStyle = "#7c5a3e";
-                ctx.shadowBlur = 0;
-                ctx.beginPath();
-                ctx.rect(xPos, yTop, MOUNTAIN_WIDTH, heightM);
-                ctx.fill();
-                ctx.fillStyle = "#aa7a4a";
-                ctx.beginPath();
-                ctx.moveTo(xPos+MOUNTAIN_WIDTH/2, yTop-18);
-                ctx.lineTo(xPos+5, yTop+12);
-                ctx.lineTo(xPos+MOUNTAIN_WIDTH-5, yTop+12);
-                ctx.fill();
-                // taş dokusu
-                ctx.fillStyle = "#e0ac69";
-                for(let i=0;i<3;i++) {
-                    ctx.fillRect(xPos+6, yTop+heightM-18, 8, 8);
-                    ctx.fillRect(xPos+MOUNTAIN_WIDTH-14, yTop+heightM-28, 8, 8);
-                }
-            }
-        }
-
-        function drawBirds() {
-            for(let b of birds) {
-                ctx.save();
-                ctx.shadowBlur = 0;
-                ctx.fillStyle = b.color;
-                ctx.beginPath();
-                ctx.ellipse(b.x, b.y, b.radius, b.radius*0.7, 0, 0, Math.PI*2);
-                ctx.fill();
-                ctx.fillStyle = "#2c1a0c";
-                ctx.beginPath();
-                ctx.arc(b.x-3, b.y-2, 2, 0, Math.PI*2);
-                ctx.fill();
-                ctx.beginPath();
-                ctx.moveTo(b.x+5, b.y-2);
-                ctx.lineTo(b.x+12, b.y-4);
-                ctx.lineTo(b.x+8, b.y+2);
-                ctx.fill();
-                ctx.restore();
-            }
-        }
-
-        function drawBalloon() {
-            if(!balloon.alive) return;
-            let x = balloon.x, y = balloon.y, r = balloon.radius;
-            // Sepet
-            ctx.fillStyle = "#a5612b";
-            ctx.fillRect(x-12, y+5, 24, 14);
-            ctx.fillStyle = "#d48c3b";
-            ctx.fillRect(x-8, y+8, 16, 6);
-            // Balon
-            ctx.beginPath();
-            ctx.moveTo(x, y-r);
-            ctx.quadraticCurveTo(x+r*0.8, y-r*0.3, x+r*0.5, y+r*0.2);
-            ctx.quadraticCurveTo(x, y+r*0.1, x-r*0.5, y+r*0.2);
-            ctx.quadraticCurveTo(x-r*0.8, y-r*0.3, x, y-r);
-            ctx.fillStyle = "#E34234";
-            ctx.fill();
-            ctx.fillStyle = "#ffb347";
-            ctx.beginPath();
-            ctx.ellipse(x, y-5, r*0.5, r*0.3, 0, 0, Math.PI*2);
-            ctx.fill();
-            // Işık
-            ctx.fillStyle = "#fff3b0";
-            ctx.beginPath();
-            ctx.arc(x-4, y-7, 3, 0, Math.PI*2);
-            ctx.fill();
-            // Gözler
-            ctx.fillStyle = "#fff";
-            ctx.beginPath();
-            ctx.arc(x-6, y-4, 3, 0, Math.PI*2);
-            ctx.fill();
-            ctx.fillStyle = "#000";
-            ctx.beginPath();
-            ctx.arc(x-7, y-5, 1.2, 0, Math.PI*2);
-            ctx.fill();
-        }
-
-        function drawWindParticles() {
-            // Rüzgar yönü partikülü
-            let dir = wind.direction;
-            let stepX = dir === 1 ? 2 : -2;
-            for(let i=0;i<5;i++) {
-                ctx.fillStyle = "rgba(255,240,180,0.6)";
-                ctx.beginPath();
-                ctx.moveTo(40+ i*18, 45);
-                ctx.lineTo(48+ i*18 + (dir*6), 40);
-                ctx.lineTo(40+ i*18, 35);
-                ctx.fill();
-            }
-        }
-
-        function drawUIelements() {
-            ctx.font = "bold 16px 'Segoe UI'";
-            ctx.fillStyle = "#3e2a1f";
-            ctx.shadowBlur = 0;
-            ctx.fillText("🔥 GAZ", 15, 55);
-            if(gasPressed) {
-                ctx.fillStyle = "#ff8800";
-                ctx.fillText("● YÜKSELİYOR", 15, 85);
-            }
-        }
-
-        function animate() {
-            if(!gameRunning) {
-                // oyun bitmiş canvas'i dondurabiliriz fakat çizim güncel kalır
-                drawBackground();
-                drawMountains();
-                drawBirds();
-                drawBalloon();
-                drawWindParticles();
-                drawUIelements();
-                requestAnimationFrame(animate);
-                return;
-            }
-            updateWorld();
-            drawBackground();
-            drawMountains();
-            drawBirds();
-            drawBalloon();
-            drawWindParticles();
-            drawUIelements();
-            requestAnimationFrame(animate);
-        }
-
-        // --- Buton etkinlikleri (anlık itme ve gaz) ---
-        function attachControls() {
-            const leftBtn = document.getElementById('leftBtn');
-            const rightBtn = document.getElementById('rightBtn');
-            const gas = document.getElementById('gasBtn');
-
-            const activateLeft = (e) => { e.preventDefault(); leftPressed = true; };
-            const deactivateLeft = (e) => { leftPressed = false; };
-            const activateRight = (e) => { e.preventDefault(); rightPressed = true; };
-            const deactivateRight = (e) => { rightPressed = false; };
-            const activateGas = (e) => { e.preventDefault(); gasPressed = true; };
-            const deactivateGas = (e) => { gasPressed = false; };
-
-            leftBtn.addEventListener('mousedown', activateLeft);
-            leftBtn.addEventListener('mouseup', deactivateLeft);
-            leftBtn.addEventListener('mouseleave', deactivateLeft);
-            rightBtn.addEventListener('mousedown', activateRight);
-            rightBtn.addEventListener('mouseup', deactivateRight);
-            rightBtn.addEventListener('mouseleave', deactivateRight);
-            gas.addEventListener('mousedown', activateGas);
-            gas.addEventListener('mouseup', deactivateGas);
-            gas.addEventListener('mouseleave', deactivateGas);
-
-            leftBtn.addEventListener('touchstart', activateLeft, {passive:false});
-            leftBtn.addEventListener('touchend', deactivateLeft);
-            rightBtn.addEventListener('touchstart', activateRight, {passive:false});
-            rightBtn.addEventListener('touchend', deactivateRight);
-            gas.addEventListener('touchstart', activateGas, {passive:false});
-            gas.addEventListener('touchend', deactivateGas);
-        }
-
-        function restartGame() {
-            balloon = {
-                x: canvas.width/2,
-                y: canvas.height-100,
-                radius: 18,
-                vx: 0, vy: 0,
-                fuel: 100,
-                alive: true,
-                gasActive: false
-            };
-            wind = { direction: 1, strength: 1.2 };
-            birds = [];
-            mountains = [];
-            mountainTimer = 0;
-            birdSpawnCounter = 0;
-            leftPressed = false;
-            rightPressed = false;
-            gasPressed = false;
-            gameRunning = true;
-            updateFuelUI();
-            updateWindUI();
-            gameOverlay.classList.add('hidden');
-            // başlangıç dağları
-            for(let i=0;i<2;i++) spawnMountain();
-        }
-
-        restartBtn.addEventListener('click', () => {
-            restartGame();
-        });
-
-        attachControls();
-        restartGame();
-        animate();
-        setInterval(() => {
-            if(gameRunning && !gasPressed && balloon.fuel>0){
-                // gaz kesikken yakıt tüketimi olmaz
-            }
-        }, 100);
-    })();
 </script>
+
 </body>
 </html>
