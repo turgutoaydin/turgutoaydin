@@ -1,373 +1,198 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Balon Kulesi</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-      overflow: hidden;
-      background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
-      font-family: Arial, sans-serif;
-      touch-action: manipulation;
-    }
-    #game {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
-    #balloon {
-      position: absolute;
-      left: 50%;
-      width: 70px;
-      height: 90px;
-      transform: translateX(-50%);
-      background: radial-gradient(circle at 30% 30%, #ff6b6b, #c0392b);
-      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-      box-shadow: inset -10px -10px 20px rgba(0,0,0,0.3);
-      transition: transform 0.1s;
-    }
-    #balloon::after {
-      content: "";
-      position: absolute;
-      bottom: -40px;
-      left: 50%;
-      width: 4px;
-      height: 40px;
-      background: #8B4513;
-      transform: translateX(-50%);
-    }
-    #basket {
-      position: absolute;
-      bottom: -45px;
-      left: 50%;
-      width: 60px;
-      height: 30px;
-      background: #8B4513;
-      border-radius: 8px;
-      transform: translateX(-50%);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-    }
-    .platform {
-      position: absolute;
-      width: 120px;
-      height: 18px;
-      background: linear-gradient(#f4a261, #e76f51);
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    }
-    .cloud {
-      position: absolute;
-      font-size: 60px;
-      opacity: 0.7;
-      pointer-events: none;
-      user-select: none;
-    }
-    .bird {
-      position: absolute;
-      font-size: 40px;
-      transition: transform 0.8s linear;
-    }
-    #score {
-      position: absolute;
-      top: 10px;
-      left: 0;
-      right: 0;
-      text-align: center;
-      font-size: 32px;
-      color: #fff;
-      text-shadow: 2px 2px 4px #000;
-      z-index: 10;
-      pointer-events: none;
-    }
-    #gameover {
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 40px;
-      z-index: 20;
-      display: none;
-    }
-    button {
-      margin-top: 20px;
-      padding: 15px 40px;
-      font-size: 24px;
-      border: none;
-      border-radius: 12px;
-      background: #e74c3c;
-      color: white;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>🌋 Kapadokya Balonu - Anime Uçuşu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<style>
+  body {margin:0; padding:0; background:#111; touch-action:none; overflow:hidden;}
+  canvas {display:block; margin:0 auto; max-width:100%; height:auto;}
+  #controls button {
+    position:absolute; background:rgba(255,255,255,0.25); color:white; border:3px solid rgba(255,255,255,0.6);
+    font-size:32px; width:80px; height:80px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 5px 20px rgba(0,0,0,0.4);
+  }
+  #gas {width:115px; height:115px; background:rgba(255,140,0,0.4); font-size:18px; flex-direction:column; bottom:150px; left:50%; transform:translateX(-50%);}
+</style>
 </head>
 <body>
+<canvas id="canvas" width="380" height="700"></canvas>
 
-<div id="game">
-  <div id="score">0 m</div>
-  <div id="balloon">
-    <div id="basket"></div>
-  </div>
-  <div id="gameover">
-    <div>Balon Patladı!</div>
-    <div id="finalscore">0 metre</div>
-    <button onclick="location.reload()">Tekrar Oyna</button>
-  </div>
+<div id="controls" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;">
+  <button id="left" style="bottom:40px; left:25px;">←</button>
+  <button id="right" style="bottom:40px; right:25px;">→</button>
+  <button id="gas">🔥<br><span style="font-size:13px;">GAZ</span></button>
 </div>
 
 <script>
-// ================================
-// OYUN DEĞİŞKENLERİ
-// ================================
-const balloon = document.getElementById('balloon');
-const scoreEl = document.getElementById('score');
-const gameoverEl = document.getElementById('gameover');
-const finalscoreEl = document.getElementById('finalscore');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let W = canvas.width = 380;
+let H = canvas.height = 700;
 
-let posX = window.innerWidth / 2 - 35;
-let posY = 300;
-let velY = 0;
-let gravity = 0.35;
-let jumpPower = -9.5;
-let gameSpeed = 2.2;
+let balloon = {x: W/2, y: H-200, vx:0, vy:0, r:24};
+let gas = 100;
 let score = 0;
-let gameActive = true;
-
-let platforms = [];
+let gameOver = false;
+let wind = 1.8;
+let windTimer = 0;
 let birds = [];
 
-// Mobil dokunma / fare desteği
-let touchActive = false;
+let leftPressed = false, rightPressed = false, gasPressed = false;
 
-// ================================
-// PLATFORM OLUŞTURMA
-// ================================
-function createPlatform(y) {
-  const p = document.createElement('div');
-  p.className = 'platform';
-  
-  let width = Math.random() * 80 + 90; // 90-170px
-  let left = Math.random() * (window.innerWidth - width - 20) + 10;
-  
-  p.style.width = width + 'px';
-  p.style.left = left + 'px';
-  p.style.top = y + 'px';
-  
-  document.getElementById('game').appendChild(p);
-  platforms.push({el: p, x: left, w: width, y});
-}
+const GRAVITY = 0.085;
+const LIFT = 0.22;
 
-// İlk platformlar
-for(let i = 0; i < 8; i++) {
-  createPlatform( window.innerHeight - i * 140 );
-}
-
-// ================================
-// KUŞ (DÜŞMAN)
-// ================================
 function spawnBird() {
-  if (!gameActive) return;
-  if (Math.random() > 0.97) {   // nadir spawn
-    const bird = document.createElement('div');
-    bird.className = 'bird';
-    bird.textContent = '🦅';
-    
-    const side = Math.random() > 0.5 ? 'left' : 'right';
-    const startX = side === 'left' ? -60 : window.innerWidth + 20;
-    const targetX = side === 'left' ? window.innerWidth + 80 : -80;
-    
-    bird.style.left = startX + 'px';
-    bird.style.top = (100 + Math.random() * (window.innerHeight - 200)) + 'px';
-    
-    document.getElementById('game').appendChild(bird);
-    birds.push({
-      el: bird,
-      x: side === 'left' ? -60 : window.innerWidth,
-      vx: side === 'left' ? 3.2 : -3.2
-    });
+  birds.push({x: Math.random()<0.5 ? -20 : W+20, y:100+Math.random()*(H*0.55), vx:Math.random()<0.5?2.8:-2.8});
+}
+
+// Butonlar
+document.getElementById('left').addEventListener('touchstart', e=>{e.preventDefault(); leftPressed=true;});
+document.getElementById('left').addEventListener('touchend', ()=>{leftPressed=false;});
+document.getElementById('right').addEventListener('touchstart', e=>{e.preventDefault(); rightPressed=true;});
+document.getElementById('right').addEventListener('touchend', ()=>{rightPressed=false;});
+document.getElementById('gas').addEventListener('touchstart', e=>{e.preventDefault(); gasPressed=true;});
+document.getElementById('gas').addEventListener('touchend', ()=>{gasPressed=false;});
+
+// Klavye (bilgisayarda test için)
+document.addEventListener('keydown', e=>{ 
+  if(e.key==='ArrowLeft'||e.key==='a') leftPressed=true; 
+  if(e.key==='ArrowRight'||e.key==='d') rightPressed=true; 
+  if(e.key===' ') gasPressed=true;
+});
+document.addEventListener('keyup', e=>{ 
+  if(e.key==='ArrowLeft'||e.key==='a') leftPressed=false; 
+  if(e.key==='ArrowRight'||e.key==='d') rightPressed=false; 
+  if(e.key===' ') gasPressed=false;
+});
+
+function update() {
+  if(gameOver) return;
+  score += 0.2;
+
+  // Yükselme / Alçalma
+  if(gasPressed && gas>0){
+    balloon.vy = Math.max(balloon.vy - LIFT, -4.5);
+    gas -= 0.28;
+  } else {
+    balloon.vy += GRAVITY;
+  }
+
+  // Rüzgar + yönlendirme
+  balloon.vx += wind * 0.045;
+  if(leftPressed) balloon.vx -= 3.5;
+  if(rightPressed) balloon.vx += 3.5;
+  balloon.vx *= 0.82;
+
+  balloon.x += balloon.vx;
+  balloon.y += balloon.vy;
+
+  // Dinamik dağ kenarları (rüzgara göre değişir)
+  const leftWall = 38 + 28 * Math.sin(score/18);
+  const rightWall = W - 38 - 25 * Math.sin(score/22 + 1);
+  if(balloon.x - balloon.r < leftWall || balloon.x + balloon.r > rightWall) gameOver = true;
+
+  if(balloon.y > H-40 || balloon.y < 30) gameOver = true;
+  if(gas <= 0) balloon.vy += 0.12; // ağır düşüş
+
+  // Kuşlar
+  for(let i=birds.length-1; i>=0; i--){
+    let b = birds[i];
+    b.x += b.vx;
+    if(b.x < -100 || b.x > W+100){ birds.splice(i,1); continue; }
+    let dx = b.x - balloon.x;
+    let dy = b.y - balloon.y;
+    if(dx*dx + dy*dy < 1200) gameOver = true;
+  }
+
+  if(Math.random()<0.035) spawnBird();
+
+  // Rüzgar değişimi
+  windTimer++;
+  if(windTimer > 120){
+    wind = (Math.random()*4 - 2);
+    windTimer = 0;
+  }
+  gas = Math.max(0, gas);
+}
+
+function drawBackground(){
+  let gr = ctx.createLinearGradient(0,0,0,H*0.8);
+  gr.addColorStop(0,'#5C9ED6'); gr.addColorStop(1,'#B0E0FF');
+  ctx.fillStyle = gr; ctx.fillRect(0,0,W,H);
+
+  // Peri bacaları (Cappadocia manzarası)
+  ctx.fillStyle = '#C38B5E';
+  ctx.beginPath(); ctx.moveTo(0,H*0.75); ctx.lineTo(W*0.3,H*0.45); ctx.lineTo(W*0.7,H*0.62); ctx.lineTo(W,H*0.55); ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.fill();
+}
+
+function draw(){
+  drawBackground();
+
+  // Balon (anime tarzı)
+  ctx.save();
+  ctx.translate(balloon.x, balloon.y-10);
+  ctx.fillStyle = '#FF4D00';
+  ctx.beginPath(); ctx.ellipse(0,-32,27,40,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#FFAA00';
+  ctx.beginPath(); ctx.ellipse(0,-30,20,28,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#5C4033';
+  ctx.fillRect(-10,12,20,18);
+  ctx.strokeStyle = '#222'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(-9,12); ctx.lineTo(-16,-18); ctx.moveTo(9,12); ctx.lineTo(15,-19); ctx.stroke();
+  ctx.restore();
+
+  // Kuşlar
+  ctx.fillStyle = '#1E3A5F';
+  for(let b of birds){
+    ctx.save();
+    ctx.translate(b.x, b.y);
+    ctx.scale(b.vx>0?1:-1,1);
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(15,-8); ctx.lineTo(8,-2); ctx.lineTo(18,5); ctx.fill();
+    ctx.restore();
+  }
+
+  // Dinamik dağ duvarları
+  const leftWall = 38 + 28*Math.sin(score/18);
+  const rightWall = W-38-25*Math.sin(score/22+1);
+  ctx.fillStyle = '#A67C5D';
+  ctx.fillRect(0,0,leftWall+8,H);
+  ctx.fillRect(rightWall-8,0,W,H);
+
+  // Gaz deposu
+  ctx.strokeStyle = '#fff'; ctx.lineWidth=6;
+  ctx.strokeRect(W-42,80,26,220);
+  ctx.fillStyle = gas>35?'#FFCC00':'#FF3333';
+  ctx.fillRect(W-38,85+(215-gas*2.15),18,gas*2.15);
+
+  // Rüzgar göstergesi
+  ctx.fillStyle = '#fff'; ctx.font='bold 17px Arial';
+  ctx.fillText('RÜZGAR '+(wind>0?'→':'←')+' '+Math.abs(wind).toFixed(1),22,55);
+
+  // Skor
+  ctx.fillStyle='white'; ctx.shadowColor='#000'; ctx.shadowBlur=8; ctx.font='bold 26px Arial';
+  ctx.fillText('⌈ '+Math.floor(score)+'m',20,28);
+
+  if(gameOver){
+    ctx.fillStyle='rgba(178,34,34,0.85)';
+    ctx.fillRect(0,H/2-90,W,170);
+    ctx.fillStyle='white'; ctx.font='bold 42px Arial'; ctx.textAlign='center';
+    ctx.fillText('BALON PATLADI!',W/2,H/2-20);
+    ctx.font='20px Arial';
+    ctx.fillText('Yüksekliğin: '+Math.floor(score)+' metre',W/2,H/2+40);
+    ctx.fillText('Tekrar oynamak için sayfayı yenile',W/2,H/2+80);
   }
 }
 
-// ================================
-// Oyun Döngüsü
-// ================================
-function gameLoop() {
-  if (!gameActive) return;
-
-  // Yerçekimi + hız
-  velY += gravity;
-  posY += velY;
-
-  // Yukarı kaydırma (kamerası yukarı gidiyor)
-  if (posY < window.innerHeight * 0.35) {
-    const moveUp = (window.innerHeight * 0.35 - posY) * 0.12;
-    posY += moveUp;
-    score += moveUp * 0.07;
-
-    // Platformları aşağı kaydır
-    platforms.forEach(p => {
-      p.y += moveUp;
-      p.el.style.top = p.y + 'px';
-    });
-
-    // Kuşları da aşağı kaydır
-    birds.forEach(b => {
-      b.el.style.top = (parseFloat(b.el.style.top) + moveUp) + 'px';
-    });
-
-    // Çok aşağı düşen platformları sil
-    platforms = platforms.filter(p => {
-      if (p.y > window.innerHeight + 50) {
-        p.el.remove();
-        return false;
-      }
-      return true;
-    });
-
-    // Yeni platform ekle
-    if (platforms.length < 12 || platforms[platforms.length-1].y > 300) {
-      const lastY = platforms.length ? platforms[platforms.length-1].y : window.innerHeight;
-      createPlatform(lastY - (140 + Math.random()*60));
-    }
-  }
-
-  // Balonu hareket ettir
-  balloon.style.top = posY + 'px';
-  balloon.style.left = posX + 'px';
-
-  // Zemin kontrolü (oyun bitmez ama çok aşağı düşmesin)
-  if (posY > window.innerHeight + 100) {
-    velY = jumpPower * 0.6; // hafif sıçrama
-  }
-
-  // Çarpışma - platform
-  let onPlatform = false;
-  for (let p of platforms) {
-    if (
-      posX + 35 > p.x &&
-      posX + 35 < p.x + p.w &&
-      posY + 80 > p.y &&
-      posY + 110 < p.y + 30 &&
-      velY > 0
-    ) {
-      posY = p.y - 110;
-      velY = jumpPower;
-      onPlatform = true;
-      break;
-    }
-  }
-
-  // Çarpışma - kuş
-  for (let b of birds) {
-    const birdRect = b.el.getBoundingClientRect();
-    const balRect = balloon.getBoundingClientRect();
-
-    if (
-      balRect.left < birdRect.right &&
-      balRect.right > birdRect.left &&
-      balRect.top < birdRect.bottom &&
-      balRect.bottom > birdRect.top
-    ) {
-      gameActive = false;
-      finalscoreEl.textContent = Math.floor(score) + " metre";
-      gameoverEl.style.display = 'flex';
-      break;
-    }
-  }
-
-  // Kuş hareketi
-  birds = birds.filter(b => {
-    b.x += b.vx;
-    b.el.style.left = b.x + 'px';
-
-    // Ekstra kuş animasyonu (kanat çırpma hissi)
-    b.el.style.transform = `scaleX(${Math.sin(Date.now()*0.015)*0.2 + 1})`;
-
-    if (b.x < -100 || b.x > window.innerWidth + 100) {
-      b.el.remove();
-      return false;
-    }
-    return true;
-  });
-
-  // Skor güncelle
-  scoreEl.textContent = Math.floor(score) + " m";
-
-  // Zorluk artışı
-  if (score > 300) gravity = 0.38;
-  if (score > 800) gravity = 0.42;
-  if (score > 1500) gameSpeed = 2.8;
-
+function gameLoop(){
+  update();
+  draw();
   requestAnimationFrame(gameLoop);
 }
 
-// ================================
-// Kontroller (hem fare hem dokunmatik)
-// ================================
-function jump() {
-  if (!gameActive) return;
-  velY = jumpPower;
-  balloon.style.transform = 'translateX(-50%) scale(1.08)';
-  setTimeout(() => balloon.style.transform = 'translateX(-50%) scale(1)', 80);
-}
-
-window.addEventListener('keydown', e => {
-  if (e.code === 'Space' || e.code === 'ArrowUp') {
-    e.preventDefault();
-    jump();
-  }
-});
-
-window.addEventListener('mousedown', e => {
-  e.preventDefault();
-  jump();
-});
-
-window.addEventListener('touchstart', e => {
-  e.preventDefault();
-  touchActive = true;
-  jump();
-});
-
-window.addEventListener('touchend', () => {
-  touchActive = false;
-});
-
-// Yanlara hareket (fare ile sürükleme / dokunmatik)
-let lastTouchX = null;
-
-window.addEventListener('mousemove', e => {
-  if (!gameActive) return;
-  posX = e.clientX;
-});
-
-window.addEventListener('touchmove', e => {
-  if (!gameActive) return;
-  e.preventDefault();
-  const touch = e.touches[0];
-  if (lastTouchX !== null) {
-    const delta = touch.clientX - lastTouchX;
-    posX += delta * 1.4;
-  }
-  lastTouchX = touch.clientX;
-});
-
-window.addEventListener('touchend', () => {
-  lastTouchX = null;
-});
-
-// Oyun başlasın
+spawnBird();
 gameLoop();
-setInterval(spawnBird, 800);
-
 </script>
 </body>
 </html>
