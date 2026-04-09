@@ -1,95 +1,314 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
-<meta charset="UTF-8">
-<title>Balloon Game</title>
-<script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
-<style>
-body { margin:0; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sonsuz Balon</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+            touch-action: none;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: linear-gradient(#87CEEB, #E0F7FF);
+        }
+        #score {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+            z-index: 100;
+            pointer-events: none;
+        }
+        #startScreen {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 200;
+            text-align: center;
+        }
+        button {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 24px;
+            background: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
-<script>
+<div id="score">0 m</div>
 
-const config = {
-    type: Phaser.AUTO,
-    width: 360,
-    height: 640,
-    physics: {
-        default: 'arcade',
-        arcade: { gravity: { y: 200 } }
-    },
-    scene: {
-        preload,
-        create,
-        update
-    }
+<div id="startScreen">
+    <h1>🌤️ Sıcak Hava Balonu</h1>
+    <p>Yukarı çık!<br>Engellere çarpma!</p>
+    <button onclick="startGame()">BAŞLA</button>
+</div>
+
+<canvas id="game"></canvas>
+
+<script>
+// Canvas setup
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+
+let width, height;
+
+// Mobil dikey için boyut ayarı
+function resize() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// Oyun değişkenleri
+let balloon = {
+    x: width / 2,
+    y: height * 0.7,
+    radius: 25,
+    velocity: 0,
+    gravity: 0.12,
+    lift: -3.5
 };
 
-let balloon;
-let cursors;
-let gas = 100;
-let wind = 30;
+let score = 0;
+let gameRunning = false;
+let obstacles = [];
+let clouds = [];
+let lastObstacle = 0;
 
-const game = new Phaser.Game(config);
+// Kontroller (hem dokunmatik hem klavye)
+let isTouching = false;
 
-function preload() {
-    this.load.image('balloon', 'https://labs.phaser.io/assets/sprites/hotairballoon.png');
-    this.load.image('bird', 'https://labs.phaser.io/assets/sprites/bird.png');
+document.addEventListener('touchstart', () => { if(gameRunning) isTouching = true; });
+document.addEventListener('touchend', () => { isTouching = false; });
+
+document.addEventListener('mousedown', () => { if(gameRunning) isTouching = true; });
+document.addEventListener('mouseup', () => { isTouching = false; });
+
+// Klavye desteği (boşluk tuşu)
+document.addEventListener('keydown', e => {
+    if (e.code === 'Space' && gameRunning) isTouching = true;
+});
+document.addEventListener('keyup', e => {
+    if (e.code === 'Space') isTouching = false;
+});
+
+// Bulutlar (arka plan)
+for (let i = 0; i < 8; i++) {
+    clouds.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        size: 40 + Math.random() * 50,
+        speed: 0.3 + Math.random() * 0.4
+    });
 }
 
-function create() {
-
-    balloon = this.physics.add.sprite(180, 500, 'balloon');
-    balloon.setCollideWorldBounds(true);
-
-    cursors = this.input.keyboard.createCursorKeys();
-
-    // Kuşlar
-    this.birds = this.physics.add.group();
-
-    this.time.addEvent({
-        delay: 2000,
-        loop: true,
-        callback: () => {
-            let bird = this.birds.create(Phaser.Math.Between(0, 360), 0, 'bird');
-            bird.setVelocityY(100);
-        }
+function createObstacle() {
+    const gap = 220; // geçiş boşluğu
+    const minHeight = 150;
+    const maxHeight = height - gap - 150;
+    
+    const topHeight = minHeight + Math.random() * (maxHeight - minHeight);
+    
+    obstacles.push({
+        x: width,
+        top: topHeight,
+        width: 70,
+        passed: false
     });
+}
 
-    this.physics.add.collider(balloon, this.birds, () => {
-        alert("Patladın!");
-        location.reload();
-    });
+function drawBalloon() {
+    // Balon gövdesi
+    ctx.save();
+    ctx.translate(balloon.x, balloon.y);
+    
+    // İp
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(0, balloon.radius);
+    ctx.lineTo(0, balloon.radius + 35);
+    ctx.stroke();
+    
+    // Balon
+    ctx.fillStyle = '#FF5722';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, balloon.radius, balloon.radius * 1.15, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Parlama efekti
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.beginPath();
+    ctx.ellipse(-8, -10, 10, 18, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Sepet
+    ctx.fillStyle = '#8D5524';
+    ctx.fillRect(-12, balloon.radius + 35, 24, 18);
+    
+    ctx.restore();
+}
 
+function drawObstacles() {
+    ctx.fillStyle = '#4CAF50';
+    for (let obs of obstacles) {
+        // Üst engel (dağ veya kule gibi)
+        ctx.fillRect(obs.x, 0, obs.width, obs.top);
+        
+        // Alt engel
+        ctx.fillRect(obs.x, obs.top + 220, obs.width, height);
+        
+        // Kenar çizgileri
+        ctx.strokeStyle = '#2E7D32';
+        ctx.lineWidth = 6;
+        ctx.strokeRect(obs.x, 0, obs.width, obs.top);
+        ctx.strokeRect(obs.x, obs.top + 220, obs.width, height);
+    }
+}
+
+function drawClouds() {
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    for (let cloud of clouds) {
+        ctx.beginPath();
+        ctx.ellipse(cloud.x, cloud.y, cloud.size, cloud.size * 0.6, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(cloud.x - cloud.size*0.4, cloud.y - 10, cloud.size*0.7, cloud.size*0.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(cloud.x + cloud.size*0.4, cloud.y - 5, cloud.size*0.6, cloud.size*0.55, 0, 0, Math.PI * 2);
+        ctx.fill();
+    }
 }
 
 function update() {
+    if (!gameRunning) return;
 
-    // Rüzgar etkisi
-    balloon.setVelocityX(wind);
+    // Balon fizikleri
+    if (isTouching) {
+        balloon.velocity = balloon.lift;
+    } else {
+        balloon.velocity += balloon.gravity;
+    }
+    
+    balloon.y += balloon.velocity;
 
-    // Sol sağ kontrol
-    if (cursors.left.isDown) {
-        balloon.setVelocityX(-150);
-    } else if (cursors.right.isDown) {
-        balloon.setVelocityX(150);
+    // Ekran sınırları
+    if (balloon.y - balloon.radius < 0) {
+        balloon.y = balloon.radius;
+        balloon.velocity = 0;
+    }
+    if (balloon.y + balloon.radius + 55 > height) {
+        gameOver();
     }
 
-    // Gaz (yukarı çıkış)
-    if (cursors.up.isDown && gas > 0) {
-        balloon.setVelocityY(-200);
-        gas -= 0.3;
+    // Engel üretimi
+    if (Date.now() - lastObstacle > 1400) {
+        createObstacle();
+        lastObstacle = Date.now();
     }
 
-    // Gaz biterse düş
-    if (gas <= 0) {
-        balloon.setVelocityY(300);
+    // Engel hareketi ve çarpışma
+    for (let i = obstacles.length - 1; i >= 0; i--) {
+        let obs = obstacles[i];
+        obs.x -= 3.2;
+
+        // Skor
+        if (!obs.passed && obs.x + obs.width < balloon.x) {
+            obs.passed = true;
+            score += 10;
+            document.getElementById('score').textContent = score + " m";
+        }
+
+        // Çarpışma kontrolü
+        if (
+            balloon.x + balloon.radius > obs.x &&
+            balloon.x - balloon.radius < obs.x + obs.width
+        ) {
+            if (
+                balloon.y - balloon.radius < obs.top ||
+                balloon.y + balloon.radius + 55 > obs.top + 220
+            ) {
+                gameOver();
+            }
+        }
+
+        // Ekran dışına çıkan engeli sil
+        if (obs.x + obs.width < 0) {
+            obstacles.splice(i, 1);
+        }
     }
 
+    // Bulutlar yavaş hareket etsin
+    for (let cloud of clouds) {
+        cloud.x -= cloud.speed;
+        if (cloud.x < -200) cloud.x = width + 100;
+    }
+
+    // Arka plan rengi hafif değişsin (yükseldikçe)
+    if (score > 500) {
+        canvas.style.background = 'linear-gradient(#5C9EFF, #B0E0FF)';
+    }
 }
 
+function draw() {
+    ctx.clearRect(0, 0, width, height);
+    
+    drawClouds();
+    drawObstacles();
+    drawBalloon();
+}
+
+function gameLoop() {
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+
+function gameOver() {
+    gameRunning = false;
+    alert(`Oyun Bitti! 🌤️\nYüksekliğin: ${score} metre\nTekrar oynamak için sayfayı yenile.`);
+}
+
+function startGame() {
+    document.getElementById('startScreen').style.display = 'none';
+    
+    // Reset
+    balloon.y = height * 0.7;
+    balloon.velocity = 0;
+    obstacles = [];
+    score = 0;
+    document.getElementById('score').textContent = "0 m";
+    gameRunning = true;
+    lastObstacle = Date.now();
+}
+
+// Başlat
+gameLoop();
 </script>
 
 </body>
