@@ -2,8 +2,8 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Cappadocia Balloon Run</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cappadocia Balloon</title>
 
 <style>
 body { margin:0; overflow:hidden; background:#000; font-family:Arial;}
@@ -55,12 +55,12 @@ button {
     <div id="score">0 m</div>
 
     <div id="menu" class="screen">
-        <h1>🎈 Kapadokya Uçuşu</h1>
+        <h1>🎈 Kapadokya</h1>
         <button onclick="startGame()">Başla</button>
     </div>
 
     <div id="gameover" class="screen" style="display:none;">
-        <h1>Çarpıştın!</h1>
+        <h1>Çarpıştın</h1>
         <p id="finalScore"></p>
         <button onclick="restart()">Tekrar</button>
     </div>
@@ -86,9 +86,8 @@ let gameState = STATE.MENU;
 
 // ================= PLAYER =================
 let balloon = {
-    x:0,
+    x:0, // sabit olacak
     y:0,
-    vx:0,
     vy:0,
     gravity:0.25,
     lift:-0.7,
@@ -97,7 +96,7 @@ let balloon = {
 
 // ================= WIND =================
 let wind = {
-    speed:0.3
+    force:0
 };
 
 // ================= INPUT =================
@@ -112,11 +111,10 @@ let chimneys = [];
 let birds = [];
 
 function spawnChimney(){
-    let height = 100 + Math.random()*150;
     chimneys.push({
         x: W + 100,
         width: 80,
-        height: height
+        height: 120 + Math.random()*180
     });
 }
 
@@ -125,22 +123,21 @@ function spawnBird(){
         x: W + 50,
         y: 50 + Math.random()*200,
         size: 25,
-        speed: 3 + Math.random()*2
+        speed: 2 + Math.random()*2
     });
 }
 
 // ================= RESET =================
 let score=0;
 function reset(){
-    balloon.x = W*0.3;
-    balloon.y = H*0.5;
-    balloon.vx = 0;
+    balloon.x = W * 0.3; // SABİT POZİSYON
+    balloon.y = H * 0.5;
     balloon.vy = 0;
 
     chimneys = [];
     birds = [];
 
-    wind.speed = 0.3;
+    wind.force = 1.5;
     score = 0;
 }
 
@@ -150,37 +147,27 @@ function updatePlayer(){
     if(press) balloon.vy += balloon.lift;
 
     balloon.vy += balloon.gravity;
-
-    // rüzgar sağa iter
-    balloon.vx += wind.speed * 0.02;
-
-    balloon.vx *= balloon.drag;
     balloon.vy *= balloon.drag;
 
-    balloon.x += balloon.vx;
     balloon.y += balloon.vy;
 
-    // ekran sınırları
-    if(balloon.y > H || balloon.y < 0) gameOver();
+    if(balloon.y < 0 || balloon.y > H) gameOver();
 }
 
-// ================= OBSTACLES UPDATE =================
+// ================= OBSTACLES =================
 let lastSpawn = 0;
 
 function updateObstacles(){
 
-    // spawn
     if(Date.now() - lastSpawn > 1200){
         spawnChimney();
         if(Math.random()>0.5) spawnBird();
         lastSpawn = Date.now();
     }
 
-    // peri bacaları (alt)
     chimneys.forEach((c,i)=>{
-        c.x -= 3 + wind.speed;
+        c.x -= wind.force + 2;
 
-        // çarpışma
         if(balloon.x + 30 > c.x && balloon.x - 30 < c.x + c.width){
             if(balloon.y + 30 > H - c.height){
                 gameOver();
@@ -190,26 +177,22 @@ function updateObstacles(){
         if(c.x < -100) chimneys.splice(i,1);
     });
 
-    // kuşlar (üst)
     birds.forEach((b,i)=>{
-        b.x -= b.speed + wind.speed;
+        b.x -= wind.force + b.speed;
 
-        // çarpışma
         let dx = balloon.x - b.x;
         let dy = balloon.y - b.y;
         let dist = Math.sqrt(dx*dx + dy*dy);
 
-        if(dist < 40){
-            gameOver();
-        }
+        if(dist < 35) gameOver();
 
         if(b.x < -50) birds.splice(i,1);
     });
 }
 
-// ================= WIND DIFFICULTY =================
+// ================= DIFFICULTY =================
 function updateDifficulty(){
-    wind.speed += 0.0005; // zamanla artar
+    wind.force += 0.0007; // giderek zorlaşır
 }
 
 // ================= DRAW =================
@@ -255,7 +238,7 @@ function drawBalloon(){
     ctx.restore();
 }
 
-// ================= GAME LOOP =================
+// ================= LOOP =================
 function update(){
     if(gameState !== STATE.PLAY) return;
 
