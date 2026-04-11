@@ -3,77 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sonsuz Gökyüzü Balonu</title>
+    <title>Kapadokya Balon Uçuşu</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap');
+        
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
             background: #000;
             touch-action: none;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Roboto', sans-serif;
         }
         canvas {
             display: block;
             margin: 0 auto;
+        }
+        #ui {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 100;
         }
         #score {
             position: absolute;
             top: 25px;
             left: 50%;
             transform: translateX(-50%);
-            color: white;
-            font-size: 36px;
-            font-weight: bold;
-            text-shadow: 0 0 10px rgba(0,0,0,0.7);
-            z-index: 100;
+            color: #fff;
+            font-size: 42px;
+            font-weight: 700;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            letter-spacing: 2px;
             pointer-events: none;
         }
-        #startScreen {
+        #startScreen, #gameOverScreen {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.65);
+            background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85));
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             color: white;
-            z-index: 200;
             text-align: center;
+            z-index: 200;
+            transition: opacity 0.6s ease;
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 52px;
+            margin: 0 0 10px;
+            text-shadow: 0 0 20px #ff9800;
+            letter-spacing: 3px;
+        }
+        p {
+            font-size: 22px;
+            max-width: 80%;
+            margin: 10px 0 30px;
+            opacity: 0.9;
         }
         button {
-            margin-top: 30px;
-            padding: 18px 50px;
+            padding: 18px 55px;
             font-size: 26px;
-            background: linear-gradient(#ff9800, #f57c00);
+            font-weight: 700;
+            background: linear-gradient(45deg, #ff9800, #f57c00);
             color: white;
             border: none;
-            border-radius: 50px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+            border-radius: 60px;
+            box-shadow: 0 10px 25px rgba(245, 124, 0, 0.5);
             cursor: pointer;
+            transition: all 0.3s;
+            pointer-events: all;
         }
-        button:active { transform: scale(0.95); }
+        button:active {
+            transform: scale(0.92);
+            box-shadow: 0 5px 15px rgba(245, 124, 0, 0.4);
+        }
+        .highscore {
+            font-size: 18px;
+            margin-top: 20px;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
 
-<div id="score">0 m</div>
+<div id="ui">
+    <div id="score">0 m</div>
+    
+    <div id="startScreen">
+        <h1>🌄 Kapadokya</h1>
+        <p>Peri bacaları arasında<br>sonsuz balon uçuşu</p>
+        <button onclick="startGame()">UÇUŞA BAŞLA</button>
+        <div class="highscore" id="startHigh">En iyi: 0 m</div>
+    </div>
 
-<div id="startScreen">
-    <h1>🌤️ Sonsuz Gökyüzü</h1>
-    <p>Balonu yukarıda tut,<br>kuşlara ve türbinlere çarpma!</p>
-    <button onclick="startGame()">UÇUŞA GEÇ</button>
+    <div id="gameOverScreen" style="display:none;">
+        <h1>🎈 Uçuş Bitti</h1>
+        <p id="finalScore">Yüksekliğin: 0 m</p>
+        <div class="highscore" id="gameOverHigh">En iyi: 0 m</div>
+        <button onclick="restartGame()">TEKRAR UÇ</button>
+    </div>
 </div>
 
 <canvas id="game"></canvas>
 
 <script>
-// Canvas
+// Canvas setup
 const canvas = document.getElementById('game');
-const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext('2d', { alpha: true });
 
 let W, H;
-
 function resize() {
     W = window.innerWidth;
     H = window.innerHeight;
@@ -86,242 +127,372 @@ window.addEventListener('resize', resize);
 // Oyun değişkenleri
 let balloon = {
     x: W * 0.5,
-    y: H * 0.65,
-    radius: 32,
+    y: H * 0.6,
+    radius: 35,
     vy: 0,
-    gravity: 0.18,
-    lift: -4.8
+    gravity: 0.22,
+    lift: -5.8,
+    rotation: 0
 };
 
 let score = 0;
+let highScore = localStorage.getItem('kapadokyaHigh') || 0;
 let gameRunning = false;
-let obstacles = [];
-let clouds = [];
-let mountains = [];
-let lastObstacleTime = 0;
 
+let obstacles = [];
+let particles = [];
+let distantBalloons = [];
+let lastObstacle = 0;
 let isPressed = false;
 
-// Kontroller
-document.addEventListener('touchstart', e => { if(gameRunning) isPressed = true; });
+// Kontroller (mobil + klavye)
+document.addEventListener('touchstart', () => { if (gameRunning) isPressed = true; });
 document.addEventListener('touchend', () => { isPressed = false; });
-document.addEventListener('mousedown', () => { if(gameRunning) isPressed = true; });
+document.addEventListener('mousedown', () => { if (gameRunning) isPressed = true; });
 document.addEventListener('mouseup', () => { isPressed = false; });
-document.addEventListener('keydown', e => { if(e.code === 'Space' && gameRunning) isPressed = true; });
-document.addEventListener('keyup', e => { if(e.code === 'Space') isPressed = false; });
+document.addEventListener('keydown', e => { if (e.code === 'Space' && gameRunning) isPressed = true; });
+document.addEventListener('keyup', e => { if (e.code === 'Space') isPressed = false; });
 
-// Arka plan katmanları
-for (let i = 0; i < 6; i++) {
-    clouds.push({
-        x: Math.random() * W * 1.5,
-        y: 80 + Math.random() * (H * 0.5),
-        size: 60 + Math.random() * 80,
-        speed: 0.4 + i * 0.15,
-        layer: i
+// Arka plan katmanları (Kapadokya temalı)
+let skyTime = 0;
+let parallaxOffset = 0;
+
+// Distant peri bacaları (arka plan)
+let distantChimneys = [];
+for (let i = 0; i < 12; i++) {
+    distantChimneys.push({
+        x: Math.random() * W * 2,
+        height: 120 + Math.random() * 180,
+        width: 35 + Math.random() * 25,
+        offset: Math.random() * 100
     });
 }
 
-for (let i = 0; i < 4; i++) {
-    mountains.push({
-        x: i * (W / 3),
-        height: 180 + Math.random() * 120,
-        speed: 0.8
+// Distant balonlar (atmosfer efekti)
+for (let i = 0; i < 5; i++) {
+    distantBalloons.push({
+        x: Math.random() * W,
+        y: 80 + Math.random() * 220,
+        size: 12 + Math.random() * 10,
+        speed: 0.2 + Math.random() * 0.3
     });
 }
 
+// Engel oluştur (Peri bacası)
 function createObstacle() {
-    const gap = 260;
-    const minH = 120;
-    const topH = minH + Math.random() * (H - gap - minH * 2);
+    const gap = 270;
+    const minTop = 140;
+    const topHeight = minTop + Math.random() * (H - gap - minTop * 2.2);
     
     obstacles.push({
-        x: W + 50,
-        top: topH,
-        width: 85,
+        x: W + 80,
+        top: topHeight,
+        width: 92,
         passed: false,
-        type: Math.random() > 0.5 ? 'turbine' : 'birds'  // iki çeşit engel
+        sway: Math.random() * Math.PI * 2 // hafif sallanma efekti
     });
 }
 
-function drawBackground() {
-    // Gökyüzü gradient (yükseldikçe değişir)
-    const skyGrad = ctx.createLinearGradient(0, 0, 0, H);
-    const intensity = Math.min(score / 800, 1);
-    skyGrad.addColorStop(0, `rgb(80, 140, ${255 - intensity*80})`);
-    skyGrad.addColorStop(1, `rgb(200, 230, ${255 - intensity*40})`);
-    ctx.fillStyle = skyGrad;
-    ctx.fillRect(0, 0, W, H);
-
-    // Uzak dağlar
-    ctx.fillStyle = '#5C7A96';
-    for (let m of mountains) {
-        ctx.beginPath();
-        ctx.moveTo(m.x - 100, H);
-        ctx.lineTo(m.x + W/4, H - m.height);
-        ctx.lineTo(m.x + W/2, H);
-        ctx.fill();
-    }
-
-    // Bulutlar (parallax)
-    ctx.fillStyle = 'rgba(255,255,255,0.95)';
-    for (let c of clouds) {
-        const scale = 0.6 + c.layer * 0.1;
-        ctx.globalAlpha = 0.7 + c.layer * 0.05;
-        ctx.beginPath();
-        ctx.ellipse(c.x, c.y, c.size * scale, c.size * scale * 0.55, 0, 0, Math.PI*2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.ellipse(c.x - c.size*0.45*scale, c.y - 15*scale, c.size*0.75*scale, c.size*0.5*scale, 0, 0, Math.PI*2);
-        ctx.fill();
-        ctx.globalAlpha = 1;
-    }
+// Partikül (rüzgar + balon ısısı)
+function createParticle(x, y, isHeat = false) {
+    particles.push({
+        x: x,
+        y: y,
+        vx: isHeat ? (Math.random() - 0.5) * 1.5 : (Math.random() - 0.8) * 2.5,
+        vy: isHeat ? -2 - Math.random() * 3 : (Math.random() - 0.5) * 2,
+        life: isHeat ? 35 : 55,
+        size: isHeat ? 4 + Math.random() * 5 : 2 + Math.random() * 3,
+        color: isHeat ? `rgba(255, ${120 + Math.random()*135}, 30, ${Math.random()})` : 'rgba(220,220,255,0.7)'
+    });
 }
 
+// Peri bacası çiz (gerçekçi 3D benzeri)
+function drawFairyChimney(x, topY, width, height, isTop = false) {
+    ctx.save();
+    ctx.translate(x + width/2, isTop ? topY + height : topY);
+    
+    const baseW = width * 1.15;
+    const tipW = width * 0.4;
+    
+    // Gölge (3D derinlik)
+    ctx.shadowColor = 'rgba(0,0,0,0.45)';
+    ctx.shadowBlur = 18;
+    ctx.shadowOffsetX = 8;
+    ctx.shadowOffsetY = 12;
+    
+    // Ana gövde (konik peri bacası)
+    ctx.fillStyle = '#C38A5F';
+    ctx.beginPath();
+    if (!isTop) {
+        ctx.moveTo(-baseW/2, 0);
+        ctx.lineTo(-tipW/2, -height);
+        ctx.lineTo(tipW/2, -height);
+        ctx.lineTo(baseW/2, 0);
+    } else {
+        ctx.moveTo(-baseW/2, 0);
+        ctx.lineTo(-tipW/2, height);
+        ctx.lineTo(tipW/2, height);
+        ctx.lineTo(baseW/2, 0);
+    }
+    ctx.closePath();
+    ctx.fill();
+    
+    // Taş dokusu (çizgilerle gerçekçilik)
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.strokeStyle = '#A66E48';
+    ctx.lineWidth = 3;
+    for (let i = 1; i < 7; i++) {
+        const yy = -height * (i / 8);
+        const ww = baseW - (baseW - tipW) * (i / 8);
+        ctx.beginPath();
+        ctx.moveTo(-ww/2 + 6, yy);
+        ctx.lineTo(ww/2 - 6, yy);
+        ctx.stroke();
+    }
+    
+    // Üst başlık (kapak efekti)
+    ctx.fillStyle = '#8B5A3C';
+    ctx.beginPath();
+    ctx.ellipse(0, isTop ? height + 8 : -height - 8, width * 0.65, 18, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.restore();
+}
+
+// Balon çizimi (ultra detaylı, 3D hissi)
 function drawBalloon() {
     ctx.save();
     ctx.translate(balloon.x, balloon.y);
-
+    ctx.rotate(balloon.rotation * 0.018); // hafif 3D eğim
+    
     // Balon gölgesi
+    ctx.shadowColor = 'rgba(0,0,0,0.35)';
+    ctx.shadowBlur = 25;
+    ctx.shadowOffsetX = 18;
+    ctx.shadowOffsetY = 22;
     ctx.fillStyle = 'rgba(0,0,0,0.25)';
     ctx.beginPath();
-    ctx.ellipse(12, 12, balloon.radius*1.05, balloon.radius*1.2, 0, 0, Math.PI*2);
+    ctx.ellipse(18, 22, balloon.radius * 1.1, balloon.radius * 1.25, 0, 0, Math.PI * 2);
     ctx.fill();
-
-    // Balon gövdesi (renkli gradient)
-    const grad = ctx.createLinearGradient(0, -balloon.radius*1.2, 0, balloon.radius*0.8);
-    grad.addColorStop(0, '#FF6D00');
-    grad.addColorStop(0.5, '#FF9800');
-    grad.addColorStop(1, '#FFB300');
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+    
+    // Balon gövdesi (Kapadokya tarzı renkli şeritli)
+    const grad = ctx.createLinearGradient(0, -balloon.radius * 1.3, 0, balloon.radius * 0.9);
+    grad.addColorStop(0, '#FF4D00');
+    grad.addColorStop(0.3, '#FF9F00');
+    grad.addColorStop(0.5, '#FFE200');
+    grad.addColorStop(0.7, '#00C3FF');
+    grad.addColorStop(1, '#0066FF');
     ctx.fillStyle = grad;
     ctx.beginPath();
-    ctx.ellipse(0, 0, balloon.radius, balloon.radius * 1.22, 0, 0, Math.PI*2);
+    ctx.ellipse(0, 0, balloon.radius, balloon.radius * 1.28, 0, 0, Math.PI * 2);
     ctx.fill();
-
-    // Balon çizgileri (gerçekçi görünüm)
-    ctx.strokeStyle = '#E65100';
+    
+    // Şeritler (gerçek balon gibi)
+    ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+    ctx.lineWidth = 7;
+    for (let i = -4; i <= 4; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * 9, -balloon.radius * 1.15);
+        ctx.quadraticCurveTo(i * 18, -balloon.radius * 0.4, i * 6, balloon.radius * 0.95);
+        ctx.stroke();
+    }
+    
+    // Parlaklık
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.beginPath();
+    ctx.ellipse(-14, -26, 14, 26, Math.PI / 4, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // İpler (3D çoklu ip)
+    ctx.strokeStyle = '#263238';
     ctx.lineWidth = 4;
     for (let i = -1; i <= 1; i++) {
         ctx.beginPath();
-        ctx.moveTo(i*12, -balloon.radius*1.05);
-        ctx.quadraticCurveTo(i*25, -20, i*8, balloon.radius*0.9);
+        ctx.moveTo(i * 9, balloon.radius * 0.95);
+        ctx.quadraticCurveTo(i * 22, balloon.radius + 18, i * 4, balloon.radius + 48);
         ctx.stroke();
     }
-
-    // Parlaklık efekti
-    ctx.fillStyle = 'rgba(255,255,255,0.45)';
-    ctx.beginPath();
-    ctx.ellipse(-11, -18, 13, 22, Math.PI/6, 0, Math.PI*2);
-    ctx.fill();
-
-    // İpler
-    ctx.strokeStyle = '#263238';
-    ctx.lineWidth = 3.5;
-    ctx.beginPath();
-    ctx.moveTo(0, balloon.radius * 0.95);
-    ctx.lineTo(0, balloon.radius + 42);
-    ctx.stroke();
-
-    // Sepet
+    
+    // Sepet (ahşap dokulu)
     ctx.fillStyle = '#5D4037';
-    ctx.fillRect(-14, balloon.radius + 40, 28, 22);
+    ctx.fillRect(-17, balloon.radius + 46, 34, 26);
     ctx.strokeStyle = '#3E2723';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(-14, balloon.radius + 40, 28, 22);
-
+    ctx.lineWidth = 4;
+    ctx.strokeRect(-17, balloon.radius + 46, 34, 26);
+    
+    // Sepet detayları
+    ctx.fillStyle = '#8B5A3C';
+    for (let i = 0; i < 4; i++) {
+        ctx.fillRect(-14 + i * 9, balloon.radius + 48, 4, 22);
+    }
+    
     ctx.restore();
+    
+    // Balon ısısı partikülleri
+    if (Math.random() > 0.6) {
+        createParticle(balloon.x - 8, balloon.y + balloon.radius + 52, true);
+    }
+}
+
+function drawBackground() {
+    // Dinamik Kapadokya sabah gökyüzü (3D derinlik)
+    skyTime += 0.008;
+    const intensity = Math.sin(skyTime) * 0.2 + 0.8;
+    const grad = ctx.createLinearGradient(0, 0, 0, H * 0.75);
+    grad.addColorStop(0, `rgb(255, ${110 + intensity*80}, ${60 + intensity*40})`); // turuncu-pembe
+    grad.addColorStop(0.45, `rgb(255, 200, ${140 + intensity*60})`);
+    grad.addColorStop(1, '#A0D8FF');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+    
+    // Güneş (parlak)
+    ctx.shadowBlur = 60;
+    ctx.shadowColor = '#FFEEAA';
+    ctx.fillStyle = '#FFEE88';
+    ctx.beginPath();
+    ctx.arc(W * 0.78, H * 0.22, 38, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    
+    // Uzak peri bacaları (parallax yavaş)
+    parallaxOffset += 0.4;
+    ctx.fillStyle = '#D9B38C';
+    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+    ctx.shadowBlur = 12;
+    ctx.shadowOffsetY = 8;
+    for (let ch of distantChimneys) {
+        const xx = (ch.x - parallaxOffset * 0.3) % (W * 1.8);
+        const hh = ch.height;
+        ctx.beginPath();
+        ctx.moveTo(xx - ch.width/2, H);
+        ctx.lineTo(xx - ch.width*0.3, H - hh);
+        ctx.lineTo(xx + ch.width*0.3, H - hh);
+        ctx.lineTo(xx + ch.width/2, H);
+        ctx.fill();
+        
+        // Basit taş doku
+        ctx.strokeStyle = '#B38A6A';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(xx - ch.width*0.4, H - hh * 0.6);
+        ctx.lineTo(xx + ch.width*0.4, H - hh * 0.6);
+        ctx.stroke();
+    }
+    ctx.shadowBlur = 0;
+    
+    // Hafif sis (derinlik)
+    ctx.fillStyle = 'rgba(255,240,220,0.25)';
+    ctx.fillRect(0, H * 0.55, W, H * 0.45);
+    
+    // Distant balonlar (atmosfer)
+    for (let b of distantBalloons) {
+        ctx.globalAlpha = 0.65;
+        ctx.fillStyle = '#FF6D00';
+        ctx.beginPath();
+        ctx.ellipse(b.x, b.y, b.size * 0.9, b.size * 1.15, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        b.x += b.speed;
+        if (b.x > W + 100) b.x = -50;
+    }
 }
 
 function drawObstacles() {
     for (let obs of obstacles) {
-        if (obs.type === 'turbine') {
-            // Rüzgar türbini
-            ctx.fillStyle = '#455A64';
-            ctx.fillRect(obs.x + 20, obs.top - 40, 45, 40); // üst kısım
-            ctx.fillRect(obs.x + 28, obs.top, 30, H);     // direk
-            
-            // Pervaneler (basit animasyon)
-            const angle = Date.now() / 200;
-            ctx.strokeStyle = '#263238';
-            ctx.lineWidth = 8;
-            for (let i = 0; i < 3; i++) {
-                ctx.beginPath();
-                ctx.moveTo(obs.x + 42, obs.top - 20);
-                ctx.lineTo(obs.x + 42 + Math.cos(angle + i*2.1)*38, 
-                          obs.top - 20 + Math.sin(angle + i*2.1)*38);
-                ctx.stroke();
-            }
-        } else {
-            // Kuş sürüsü (birkaç kuş)
-            ctx.fillStyle = '#263238';
-            for (let i = 0; i < 5; i++) {
-                const ky = obs.top - 60 + i*28 + Math.sin(Date.now()/300 + i)*12;
-                ctx.beginPath();
-                ctx.ellipse(obs.x + 30 + i*12, ky, 18, 9, 0.3, 0, Math.PI*2);
-                ctx.fill();
-                // kanat
-                ctx.fillRect(obs.x + 25 + i*12, ky - 8, 14, 6);
-            }
-        }
+        const sway = Math.sin(obs.sway + Date.now() / 800) * 4; // hafif rüzgar sallanması
+        // Alt peri bacası
+        drawFairyChimney(obs.x + sway, obs.top, obs.width, H - obs.top + 40);
+        
+        // Üst peri bacası (ters)
+        drawFairyChimney(obs.x + sway, obs.top - 280, obs.width, 280, true);
     }
 }
 
 function update() {
     if (!gameRunning) return;
-
-    // Fizik
+    
+    // Fizik (daha gerçekçi)
     balloon.vy += balloon.gravity;
     if (isPressed) balloon.vy = balloon.lift;
+    balloon.vy *= 0.96; // hava direnci
     balloon.y += balloon.vy;
-
+    
+    // 3D eğim
+    balloon.rotation = balloon.vy * 1.8;
+    balloon.rotation = Math.max(Math.min(balloon.rotation, 28), -28);
+    
     // Sınırlar
-    if (balloon.y < balloon.radius * 1.3) {
-        balloon.y = balloon.radius * 1.3;
-        balloon.vy = 0.5;
+    if (balloon.y < balloon.radius * 1.4) {
+        balloon.y = balloon.radius * 1.4;
+        balloon.vy = 1.5;
     }
-    if (balloon.y > H - 80) gameOver();
-
+    if (balloon.y > H - 110) gameOver();
+    
     // Engel üretimi
-    if (Date.now() - lastObstacleTime > 1350) {
+    if (Date.now() - lastObstacle > 1280) {
         createObstacle();
-        lastObstacleTime = Date.now();
+        lastObstacle = Date.now();
     }
-
-    // Engelleri hareket ettir ve kontrol et
+    
+    // Engelleri güncelle
     for (let i = obstacles.length - 1; i >= 0; i--) {
         let o = obstacles[i];
-        o.x -= 3.4;
-
-        if (!o.passed && o.x + o.width < balloon.x - 20) {
+        o.x -= 3.8;
+        o.sway += 0.04;
+        
+        if (!o.passed && o.x + o.width < balloon.x - 30) {
             o.passed = true;
-            score += 15;
-            document.getElementById('score').textContent = Math.floor(score) + " m";
+            score += 18;
+            document.getElementById('score').textContent = Math.floor(score) + ' m';
         }
-
-        // Çarpışma
+        
+        // Çarpışma (daha hassas)
         const bx = balloon.x;
-        const by = balloon.y;
+        const by = balloon.y + balloon.vy * 0.6;
         if (bx + balloon.radius > o.x && bx - balloon.radius < o.x + o.width) {
-            if (by - balloon.radius < o.top || by + balloon.radius + 65 > o.top + 260) {
+            if (by - balloon.radius < o.top - 10 || by + balloon.radius + 72 > o.top + 260) {
                 gameOver();
             }
         }
-
-        if (o.x < -150) obstacles.splice(i, 1);
+        
+        if (o.x < -200) obstacles.splice(i, 1);
     }
-
-    // Arka plan hareketi
-    for (let c of clouds) c.x -= c.speed;
-    for (let m of mountains) m.x -= m.speed * 0.6;
-
-    // Sonsuz döngü
-    if (clouds[0].x < -300) clouds.push(clouds.shift());
-    if (mountains[0].x < -W/2) mountains.push(mountains.shift());
+    
+    // Partiküller
+    for (let i = particles.length - 1; i >= 0; i--) {
+        let p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.12;
+        p.life--;
+        p.size *= 0.97;
+        if (p.life <= 0 || p.size < 0.5) particles.splice(i, 1);
+    }
+    
+    // Rüzgar partikülleri (Kapadokya rüzgarı)
+    if (Math.random() > 0.7) {
+        createParticle(Math.random() * W, Math.random() * H * 0.7);
+    }
 }
 
 function draw() {
     ctx.clearRect(0, 0, W, H);
     drawBackground();
     drawObstacles();
+    
+    // Partiküller
+    for (let p of particles) {
+        ctx.globalAlpha = p.life / 40;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+    }
+    ctx.globalAlpha = 1;
+    
     drawBalloon();
 }
 
@@ -333,23 +504,45 @@ function gameLoop() {
 
 function gameOver() {
     gameRunning = false;
-    setTimeout(() => {
-        alert(`🎈 Uçuş bitti!\n\nYüksekliğin: ${Math.floor(score)} metre\n\nTekrar denemek için sayfayı yenile.`);
-    }, 100);
+    if (score > highScore) {
+        highScore = Math.floor(score);
+        localStorage.setItem('kapadokyaHigh', highScore);
+    }
+    
+    const goScreen = document.getElementById('gameOverScreen');
+    document.getElementById('finalScore').innerHTML = `Yüksekliğin: <strong>${Math.floor(score)} m</strong>`;
+    document.getElementById('gameOverHigh').textContent = `En iyi: ${highScore} m`;
+    goScreen.style.display = 'flex';
 }
 
 function startGame() {
-    document.getElementById('startScreen').style.display = 'none';
-    
-    balloon.y = H * 0.65;
-    balloon.vy = -2;
-    obstacles = [];
-    score = 0;
-    document.getElementById('score').textContent = "0 m";
-    gameRunning = true;
-    lastObstacleTime = Date.now() - 1000;
+    document.getElementById('startScreen').style.opacity = '0';
+    setTimeout(() => {
+        document.getElementById('startScreen').style.display = 'none';
+        
+        // Reset
+        balloon.y = H * 0.6;
+        balloon.vy = -4;
+        balloon.rotation = 0;
+        obstacles = [];
+        particles = [];
+        score = 0;
+        document.getElementById('score').textContent = '0 m';
+        gameRunning = true;
+        lastObstacle = Date.now() - 800;
+    }, 600);
 }
 
+function restartGame() {
+    const goScreen = document.getElementById('gameOverScreen');
+    goScreen.style.display = 'none';
+    document.getElementById('startScreen').style.display = 'flex';
+    document.getElementById('startScreen').style.opacity = '1';
+    document.getElementById('startHigh').textContent = `En iyi: ${highScore} m`;
+}
+
+// Başlat
+document.getElementById('startHigh').textContent = `En iyi: ${highScore} m`;
 gameLoop();
 </script>
 
