@@ -3,23 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Cappadocia Balloon Ultimate</title>
+<title>Cappadocia Balloon Run</title>
 
 <style>
-body {
-    margin:0;
-    overflow:hidden;
-    background:#000;
-    font-family:Arial, sans-serif;
-}
-
-canvas {
-    display:block;
-}
+body { margin:0; overflow:hidden; background:#000; font-family:Arial;}
+canvas { display:block; }
 
 #ui {
-    position:absolute;
-    inset:0;
+    position:absolute; inset:0;
     pointer-events:none;
 }
 
@@ -28,8 +19,8 @@ canvas {
     top:20px;
     left:50%;
     transform:translateX(-50%);
-    font-size:32px;
     color:#fff;
+    font-size:28px;
     font-weight:bold;
 }
 
@@ -37,9 +28,9 @@ canvas {
     position:absolute;
     inset:0;
     display:flex;
-    flex-direction:column;
     justify-content:center;
     align-items:center;
+    flex-direction:column;
     background:rgba(0,0,0,0.7);
     color:#fff;
     pointer-events:auto;
@@ -47,11 +38,11 @@ canvas {
 
 button {
     padding:15px 40px;
-    font-size:22px;
+    font-size:20px;
     border:none;
-    border-radius:30px;
+    border-radius:25px;
     background:orange;
-    color:white;
+    color:#fff;
 }
 </style>
 </head>
@@ -64,14 +55,14 @@ button {
     <div id="score">0 m</div>
 
     <div id="menu" class="screen">
-        <h1>🎈 Cappadocia</h1>
-        <button onclick="startGame()">Start</button>
+        <h1>🎈 Kapadokya Uçuşu</h1>
+        <button onclick="startGame()">Başla</button>
     </div>
 
     <div id="gameover" class="screen" style="display:none;">
-        <h1>Game Over</h1>
+        <h1>Çarpıştın!</h1>
         <p id="finalScore"></p>
-        <button onclick="restart()">Retry</button>
+        <button onclick="restart()">Tekrar</button>
     </div>
 </div>
 
@@ -90,22 +81,8 @@ resize();
 window.addEventListener("resize", resize);
 
 // ================= STATE =================
-const STATE = { MENU:0, PLAY:1, OVER:2 };
+const STATE = {MENU:0, PLAY:1, OVER:2};
 let gameState = STATE.MENU;
-
-// ================= CAMERA =================
-let camera = {
-    y:0,
-    target:0,
-    smooth:0.08
-};
-
-// ================= WIND =================
-let wind = {
-    force:0,
-    target:0,
-    timer:0
-};
 
 // ================= PLAYER =================
 let balloon = {
@@ -118,6 +95,11 @@ let balloon = {
     drag:0.98
 };
 
+// ================= WIND =================
+let wind = {
+    speed:0.3
+};
+
 // ================= INPUT =================
 let press=false;
 window.addEventListener("touchstart",()=>press=true);
@@ -125,34 +107,41 @@ window.addEventListener("touchend",()=>press=false);
 window.addEventListener("mousedown",()=>press=true);
 window.addEventListener("mouseup",()=>press=false);
 
-// ================= PARTICLES =================
-let particles=[];
-function spawnParticle(x,y){
-    particles.push({
-        x,y,
-        vx:(Math.random()-0.5)*2,
-        vy:-Math.random()*3,
-        life:40
+// ================= OBSTACLES =================
+let chimneys = [];
+let birds = [];
+
+function spawnChimney(){
+    let height = 100 + Math.random()*150;
+    chimneys.push({
+        x: W + 100,
+        width: 80,
+        height: height
+    });
+}
+
+function spawnBird(){
+    birds.push({
+        x: W + 50,
+        y: 50 + Math.random()*200,
+        size: 25,
+        speed: 3 + Math.random()*2
     });
 }
 
 // ================= RESET =================
+let score=0;
 function reset(){
-    balloon.x = W/2;
-    balloon.y = H/2;
+    balloon.x = W*0.3;
+    balloon.y = H*0.5;
     balloon.vx = 0;
     balloon.vy = 0;
-    score = 0;
-}
 
-// ================= WIND =================
-function updateWind(){
-    wind.timer--;
-    if(wind.timer<=0){
-        wind.target = (Math.random()-0.5)*1.5;
-        wind.timer = 200;
-    }
-    wind.force += (wind.target - wind.force)*0.02;
+    chimneys = [];
+    birds = [];
+
+    wind.speed = 0.3;
+    score = 0;
 }
 
 // ================= PLAYER =================
@@ -161,7 +150,9 @@ function updatePlayer(){
     if(press) balloon.vy += balloon.lift;
 
     balloon.vy += balloon.gravity;
-    balloon.vx += wind.force*0.05;
+
+    // rüzgar sağa iter
+    balloon.vx += wind.speed * 0.02;
 
     balloon.vx *= balloon.drag;
     balloon.vy *= balloon.drag;
@@ -169,20 +160,59 @@ function updatePlayer(){
     balloon.x += balloon.vx;
     balloon.y += balloon.vy;
 
-    if(balloon.y > H) gameOver();
+    // ekran sınırları
+    if(balloon.y > H || balloon.y < 0) gameOver();
+}
 
-    if(Math.random()>0.6){
-        spawnParticle(balloon.x, balloon.y+30);
+// ================= OBSTACLES UPDATE =================
+let lastSpawn = 0;
+
+function updateObstacles(){
+
+    // spawn
+    if(Date.now() - lastSpawn > 1200){
+        spawnChimney();
+        if(Math.random()>0.5) spawnBird();
+        lastSpawn = Date.now();
     }
+
+    // peri bacaları (alt)
+    chimneys.forEach((c,i)=>{
+        c.x -= 3 + wind.speed;
+
+        // çarpışma
+        if(balloon.x + 30 > c.x && balloon.x - 30 < c.x + c.width){
+            if(balloon.y + 30 > H - c.height){
+                gameOver();
+            }
+        }
+
+        if(c.x < -100) chimneys.splice(i,1);
+    });
+
+    // kuşlar (üst)
+    birds.forEach((b,i)=>{
+        b.x -= b.speed + wind.speed;
+
+        // çarpışma
+        let dx = balloon.x - b.x;
+        let dy = balloon.y - b.y;
+        let dist = Math.sqrt(dx*dx + dy*dy);
+
+        if(dist < 40){
+            gameOver();
+        }
+
+        if(b.x < -50) birds.splice(i,1);
+    });
 }
 
-// ================= CAMERA =================
-function updateCamera(){
-    camera.target = balloon.y - H*0.4;
-    camera.y += (camera.target - camera.y)*camera.smooth;
+// ================= WIND DIFFICULTY =================
+function updateDifficulty(){
+    wind.speed += 0.0005; // zamanla artar
 }
 
-// ================= SKY =================
+// ================= DRAW =================
 function drawSky(){
     let g = ctx.createLinearGradient(0,0,0,H);
     g.addColorStop(0,"#FF8C42");
@@ -191,72 +221,47 @@ function drawSky(){
     ctx.fillRect(0,0,W,H);
 }
 
-// ================= TERRAIN =================
-let layers = [
-    {speed:0.2, color:"#FAD7A0"},
-    {speed:0.4, color:"#E59866"},
-    {speed:0.7, color:"#CA6F1E"},
-    {speed:1.0, color:"#873600"}
-];
-
-function drawTerrain(){
-    layers.forEach((l,i)=>{
-        ctx.fillStyle = l.color;
-
-        for(let x=-100; x<W+100; x+=80){
-            let y = H - 120 - i*40 + Math.sin((x + camera.y*l.speed)*0.01)*40;
-
-            ctx.beginPath();
-            ctx.moveTo(x,y);
-            ctx.lineTo(x+40,y-100);
-            ctx.lineTo(x+80,y);
-            ctx.fill();
-        }
+function drawChimneys(){
+    ctx.fillStyle="#8B5A3C";
+    chimneys.forEach(c=>{
+        ctx.fillRect(c.x, H - c.height, c.width, c.height);
     });
 }
 
-// ================= BALLOON =================
+function drawBirds(){
+    ctx.fillStyle="black";
+    birds.forEach(b=>{
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.size, 0, Math.PI*2);
+        ctx.fill();
+    });
+}
+
 function drawBalloon(){
     ctx.save();
-    ctx.translate(balloon.x, balloon.y - camera.y);
+    ctx.translate(balloon.x, balloon.y);
 
     let tilt = balloon.vy * 0.05;
     ctx.rotate(tilt);
 
     ctx.fillStyle="orange";
     ctx.beginPath();
-    ctx.arc(0,0,40,0,Math.PI*2);
+    ctx.arc(0,0,30,0,Math.PI*2);
     ctx.fill();
 
     ctx.fillStyle="#5D4037";
-    ctx.fillRect(-10,40,20,15);
+    ctx.fillRect(-10,30,20,15);
 
     ctx.restore();
 }
 
-// ================= PARTICLES =================
-function drawParticles(){
-    particles.forEach((p,i)=>{
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life--;
-
-        ctx.fillStyle="rgba(255,150,50,"+(p.life/40)+")";
-        ctx.fillRect(p.x, p.y-camera.y, 4,4);
-
-        if(p.life<=0) particles.splice(i,1);
-    });
-}
-
 // ================= GAME LOOP =================
-let score=0;
-
 function update(){
-    if(gameState!==STATE.PLAY) return;
+    if(gameState !== STATE.PLAY) return;
 
-    updateWind();
     updatePlayer();
-    updateCamera();
+    updateObstacles();
+    updateDifficulty();
 
     score += 0.1;
     document.getElementById("score").innerText = Math.floor(score)+" m";
@@ -266,8 +271,8 @@ function draw(){
     ctx.clearRect(0,0,W,H);
 
     drawSky();
-    drawTerrain();
-    drawParticles();
+    drawChimneys();
+    drawBirds();
     drawBalloon();
 }
 
@@ -278,7 +283,7 @@ function loop(){
 }
 loop();
 
-// ================= GAME CONTROL =================
+// ================= CONTROL =================
 function startGame(){
     reset();
     gameState = STATE.PLAY;
@@ -288,7 +293,7 @@ function startGame(){
 function gameOver(){
     gameState = STATE.OVER;
     document.getElementById("gameover").style.display="flex";
-    document.getElementById("finalScore").innerText = "Score: "+Math.floor(score)+" m";
+    document.getElementById("finalScore").innerText = "Mesafe: "+Math.floor(score)+" m";
 }
 
 function restart(){
