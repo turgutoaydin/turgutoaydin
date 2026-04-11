@@ -1,391 +1,450 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Cappadocia Balloon Ultimate</title>
-
 <style>
-body { margin:0; overflow:hidden; background:#000; font-family:Arial; }
-canvas { display:block; }
+    body { margin:0; overflow:hidden; background:#000; font-family: 'Arial', sans-serif; }
+    canvas { display:block; }
 
-#ui { position:absolute; inset:0; pointer-events:none; }
-
-.hud {
-    position:absolute;
-    top:15px;
-    left:50%;
-    transform:translateX(-50%);
-    text-align:center;
-    color:#fff;
-    font-weight:bold;
-}
-
-#fuelBar {
-    width:140px;
-    height:10px;
-    background:#333;
-    margin:6px auto;
-    border-radius:6px;
-    overflow:hidden;
-}
-#fuelFill {
-    height:100%;
-    background:linear-gradient(90deg,#00e676,#ffeb3b,#ff5252);
-    width:100%;
-}
-
-.screen {
-    position:absolute;
-    inset:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-    background:rgba(0,0,0,0.7);
-    color:#fff;
-    pointer-events:auto;
-}
-
-button {
-    padding:15px 40px;
-    font-size:20px;
-    border:none;
-    border-radius:25px;
-    background:orange;
-    color:#fff;
-}
+    #ui { position:absolute; inset:0; pointer-events:none; z-index:10; }
+    .hud {
+        position:absolute;
+        top:15px;
+        left:50%;
+        transform:translateX(-50%);
+        text-align:center;
+        color:#fff;
+        font-weight:bold;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+    #fuelBar {
+        width:180px;
+        height:14px;
+        background:rgba(0,0,0,0.5);
+        margin:8px auto;
+        border-radius:8px;
+        overflow:hidden;
+        border:2px solid #fff;
+    }
+    #fuelFill {
+        height:100%;
+        background:linear-gradient(90deg, #00ff88, #ffeb3b, #ff5252);
+        width:100%;
+        transition: width 0.2s linear;
+    }
+    .screen {
+        position:absolute;
+        inset:0;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        flex-direction:column;
+        background:rgba(0,0,0,0.75);
+        color:#fff;
+        pointer-events:auto;
+        text-align:center;
+    }
+    button {
+        padding:16px 50px;
+        font-size:22px;
+        border:none;
+        border-radius:30px;
+        background:linear-gradient(#ff9800, #f57c00);
+        color:#fff;
+        margin-top:20px;
+        cursor:pointer;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+    }
+    button:active { transform:scale(0.95); }
 </style>
 </head>
-
 <body>
 
 <canvas id="game"></canvas>
 
 <div id="ui">
-
     <div class="hud">
-        <div id="score">0 m</div>
-        <div id="wind">Wind: 0</div>
-        <div id="difficulty">Easy</div>
+        <div id="score" style="font-size:28px;">0 m</div>
+        <div id="wind" style="font-size:16px; margin:4px 0;">Rüzgar: 0.0</div>
+        <div id="difficulty" style="font-size:16px;">Kolay</div>
         <div id="fuelBar"><div id="fuelFill"></div></div>
     </div>
 
     <div id="menu" class="screen">
-        <h1>🎈 Cappadocia Flight</h1>
-        <button onclick="startGame()">Start</button>
+        <h1 style="font-size:52px; margin:0; text-shadow:0 4px 12px rgba(255,140,0,0.8);">🎈 Cappadocia Balloon</h1>
+        <p style="margin:10px 0 30px; font-size:20px;">Kapadokya'da uçuşa hazır mısın?</p>
+        <button onclick="startGame()">Uçuşa Başla</button>
     </div>
 
     <div id="gameover" class="screen" style="display:none;">
-        <h1>Game Over</h1>
-        <p id="finalScore"></p>
-        <button onclick="restart()">Retry</button>
+        <h1>Oyun Bitti</h1>
+        <p id="finalScore" style="font-size:28px;"></p>
+        <button onclick="restart()">Tekrar Dene</button>
     </div>
-
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 <script>
 
-// ================= CANVAS =================
+// ================= SETUP =================
 const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
 
-let W,H;
-function resize(){
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
+camera.position.set(0, 5, 25);
+camera.lookAt(0, 5, 0);
+
+let W = window.innerWidth, H = window.innerHeight;
+window.addEventListener('resize', () => {
+    W = window.innerWidth; H = window.innerHeight;
+    camera.aspect = W/H;
+    camera.updateProjectionMatrix();
+    renderer.setSize(W, H);
+});
+
+// ================= LIGHTING (Cappadocia havası) =================
+const ambientLight = new THREE.AmbientLight(0xffeedd, 0.7);
+scene.add(ambientLight);
+
+const sunLight = new THREE.DirectionalLight(0xffddaa, 1.2);
+sunLight.position.set(20, 40, 30);
+sunLight.castShadow = true;
+scene.add(sunLight);
+
+// ================= SKY BACKGROUND (Gradient + hafif sis) =================
+scene.background = new THREE.Color(0xFF9A5C);
+scene.fog = new THREE.Fog(0xFF9A5C, 80, 300);
+
+// ================= BALLOON (daha detaylı) =================
+const balloonGroup = new THREE.Group();
+
+const balloonGeo = new THREE.SphereGeometry(4, 32, 32);
+const balloonMat = new THREE.MeshPhongMaterial({ 
+    color: 0xFF4500,
+    shininess: 10,
+    specular: 0x222222
+});
+const balloonMesh = new THREE.Mesh(balloonGeo, balloonMat);
+balloonMesh.castShadow = true;
+balloonMesh.receiveShadow = true;
+balloonGroup.add(balloonMesh);
+
+// Sepet
+const basketGeo = new THREE.BoxGeometry(2.2, 1.8, 2.2);
+const basketMat = new THREE.MeshPhongMaterial({color: 0x8B4513});
+const basket = new THREE.Mesh(basketGeo, basketMat);
+basket.position.y = -5.5;
+balloonGroup.add(basket);
+
+// İpler (basit ama daha gerçekçi)
+for(let i = -1; i <= 1; i+=2){
+    const ropeGeo = new THREE.CylinderGeometry(0.05, 0.05, 5.5, 8);
+    const rope = new THREE.Mesh(ropeGeo, new THREE.MeshPhongMaterial({color: 0x333333}));
+    rope.position.set(i*1.2, -2.8, 0);
+    rope.rotation.z = i*0.3;
+    balloonGroup.add(rope);
 }
-resize();
-window.addEventListener("resize", resize);
 
-// ================= STATE =================
-const STATE = {MENU:0, PLAY:1, OVER:2};
-let gameState = STATE.MENU;
+// Ateş efekti (particle benzeri basit koni + renk animasyonu)
+const flameGeo = new THREE.ConeGeometry(0.6, 2.5, 8);
+const flameMat = new THREE.MeshBasicMaterial({color: 0xFFAA00});
+const flame = new THREE.Mesh(flameGeo, flameMat);
+flame.position.y = -4.8;
+flame.rotation.x = Math.PI;
+balloonGroup.add(flame);
 
-// ================= PLAYER =================
+scene.add(balloonGroup);
+
 let balloon = {
-    x:0,
-    y:0,
-    vy:0,
-    gravity:0.25,
-    lift:-0.8,
-    drag:0.98
+    vy: 0,
+    gravity: 0.18,
+    lift: -0.95,
+    drag: 0.975,
+    x: 0,
+    y: 8,
+    tilt: 0
 };
 
-// ================= SYSTEM =================
-let wind = { force:1 };
-let fuel = 100;
-let score = 0;
+// ================= PERI BACALARI (daha gerçekçi) =================
+let chimneys = [];
+const chimneyMaterial = new THREE.MeshPhongMaterial({color: 0xD2A679});
+
+function createChimney() {
+    const group = new THREE.Group();
+    
+    // Ana kaya gövdesi (konik + düzensiz)
+    const height = 12 + Math.random()*18;
+    const bodyGeo = new THREE.CylinderGeometry(3, 5.5, height, 6);
+    const body = new THREE.Mesh(bodyGeo, chimneyMaterial);
+    body.position.y = height/2 - 2;
+    body.castShadow = true;
+    body.receiveShadow = true;
+    group.add(body);
+
+    // Tepe şapkası (kapak)
+    const capGeo = new THREE.CylinderGeometry(3.8, 3.2, 1.8, 6);
+    const cap = new THREE.Mesh(capGeo, new THREE.MeshPhongMaterial({color: 0xA67C5D}));
+    cap.position.y = height - 1;
+    group.add(cap);
+
+    group.userData = {height: height};
+    return group;
+}
+
+// ================= KUŞLAR =================
+let birds = [];
+function createBird() {
+    const bird = new THREE.Group();
+    const body = new THREE.Mesh(
+        new THREE.SphereGeometry(0.6, 8, 8),
+        new THREE.MeshPhongMaterial({color: 0x222222})
+    );
+    bird.add(body);
+    
+    // Kanatlar (basit düzlem)
+    const wingGeo = new THREE.PlaneGeometry(2.2, 0.8);
+    const wingMat = new THREE.MeshPhongMaterial({color: 0x111111, side: THREE.DoubleSide});
+    const leftWing = new THREE.Mesh(wingGeo, wingMat);
+    leftWing.position.set(-0.8, 0, 0);
+    leftWing.rotation.y = Math.PI/2;
+    bird.add(leftWing);
+    
+    const rightWing = leftWing.clone();
+    rightWing.position.x = 0.8;
+    bird.add(rightWing);
+    
+    bird.userData = {wingPhase: Math.random()*Math.PI*2, speed: 3 + Math.random()*3};
+    return bird;
+}
+
+// ================= YAKIT İKONLARI =================
+let fuelItems = [];
+function createFuel() {
+    const fuelGroup = new THREE.Group();
+    
+    // Gaz tüpü benzeri
+    const tank = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.8, 0.8, 2.5, 12),
+        new THREE.MeshPhongMaterial({color: 0xFFDD44})
+    );
+    tank.rotation.x = Math.PI/2;
+    fuelGroup.add(tank);
+    
+    // Alev işareti
+    const flameIcon = new THREE.Mesh(
+        new THREE.ConeGeometry(0.6, 1.8, 4),
+        new THREE.MeshBasicMaterial({color: 0xFF5500})
+    );
+    flameIcon.position.y = 2;
+    fuelGroup.add(flameIcon);
+    
+    fuelGroup.scale.set(0.8, 0.8, 0.8);
+    return fuelGroup;
+}
 
 // ================= INPUT =================
-let press=false;
-window.addEventListener("touchstart",()=>press=true);
-window.addEventListener("touchend",()=>press=false);
-window.addEventListener("mousedown",()=>press=true);
-window.addEventListener("mouseup",()=>press=false);
+let press = false;
+window.addEventListener("touchstart", e => { e.preventDefault(); press = true; });
+window.addEventListener("touchend", () => press = false);
+window.addEventListener("mousedown", () => press = true);
+window.addEventListener("mouseup", () => press = false);
 
-// ================= OBJECTS =================
-let chimneys = [];
-let birds = [];
-let fuels = [];
+// ================= GAME STATE =================
+let gameState = "MENU"; // MENU, PLAY, OVER
+let fuel = 100;
+let score = 0;
+let windForce = 1.8;
+let lastSpawn = Date.now();
 
 // ================= RESET =================
-function reset(){
-    balloon.x = W*0.3;
-    balloon.y = H*0.5;
+function reset() {
+    balloon.x = 0;
+    balloon.y = 8;
     balloon.vy = 0;
-
-    wind.force = 1;
     fuel = 100;
     score = 0;
+    windForce = 1.8;
 
+    // Temizle
+    chimneys.forEach(c => scene.remove(c));
+    birds.forEach(b => scene.remove(b));
+    fuelItems.forEach(f => scene.remove(f));
+    
     chimneys = [];
     birds = [];
-    fuels = [];
+    fuelItems = [];
 }
 
 // ================= SPAWN =================
-let lastSpawn = 0;
-
-function spawnObjects(){
-    if(Date.now() - lastSpawn > 1200){
-
-        chimneys.push({
-            x: W + 100,
-            w: 70,
-            h: 120 + Math.random()*180
-        });
-
-        if(Math.random()>0.5){
-            birds.push({
-                x: W + 50,
-                y: 50 + Math.random()*200,
-                size: 20,
-                speed: 2 + Math.random()*2
-            });
-        }
-
-        if(Math.random()>0.7){
-            fuels.push({
-                x: W + 80,
-                y: 100 + Math.random()*300,
-                size: 15
-            });
-        }
-
-        lastSpawn = Date.now();
+function spawnObjects() {
+    if(Date.now() - lastSpawn < 1100) return;
+    
+    // Peri bacası
+    if(Math.random() > 0.15) {
+        const chimney = createChimney();
+        chimney.position.set(45 + Math.random()*20, -5, 0);
+        scene.add(chimney);
+        chimneys.push(chimney);
     }
+    
+    // Kuş
+    if(Math.random() > 0.45) {
+        const bird = createBird();
+        bird.position.set(50, 12 + Math.random()*18, 0);
+        scene.add(bird);
+        birds.push(bird);
+    }
+    
+    // Yakıt
+    if(Math.random() > 0.65) {
+        const fuelObj = createFuel();
+        fuelObj.position.set(48, 8 + Math.random()*22, 0);
+        scene.add(fuelObj);
+        fuelItems.push(fuelObj);
+    }
+    
+    lastSpawn = Date.now();
 }
 
 // ================= UPDATE =================
-function updatePlayer(){
+function update() {
+    if(gameState !== "PLAY") return;
 
-    if(press && fuel > 0){
+    // Balon fizik
+    if(press && fuel > 0) {
         balloon.vy += balloon.lift;
-        fuel -= 0.3;
+        fuel -= 0.28;
+        flame.visible = true;
+        flame.scale.set(1 + Math.random()*0.3, 1 + Math.random()*0.6, 1);
+    } else {
+        flame.visible = false;
     }
 
     balloon.vy += balloon.gravity;
     balloon.vy *= balloon.drag;
     balloon.y += balloon.vy;
 
-    if(balloon.y < 0 || balloon.y > H) gameOver();
-}
+    // Tilt efekti (rüzgar + hız)
+    balloon.tilt = balloon.vy * 0.07 + (windForce - 2) * 0.03;
+    balloonGroup.rotation.z = balloon.tilt * 0.6;
+    balloonGroup.position.set(balloon.x, balloon.y, 0);
 
-function updateWorld(){
+    // Sınırlar
+    if(balloon.y < 1 || balloon.y > 45) gameOver();
 
-    chimneys.forEach((c,i)=>{
-        c.x -= wind.force + 2;
+    // Dünya hareketi (ilerleme hissi)
+    const speed = windForce + 2.2;
 
-        if(balloon.x + 30 > c.x && balloon.x - 30 < c.x + c.w){
-            if(balloon.y + 30 > H - c.h){
-                gameOver();
-            }
+    // Peri bacaları
+    for(let i = chimneys.length-1; i >= 0; i--) {
+        const c = chimneys[i];
+        c.position.x -= speed;
+
+        // Çarpışma (basit bounding box)
+        if(Math.abs(c.position.x) < 8 && 
+           Math.abs(balloon.y - (c.position.y + c.userData.height/2)) < c.userData.height/2 + 6) {
+            gameOver();
         }
 
-        if(c.x < -100) chimneys.splice(i,1);
-    });
-
-    birds.forEach((b,i)=>{
-        b.x -= wind.force + b.speed;
-
-        let dx = balloon.x - b.x;
-        let dy = balloon.y - b.y;
-
-        if(Math.sqrt(dx*dx+dy*dy) < 30) gameOver();
-
-        if(b.x < -50) birds.splice(i,1);
-    });
-
-    fuels.forEach((f,i)=>{
-        f.x -= wind.force + 2;
-
-        let dx = balloon.x - f.x;
-        let dy = balloon.y - f.y;
-
-        if(Math.sqrt(dx*dx+dy*dy) < 30){
-            fuel = Math.min(100, fuel + 30);
-            fuels.splice(i,1);
+        if(c.position.x < -60) {
+            scene.remove(c);
+            chimneys.splice(i,1);
         }
-    });
-}
-
-function updateDifficulty(){
-    wind.force += 0.0007;
-
-    let level = "Easy";
-    if(wind.force > 2) level = "Medium";
-    if(wind.force > 3) level = "Hard";
-    if(wind.force > 4) level = "Insane";
-
-    document.getElementById("difficulty").innerText = level;
-}
-
-// ================= DRAW =================
-function drawSky(){
-    let g = ctx.createLinearGradient(0,0,0,H);
-    g.addColorStop(0,"#FF8C42");
-    g.addColorStop(1,"#87CEEB");
-    ctx.fillStyle = g;
-    ctx.fillRect(0,0,W,H);
-}
-
-// realistic chimney shape
-function drawChimneys(){
-    ctx.fillStyle="#C38A5F";
-
-    chimneys.forEach(c=>{
-        let x = c.x;
-        let y = H - c.h;
-
-        ctx.beginPath();
-        ctx.moveTo(x, H);
-        ctx.lineTo(x + c.w*0.3, y);
-        ctx.lineTo(x + c.w*0.7, y);
-        ctx.lineTo(x + c.w, H);
-        ctx.fill();
-
-        // top cap
-        ctx.beginPath();
-        ctx.ellipse(x + c.w/2, y, c.w*0.4, 12, 0, 0, Math.PI*2);
-        ctx.fillStyle="#8B5A3C";
-        ctx.fill();
-        ctx.fillStyle="#C38A5F";
-    });
-}
-
-function drawBirds(){
-    ctx.fillStyle="black";
-    birds.forEach(b=>{
-        ctx.beginPath();
-        ctx.arc(b.x, b.y, b.size, 0, Math.PI*2);
-        ctx.fill();
-    });
-}
-
-function drawFuel(){
-    ctx.fillStyle="yellow";
-    fuels.forEach(f=>{
-        ctx.beginPath();
-        ctx.arc(f.x, f.y, f.size, 0, Math.PI*2);
-        ctx.fill();
-    });
-}
-
-// balloon with ropes + flame
-function drawBalloon(){
-    ctx.save();
-    ctx.translate(balloon.x, balloon.y);
-
-    let tilt = balloon.vy * 0.05;
-    ctx.rotate(tilt);
-
-    // balloon
-    ctx.fillStyle="orange";
-    ctx.beginPath();
-    ctx.arc(0,0,30,0,Math.PI*2);
-    ctx.fill();
-
-    // ropes
-    ctx.strokeStyle="#333";
-    ctx.lineWidth=2;
-    ctx.beginPath();
-    ctx.moveTo(-10,20);
-    ctx.lineTo(-5,40);
-    ctx.moveTo(10,20);
-    ctx.lineTo(5,40);
-    ctx.stroke();
-
-    // basket
-    ctx.fillStyle="#5D4037";
-    ctx.fillRect(-8,40,16,12);
-
-    // flame
-    if(press && fuel > 0){
-        ctx.fillStyle="orange";
-        ctx.beginPath();
-        ctx.moveTo(-5,40);
-        ctx.lineTo(0,60 + Math.random()*10);
-        ctx.lineTo(5,40);
-        ctx.fill();
     }
 
-    ctx.restore();
-}
+    // Kuşlar
+    for(let i = birds.length-1; i >= 0; i--) {
+        const b = birds[i];
+        b.position.x -= speed + b.userData.speed;
+        
+        // Basit kanat çırpma
+        b.userData.wingPhase += 0.25;
+        b.children[1].rotation.z = Math.sin(b.userData.wingPhase) * 0.6; // left wing
+        b.children[2].rotation.z = -Math.sin(b.userData.wingPhase) * 0.6; // right
 
-// ================= LOOP =================
-function update(){
-    if(gameState !== STATE.PLAY) return;
+        const dx = balloon.x - b.position.x;
+        const dy = balloon.y - b.position.y;
+        if(Math.sqrt(dx*dx + dy*dy) < 6) gameOver();
 
-    updatePlayer();
-    spawnObjects();
-    updateWorld();
-    updateDifficulty();
+        if(b.position.x < -60) {
+            scene.remove(b);
+            birds.splice(i,1);
+        }
+    }
 
-    score += 0.1;
+    // Yakıtlar
+    for(let i = fuelItems.length-1; i >= 0; i--) {
+        const f = fuelItems[i];
+        f.position.x -= speed;
+        f.rotation.y += 0.03; // dönme efekti
 
-    document.getElementById("score").innerText = Math.floor(score)+" m";
-    document.getElementById("wind").innerText = "Wind: " + wind.force.toFixed(2);
+        const dx = balloon.x - f.position.x;
+        const dy = balloon.y - f.position.y;
+        if(Math.sqrt(dx*dx + dy*dy) < 7) {
+            fuel = Math.min(100, fuel + 28);
+            scene.remove(f);
+            fuelItems.splice(i,1);
+        }
+
+        if(f.position.x < -60) {
+            scene.remove(f);
+            fuelItems.splice(i,1);
+        }
+    }
+
+    // Zorluk artışı
+    windForce += 0.0009;
+    score += 0.18;
+
+    // UI Güncelle
+    document.getElementById("score").innerText = Math.floor(score) + " m";
+    document.getElementById("wind").innerText = "Rüzgar: " + windForce.toFixed(1);
     document.getElementById("fuelFill").style.width = fuel + "%";
+
+    let diffText = "Kolay";
+    if(windForce > 3.5) diffText = "Orta";
+    if(windForce > 5) diffText = "Zor";
+    if(windForce > 6.5) diffText = "Çılgın";
+    document.getElementById("difficulty").innerText = diffText;
+
+    spawnObjects();
 }
 
-function draw(){
-    ctx.clearRect(0,0,W,H);
-
-    drawSky();
-    drawChimneys();
-    drawBirds();
-    drawFuel();
-    drawBalloon();
-}
-
-function loop(){
+// ================= DRAW / ANIMATE =================
+function animate() {
+    requestAnimationFrame(animate);
     update();
-    draw();
-    requestAnimationFrame(loop);
+    renderer.render(scene, camera);
 }
-loop();
+animate();
 
-// ================= CONTROL =================
-function startGame(){
+// ================= GAME CONTROL =================
+function startGame() {
     reset();
-    gameState = STATE.PLAY;
-    document.getElementById("menu").style.display="none";
+    gameState = "PLAY";
+    document.getElementById("menu").style.display = "none";
 }
 
-function gameOver(){
-    gameState = STATE.OVER;
-    document.getElementById("gameover").style.display="flex";
-    document.getElementById("finalScore").innerText = "Distance: " + Math.floor(score) + " m";
+function gameOver() {
+    gameState = "OVER";
+    document.getElementById("gameover").style.display = "flex";
+    document.getElementById("finalScore").innerText = "Uçuş Mesafesi: " + Math.floor(score) + " metre";
 }
 
-function restart(){
-    document.getElementById("gameover").style.display="none";
-    document.getElementById("menu").style.display="flex";
-    gameState = STATE.MENU;
+function restart() {
+    document.getElementById("gameover").style.display = "none";
+    document.getElementById("menu").style.display = "flex";
+    gameState = "MENU";
 }
+
+// Başlangıç
+document.getElementById("menu").style.display = "flex";
 
 </script>
-
 </body>
 </html>
