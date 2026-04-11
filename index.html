@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Ramazan Oyunu</title>
+<title>Ramazan Mahallesi Oyunu</title>
 <style>
 html,body{
 margin:0;
 padding:0;
 overflow:hidden;
-background:linear-gradient(#0b1d3a,#132c55);
+background:linear-gradient(#081427,#0f2a52);
 font-family:Arial, sans-serif;
 touch-action:manipulation;
 }
@@ -30,7 +30,7 @@ z-index:10;
 #startScreen{
 position:fixed;
 inset:0;
-background:linear-gradient(#0b1d3a,#132c55);
+background:linear-gradient(#081427,#0f2a52);
 display:flex;
 flex-direction:column;
 justify-content:center;
@@ -53,11 +53,11 @@ margin-top:20px;
 </head>
 <body>
 
-<div id="ui">Sevap Puanı: <span id="score">0</span></div>
+<div id="ui">Sevap: <span id="score">0</span></div>
 
 <div id="startScreen">
 <h1>🌙 Ramazan Mahallesi</h1>
-<p>Davulcu ile iftara yetiş, güzel anları topla</p>
+<p>Davulcu ile mahallede dolaş, iftar hazırlıklarını topla</p>
 <button onclick="startGame()">Başla</button>
 </div>
 
@@ -78,23 +78,19 @@ let gameStarted=false
 let score=0
 const scoreEl=document.getElementById("score")
 
-const player={
-x:0,
-y:0,
-size:60
-}
+const player={x:0,y:0,size:60}
 
 const items=[
-"🥁", // davulcu
+"🥁", // davul
 "🕌", // cami
 "🧒", // çocuk
-"👩‍🍳", // iftar hazırlığı
-"🍲", // yemek
-"🌙", // ay
-"📿"  // tesbih
+"👩‍🍳", // anne
+"🍲", // iftar
+"🥖", // pide
+"🌙"  // hilal
 ]
 
-const bonus=["🎭","📺"] // karagöz hacivat & tv
+const bonus=["🎭","📺"]
 
 let objects=[]
 
@@ -114,7 +110,7 @@ player.y=canvas.height-120
 function spawn(){
 if(!gameStarted) return
 
-const arr=Math.random()<0.15?bonus:items
+const arr=Math.random()<0.2?bonus:items
 
 objects.push({
 x:Math.random()*canvas.width,
@@ -135,28 +131,27 @@ canvas.addEventListener("mousemove",e=>{
 player.x=e.clientX
 })
 
-function drawPlayer(){
-ctx.font=player.size+"px Arial"
-ctx.textAlign="center"
-ctx.fillText("🥁",player.x,player.y)
-}
-
-function drawSky(){
-ctx.fillStyle="rgba(255,255,255,0.2)"
-for(let i=0;i<20;i++){
+function drawBackground(){
+ctx.fillStyle="rgba(255,255,255,0.15)"
+for(let i=0;i<25;i++){
 ctx.beginPath()
 ctx.arc(Math.random()*canvas.width,Math.random()*canvas.height,1.5,0,Math.PI*2)
 ctx.fill()
 }
 }
 
+function drawPlayer(){
+ctx.font=player.size+"px Arial"
+ctx.textAlign="center"
+ctx.fillText("🥁",player.x,player.y)
+}
+
 function update(){
 ctx.clearRect(0,0,canvas.width,canvas.height)
 
-drawSky()
+drawBackground()
 
 if(gameStarted){
-
 drawPlayer()
 
 objects.forEach((o,i)=>{
@@ -169,13 +164,11 @@ const dy=o.y-player.y
 const dist=Math.sqrt(dx*dx+dy*dy)
 
 if(dist<50){
-
 if(o.emoji=="🎭" || o.emoji=="📺"){
 score+=5
 }else{
 score++
 }
-
 scoreEl.textContent=score
 objects.splice(i,1)
 }
