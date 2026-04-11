@@ -1,391 +1,745 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Cappadocia Balloon Ultimate</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Kapadokya Balon Macerası | Peri Bacaları & Kuşlar</title>
+    <style>
+        * {
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-<style>
-body { margin:0; overflow:hidden; background:#000; font-family:Arial; }
-canvas { display:block; }
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #0a0f1e;
+            font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, 'Quicksand', sans-serif;
+        }
 
-#ui { position:absolute; inset:0; pointer-events:none; }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
 
-.hud {
-    position:absolute;
-    top:15px;
-    left:50%;
-    transform:translateX(-50%);
-    text-align:center;
-    color:#fff;
-    font-weight:bold;
-}
+        /* HUD - modern glassmorfizm */
+        .hud {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0 20px;
+            pointer-events: none;
+            z-index: 20;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
 
-#fuelBar {
-    width:140px;
-    height:10px;
-    background:#333;
-    margin:6px auto;
-    border-radius:6px;
-    overflow:hidden;
-}
-#fuelFill {
-    height:100%;
-    background:linear-gradient(90deg,#00e676,#ffeb3b,#ff5252);
-    width:100%;
-}
+        .stats-panel {
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(8px);
+            border-radius: 32px;
+            padding: 8px 20px;
+            color: white;
+            font-weight: 600;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,215,150,0.5);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 1.1rem;
+        }
 
-.screen {
-    position:absolute;
-    inset:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-    background:rgba(0,0,0,0.7);
-    color:#fff;
-    pointer-events:auto;
-}
+        .stats-panel span {
+            color: #ffcd7e;
+            font-weight: 800;
+        }
 
-button {
-    padding:15px 40px;
-    font-size:20px;
-    border:none;
-    border-radius:25px;
-    background:orange;
-    color:#fff;
-}
-</style>
+        .fuel-container {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 40px;
+            padding: 6px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #ffb347;
+        }
+
+        .fuel-icon {
+            font-size: 1.6rem;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.4));
+        }
+
+        #fuelBar {
+            width: 160px;
+            height: 12px;
+            background: #2c2418;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px #00000055;
+        }
+
+        #fuelFill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #4caf50, #ffc107, #ff5722);
+            border-radius: 20px;
+            transition: width 0.1s linear;
+        }
+
+        .wind-badge {
+            background: #2e3b3ecc;
+            backdrop-filter: blur(6px);
+        }
+
+        .screen {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, #000000aa, #000000dd);
+            backdrop-filter: blur(10px);
+            color: white;
+            pointer-events: auto;
+            z-index: 30;
+            text-align: center;
+            padding: 20px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f9a602, #e07c1f);
+            border: none;
+            padding: 14px 40px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border-radius: 60px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+        }
+
+        button:active {
+            transform: scale(0.96);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0;
+            text-shadow: 0 5px 15px #ff8c00;
+            letter-spacing: 2px;
+        }
+
+        .sub {
+            margin-top: 8px;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        #finalScore {
+            font-size: 1.8rem;
+            background: #ffb34733;
+            padding: 10px 24px;
+            border-radius: 48px;
+            margin: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .stats-panel { font-size: 0.85rem; padding: 4px 14px; }
+            .fuel-container { padding: 3px 12px; gap: 6px; }
+            #fuelBar { width: 100px; }
+            h1 { font-size: 1.8rem; }
+        }
+
+        .instruction {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: rgba(255,255,200,0.7);
+            font-size: 0.8rem;
+            pointer-events: none;
+            z-index: 20;
+            background: rgba(0,0,0,0.4);
+            width: fit-content;
+            margin: 0 auto;
+            padding: 4px 16px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+        }
+    </style>
 </head>
-
 <body>
 
-<canvas id="game"></canvas>
+<canvas id="gameCanvas"></canvas>
 
-<div id="ui">
-
-    <div class="hud">
-        <div id="score">0 m</div>
-        <div id="wind">Wind: 0</div>
-        <div id="difficulty">Easy</div>
+<div class="hud">
+    <div class="stats-panel">
+        🎈 <span id="scoreValue">0</span> m
+    </div>
+    <div class="stats-panel wind-badge">
+        💨 <span id="windValue">0.0</span>
+    </div>
+    <div class="fuel-container">
+        <div class="fuel-icon">⛽</div>
         <div id="fuelBar"><div id="fuelFill"></div></div>
     </div>
+</div>
+<div class="instruction">
+    🔥 Basılı tut → Yüksel | Yakıtı yönet & engellerden kaç!
+</div>
 
-    <div id="menu" class="screen">
-        <h1>🎈 Cappadocia Flight</h1>
-        <button onclick="startGame()">Start</button>
-    </div>
+<div id="menuScreen" class="screen">
+    <h1>🎈✨ KAPADOKYA</h1>
+    <div style="font-size:1.8rem;">🏔️🧿</div>
+    <p class="sub">Peri Bacaları • Kuşlar • Rüzgar</p>
+    <button id="startBtn">Uçuşa Başla 🚀</button>
+</div>
 
-    <div id="gameover" class="screen" style="display:none;">
-        <h1>Game Over</h1>
-        <p id="finalScore"></p>
-        <button onclick="restart()">Retry</button>
-    </div>
-
+<div id="gameoverScreen" class="screen" style="display:none;">
+    <h1>💥 Düştün 💥</h1>
+    <div id="finalScoreText"></div>
+    <button id="restartBtn">Tekrar Dene 🔄</button>
 </div>
 
 <script>
-
-// ================= CANVAS =================
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
-
-let W,H;
-function resize(){
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener("resize", resize);
-
-// ================= STATE =================
-const STATE = {MENU:0, PLAY:1, OVER:2};
-let gameState = STATE.MENU;
-
-// ================= PLAYER =================
-let balloon = {
-    x:0,
-    y:0,
-    vy:0,
-    gravity:0.25,
-    lift:-0.8,
-    drag:0.98
-};
-
-// ================= SYSTEM =================
-let wind = { force:1 };
-let fuel = 100;
-let score = 0;
-
-// ================= INPUT =================
-let press=false;
-window.addEventListener("touchstart",()=>press=true);
-window.addEventListener("touchend",()=>press=false);
-window.addEventListener("mousedown",()=>press=true);
-window.addEventListener("mouseup",()=>press=false);
-
-// ================= OBJECTS =================
-let chimneys = [];
-let birds = [];
-let fuels = [];
-
-// ================= RESET =================
-function reset(){
-    balloon.x = W*0.3;
-    balloon.y = H*0.5;
-    balloon.vy = 0;
-
-    wind.force = 1;
-    fuel = 100;
-    score = 0;
-
-    chimneys = [];
-    birds = [];
-    fuels = [];
-}
-
-// ================= SPAWN =================
-let lastSpawn = 0;
-
-function spawnObjects(){
-    if(Date.now() - lastSpawn > 1200){
-
-        chimneys.push({
-            x: W + 100,
-            w: 70,
-            h: 120 + Math.random()*180
+    (function(){
+        // ---------- CANVAS ----------
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        
+        function resizeCanvas() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            if(gameActive) repositionBalloonOnResize();
         });
-
-        if(Math.random()>0.5){
-            birds.push({
-                x: W + 50,
-                y: 50 + Math.random()*200,
-                size: 20,
-                speed: 2 + Math.random()*2
-            });
-        }
-
-        if(Math.random()>0.7){
-            fuels.push({
-                x: W + 80,
-                y: 100 + Math.random()*300,
-                size: 15
-            });
-        }
-
-        lastSpawn = Date.now();
-    }
-}
-
-// ================= UPDATE =================
-function updatePlayer(){
-
-    if(press && fuel > 0){
-        balloon.vy += balloon.lift;
-        fuel -= 0.3;
-    }
-
-    balloon.vy += balloon.gravity;
-    balloon.vy *= balloon.drag;
-    balloon.y += balloon.vy;
-
-    if(balloon.y < 0 || balloon.y > H) gameOver();
-}
-
-function updateWorld(){
-
-    chimneys.forEach((c,i)=>{
-        c.x -= wind.force + 2;
-
-        if(balloon.x + 30 > c.x && balloon.x - 30 < c.x + c.w){
-            if(balloon.y + 30 > H - c.h){
-                gameOver();
+        
+        function repositionBalloonOnResize() {
+            if(balloon && gameActive) {
+                // sınırlara yakın olmamalı
+                balloon.x = Math.min(width - 70, Math.max(70, balloon.x));
+                balloon.y = Math.min(height - 80, Math.max(60, balloon.y));
             }
         }
-
-        if(c.x < -100) chimneys.splice(i,1);
-    });
-
-    birds.forEach((b,i)=>{
-        b.x -= wind.force + b.speed;
-
-        let dx = balloon.x - b.x;
-        let dy = balloon.y - b.y;
-
-        if(Math.sqrt(dx*dx+dy*dy) < 30) gameOver();
-
-        if(b.x < -50) birds.splice(i,1);
-    });
-
-    fuels.forEach((f,i)=>{
-        f.x -= wind.force + 2;
-
-        let dx = balloon.x - f.x;
-        let dy = balloon.y - f.y;
-
-        if(Math.sqrt(dx*dx+dy*dy) < 30){
-            fuel = Math.min(100, fuel + 30);
-            fuels.splice(i,1);
+        
+        // ---------- OYUN DURUMU ----------
+        let gameActive = false;    // true = oynanıyor
+        let animationId = null;
+        
+        // ---------- BALON ----------
+        let balloon = {
+            x: 0,
+            y: 0,
+            vy: 0,
+            radius: 28,
+            gravity: 0.22,
+            liftForce: -0.75,
+            drag: 0.98
+        };
+        
+        // ---------- SİSTEM ----------
+        let windSpeed = 1.2;      // oyun ilerledikçe artar (yatay hız)
+        let fuel = 100;
+        let distance = 0;          // metre (score)
+        let frame = 0;
+        
+        // ---------- ENGEL DİZİLERİ ----------
+        let fairyChimneys = [];     // peri bacaları (daha detaylı)
+        let birds = [];
+        let gasIcons = [];           // gaz ikonu (yakıt)
+        
+        // ---------- SPAWN KONTROL ----------
+        let lastSpawnFrame = 0;
+        let frameCounter = 0;
+        
+        // ---------- INPUT (dokunma / fare) ----------
+        let isBoosting = false;
+        
+        function handleStart(e) {
+            e.preventDefault();
+            if(gameActive && fuel > 0) isBoosting = true;
         }
-    });
-}
-
-function updateDifficulty(){
-    wind.force += 0.0007;
-
-    let level = "Easy";
-    if(wind.force > 2) level = "Medium";
-    if(wind.force > 3) level = "Hard";
-    if(wind.force > 4) level = "Insane";
-
-    document.getElementById("difficulty").innerText = level;
-}
-
-// ================= DRAW =================
-function drawSky(){
-    let g = ctx.createLinearGradient(0,0,0,H);
-    g.addColorStop(0,"#FF8C42");
-    g.addColorStop(1,"#87CEEB");
-    ctx.fillStyle = g;
-    ctx.fillRect(0,0,W,H);
-}
-
-// realistic chimney shape
-function drawChimneys(){
-    ctx.fillStyle="#C38A5F";
-
-    chimneys.forEach(c=>{
-        let x = c.x;
-        let y = H - c.h;
-
-        ctx.beginPath();
-        ctx.moveTo(x, H);
-        ctx.lineTo(x + c.w*0.3, y);
-        ctx.lineTo(x + c.w*0.7, y);
-        ctx.lineTo(x + c.w, H);
-        ctx.fill();
-
-        // top cap
-        ctx.beginPath();
-        ctx.ellipse(x + c.w/2, y, c.w*0.4, 12, 0, 0, Math.PI*2);
-        ctx.fillStyle="#8B5A3C";
-        ctx.fill();
-        ctx.fillStyle="#C38A5F";
-    });
-}
-
-function drawBirds(){
-    ctx.fillStyle="black";
-    birds.forEach(b=>{
-        ctx.beginPath();
-        ctx.arc(b.x, b.y, b.size, 0, Math.PI*2);
-        ctx.fill();
-    });
-}
-
-function drawFuel(){
-    ctx.fillStyle="yellow";
-    fuels.forEach(f=>{
-        ctx.beginPath();
-        ctx.arc(f.x, f.y, f.size, 0, Math.PI*2);
-        ctx.fill();
-    });
-}
-
-// balloon with ropes + flame
-function drawBalloon(){
-    ctx.save();
-    ctx.translate(balloon.x, balloon.y);
-
-    let tilt = balloon.vy * 0.05;
-    ctx.rotate(tilt);
-
-    // balloon
-    ctx.fillStyle="orange";
-    ctx.beginPath();
-    ctx.arc(0,0,30,0,Math.PI*2);
-    ctx.fill();
-
-    // ropes
-    ctx.strokeStyle="#333";
-    ctx.lineWidth=2;
-    ctx.beginPath();
-    ctx.moveTo(-10,20);
-    ctx.lineTo(-5,40);
-    ctx.moveTo(10,20);
-    ctx.lineTo(5,40);
-    ctx.stroke();
-
-    // basket
-    ctx.fillStyle="#5D4037";
-    ctx.fillRect(-8,40,16,12);
-
-    // flame
-    if(press && fuel > 0){
-        ctx.fillStyle="orange";
-        ctx.beginPath();
-        ctx.moveTo(-5,40);
-        ctx.lineTo(0,60 + Math.random()*10);
-        ctx.lineTo(5,40);
-        ctx.fill();
-    }
-
-    ctx.restore();
-}
-
-// ================= LOOP =================
-function update(){
-    if(gameState !== STATE.PLAY) return;
-
-    updatePlayer();
-    spawnObjects();
-    updateWorld();
-    updateDifficulty();
-
-    score += 0.1;
-
-    document.getElementById("score").innerText = Math.floor(score)+" m";
-    document.getElementById("wind").innerText = "Wind: " + wind.force.toFixed(2);
-    document.getElementById("fuelFill").style.width = fuel + "%";
-}
-
-function draw(){
-    ctx.clearRect(0,0,W,H);
-
-    drawSky();
-    drawChimneys();
-    drawBirds();
-    drawFuel();
-    drawBalloon();
-}
-
-function loop(){
-    update();
-    draw();
-    requestAnimationFrame(loop);
-}
-loop();
-
-// ================= CONTROL =================
-function startGame(){
-    reset();
-    gameState = STATE.PLAY;
-    document.getElementById("menu").style.display="none";
-}
-
-function gameOver(){
-    gameState = STATE.OVER;
-    document.getElementById("gameover").style.display="flex";
-    document.getElementById("finalScore").innerText = "Distance: " + Math.floor(score) + " m";
-}
-
-function restart(){
-    document.getElementById("gameover").style.display="none";
-    document.getElementById("menu").style.display="flex";
-    gameState = STATE.MENU;
-}
-
+        function handleEnd(e) {
+            e.preventDefault();
+            isBoosting = false;
+        }
+        
+        canvas.addEventListener('touchstart', handleStart, {passive:false});
+        canvas.addEventListener('touchend', handleEnd);
+        canvas.addEventListener('mousedown', handleStart);
+        canvas.addEventListener('mouseup', handleEnd);
+        // mouse canvas dışında bırakılırsa boosting bitsin
+        window.addEventListener('mouseup', () => { if(gameActive) isBoosting = false; });
+        
+        // ---------- OYUN RESET ----------
+        function resetGame() {
+            // balon başlangıç
+            balloon.x = Math.min(width * 0.28, width - 80);
+            if(balloon.x < 70) balloon.x = 70;
+            balloon.y = height * 0.5;
+            balloon.vy = 0;
+            fuel = 100;
+            distance = 0;
+            windSpeed = 1.2;
+            frameCounter = 0;
+            lastSpawnFrame = 0;
+            
+            // temizle
+            fairyChimneys = [];
+            birds = [];
+            gasIcons = [];
+            
+            // UI güncelle
+            document.getElementById('scoreValue').innerText = "0";
+            document.getElementById('windValue').innerText = windSpeed.toFixed(1);
+            updateFuelUI();
+            
+            // rüzgar hızı arttıkça zorluk gösterimi (HUD'a ek)
+            gameActive = true;
+        }
+        
+        // ---------- SPAWN MEKANİKLERİ (kaliteli tasarım) ----------
+        function spawnObjects(currentFrame) {
+            if(!gameActive) return;
+            // Her 45-55 frame'de bir nesne grubu (akıcı)
+            let spawnInterval = Math.max(38, 50 - Math.floor(windSpeed * 2));
+            if(currentFrame - lastSpawnFrame > spawnInterval) {
+                lastSpawnFrame = currentFrame;
+                
+                // 1) PERİ BACASI (her seferinde 1 tane, rastgele yükseklik ve genişlik)
+                let chimneyWidth = 45 + Math.random() * 35;
+                let chimneyHeight = 90 + Math.random() * 150;
+                fairyChimneys.push({
+                    x: width + 40,
+                    width: chimneyWidth,
+                    height: chimneyHeight,
+                    // farklı renk tonu için
+                    variant: Math.floor(Math.random() * 3)
+                });
+                
+                // 2) KUŞLAR - %60 ihtimalle 1 veya 2 kuş
+                if(Math.random() < 0.65) {
+                    let birdCount = Math.random() > 0.7 ? 2 : 1;
+                    for(let i=0; i<birdCount; i++) {
+                        let offsetY = (Math.random() - 0.5) * 130;
+                        birds.push({
+                            x: width + 40 + i * 35,
+                            y: Math.min(height - 90, Math.max(50, height * 0.3 + offsetY)),
+                            radius: 12 + Math.random() * 5,
+                            speedY: (Math.random() - 0.5) * 0.8,
+                            flap: 0
+                        });
+                    }
+                }
+                
+                // 3) GAZ İKONU (Yakıt) - %45 ihtimal, daha sık ama dengeli
+                if(Math.random() < 0.48) {
+                    gasIcons.push({
+                        x: width + 30,
+                        y: 70 + Math.random() * (height - 140),
+                        radius: 14,
+                        collected: false
+                    });
+                }
+                
+                // Bazen çift peri bacası eğlencesi: rüzgar yüksekse daha fazla engel
+                if(windSpeed > 2.5 && Math.random() < 0.4) {
+                    fairyChimneys.push({
+                        x: width + 90,
+                        width: 42 + Math.random() * 30,
+                        height: 80 + Math.random() * 130,
+                        variant: Math.floor(Math.random() * 3)
+                    });
+                }
+            }
+        }
+        
+        // ---------- GÜNCELLEMELER ----------
+        function updateGame() {
+            if(!gameActive) return;
+            
+            // 1) Balon fiziği
+            if(isBoosting && fuel > 0) {
+                balloon.vy += balloon.liftForce;
+                fuel -= 0.27;   // yakıt tüketimi
+                if(fuel < 0) fuel = 0;
+                updateFuelUI();
+            }
+            balloon.vy += balloon.gravity;
+            balloon.vy *= balloon.drag;
+            balloon.y += balloon.vy;
+            
+            // Sınırlar (üst/alt)
+            if(balloon.y - balloon.radius <= 5) {
+                balloon.y = balloon.radius + 5;
+                balloon.vy = Math.abs(balloon.vy) * 0.3;
+            }
+            if(balloon.y + balloon.radius >= height - 8) {
+                gameOver();
+                return;
+            }
+            
+            // 2) Rüzgar & skor (mesafe artar)
+            distance += 0.12 + (windSpeed * 0.025);
+            document.getElementById('scoreValue').innerText = Math.floor(distance);
+            
+            // Rüzgar zorluğu kademeli artış (max 6.5)
+            if(windSpeed < 6.0) {
+                windSpeed += 0.0009;
+            }
+            document.getElementById('windValue').innerText = windSpeed.toFixed(1);
+            
+            // 3) Yakıt biterse oyun biter
+            if(fuel <= 0.0) {
+                gameOver();
+                return;
+            }
+            
+            // 4) Engelleri hareket ettir ve çarpışma
+            // PERİ BACALARI
+            for(let i=0; i<fairyChimneys.length; i++) {
+                const c = fairyChimneys[i];
+                c.x -= (windSpeed + 1.7);
+                
+                // Çarpışma (balon ile peri bacası)
+                const balloonLeft = balloon.x - balloon.radius;
+                const balloonRight = balloon.x + balloon.radius;
+                const chimneyLeft = c.x;
+                const chimneyRight = c.x + c.width;
+                if(balloonRight > chimneyLeft && balloonLeft < chimneyRight) {
+                    // Y düzleminde peri bacası zeminden yüksekliğe sahip (yere oturuyor)
+                    const chimneyTopY = height - c.height;
+                    if(balloon.y + balloon.radius > chimneyTopY) {
+                        gameOver();
+                        return;
+                    }
+                }
+                // Ekran dışı temizlik
+                if(c.x + c.width < -80) fairyChimneys.splice(i,1);
+            }
+            
+            // KUŞLAR (hareketli)
+            for(let i=0; i<birds.length; i++) {
+                const b = birds[i];
+                b.x -= (windSpeed + 1.3);
+                b.y += b.speedY;
+                // sınır y ekseninde sekip durmasın, ekran dışına kaçarsa sil
+                if(b.y + b.radius > height-20) b.y = height-20 - b.radius;
+                if(b.y - b.radius < 15) b.y = 15 + b.radius;
+                
+                // çarpışma kontrolü
+                const dx = balloon.x - b.x;
+                const dy = balloon.y - b.y;
+                const dist = Math.hypot(dx, dy);
+                if(dist < balloon.radius + b.radius) {
+                    gameOver();
+                    return;
+                }
+                if(b.x + b.radius < -50) birds.splice(i,1);
+            }
+            
+            // GAZ İKONLARI (yakıt toplama)
+            for(let i=0; i<gasIcons.length; i++) {
+                const g = gasIcons[i];
+                g.x -= (windSpeed + 1.4);
+                const dx = balloon.x - g.x;
+                const dy = balloon.y - g.y;
+                if(Math.hypot(dx, dy) < balloon.radius + g.radius) {
+                    // yakıt topla
+                    fuel = Math.min(100, fuel + 32);
+                    updateFuelUI();
+                    gasIcons.splice(i,1);
+                    i--;
+                    continue;
+                }
+                if(g.x + g.radius < -40) gasIcons.splice(i,1);
+            }
+            
+            // rastgele ekstra gaz ikonu efekti (görsel zenginlik)
+            // ayrıca periyodik olarak yakıt kontrolü
+            if(fuel < 15 && gameActive && Math.random() < 0.005) {
+                // umut ışığı: nadir durumlarda ekstra yardımcı gaz ikonu doğar
+                if(gasIcons.length < 5) {
+                    gasIcons.push({
+                        x: balloon.x + 100 + Math.random() * 70,
+                        y: 40 + Math.random() * (height-100),
+                        radius: 14,
+                        collected: false
+                    });
+                }
+            }
+        }
+        
+        // ---------- ÇİZİMLER (YENİ, KALİTELİ & PERİ BACALARI, KUŞLAR, GAZ) ----------
+        function drawBackground() {
+            // Gökyüzü gradyanı (Kapadokya gün batımı)
+            const grad = ctx.createLinearGradient(0, 0, 0, height);
+            grad.addColorStop(0, '#ff9966');
+            grad.addColorStop(0.45, '#ffb88c');
+            grad.addColorStop(0.75, '#e8c396');
+            grad.addColorStop(1, '#a1c4e5');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, width, height);
+            
+            // Uzak dağ silüetleri
+            ctx.fillStyle = '#b87c4faa';
+            ctx.beginPath();
+            for(let i=0;i<8;i++) {
+                let baseX = i*130 - (frameCounter*0.2)%400;
+                ctx.moveTo(baseX, height-60);
+                ctx.lineTo(baseX+50, height-160);
+                ctx.lineTo(baseX+100, height-70);
+                ctx.fill();
+            }
+            ctx.fillStyle = '#9b5e2caa';
+            for(let i=0;i<6;i++) {
+                let baseX = i*210 - (frameCounter*0.1)%500;
+                ctx.beginPath();
+                ctx.moveTo(baseX, height-40);
+                ctx.lineTo(baseX+70, height-120);
+                ctx.lineTo(baseX+140, height-50);
+                ctx.fill();
+            }
+        }
+        
+        // PERİ BACALARI (gerçekçi, katmanlı)
+        function drawFairyChimneys() {
+            for(let c of fairyChimneys) {
+                const x = c.x;
+                const yBase = height;
+                const topY = height - c.height;
+                const w = c.width;
+                // ana gövde
+                ctx.fillStyle = '#C28B5E';
+                ctx.beginPath();
+                ctx.moveTo(x, yBase);
+                ctx.lineTo(x + w*0.35, topY);
+                ctx.lineTo(x + w*0.65, topY);
+                ctx.lineTo(x + w, yBase);
+                ctx.fill();
+                // taş dokusu
+                ctx.fillStyle = '#AB6F3F';
+                ctx.beginPath();
+                ctx.rect(x + w*0.2, topY + 8, w*0.6, 18);
+                ctx.fill();
+                ctx.fillStyle = '#8B5A3C';
+                ctx.beginPath();
+                ctx.ellipse(x + w/2, topY-5, w*0.4, 12, 0, 0, Math.PI*2);
+                ctx.fill();
+                // peri bacası başlık (kaya şapka)
+                ctx.fillStyle = '#996633';
+                ctx.beginPath();
+                ctx.ellipse(x + w/2, topY-2, w*0.48, 9, 0, 0, Math.PI*2);
+                ctx.fill();
+                // çizgi detayları
+                ctx.strokeStyle = '#6f4f2e';
+                ctx.lineWidth = 1.5;
+                for(let i=0;i<3;i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(x + w*0.3 + i*12, topY+10);
+                    ctx.lineTo(x + w*0.5 + i*8, topY+32);
+                    ctx.stroke();
+                }
+            }
+        }
+        
+        // KUŞLAR (kanat çırpma animasyonu)
+        let birdFlap = 0;
+        function drawBirds() {
+            birdFlap = (birdFlap + 0.2) % (Math.PI*2);
+            for(let b of birds) {
+                ctx.save();
+                ctx.translate(b.x, b.y);
+                ctx.fillStyle = '#2c2c2c';
+                ctx.beginPath();
+                ctx.ellipse(0, 0, b.radius, b.radius*0.8, 0, 0, Math.PI*2);
+                ctx.fill();
+                ctx.fillStyle = '#4a3b2c';
+                ctx.beginPath();
+                ctx.moveTo(-b.radius*0.8, -b.radius*0.4);
+                ctx.lineTo(-b.radius*1.5, -b.radius*0.7 - Math.sin(birdFlap)*3);
+                ctx.lineTo(-b.radius*0.8, -b.radius*0.2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(b.radius*0.8, -b.radius*0.4);
+                ctx.lineTo(b.radius*1.5, -b.radius*0.7 - Math.cos(birdFlap)*3);
+                ctx.lineTo(b.radius*0.8, -b.radius*0.2);
+                ctx.fill();
+                ctx.fillStyle = '#f5cb5c';
+                ctx.beginPath();
+                ctx.arc(-3, -2, 2, 0, Math.PI*2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+        
+        // GAZ İKONU (şık, parlayan)
+        function drawGasIcons() {
+            for(let g of gasIcons) {
+                ctx.save();
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = '#ffdd77';
+                ctx.beginPath();
+                ctx.arc(g.x, g.y, g.radius, 0, Math.PI*2);
+                ctx.fillStyle = '#f5d742';
+                ctx.fill();
+                ctx.fillStyle = '#d49b2a';
+                ctx.font = `${g.radius+4}px "Segoe UI", "FontAwesome"`;
+                ctx.fillText("⛽", g.x-9, g.y+7);
+                ctx.fillStyle = 'white';
+                ctx.font = `bold ${g.radius-2}px sans-serif`;
+                ctx.fillText("+", g.x-4, g.y+5);
+                ctx.shadowBlur = 0;
+                ctx.restore();
+            }
+        }
+        
+        // BALON (zengin, alev efekti, sepet)
+        function drawBalloon() {
+            ctx.save();
+            ctx.translate(balloon.x, balloon.y);
+            let tilt = balloon.vy * 0.06;
+            ctx.rotate(tilt);
+            // balon ana gövde
+            ctx.fillStyle = '#FF5E3A';
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = 'rgba(0,0,0,0.3)';
+            ctx.beginPath();
+            ctx.ellipse(0, -6, balloon.radius, balloon.radius*1.15, 0, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = '#F2862E';
+            ctx.beginPath();
+            ctx.ellipse(-8, -12, 7, 9, 0, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(8, -12, 7, 9, 0, 0, Math.PI*2);
+            ctx.fill();
+            // desen
+            ctx.fillStyle = '#FFC857';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 10, 7, 0, 0, Math.PI*2);
+            ctx.fill();
+            
+            // ip detayları
+            ctx.beginPath();
+            ctx.moveTo(-12, 14);
+            ctx.lineTo(-6, 30);
+            ctx.lineTo(0, 32);
+            ctx.lineTo(6, 30);
+            ctx.lineTo(12, 14);
+            ctx.fillStyle = '#9C6B3E';
+            ctx.fill();
+            // sepet
+            ctx.fillStyle = '#6B3E1C';
+            ctx.fillRect(-9, 32, 18, 12);
+            ctx.fillStyle = '#CD8E5B';
+            ctx.fillRect(-6, 32, 12, 5);
+            // ALEV (yakıt kullanırken)
+            if(isBoosting && fuel > 0) {
+                ctx.fillStyle = '#ff7b24';
+                ctx.beginPath();
+                ctx.moveTo(-5, 44);
+                ctx.lineTo(0, 60 + Math.random()*7);
+                ctx.lineTo(5, 44);
+                ctx.fill();
+                ctx.fillStyle = '#ffbb44';
+                ctx.beginPath();
+                ctx.moveTo(-2, 44);
+                ctx.lineTo(0, 55 + Math.random()*6);
+                ctx.lineTo(2, 44);
+                ctx.fill();
+            }
+            ctx.shadowBlur = 0;
+            ctx.restore();
+        }
+        
+        // UI yardımcı
+        function updateFuelUI() {
+            const percent = Math.max(0, (fuel / 100) * 100);
+            document.getElementById('fuelFill').style.width = percent + "%";
+            if(fuel < 20) document.getElementById('fuelFill').style.background = "linear-gradient(90deg, #ff4d4d, #ffa500)";
+            else document.getElementById('fuelFill').style.background = "linear-gradient(90deg, #00e676, #ffeb3b, #ff5252)";
+        }
+        
+        // OYUN BİTİŞ
+        function gameOver() {
+            if(!gameActive) return;
+            gameActive = false;
+            document.getElementById('finalScoreText').innerHTML = `🏆 ${Math.floor(distance)} metre<br>🌬️ Rüzgar: ${windSpeed.toFixed(1)}`;
+            document.getElementById('gameoverScreen').style.display = 'flex';
+        }
+        
+        function startGame() {
+            document.getElementById('menuScreen').style.display = 'none';
+            document.getElementById('gameoverScreen').style.display = 'none';
+            resizeCanvas();
+            resetGame();
+            gameActive = true;
+            isBoosting = false;
+            frameCounter = 0;
+            lastSpawnFrame = 0;
+        }
+        
+        function restartFromOver() {
+            startGame();
+        }
+        
+        // ---------- ANİMASYON DÖNGÜSÜ ----------
+        function animate() {
+            if(gameActive) {
+                frameCounter++;
+                updateGame();
+                spawnObjects(frameCounter);
+            }
+            drawBackground();
+            drawFairyChimneys();
+            drawBirds();
+            drawGasIcons();
+            drawBalloon();
+            
+            // ekstra rüzgar efekti: çizgi
+            if(windSpeed > 2.5 && gameActive) {
+                ctx.beginPath();
+                for(let i=0;i<8;i++) {
+                    ctx.moveTo(width*0.2 + (frameCounter*2)%width, i*50);
+                    ctx.lineTo(width*0.2 + (frameCounter*2)%width + 25, i*50-15);
+                    ctx.strokeStyle = '#ffffff66';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        
+        // Event listener butonlar
+        document.getElementById('startBtn').addEventListener('click', startGame);
+        document.getElementById('restartBtn').addEventListener('click', restartFromOver);
+        
+        resizeCanvas();
+        // Başlangıçta menü açık, balon pozisyonu
+        balloon.x = 150;
+        balloon.y = 300;
+        gameActive = false;
+        updateFuelUI();
+        animate();
+        
+        // pasif durumda başlangıç değerleri
+        window.startGame = startGame;
+    })();
 </script>
-
 </body>
 </html>
