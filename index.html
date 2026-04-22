@@ -2,59 +2,37 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
 <title>Cappadocia Balloon Ultimate</title>
 
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
 <style>
-body { margin:0; overflow:hidden; background:#000; font-family:Arial; }
-canvas { display:block; }
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
 
-#ui { position:absolute; inset:0; pointer-events:none; }
+    body { 
+        margin: 0; 
+        overflow: hidden; 
+        background: #000; 
+        font-family: 'Poppins', sans-serif; 
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    canvas { display: block; }
 
-.hud {
-    position:absolute;
-    top:15px;
-    left:50%;
-    transform:translateX(-50%);
-    text-align:center;
-    color:#fff;
-    font-weight:bold;
-}
+    #ui { position: absolute; inset: 0; pointer-events: none; }
+    
+    /* Glassmorphism UI Elements */
+    .glass {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
 
-#fuelBar {
-    width:140px;
-    height:10px;
-    background:#333;
-    margin:6px auto;
-    border-radius:6px;
-    overflow:hidden;
-}
-#fuelFill {
-    height:100%;
-    background:linear-gradient(90deg,#00e676,#ffeb3b,#ff5252);
-    width:100%;
-}
-
-.screen {
-    position:absolute;
-    inset:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-    background:rgba(0,0,0,0.7);
-    color:#fff;
-    pointer-events:auto;
-}
-
-button {
-    padding:15px 40px;
-    font-size:20px;
-    border:none;
-    border-radius:25px;
-    background:orange;
-    color:#fff;
-}
+    .pointer-auto { pointer-events: auto; }
 </style>
 </head>
 
@@ -64,33 +42,56 @@ button {
 
 <div id="ui">
 
-    <div class="hud">
-        <div id="score">0 m</div>
-        <div id="wind">Wind: 0</div>
-        <div id="difficulty">Easy</div>
-        <div id="fuelBar"><div id="fuelFill"></div></div>
+    <div id="hud" class="absolute top-4 left-1/2 -translate-x-1/2 w-[90%] max-w-md glass rounded-2xl p-4 flex flex-col gap-2 opacity-0">
+        <div class="flex justify-between items-center text-white font-bold">
+            <div class="flex flex-col">
+                <span class="text-xs text-gray-300 uppercase tracking-wider">Distance</span>
+                <span id="score" class="text-2xl text-orange-400">0 m</span>
+            </div>
+            <div class="flex flex-col text-right">
+                <span class="text-xs text-gray-300 uppercase tracking-wider">Wind Level</span>
+                <span id="difficulty" class="text-lg text-blue-300">Easy</span>
+            </div>
+        </div>
+        
+        <div class="w-full h-3 bg-gray-900 rounded-full overflow-hidden border border-gray-600 relative">
+            <div id="fuelFill" class="h-full bg-gradient-to-r from-red-500 via-yellow-400 to-green-500 w-full transition-all duration-200"></div>
+            <div class="absolute top-0 left-0 w-full h-1/2 bg-white/20"></div>
+        </div>
     </div>
 
-    <div id="menu" class="screen">
-        <h1>🎈 Cappadocia Flight</h1>
-        <button onclick="startGame()">Start</button>
+    <div id="menu" class="absolute inset-0 flex justify-center items-center pointer-auto z-50 bg-black/40 backdrop-blur-sm">
+        <div class="glass p-8 rounded-3xl text-center max-w-sm w-[90%] transform scale-90 opacity-0" id="menuCard">
+            <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-red-600 mb-2 drop-shadow-lg">CAPPADOCIA</h1>
+            <h2 class="text-xl font-bold text-white tracking-widest mb-8">ULTIMATE FLIGHT</h2>
+            
+            <button onclick="startGame()" class="w-full py-4 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-xl shadow-[0_0_20px_rgba(249,115,22,0.5)] hover:scale-105 active:scale-95 transition-transform">
+                START FLIGHT
+            </button>
+            <p class="mt-4 text-gray-300 text-sm">Tap and hold to ignite the burner!</p>
+        </div>
     </div>
 
-    <div id="gameover" class="screen" style="display:none;">
-        <h1>Game Over</h1>
-        <p id="finalScore"></p>
-        <button onclick="restart()">Retry</button>
+    <div id="gameover" class="absolute inset-0 flex justify-center items-center pointer-auto z-50 bg-black/60 backdrop-blur-md hidden">
+        <div class="glass p-8 rounded-3xl text-center max-w-sm w-[90%] border-red-500/50 border-2 shadow-[0_0_40px_rgba(239,68,68,0.3)]">
+            <h1 class="text-5xl font-black text-red-500 mb-4 drop-shadow-md">CRASHED!</h1>
+            <p class="text-gray-300 text-lg uppercase tracking-wider mb-1">Final Distance</p>
+            <p id="finalScore" class="text-4xl font-bold text-white mb-8">0 m</p>
+            
+            <button onclick="restart()" class="w-full py-4 rounded-full bg-white text-black font-black text-xl hover:bg-gray-200 active:scale-95 transition-transform flex items-center justify-center gap-2">
+                <span>🔄</span> TRY AGAIN
+            </button>
+        </div>
     </div>
 
 </div>
 
 <script>
-
-// ================= CANVAS =================
+// ================= CANVAS & ENGINE =================
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-let W,H;
+let W, H;
 function resize(){
     W = canvas.width = window.innerWidth;
     H = canvas.height = window.innerHeight;
@@ -99,292 +100,492 @@ resize();
 window.addEventListener("resize", resize);
 
 // ================= STATE =================
-const STATE = {MENU:0, PLAY:1, OVER:2};
+const STATE = {MENU: 0, PLAY: 1, OVER: 2};
 let gameState = STATE.MENU;
 
-// ================= PLAYER =================
-let balloon = {
-    x:0,
-    y:0,
-    vy:0,
-    gravity:0.25,
-    lift:-0.8,
-    drag:0.98
-};
-
-// ================= SYSTEM =================
-let wind = { force:1 };
-let fuel = 100;
-let score = 0;
+// ================= VARIABLES =================
+let balloon, wind, fuel, score;
+let chimneys = [], birds = [], fuels = [], particles = [], mountains = [];
+let press = false;
+let time = 0;
 
 // ================= INPUT =================
-let press=false;
-window.addEventListener("touchstart",()=>press=true);
-window.addEventListener("touchend",()=>press=false);
-window.addEventListener("mousedown",()=>press=true);
-window.addEventListener("mouseup",()=>press=false);
+window.addEventListener("touchstart", (e) => { if(gameState===STATE.PLAY) press = true; }, {passive: false});
+window.addEventListener("touchend", () => press = false);
+window.addEventListener("mousedown", () => { if(gameState===STATE.PLAY) press = true; });
+window.addEventListener("mouseup", () => press = false);
 
-// ================= OBJECTS =================
-let chimneys = [];
-let birds = [];
-let fuels = [];
-
-// ================= RESET =================
-function reset(){
-    balloon.x = W*0.3;
-    balloon.y = H*0.5;
-    balloon.vy = 0;
-
-    wind.force = 1;
+// ================= INIT / RESET =================
+function reset() {
+    balloon = { x: W * 0.3, y: H * 0.5, vy: 0, gravity: 0.2, lift: -0.6, drag: 0.98 };
+    wind = { force: 1 };
     fuel = 100;
     score = 0;
+    time = 0;
+    chimneys = []; birds = []; fuels = []; particles = [];
+    
+    // Generate initial parallax mountains
+    mountains = [
+        { y: H * 0.5, color: '#C86B3C', speed: 0.2, offset: 0 },
+        { y: H * 0.65, color: '#A04B28', speed: 0.5, offset: 0 },
+        { y: H * 0.8, color: '#7D321E', speed: 0.8, offset: 0 }
+    ];
+}
+reset();
 
-    chimneys = [];
-    birds = [];
-    fuels = [];
+// ================= PARTICLES =================
+function createFireParticles() {
+    if(press && fuel > 0 && Math.random() > 0.5) {
+        particles.push({
+            x: balloon.x,
+            y: balloon.y + 40,
+            vx: (Math.random() - 0.5) * 2,
+            vy: Math.random() * 3 + 2,
+            life: 1,
+            color: Math.random() > 0.5 ? '#FF4500' : '#FFA500',
+            size: Math.random() * 4 + 2
+        });
+    }
+}
+
+function createCollectParticles(x, y) {
+    for(let i=0; i<15; i++) {
+        particles.push({
+            x: x, y: y,
+            vx: (Math.random() - 0.5) * 8,
+            vy: (Math.random() - 0.5) * 8,
+            life: 1,
+            color: '#FFFF00',
+            size: Math.random() * 5 + 3
+        });
+    }
+}
+
+function updateDrawParticles() {
+    for (let i = particles.length - 1; i >= 0; i--) {
+        let p = particles[i];
+        p.x += p.vx - wind.force; // affected by wind
+        p.y += p.vy;
+        p.life -= 0.03;
+        p.size *= 0.95;
+
+        if (p.life <= 0) {
+            particles.splice(i, 1);
+            continue;
+        }
+
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+    }
 }
 
 // ================= SPAWN =================
 let lastSpawn = 0;
-
 function spawnObjects(){
-    if(Date.now() - lastSpawn > 1200){
-
+    if(Date.now() - lastSpawn > 1500 - (wind.force * 100)){
+        
+        // Spawn Chimney
         chimneys.push({
             x: W + 100,
-            w: 70,
-            h: 120 + Math.random()*180
+            w: 80 + Math.random()*40,
+            h: 150 + Math.random()*250,
+            seed: Math.random() // for texturing
         });
 
-        if(Math.random()>0.5){
+        // Spawn Bird
+        if(Math.random() > 0.4){
             birds.push({
                 x: W + 50,
-                y: 50 + Math.random()*200,
-                size: 20,
-                speed: 2 + Math.random()*2
+                y: 50 + Math.random() * (H - 200),
+                size: 15,
+                speed: 3 + Math.random() * 3,
+                flapSpeed: 0.1 + Math.random() * 0.1
             });
         }
 
-        if(Math.random()>0.7){
+        // Spawn Fuel
+        if(Math.random() > 0.6){
             fuels.push({
                 x: W + 80,
-                y: 100 + Math.random()*300,
-                size: 15
+                y: 100 + Math.random() * (H - 300),
+                size: 18,
+                pulse: Math.random() * Math.PI
             });
         }
-
         lastSpawn = Date.now();
     }
 }
 
 // ================= UPDATE =================
-function updatePlayer(){
+function updateGame(){
+    time++;
 
+    // Player Physics
     if(press && fuel > 0){
         balloon.vy += balloon.lift;
-        fuel -= 0.3;
+        fuel -= 0.25; // Slower drain for better gameplay
     }
-
     balloon.vy += balloon.gravity;
     balloon.vy *= balloon.drag;
     balloon.y += balloon.vy;
 
-    if(balloon.y < 0 || balloon.y > H) gameOver();
-}
+    // Bounds Check
+    if(balloon.y < -50 || balloon.y > H + 50) triggerGameOver();
 
-function updateWorld(){
+    createFireParticles();
 
-    chimneys.forEach((c,i)=>{
+    // Move & Collide Chimneys
+    for (let i = chimneys.length - 1; i >= 0; i--) {
+        let c = chimneys[i];
         c.x -= wind.force + 2;
 
-        if(balloon.x + 30 > c.x && balloon.x - 30 < c.x + c.w){
-            if(balloon.y + 30 > H - c.h){
-                gameOver();
-            }
-        }
+        // Collision Hitbox
+        let hitX = balloon.x + 20 > c.x && balloon.x - 20 < c.x + c.w;
+        let hitY = balloon.y + 35 > H - c.h;
+        
+        if (hitX && hitY) triggerGameOver();
+        if (c.x < -150) chimneys.splice(i, 1);
+    }
 
-        if(c.x < -100) chimneys.splice(i,1);
-    });
-
-    birds.forEach((b,i)=>{
+    // Move & Collide Birds
+    for (let i = birds.length - 1; i >= 0; i--) {
+        let b = birds[i];
         b.x -= wind.force + b.speed;
+        
+        // Simple bobbing motion
+        b.y += Math.sin(time * b.flapSpeed) * 1.5;
 
         let dx = balloon.x - b.x;
         let dy = balloon.y - b.y;
+        if (Math.sqrt(dx*dx + dy*dy) < 35) triggerGameOver();
+        if (b.x < -50) birds.splice(i, 1);
+    }
 
-        if(Math.sqrt(dx*dx+dy*dy) < 30) gameOver();
-
-        if(b.x < -50) birds.splice(i,1);
-    });
-
-    fuels.forEach((f,i)=>{
+    // Move & Collide Fuel
+    for (let i = fuels.length - 1; i >= 0; i--) {
+        let f = fuels[i];
         f.x -= wind.force + 2;
 
         let dx = balloon.x - f.x;
         let dy = balloon.y - f.y;
-
-        if(Math.sqrt(dx*dx+dy*dy) < 30){
-            fuel = Math.min(100, fuel + 30);
-            fuels.splice(i,1);
+        if (Math.sqrt(dx*dx + dy*dy) < 40) {
+            fuel = Math.min(100, fuel + 40);
+            createCollectParticles(f.x, f.y);
+            fuels.splice(i, 1);
+        } else if (f.x < -50) {
+            fuels.splice(i, 1);
         }
+    }
+
+    // Difficulty & HUD
+    wind.force += 0.0005;
+    score += 0.1;
+
+    let level = "Breeze";
+    let windColor = "text-blue-300";
+    if(wind.force > 2) { level = "Strong"; windColor = "text-yellow-400"; }
+    if(wind.force > 3) { level = "Storm"; windColor = "text-red-500"; }
+
+    document.getElementById("score").innerText = Math.floor(score) + " m";
+    
+    let diffEl = document.getElementById("difficulty");
+    diffEl.innerText = level;
+    diffEl.className = `text-lg font-bold ${windColor}`;
+    
+    document.getElementById("fuelFill").style.width = fuel + "%";
+}
+
+// ================= DRAWING =================
+function drawSky(){
+    // Beautiful Sunrise Gradient
+    let g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "#2A1B3D");
+    g.addColorStop(0.4, "#D83F87");
+    g.addColorStop(1, "#FF8C42");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    // Glowing Sun
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(W * 0.8, H * 0.4, 80, 0, Math.PI * 2);
+    let sunGlow = ctx.createRadialGradient(W*0.8, H*0.4, 40, W*0.8, H*0.4, 150);
+    sunGlow.addColorStop(0, "rgba(255, 235, 59, 1)");
+    sunGlow.addColorStop(1, "rgba(255, 235, 59, 0)");
+    ctx.fillStyle = sunGlow;
+    ctx.fill();
+    ctx.restore();
+}
+
+function drawMountains() {
+    mountains.forEach((m) => {
+        m.offset = (m.offset - m.speed - wind.force * 0.5) % W;
+        ctx.fillStyle = m.color;
+        ctx.beginPath();
+        ctx.moveTo(0, H);
+        
+        // Create wave-like mountains
+        for (let x = 0; x <= W + 100; x += 100) {
+            let actualX = x + m.offset;
+            let currentY = m.y + Math.sin((actualX) * 0.01) * 50;
+            ctx.lineTo(x, currentY);
+        }
+        ctx.lineTo(W, H);
+        ctx.fill();
     });
 }
 
-function updateDifficulty(){
-    wind.force += 0.0007;
-
-    let level = "Easy";
-    if(wind.force > 2) level = "Medium";
-    if(wind.force > 3) level = "Hard";
-    if(wind.force > 4) level = "Insane";
-
-    document.getElementById("difficulty").innerText = level;
-}
-
-// ================= DRAW =================
-function drawSky(){
-    let g = ctx.createLinearGradient(0,0,0,H);
-    g.addColorStop(0,"#FF8C42");
-    g.addColorStop(1,"#87CEEB");
-    ctx.fillStyle = g;
-    ctx.fillRect(0,0,W,H);
-}
-
-// realistic chimney shape
 function drawChimneys(){
-    ctx.fillStyle="#C38A5F";
-
-    chimneys.forEach(c=>{
+    chimneys.forEach(c => {
         let x = c.x;
         let y = H - c.h;
 
+        // Base with 3D gradient
+        let grad = ctx.createLinearGradient(x, 0, x + c.w, 0);
+        grad.addColorStop(0, "#D38A59");
+        grad.addColorStop(0.5, "#E2A475");
+        grad.addColorStop(1, "#A05A35");
+        ctx.fillStyle = grad;
+
         ctx.beginPath();
-        ctx.moveTo(x, H);
-        ctx.lineTo(x + c.w*0.3, y);
-        ctx.lineTo(x + c.w*0.7, y);
-        ctx.lineTo(x + c.w, H);
+        ctx.moveTo(x - 10, H);
+        ctx.lineTo(x + c.w * 0.2, y);
+        ctx.lineTo(x + c.w * 0.8, y);
+        ctx.lineTo(x + c.w + 10, H);
         ctx.fill();
 
-        // top cap
+        // Details/Lines on chimney
+        ctx.strokeStyle = "rgba(0,0,0,0.1)";
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.ellipse(x + c.w/2, y, c.w*0.4, 12, 0, 0, Math.PI*2);
-        ctx.fillStyle="#8B5A3C";
+        ctx.moveTo(x + c.w * 0.5, H);
+        ctx.lineTo(x + c.w * 0.5, y);
+        ctx.stroke();
+
+        // Hat / Cap
+        let capGrad = ctx.createLinearGradient(x, y-20, x, y);
+        capGrad.addColorStop(0, "#5D4037");
+        capGrad.addColorStop(1, "#3E2723");
+        
+        ctx.beginPath();
+        ctx.moveTo(x - 15, y + 10);
+        ctx.quadraticCurveTo(x + c.w/2, y - 40, x + c.w + 15, y + 10);
+        ctx.fillStyle = capGrad;
         ctx.fill();
-        ctx.fillStyle="#C38A5F";
     });
 }
 
 function drawBirds(){
-    ctx.fillStyle="black";
-    birds.forEach(b=>{
+    ctx.fillStyle = "#111";
+    birds.forEach(b => {
+        ctx.save();
+        ctx.translate(b.x, b.y);
+        
+        // Wing animation
+        let flap = Math.sin(time * b.flapSpeed) * 10;
+        
         ctx.beginPath();
-        ctx.arc(b.x, b.y, b.size, 0, Math.PI*2);
+        // Body
+        ctx.arc(0, 0, 4, 0, Math.PI*2);
         ctx.fill();
+        
+        // Left Wing
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(-10, flap - 5, -15, flap);
+        ctx.quadraticCurveTo(-5, flap + 2, 0, 0);
+        ctx.fill();
+
+        // Right Wing
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(10, flap - 5, 15, flap);
+        ctx.quadraticCurveTo(5, flap + 2, 0, 0);
+        ctx.fill();
+
+        ctx.restore();
     });
 }
 
 function drawFuel(){
-    ctx.fillStyle="yellow";
-    fuels.forEach(f=>{
+    fuels.forEach(f => {
+        f.pulse += 0.1;
+        let scale = 1 + Math.sin(f.pulse) * 0.15;
+        
+        ctx.save();
+        ctx.translate(f.x, f.y);
+        ctx.scale(scale, scale);
+        
+        // Glow
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = "#FFF500";
+        
+        // Coin/Canister
+        ctx.fillStyle = "#FFD700";
         ctx.beginPath();
-        ctx.arc(f.x, f.y, f.size, 0, Math.PI*2);
+        ctx.arc(0, 0, f.size, 0, Math.PI * 2);
         ctx.fill();
+
+        // Inner detail
+        ctx.fillStyle = "#FFA500";
+        ctx.beginPath();
+        ctx.arc(0, 0, f.size * 0.6, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Flame icon (simple triangle)
+        ctx.fillStyle = "#FFF";
+        ctx.beginPath();
+        ctx.moveTo(0, -6);
+        ctx.lineTo(4, 4);
+        ctx.lineTo(-4, 4);
+        ctx.fill();
+        
+        ctx.restore();
     });
 }
 
-// balloon with ropes + flame
 function drawBalloon(){
     ctx.save();
     ctx.translate(balloon.x, balloon.y);
 
-    let tilt = balloon.vy * 0.05;
+    let tilt = balloon.vy * 0.04; // Tilt based on vertical speed
     ctx.rotate(tilt);
 
-    // balloon
-    ctx.fillStyle="orange";
-    ctx.beginPath();
-    ctx.arc(0,0,30,0,Math.PI*2);
-    ctx.fill();
+    // Burner Flame (if pressing)
+    if(press && fuel > 0){
+        ctx.shadowBlur = 30;
+        ctx.shadowColor = "#FF5722";
+        ctx.fillStyle = "#FFC107";
+        ctx.beginPath();
+        ctx.moveTo(-8, 35);
+        ctx.lineTo(0, 35 + Math.random()*25 + 10);
+        ctx.lineTo(8, 35);
+        ctx.fill();
+        ctx.shadowBlur = 0; // reset
+    }
 
-    // ropes
-    ctx.strokeStyle="#333";
-    ctx.lineWidth=2;
+    // Ropes
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(-10,20);
-    ctx.lineTo(-5,40);
-    ctx.moveTo(10,20);
-    ctx.lineTo(5,40);
+    ctx.moveTo(-15, 15); ctx.lineTo(-10, 45);
+    ctx.moveTo(15, 15); ctx.lineTo(10, 45);
     ctx.stroke();
 
-    // basket
-    ctx.fillStyle="#5D4037";
-    ctx.fillRect(-8,40,16,12);
+    // Basket
+    ctx.fillStyle = "#8D6E63";
+    let basketGrad = ctx.createLinearGradient(-12, 45, 12, 45);
+    basketGrad.addColorStop(0, "#5D4037");
+    basketGrad.addColorStop(1, "#795548");
+    ctx.fillStyle = basketGrad;
+    ctx.fillRect(-12, 45, 24, 18);
+    
+    // Basket rim
+    ctx.fillStyle = "#3E2723";
+    ctx.fillRect(-14, 43, 28, 4);
 
-    // flame
-    if(press && fuel > 0){
-        ctx.fillStyle="orange";
-        ctx.beginPath();
-        ctx.moveTo(-5,40);
-        ctx.lineTo(0,60 + Math.random()*10);
-        ctx.lineTo(5,40);
-        ctx.fill();
+    // Envelope (Balloon itself)
+    // Create striped pattern using clip and gradients
+    ctx.beginPath();
+    ctx.arc(0, -10, 35, 0, Math.PI*2);
+    ctx.clip(); // Clip to circle
+
+    // Draw stripes
+    let colors = ["#FF3B30", "#FF9500", "#FFCC00", "#4CD964", "#5AC8FA", "#007AFF"];
+    let stripeWidth = 14;
+    for(let i = -3; i < 4; i++) {
+        ctx.fillStyle = colors[(i + 3) % colors.length];
+        ctx.fillRect(i * stripeWidth - stripeWidth/2, -50, stripeWidth, 80);
     }
+    
+    // Shading over the envelope to make it spherical
+    let sphereGlow = ctx.createRadialGradient(-10, -20, 5, 0, -10, 40);
+    sphereGlow.addColorStop(0, "rgba(255,255,255,0.4)");
+    sphereGlow.addColorStop(0.8, "rgba(0,0,0,0)");
+    sphereGlow.addColorStop(1, "rgba(0,0,0,0.6)");
+    ctx.fillStyle = sphereGlow;
+    ctx.fillRect(-40, -50, 80, 80);
 
     ctx.restore();
 }
 
 // ================= LOOP =================
-function update(){
-    if(gameState !== STATE.PLAY) return;
-
-    updatePlayer();
-    spawnObjects();
-    updateWorld();
-    updateDifficulty();
-
-    score += 0.1;
-
-    document.getElementById("score").innerText = Math.floor(score)+" m";
-    document.getElementById("wind").innerText = "Wind: " + wind.force.toFixed(2);
-    document.getElementById("fuelFill").style.width = fuel + "%";
-}
-
-function draw(){
+function loop(){
+    if(gameState === STATE.PLAY){
+        updateGame();
+        spawnObjects();
+    }
+    
+    // Always draw (to keep background alive during menus)
     ctx.clearRect(0,0,W,H);
-
     drawSky();
+    drawMountains();
     drawChimneys();
     drawBirds();
     drawFuel();
-    drawBalloon();
-}
+    updateDrawParticles();
+    
+    if(gameState !== STATE.MENU) drawBalloon();
 
-function loop(){
-    update();
-    draw();
     requestAnimationFrame(loop);
 }
-loop();
 
-// ================= CONTROL =================
+// ================= UI CONTROLS & GSAP ANIMATIONS =================
+window.onload = () => {
+    // Initial Menu Animation
+    gsap.to("#menuCard", { duration: 0.8, scale: 1, opacity: 1, ease: "back.out(1.5)" });
+    loop();
+};
+
 function startGame(){
     reset();
-    gameState = STATE.PLAY;
-    document.getElementById("menu").style.display="none";
+    
+    // Animate Menu Out
+    gsap.to("#menu", { duration: 0.4, opacity: 0, onComplete: () => {
+        document.getElementById("menu").style.display = "none";
+        gameState = STATE.PLAY;
+    }});
+
+    // Animate HUD In
+    gsap.to("#hud", { duration: 0.5, y: 10, opacity: 1, delay: 0.3, ease: "power2.out" });
 }
 
-function gameOver(){
+function triggerGameOver(){
+    if(gameState === STATE.OVER) return;
     gameState = STATE.OVER;
-    document.getElementById("gameover").style.display="flex";
-    document.getElementById("finalScore").innerText = "Distance: " + Math.floor(score) + " m";
+    
+    document.getElementById("finalScore").innerText = Math.floor(score) + " m";
+    
+    // Create big explosion
+    for(let i=0; i<30; i++) createFireParticles();
+
+    // Hide HUD
+    gsap.to("#hud", { duration: 0.3, opacity: 0, y: -20 });
+
+    // Show Game Over
+    let go = document.getElementById("gameover");
+    go.style.display = "flex";
+    gsap.fromTo(go, {opacity: 0}, {duration: 0.5, opacity: 1});
+    gsap.fromTo(go.children[0], {scale: 0.5, rotation: -10}, {duration: 0.7, scale: 1, rotation: 0, ease: "elastic.out(1, 0.5)"});
 }
 
 function restart(){
-    document.getElementById("gameover").style.display="none";
-    document.getElementById("menu").style.display="flex";
-    gameState = STATE.MENU;
+    gsap.to("#gameover", { duration: 0.3, opacity: 0, onComplete: () => {
+        document.getElementById("gameover").style.display = "none";
+        
+        // Show menu again
+        document.getElementById("menu").style.display = "flex";
+        gsap.to("#menu", { duration: 0.3, opacity: 1 });
+        gsap.fromTo("#menuCard", {scale: 0.8, opacity: 0}, {duration: 0.5, scale: 1, opacity: 1, ease: "back.out(1.5)"});
+        
+        gameState = STATE.MENU;
+        reset();
+    }});
 }
-
 </script>
 
 </body>
