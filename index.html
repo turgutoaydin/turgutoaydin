@@ -3,226 +3,199 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-<title>Cappadocia Balloon Ultimate - Remastered</title>
-
+<title>Cappadocia Balloon - Ultra 3D Edition</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
-
-    body { 
-        margin: 0; 
-        overflow: hidden; 
-        background: #000; 
-        font-family: 'Poppins', sans-serif; 
-        -webkit-tap-highlight-color: transparent;
-    }
-    
+    body { margin: 0; overflow: hidden; background: #000; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
     canvas { display: block; }
-
     #ui { position: absolute; inset: 0; pointer-events: none; }
-    
-    /* Glassmorphism UI Elements */
-    .glass {
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    }
-
+    .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px 0 rgba(0,0,0,0.3); }
     .pointer-auto { pointer-events: auto; }
 </style>
 </head>
-
 <body>
 
 <canvas id="game"></canvas>
 
 <div id="ui">
-
-    <div id="hud" class="absolute top-4 left-1/2 -translate-x-1/2 w-[85%] max-w-sm glass rounded-xl p-2.5 flex justify-between items-center text-white opacity-0 transition-opacity">
-        <div class="flex flex-col items-center gap-1">
-            <span class="text-xs text-gray-300 uppercase tracking-wider">Distance</span>
-            <span id="score" class="text-xl font-bold text-orange-400">0 m</span>
+    <div id="hud" class="absolute top-4 left-1/2 -translate-x-1/2 w-[90%] max-w-sm glass rounded-2xl p-3 flex justify-between items-center text-white opacity-0 transition-opacity">
+        <div class="flex flex-col items-center gap-1 w-1/4">
+            <span class="text-[10px] text-gray-300 uppercase tracking-widest">Dist</span>
+            <span id="score" class="text-xl font-black text-orange-400">0m</span>
         </div>
-        
-        <div class="flex-grow max-w-[50%] mx-3 flex flex-col gap-1 items-center">
-             <span id="difficulty" class="text-sm font-semibold text-blue-300">Breeze</span>
-            <div class="w-full h-2 bg-gray-900 rounded-full overflow-hidden border border-gray-600 relative">
-                <div id="fuelFill" class="h-full bg-gradient-to-r from-red-500 via-yellow-400 to-green-500 w-full transition-all duration-200"></div>
+        <div class="flex-grow flex flex-col gap-1 items-center px-2 border-x border-white/10">
+            <span id="difficulty" class="text-xs font-bold text-blue-300 uppercase tracking-widest">Breeze</span>
+            <div class="w-full h-2.5 bg-black/50 rounded-full overflow-hidden border border-white/20">
+                <div id="fuelFill" class="h-full bg-gradient-to-r from-red-500 via-yellow-400 to-green-500 w-full transition-all duration-300"></div>
             </div>
         </div>
-
-        <div class="flex flex-col items-center gap-1">
-            <span class="text-xs text-gray-300 uppercase tracking-wider">Fuel</span>
-            <span id="fuelPerc" class="text-sm font-medium">100%</span>
+        <div class="flex flex-col items-center gap-1 w-1/4">
+            <span class="text-[10px] text-gray-300 uppercase tracking-widest">Fuel</span>
+            <span id="fuelPerc" class="text-lg font-bold">100%</span>
         </div>
     </div>
 
-    <div id="menu" class="absolute inset-0 flex justify-center items-center pointer-auto z-50 bg-black/40 backdrop-blur-sm">
+    <div id="menu" class="absolute inset-0 flex justify-center items-center pointer-auto z-50 bg-black/50 backdrop-blur-sm">
         <div class="glass p-8 rounded-3xl text-center max-w-sm w-[90%] transform scale-90 opacity-0" id="menuCard">
-            <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-orange-400 to-red-600 mb-2 drop-shadow-lg">CAPPADOCIA</h1>
-            <h2 class="text-xl font-bold text-white tracking-widest mb-8">ULTIMATE FLIGHT</h2>
-            
-            <button onclick="startGame()" class="w-full py-4 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-xl shadow-[0_0_20px_rgba(249,115,22,0.5)] hover:scale-105 active:scale-95 transition-transform">
-                START FLIGHT
-            </button>
-            <p class="mt-4 text-gray-300 text-sm">Tap and hold to ignite the burner!</p>
-        </div>
-    </div>
-
-    <div id="gameover" class="absolute inset-0 flex justify-center items-center pointer-auto z-50 bg-black/60 backdrop-blur-md hidden">
-        <div class="glass p-8 rounded-3xl text-center max-w-sm w-[90%] border-red-500/50 border-2 shadow-[0_0_40px_rgba(239,68,68,0.3)]">
-            <h1 class="text-5xl font-black text-red-500 mb-4 drop-shadow-md">CRASHED!</h1>
-            <p class="text-gray-300 text-lg uppercase tracking-wider mb-1">Final Distance</p>
-            <p id="finalScore" class="text-4xl font-bold text-white mb-8">0 m</p>
-            
-            <button onclick="restart()" class="w-full py-4 rounded-full bg-white text-black font-black text-xl hover:bg-gray-200 active:scale-95 transition-transform flex items-center justify-center gap-2">
-                <span>🔄</span> TRY AGAIN
+            <h1 class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-orange-300 to-red-600 mb-2">CAPPADOCIA</h1>
+            <button onclick="startGame()" class="w-full py-4 mt-8 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-black text-xl hover:scale-105 transition-transform border border-white/30 shadow-[0_0_30px_rgba(249,115,22,0.4)]">
+                FLY NOW
             </button>
         </div>
     </div>
 
+    <div id="gameover" class="absolute inset-0 flex justify-center items-center pointer-auto z-50 bg-black/70 backdrop-blur-md hidden">
+        <div class="glass p-8 rounded-3xl text-center max-w-sm w-[90%] border-red-500/50 border shadow-[0_0_50px_rgba(239,68,68,0.3)]">
+            <h1 class="text-4xl font-black text-red-500 mb-2">GAME OVER</h1>
+            <p class="text-gray-400 text-sm uppercase tracking-widest mb-1">Distance Reached</p>
+            <p id="finalScore" class="text-5xl font-black text-white mb-8 drop-shadow-lg">0m</p>
+            <button onclick="restart()" class="w-full py-4 rounded-full bg-white text-black font-black text-xl hover:scale-105 transition-transform">
+                PLAY AGAIN
+            </button>
+        </div>
+    </div>
 </div>
 
 <script>
-// ================= CANVAS & ENGINE =================
+// ================= CANVAS SETUP =================
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
-
-let W, H;
-let scale_f = 1; // Global scale factor (smaller means further)
+let W, H, scale_f = 1;
 
 function resize(){
     W = canvas.width = window.innerWidth;
     H = canvas.height = window.innerHeight;
-    scale_f = H / 800; // Base scaling on H, reference 800px
+    scale_f = H / 800; 
 }
 resize();
 window.addEventListener("resize", resize);
 
-// ================= STATE =================
+// ================= VARIABLES =================
 const STATE = {MENU: 0, PLAY: 1, OVER: 2};
 let gameState = STATE.MENU;
-
-// ================= VARIABLES =================
-let balloon, wind, fuel, score;
-let chimneys = [], birds = [], fuels = [], particles = [], mountains = [];
+let balloon, wind, fuel, score, time = 0;
+let chimneys = [], birds = [], fuels = [], particles = [], mountains = [], fgClouds = [];
 let press = false;
-let time = 0;
 
 // ================= INPUT =================
-window.addEventListener("touchstart", (e) => { if(gameState===STATE.PLAY) press = true; }, {passive: false});
+window.addEventListener("touchstart", () => { if(gameState===STATE.PLAY) press = true; }, {passive: false});
 window.addEventListener("touchend", () => press = false);
 window.addEventListener("mousedown", () => { if(gameState===STATE.PLAY) press = true; });
 window.addEventListener("mouseup", () => press = false);
 
-// ================= INIT / RESET =================
+// ================= RESET =================
 function reset() {
-    balloon = { x: W * 0.3, y: H * 0.5, vy: 0, gravity: 0.2 * scale_f, lift: -0.6 * scale_f, drag: 0.98, r: 20 * scale_f };
+    // R value is the balloon envelope radius
+    balloon = { x: W * 0.3, y: H * 0.5, vy: 0, gravity: 0.18 * scale_f, lift: -0.55 * scale_f, drag: 0.98, r: 25 * scale_f };
     wind = { force: 1 };
     fuel = 100;
     score = 0;
     time = 0;
-    chimneys = []; birds = []; fuels = []; particles = [];
+    chimneys = []; birds = []; fuels = []; particles = []; fgClouds = [];
     
-    // Parallax mountains with slower and less chaotic movements
     mountains = [
-        { y: H * 0.5, color: '#C86B3C', speed: 0.1, offset: 0 },
-        { y: H * 0.65, color: '#A04B28', speed: 0.25, offset: 0 },
-        { y: H * 0.8, color: '#7D321E', speed: 0.4, offset: 0 }
+        { y: H * 0.45, color: '#9c5333', speed: 0.1, offset: 0 },
+        { y: H * 0.65, color: '#733a21', speed: 0.25, offset: 0 },
+        { y: H * 0.85, color: '#4a2312', speed: 0.4, offset: 0 }
     ];
 }
 reset();
 
-// ================= PARTICLES =================
+// ================= PARTICLES (Optimized) =================
 function createFireParticles() {
-    if(press && fuel > 0 && Math.random() > 0.5) {
+    if(press && fuel > 0 && Math.random() > 0.4) {
         particles.push({
             x: balloon.x,
-            y: balloon.y + balloon.r * 1.5,
-            vx: (Math.random() - 0.5) * 2 * scale_f,
-            vy: (Math.random() * 3 + 2) * scale_f,
+            y: balloon.y + balloon.r * 1.1, // Adjusted for smaller basket
+            vx: (Math.random() - 0.5) * scale_f,
+            vy: (Math.random() * 2 + 1) * scale_f,
             life: 1,
-            color: Math.random() > 0.5 ? '#FF4500' : '#FFA500',
-            size: (Math.random() * 3 + 1) * scale_f
-        });
-    }
-}
-
-function createCollectParticles(x, y) {
-    for(let i=0; i<10; i++) {
-        particles.push({
-            x: x, y: y,
-            vx: (Math.random() - 0.5) * 6 * scale_f,
-            vy: (Math.random() - 0.5) * 6 * scale_f,
-            life: 1,
-            color: '#FFFF00',
-            size: (Math.random() * 4 + 2) * scale_f
+            color: Math.random() > 0.5 ? '#FF5722' : '#FFC107',
+            size: (Math.random() * 2.5 + 1) * scale_f
         });
     }
 }
 
 function updateDrawParticles() {
-    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
     for (let i = particles.length - 1; i >= 0; i--) {
         let p = particles[i];
-        p.x += p.vx - wind.force * 0.5; // affected less by wind
+        p.x += p.vx - wind.force * 0.5;
         p.y += p.vy;
-        p.life -= 0.03;
+        p.life -= 0.04;
         p.size *= 0.95;
 
         if (p.life <= 0) {
             particles.splice(i, 1);
             continue;
         }
-
         ctx.globalAlpha = p.life;
         ctx.fillStyle = p.color;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
     }
-    ctx.restore();
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
 }
 
 // ================= SPAWN =================
 let lastSpawn = 0;
+let lastCloud = 0;
 function spawnObjects(){
-    // Spawn objects at W + further distance to give more time
-    if(Date.now() - lastSpawn > 1800 - (wind.force * 120)){
+    // Spawn Gameplay Objects
+    if(Date.now() - lastSpawn > 1600 - (wind.force * 100)){
         
-        // Spawn Chimney
+        // CHIMNEYS: 3 Different Types
+        let cType = Math.floor(Math.random() * 3);
         chimneys.push({
             x: W + 150 * scale_f,
-            w: (70 + Math.random()*30) * scale_f,
-            h: (120 + Math.random()*220) * scale_f,
-            seed: Math.random() // for texturing
+            w: (60 + Math.random()*40) * scale_f,
+            h: (150 + Math.random()*250) * scale_f,
+            type: cType, 
+            seed: Math.random()
         });
 
-        // Spawn Bird
-        if(Math.random() > 0.45){
+        // BIRDS: Variety (Eagle vs Sparrow)
+        if(Math.random() > 0.3){
+            let isEagle = Math.random() > 0.7;
             birds.push({
                 x: W + 150 * scale_f,
-                y: (50 * scale_f) + Math.random() * (H - 180 * scale_f),
-                size: 10 * scale_f,
-                speed: (2.5 + Math.random() * 2.5) * scale_f,
-                flapSpeed: 0.12 + Math.random() * 0.08
+                y: (80 * scale_f) + Math.random() * (H - 250 * scale_f),
+                isEagle: isEagle,
+                size: (isEagle ? 8 : 4) * scale_f,
+                speed: (isEagle ? 2 : 4) * scale_f,
+                flapSpeed: isEagle ? 0.08 : 0.2,
+                color: isEagle ? '#3e2723' : '#111'
             });
         }
 
-        // Spawn Fuel
+        // FUEL
         if(Math.random() > 0.6){
             fuels.push({
                 x: W + 150 * scale_f,
-                y: (80 * scale_f) + Math.random() * (H - 250 * scale_f),
-                size: 15 * scale_f,
-                pulse: Math.random() * Math.PI
+                y: (100 * scale_f) + Math.random() * (H - 300 * scale_f),
+                size: 14 * scale_f,
+                pulse: 0
             });
         }
         lastSpawn = Date.now();
+    }
+
+    // Spawn Foreground Clouds (Depth Effect)
+    if(Date.now() - lastCloud > 2000) {
+        if(Math.random() > 0.5) {
+            fgClouds.push({
+                x: W + 200,
+                y: Math.random() * H,
+                size: (50 + Math.random() * 100) * scale_f,
+                speed: 4 + Math.random() * 3 // Move faster than objects (parallax)
+            });
+        }
+        lastCloud = Date.now();
     }
 }
 
@@ -230,135 +203,102 @@ function spawnObjects(){
 function updateGame(){
     time++;
 
-    // Player Physics
     if(press && fuel > 0){
         balloon.vy += balloon.lift;
-        fuel -= 0.22; // Slower drain
+        fuel -= 0.18;
     }
     balloon.vy += balloon.gravity;
     balloon.vy *= balloon.drag;
     balloon.y += balloon.vy;
 
-    // Bounds Check - smaller buffer with scaling
-    if(balloon.y < -40 * scale_f || balloon.y > H + 40 * scale_f) triggerGameOver();
+    if(balloon.y < -50 * scale_f || balloon.y > H + 50 * scale_f) triggerGameOver();
 
     createFireParticles();
 
-    // Move & Collide Chimneys
+    // Chimneys
     for (let i = chimneys.length - 1; i >= 0; i--) {
         let c = chimneys[i];
-        c.x -= wind.force + 1.8 * scale_f;
-
-        // Collision Hitbox - smaller and scaled
-        let hitX = balloon.x + 12 * scale_f > c.x && balloon.x - 12 * scale_f < c.x + c.w;
-        let hitY = balloon.y + 20 * scale_f > H - c.h;
-        
-        if (hitX && hitY) triggerGameOver();
-        if (c.x < -180 * scale_f) chimneys.splice(i, 1);
+        c.x -= wind.force + 1.5 * scale_f;
+        // Hitbox tuning
+        if (balloon.x + balloon.r * 0.8 > c.x && balloon.x - balloon.r * 0.8 < c.x + c.w) {
+            if (balloon.y + balloon.r > H - c.h) triggerGameOver();
+        }
+        if (c.x < -200 * scale_f) chimneys.splice(i, 1);
     }
 
-    // Move & Collide Birds
+    // Birds
     for (let i = birds.length - 1; i >= 0; i--) {
         let b = birds[i];
         b.x -= wind.force + b.speed;
-        b.y += Math.sin(time * b.flapSpeed) * 1.2 * scale_f;
+        b.y += Math.sin(time * b.flapSpeed) * (b.isEagle ? 0.8 : 1.5) * scale_f;
 
         let dx = balloon.x - b.x;
         let dy = balloon.y - b.y;
-        // Scaled collision radius
-        if (Math.sqrt(dx*dx + dy*dy) < 25 * scale_f) triggerGameOver();
-        if (b.x < -60 * scale_f) birds.splice(i, 1);
+        if (Math.sqrt(dx*dx + dy*dy) < balloon.r + b.size) triggerGameOver();
+        if (b.x < -100 * scale_f) birds.splice(i, 1);
     }
 
-    // Move & Collide Fuel
+    // Fuel
     for (let i = fuels.length - 1; i >= 0; i--) {
         let f = fuels[i];
-        f.x -= wind.force + 1.8 * scale_f;
+        f.x -= wind.force + 1.5 * scale_f;
 
         let dx = balloon.x - f.x;
         let dy = balloon.y - f.y;
-        // Scaled collision radius
-        if (Math.sqrt(dx*dx + dy*dy) < 30 * scale_f) {
-            fuel = Math.min(100, fuel + 35);
-            createCollectParticles(f.x, f.y);
+        if (Math.sqrt(dx*dx + dy*dy) < balloon.r + f.size) {
+            fuel = Math.min(100, fuel + 30);
             fuels.splice(i, 1);
         } else if (f.x < -60 * scale_f) {
             fuels.splice(i, 1);
         }
     }
 
-    // Difficulty & HUD
-    wind.force += 0.0004;
-    score += 0.12 * scale_f; // Distance scale
+    // Foreground Clouds
+    for (let i = fgClouds.length - 1; i >= 0; i--) {
+        fgClouds[i].x -= fgClouds[i].speed + wind.force;
+        if (fgClouds[i].x < -300) fgClouds.splice(i, 1);
+    }
 
-    let level = "Breeze";
-    let windColor = "text-blue-300";
-    if(wind.force > 2) { level = "Strong"; windColor = "text-yellow-400"; }
-    if(wind.force > 3.2) { level = "Gale"; windColor = "text-red-500"; }
+    wind.force += 0.0003;
+    score += 0.1 * scale_f;
 
-    document.getElementById("score").innerText = Math.floor(score) + " m";
-    
-    let diffEl = document.getElementById("difficulty");
-    diffEl.innerText = level;
-    diffEl.className = `text-sm font-semibold ${windColor}`;
-    
+    document.getElementById("score").innerText = Math.floor(score) + "m";
     document.getElementById("fuelFill").style.width = fuel + "%";
     document.getElementById("fuelPerc").innerText = Math.floor(fuel) + "%";
 }
 
 // ================= DRAWING =================
 function drawSky(){
-    // Beautiful Sunrise Gradient
     let g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, "#2A1B3D");
-    g.addColorStop(0.4, "#D83F87");
-    g.addColorStop(1, "#FF8C42");
+    g.addColorStop(0, "#1a0b2e");
+    g.addColorStop(0.5, "#9e3065");
+    g.addColorStop(1, "#f26d3d");
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
 
-    // Glowing Sun
-    ctx.save();
     ctx.beginPath();
-    ctx.arc(W * 0.82, H * 0.38, 70 * scale_f, 0, Math.PI * 2);
-    let sunGlow = ctx.createRadialGradient(W*0.82, H*0.38, 30*scale_f, W*0.82, H*0.38, 140*scale_f);
-    sunGlow.addColorStop(0, "rgba(255, 235, 59, 0.9)");
-    sunGlow.addColorStop(1, "rgba(255, 235, 59, 0)");
-    ctx.fillStyle = sunGlow;
+    ctx.arc(W * 0.75, H * 0.4, 60 * scale_f, 0, Math.PI * 2);
+    let sun = ctx.createRadialGradient(W*0.75, H*0.4, 10*scale_f, W*0.75, H*0.4, 100*scale_f);
+    sun.addColorStop(0, "rgba(255, 220, 100, 1)");
+    sun.addColorStop(1, "rgba(255, 220, 100, 0)");
+    ctx.fillStyle = sun;
     ctx.fill();
-    ctx.restore();
 }
 
 function drawMountains() {
     mountains.forEach((m) => {
-        // Less chaotic movimiento
-        m.offset = (m.offset - m.speed - wind.force * 0.3) % W;
+        m.offset = (m.offset - m.speed - wind.force * 0.2) % W;
         ctx.fillStyle = m.color;
         ctx.beginPath();
         ctx.moveTo(0, H);
-        
-        // Less "wavy" mountains
-        for (let x = 0; x <= W + 100; x += 100 * scale_f) {
-            let actualX = x + m.offset;
-            let currentY = m.y + Math.sin((actualX) * 0.008) * 35 * scale_f;
-            ctx.lineTo(x, currentY);
+        for (let x = 0; x <= W + 100; x += 150 * scale_f) {
+            let cx = x + m.offset;
+            let cy = m.y + Math.sin(cx * 0.005) * 40 * scale_f;
+            ctx.lineTo(x, cy);
         }
         ctx.lineTo(W, H);
         ctx.fill();
     });
-}
-
-// Helper to draw speckled rock texture
-function drawRockTexture(x, y, w, h, seed) {
-    ctx.fillStyle = "rgba(0,0,0,0.06)";
-    let speckCount = Math.floor(w * h * 0.015);
-    for(let i=0; i<speckCount; i++) {
-        let speckX = x + (Math.sin(seed + i * 1.5) * 0.5 + 0.5) * w;
-        let speckY = y + (Math.cos(seed * 0.8 + i * 2) * 0.5 + 0.5) * h;
-        let size = (Math.random() * 1.5 + 0.5) * scale_f;
-        ctx.beginPath();
-        ctx.arc(speckX, speckY, size, 0, Math.PI*2);
-        ctx.fill();
-    }
 }
 
 function drawChimneys(){
@@ -366,76 +306,73 @@ function drawChimneys(){
         let x = c.x;
         let y = H - c.h;
 
-        // Base with 3D gradient and speckle texture
-        let grad = ctx.createLinearGradient(x, 0, x + c.w, 0);
-        grad.addColorStop(0, "#D38A59");
-        grad.addColorStop(0.5, "#E2A475");
-        grad.addColorStop(1, "#A05A35");
-        ctx.fillStyle = grad;
+        // 3D Cylinder shading
+        let bodyGrad = ctx.createLinearGradient(x, 0, x + c.w, 0);
+        bodyGrad.addColorStop(0, "#b86c42");
+        bodyGrad.addColorStop(0.5, "#d68c5c"); // highlight
+        bodyGrad.addColorStop(1, "#8a4825"); // shadow
+        ctx.fillStyle = bodyGrad;
 
+        // Base Conical Shape
         ctx.beginPath();
-        ctx.moveTo(x - 8 * scale_f, H);
-        ctx.lineTo(x + c.w * 0.15, y);
-        ctx.lineTo(x + c.w * 0.85, y);
-        ctx.lineTo(x + c.w + 8 * scale_f, H);
+        ctx.moveTo(x - 15 * scale_f, H);
+        ctx.lineTo(x + c.w * 0.2, y);
+        ctx.lineTo(x + c.w * 0.8, y);
+        ctx.lineTo(x + c.w + 15 * scale_f, H);
         ctx.fill();
-        
-        // Texture on base
-        ctx.save();
-        ctx.clip(); // Clip texturing to base
-        drawRockTexture(x-8*scale_f, y, c.w + 16*scale_f, c.h, c.seed);
-        ctx.restore();
 
-        // Hat / Cap - More organic, textured taş shape
-        let capGrad = ctx.createLinearGradient(x, y-15*scale_f, x, y);
-        capGrad.addColorStop(0, "#6D4C41");
-        capGrad.addColorStop(1, "#4E342E");
-        
-        ctx.beginPath();
-        ctx.moveTo(x - 12 * scale_f, y + 8 * scale_f);
-        // Organik eğim
-        ctx.bezierCurveTo(
-            x - 5*scale_f, y - 35*scale_f,
-            x + c.w + 5*scale_f, y - 35*scale_f,
-            x + c.w + 12 * scale_f, y + 8 * scale_f
-        );
+        // Caps based on Type
+        let capGrad = ctx.createLinearGradient(x, y-20*scale_f, x, y);
+        capGrad.addColorStop(0, "#57382b");
+        capGrad.addColorStop(1, "#362017");
         ctx.fillStyle = capGrad;
-        ctx.fill();
-        
-        // Hat texture
-        ctx.save();
-        ctx.clip();
-        drawRockTexture(x-12*scale_f, y-35*scale_f, c.w+24*scale_f, 43*scale_f, c.seed + 123);
-        ctx.restore();
-        
+
+        if(c.type === 0) {
+            // Classic Mushroom
+            ctx.beginPath();
+            ctx.ellipse(x + c.w/2, y, c.w*0.7, 20*scale_f, 0, 0, Math.PI*2);
+            ctx.fill();
+        } else if(c.type === 1) {
+            // Pointy Cone
+            ctx.beginPath();
+            ctx.moveTo(x - 5*scale_f, y + 10*scale_f);
+            ctx.lineTo(x + c.w/2, y - c.w); // sharp point
+            ctx.lineTo(x + c.w + 5*scale_f, y + 10*scale_f);
+            ctx.fill();
+        } else {
+            // Double Headed
+            ctx.beginPath();
+            ctx.ellipse(x + c.w*0.2, y-10*scale_f, c.w*0.4, 25*scale_f, -0.3, 0, Math.PI*2);
+            ctx.ellipse(x + c.w*0.8, y-5*scale_f, c.w*0.35, 20*scale_f, 0.3, 0, Math.PI*2);
+            ctx.fill();
+        }
     });
 }
 
 function drawBirds(){
-    ctx.fillStyle = "#111";
     birds.forEach(b => {
         ctx.save();
         ctx.translate(b.x, b.y);
+        ctx.fillStyle = b.color;
         
-        // Wing animation
-        let flap = Math.sin(time * b.flapSpeed) * 8 * scale_f;
+        let flap = Math.sin(time * b.flapSpeed) * (b.isEagle ? 12 : 6) * scale_f;
+        let w = b.isEagle ? 18 * scale_f : 10 * scale_f;
         
         ctx.beginPath();
-        // Body
-        ctx.arc(0, 0, 3 * scale_f, 0, Math.PI*2);
+        ctx.arc(0, 0, b.size * 0.5, 0, Math.PI*2); // Body
         ctx.fill();
         
-        // Scaled wings
+        // Wings
         ctx.beginPath();
         ctx.moveTo(0, 0);
-        ctx.quadraticCurveTo(-8 * scale_f, flap - 4 * scale_f, -12 * scale_f, flap);
-        ctx.quadraticCurveTo(-4 * scale_f, flap + 1 * scale_f, 0, 0);
+        ctx.quadraticCurveTo(-w*0.5, flap - w*0.3, -w, flap);
+        ctx.quadraticCurveTo(-w*0.3, flap + w*0.1, 0, 0);
         ctx.fill();
 
         ctx.beginPath();
         ctx.moveTo(0, 0);
-        ctx.quadraticCurveTo(8 * scale_f, flap - 4 * scale_f, 12 * scale_f, flap);
-        ctx.quadraticCurveTo(4 * scale_f, flap + 1 * scale_f, 0, 0);
+        ctx.quadraticCurveTo(w*0.5, flap - w*0.3, w, flap);
+        ctx.quadraticCurveTo(w*0.3, flap + w*0.1, 0, 0);
         ctx.fill();
 
         ctx.restore();
@@ -444,129 +381,109 @@ function drawBirds(){
 
 function drawFuel(){
     fuels.forEach(f => {
-        f.pulse += 0.12;
-        let scale = 1 + Math.sin(f.pulse) * 0.14;
+        f.pulse += 0.1;
+        let sc = 1 + Math.sin(f.pulse) * 0.1;
         
         ctx.save();
         ctx.translate(f.x, f.y);
-        ctx.scale(scale, scale);
+        ctx.scale(sc, sc);
         
-        // Glow and color
-        ctx.shadowBlur = 18 * scale_f;
-        ctx.shadowColor = "#FFF500";
-        ctx.fillStyle = "#FFD700";
+        let grad = ctx.createRadialGradient(0,0,0, 0,0, f.size);
+        grad.addColorStop(0, "#fff");
+        grad.addColorStop(0.4, "#FFD700");
+        grad.addColorStop(1, "#FF8C00");
+        
+        ctx.fillStyle = grad;
         ctx.beginPath();
         ctx.arc(0, 0, f.size, 0, Math.PI * 2);
         ctx.fill();
-
-        // Details
-        ctx.fillStyle = "#FFA500";
-        ctx.beginPath();
-        ctx.arc(0, 0, f.size * 0.6, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = "#FFF";
-        ctx.beginPath();
-        ctx.moveTo(0, -5 * scale_f);
-        ctx.lineTo(3 * scale_f, 3 * scale_f);
-        ctx.lineTo(-3 * scale_f, 3 * scale_f);
-        ctx.fill();
+        
+        ctx.fillStyle = "#fff";
+        ctx.font = `bold ${f.size}px Arial`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("F", 0, 0);
         
         ctx.restore();
     });
 }
 
-// Draw patterns/details on the balloon envelope
-function drawBalloonPattern(r) {
-    // 3D-ish Gradient shading
-    let g = ctx.createRadialGradient(-r*0.3, -r*0.6, r*0.15, 0, -r*0.3, r*1.1);
-    g.addColorStop(0, "rgba(255,255,255,0.3)");
-    g.addColorStop(0.8, "rgba(0,0,0,0)");
-    g.addColorStop(1, "rgba(0,0,0,0.5)");
-    ctx.fillStyle = g;
-    ctx.fillRect(-r*1.1, -r*1.4, r*2.2, r*2);
-    
-    // Zigzag/Pattern lines
-    ctx.strokeStyle = "rgba(0,0,0,0.2)";
-    ctx.lineWidth = 1 * scale_f;
-    ctx.beginPath();
-    for(let i=0; i<12; i++) {
-        let angle = (i / 12) * Math.PI * 2;
-        ctx.moveTo(Math.cos(angle)*r*0.9, -r*0.3);
-        ctx.lineTo(Math.cos(angle + 0.3)*r, -r*0.1);
-    }
-    ctx.stroke();
-}
-
 function drawBalloon(){
     ctx.save();
     ctx.translate(balloon.x, balloon.y);
-
-    let tilt = balloon.vy * 0.035; // Tilt factor scaled vertically
-    ctx.rotate(tilt);
+    ctx.rotate(balloon.vy * 0.03); // dynamic tilt
 
     let r = balloon.r;
 
-    // Burner Flame (if pressing)
+    // --- NEW BASKET LOGIC (50% Smaller) ---
+    let basketW = r * 0.5;  // Was r*1.0
+    let basketH = r * 0.35; // Was r*0.7
+    let ropeDrop = r * 1.1; // Distance from center to basket
+
+    // Burner Flame (Optimized)
     if(press && fuel > 0){
-        ctx.shadowBlur = 25 * scale_f;
-        ctx.shadowColor = "#FF5722";
         ctx.fillStyle = "#FFC107";
         ctx.beginPath();
-        ctx.moveTo(-6 * scale_f, r * 1.3);
-        ctx.lineTo(0, r * 1.3 + (Math.random()*22 + 8) * scale_f);
-        ctx.lineTo(6 * scale_f, r * 1.3);
+        ctx.moveTo(-basketW/2, ropeDrop);
+        ctx.lineTo(0, ropeDrop + (Math.random()*15 + 5) * scale_f);
+        ctx.lineTo(basketW/2, ropeDrop);
         ctx.fill();
-        ctx.shadowBlur = 0; // reset
     }
 
-    // Ropes - Scaled and colored
-    ctx.strokeStyle = "rgba(255,255,255,0.9)";
+    // Ropes (Narrower to match new basket)
+    ctx.strokeStyle = "rgba(255,255,255,0.8)";
     ctx.lineWidth = 1 * scale_f;
     ctx.beginPath();
-    ctx.moveTo(-r*0.6, r*0.5); ctx.lineTo(-r*0.4, r*1.3);
-    ctx.moveTo(r*0.6, r*0.5); ctx.lineTo(r*0.4, r*1.3);
+    ctx.moveTo(-r*0.4, r*0.6); ctx.lineTo(-basketW/2, ropeDrop);
+    ctx.moveTo(r*0.4, r*0.6); ctx.lineTo(basketW/2, ropeDrop);
     ctx.stroke();
 
-    // Basket - detailed and scaled
-    let basketGrad = ctx.createLinearGradient(-r*0.5, r*1.3, r*0.5, r*1.3);
-    basketGrad.addColorStop(0, "#5D4037");
-    basketGrad.addColorStop(1, "#795548");
+    // Basket Drawing
+    let basketGrad = ctx.createLinearGradient(-basketW/2, ropeDrop, basketW/2, ropeDrop);
+    basketGrad.addColorStop(0, "#4a332a");
+    basketGrad.addColorStop(1, "#66473b");
     ctx.fillStyle = basketGrad;
-    ctx.fillRect(-r*0.5, r*1.3, r*1, r*0.7);
+    ctx.fillRect(-basketW/2, ropeDrop, basketW, basketH);
     
-    ctx.fillStyle = "#3E2723"; // Rim
-    ctx.fillRect(-r*0.6, r*1.2, r*1.2, r*0.15);
-    
-    // Speckle texture on basket
-    ctx.fillStyle = "rgba(0,0,0,0.15)";
-    for(let i=0; i<15; i++) {
-        ctx.fillRect(
-            (-r*0.5) + Math.random()*r,
-            (r*1.3) + Math.random()*r*0.7,
-            1.5*scale_f, 1.5*scale_f
-        );
-    }
+    // Basket Rim
+    ctx.fillStyle = "#2d1f19";
+    ctx.fillRect(-basketW/2 - 1, ropeDrop - 1, basketW + 2, basketH * 0.2);
 
-    // Envelope (Balloon itself) - Scaled and Patterned
-    // Create striped pattern using clip and gradients
+    // --- ENVELOPE (Balloon) ---
     ctx.beginPath();
-    ctx.arc(0, -r*0.3, r*1.05, 0, Math.PI*2);
-    ctx.clip(); // Clip to circle
+    ctx.arc(0, -r*0.2, r, 0, Math.PI*2);
+    ctx.clip(); 
 
-    // Stripes with better colors
-    let colors = ["#E63946", "#F1FAEE", "#A8DADC", "#457B9D", "#1D3557"];
-    let stripeCount = 6;
-    let stripeWidth = (r*2.1) / stripeCount;
-    for(let i = 0; i < stripeCount; i++) {
+    // Vertical Stripes
+    let colors = ["#d92b3a", "#f2f2f2", "#358ab3", "#e6a122"];
+    let stripeW = (r*2) / 4;
+    for(let i = 0; i < 4; i++) {
         ctx.fillStyle = colors[i % colors.length];
-        ctx.fillRect(-r*1.05 + i * stripeWidth, -r*1.4, stripeWidth, r*2);
+        ctx.fillRect(-r + i * stripeW, -r*1.5, stripeW, r*2.5);
     }
     
-    // Add patterns and spherical shading
-    drawBalloonPattern(r*1.05);
+    // 3D Spherical Shading
+    let sphereGlow = ctx.createRadialGradient(-r*0.3, -r*0.5, r*0.2, 0, 0, r);
+    sphereGlow.addColorStop(0, "rgba(255,255,255,0.4)");
+    sphereGlow.addColorStop(0.6, "rgba(0,0,0,0)");
+    sphereGlow.addColorStop(1, "rgba(0,0,0,0.7)");
+    ctx.fillStyle = sphereGlow;
+    ctx.fillRect(-r*1.5, -r*1.5, r*3, r*3);
 
     ctx.restore();
+}
+
+// Foreground clouds to give a massive depth of field effect
+function drawForegroundClouds() {
+    ctx.fillStyle = "rgba(255, 255, 255, 0.08)"; // Very transparent
+    fgClouds.forEach(c => {
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, c.size, 0, Math.PI*2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(c.x + c.size*0.6, c.y - c.size*0.2, c.size*0.7, 0, Math.PI*2);
+        ctx.fill();
+    });
 }
 
 // ================= LOOP =================
@@ -576,7 +493,6 @@ function loop(){
         spawnObjects();
     }
     
-    // Always draw (to keep background alive during menus)
     ctx.clearRect(0,0,W,H);
     drawSky();
     drawMountains();
@@ -587,62 +503,50 @@ function loop(){
     
     if(gameState !== STATE.MENU) drawBalloon();
 
+    // Draw foreground last for depth
+    drawForegroundClouds();
+
     requestAnimationFrame(loop);
 }
 
-// ================= UI CONTROLS & GSAP ANIMATIONS =================
+// ================= UI CONTROLS =================
 window.onload = () => {
-    // Initial Menu Animation
-    gsap.to("#menuCard", { duration: 0.8, scale: 1, opacity: 1, ease: "back.out(1.5)" });
+    gsap.to("#menuCard", { duration: 0.8, scale: 1, opacity: 1, ease: "back.out(1.2)" });
     loop();
 };
 
 function startGame(){
     reset();
-    
-    // Animate Menu Out
-    gsap.to("#menu", { duration: 0.4, opacity: 0, onComplete: () => {
+    gsap.to("#menu", { duration: 0.3, opacity: 0, onComplete: () => {
         document.getElementById("menu").style.display = "none";
         gameState = STATE.PLAY;
     }});
-
-    // Animate HUD In - less intrusive
-    gsap.to("#hud", { duration: 0.4, y: 10, opacity: 1, delay: 0.3, ease: "power2.out" });
+    gsap.to("#hud", { duration: 0.4, y: 10, opacity: 1, delay: 0.2 });
 }
 
 function triggerGameOver(){
     if(gameState === STATE.OVER) return;
     gameState = STATE.OVER;
     
-    document.getElementById("finalScore").innerText = Math.floor(score) + " m";
-    
-    // Create big explosion
-    for(let i=0; i<25; i++) createFireParticles();
+    document.getElementById("finalScore").innerText = Math.floor(score) + "m";
+    gsap.to("#hud", { duration: 0.2, opacity: 0, y: -10 });
 
-    // Hide HUD
-    gsap.to("#hud", { duration: 0.3, opacity: 0, y: -20 });
-
-    // Show Game Over
     let go = document.getElementById("gameover");
     go.style.display = "flex";
-    gsap.fromTo(go, {opacity: 0}, {duration: 0.5, opacity: 1});
-    gsap.fromTo(go.children[0], {scale: 0.5, rotation: -10}, {duration: 0.7, scale: 1, rotation: 0, ease: "elastic.out(1, 0.5)"});
+    gsap.fromTo(go, {opacity: 0}, {duration: 0.4, opacity: 1});
+    gsap.fromTo(go.children[0], {scale: 0.8}, {duration: 0.5, scale: 1, ease: "back.out(1.5)"});
 }
 
 function restart(){
     gsap.to("#gameover", { duration: 0.3, opacity: 0, onComplete: () => {
         document.getElementById("gameover").style.display = "none";
-        
-        // Show menu again
         document.getElementById("menu").style.display = "flex";
         gsap.to("#menu", { duration: 0.3, opacity: 1 });
-        gsap.fromTo("#menuCard", {scale: 0.8, opacity: 0}, {duration: 0.5, scale: 1, opacity: 1, ease: "back.out(1.5)"});
-        
+        gsap.fromTo("#menuCard", {scale: 0.8, opacity: 0}, {duration: 0.5, scale: 1, opacity: 1, ease: "back.out(1.2)"});
         gameState = STATE.MENU;
         reset();
     }});
 }
 </script>
-
 </body>
 </html>
