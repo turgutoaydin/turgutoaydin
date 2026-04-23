@@ -1,66 +1,67 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-<title>eTourGood Games - Cappadocia Ultimate</title>
+<title>Cappadocia Ultimate - 3D Cartoon Edition</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Poppins:wght@400;600;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Nunito:wght@700;900&display=swap');
 
     body { 
         margin: 0; 
         overflow: hidden; 
-        background: #000; 
-        font-family: 'Poppins', sans-serif; 
+        background: #87CEEB; /* Fallback bright blue */
+        font-family: 'Fredoka', sans-serif; 
         -webkit-tap-highlight-color: transparent;
     }
     
     canvas { display: block; }
 
-    /* 3D Perspective Container for UI */
     #ui { 
         position: absolute; 
         inset: 0; 
         pointer-events: none; 
-        perspective: 1200px; /* 3D derinlik için kritik */
+        perspective: 1200px; 
     }
     
-    /* Premium Glassmorphism */
-    .glass-3d {
-        background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-top: 1px solid rgba(255,255,255,0.4);
-        border-left: 1px solid rgba(255,255,255,0.2);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.1);
+    /* Bubbly Light Glassmorphism */
+    .glass-light {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 4px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1), inset 0 0 15px rgba(255,255,255,1);
         transform-style: preserve-3d;
+        border-radius: 35px;
     }
 
     .pointer-auto { pointer-events: auto; }
     
-    /* Animated Gradient Text */
-    .text-gradient {
-        background-size: 200% 200%;
-        animation: gradientMove 3s ease infinite;
+    /* Text Styles */
+    .title-text {
+        font-family: 'Nunito', sans-serif;
+        color: #FF5E7E;
+        text-shadow: 3px 3px 0px #FFF, 5px 5px 0px rgba(0,0,0,0.1);
     }
     
-    @keyframes gradientMove {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+    .button-3d {
+        background: linear-gradient(180deg, #FF6B6B 0%, #FF4757 100%);
+        box-shadow: 0 8px 0 #C92A2A, 0 15px 20px rgba(255, 71, 87, 0.4);
+        transition: all 0.1s;
+    }
+    .button-3d:active {
+        transform: translateY(8px);
+        box-shadow: 0 0px 0 #C92A2A, 0 5px 10px rgba(255, 71, 87, 0.4);
     }
 
-    /* Floating Animation for UI */
-    .float-anim {
-        animation: float 4s ease-in-out infinite;
-    }
+    .float-anim { animation: float 3s ease-in-out infinite; }
     @keyframes float {
         0% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
+        50% { transform: translateY(-12px); }
         100% { transform: translateY(0px); }
     }
 </style>
@@ -71,67 +72,63 @@
 
 <div id="ui">
 
-    <div id="appHeader" class="absolute top-0 left-0 w-full p-4 flex justify-between items-center pointer-events-none z-40 opacity-0 bg-gradient-to-b from-black/80 to-transparent">
-        <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 flex justify-center items-center font-black text-white text-xs shadow-lg shadow-purple-500/50">eTG</div>
-            <span class="text-white font-black tracking-widest text-sm drop-shadow-md font-['Montserrat']">eTourGood<span class="text-purple-400">Games</span></span>
+    <div id="hud" class="absolute top-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-white/80 backdrop-blur-md rounded-full p-2 flex justify-between items-center text-gray-800 opacity-0 transition-opacity border-4 border-white shadow-lg">
+        <div class="flex flex-col items-center justify-center w-1/4">
+            <span class="text-[11px] text-gray-500 uppercase font-bold tracking-wider">Distance</span>
+            <span id="score" class="text-xl font-black text-[#FF4757]">0m</span>
         </div>
-        <div class="px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-400/50 text-yellow-400 text-xs font-bold animate-pulse">
-            🏆 Ödüllü Oyun
-        </div>
-    </div>
-
-    <div id="hud" class="absolute top-16 left-1/2 -translate-x-1/2 w-[90%] max-w-sm glass-3d rounded-2xl p-3 flex justify-between items-center text-white opacity-0 transition-opacity">
-        <div class="flex flex-col items-center gap-1 w-1/4">
-            <span class="text-[10px] text-gray-300 uppercase tracking-widest">Mesafe</span>
-            <span id="score" class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-300 to-yellow-500">0m</span>
-        </div>
-        <div class="flex-grow flex flex-col gap-1 items-center px-2 border-x border-white/10">
-            <div class="w-full h-3 bg-black/60 rounded-full overflow-hidden border border-white/20 relative shadow-inner">
-                <div id="fuelFill" class="h-full bg-gradient-to-r from-red-600 via-orange-500 to-green-500 w-full transition-all duration-300 relative">
-                    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xNSIvPjwvc3ZnPg==')] opacity-50"></div>
+        <div class="flex-grow flex flex-col gap-1 items-center px-3 border-x-2 border-gray-200">
+            <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden border-2 border-gray-300 relative shadow-inner">
+                <div id="fuelFill" class="h-full bg-gradient-to-r from-[#FF6B6B] via-[#FECCA2] to-[#38D39F] w-full transition-all duration-300 relative rounded-full">
+                    <div class="absolute top-0 left-0 w-full h-1/2 bg-white/40 rounded-full"></div>
                 </div>
             </div>
         </div>
-        <div class="flex flex-col items-center gap-1 w-1/4">
-            <span class="text-[10px] text-gray-300 uppercase tracking-widest">Ateş</span>
-            <span id="fuelPerc" class="text-lg font-bold">100%</span>
+        <div class="flex flex-col items-center justify-center w-1/4">
+            <span class="text-[11px] text-gray-500 uppercase font-bold tracking-wider">Fuel</span>
+            <span id="fuelPerc" class="text-lg font-black text-[#2ED573]">100%</span>
         </div>
     </div>
 
-    <div id="menu" class="absolute inset-0 flex justify-center items-center pointer-auto z-50 bg-black/40 backdrop-blur-sm">
-        <div class="glass-3d p-8 rounded-3xl text-center max-w-sm w-[90%] float-anim shadow-[0_0_80px_rgba(147,51,234,0.3)]" id="menuCard">
+    <div id="menu" class="absolute inset-0 flex justify-center items-center pointer-auto z-50 bg-white/20 backdrop-blur-sm">
+        <div class="glass-light p-8 text-center max-w-sm w-[90%] float-anim" id="menuCard">
             
-            <h2 class="text-sm font-bold text-purple-300 tracking-[0.3em] mb-1 uppercase">Bölüm 1</h2>
-            <h1 class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-orange-300 via-red-500 to-purple-600 mb-6 drop-shadow-lg text-gradient pb-2 font-['Montserrat']">CAPPADOCIA</h1>
+            <div class="w-16 h-16 bg-white rounded-2xl mx-auto mb-3 flex justify-center items-center shadow-md rotate-3">
+                <span class="text-4xl">🎈</span>
+            </div>
             
-            <button onclick="startGame()" class="relative w-full py-5 rounded-2xl bg-gradient-to-r from-orange-500 to-pink-600 text-white font-black text-2xl hover:scale-105 active:scale-95 transition-all shadow-[0_10px_30px_rgba(236,72,153,0.5)] overflow-hidden group">
-                <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform"></div>
-                <span class="relative flex items-center justify-center gap-2">
-                    OYNA VE KAZAN 🎈
-                </span>
+            <h1 class="text-5xl font-black title-text mb-6">CAPPADOCIA</h1>
+            
+            <button onclick="startGame()" class="relative w-full py-4 rounded-2xl button-3d text-white font-black text-2xl group flex justify-center items-center gap-2 mb-6">
+                PLAY
+                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             </button>
             
-            <div class="mt-6 p-4 rounded-xl bg-gradient-to-b from-yellow-500/10 to-transparent border border-yellow-500/30">
-                <p class="text-lg font-black text-yellow-400 drop-shadow-md">🎁 Sıcak hava balon ödüllü oyun!</p>
-                <p class="text-xs text-gray-300 mt-2 leading-relaxed">eTourGood sponsorluğunda, her yıl liderlik tablosundaki oyunculara <b>gerçek Kapadokya Balon Turu</b> hediye ediliyor!</p>
+            <div class="p-4 rounded-2xl bg-[#FFF3E0] border-2 border-[#FFD8A8] relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 w-16 h-16 bg-white/50 rounded-full blur-xl"></div>
+                <h3 class="text-lg font-black text-[#FF8C00] drop-shadow-sm mb-1">🎁 Win a Real Flight!</h3>
+                <p class="text-[13px] text-gray-600 font-medium leading-tight">Sponsored by <b>eTourGood</b>. Top players on the leaderboard win a real hot air balloon ride in Cappadocia!</p>
             </div>
         </div>
     </div>
 
-    <div id="gameover" class="absolute inset-0 flex justify-center items-center pointer-auto z-50 bg-black/70 backdrop-blur-md hidden">
-        <div class="glass-3d p-8 rounded-3xl text-center max-w-sm w-[90%] border-red-500/50 border shadow-[0_0_80px_rgba(239,68,68,0.4)] relative overflow-hidden" id="gameOverCard">
-            <div class="absolute -top-20 -right-20 w-40 h-40 bg-red-500/30 rounded-full blur-3xl"></div>
+    <div id="gameover" class="absolute inset-0 flex justify-center items-center pointer-auto z-50 bg-black/20 backdrop-blur-md hidden">
+        <div class="glass-light p-8 text-center max-w-sm w-[90%] border-red-400 relative overflow-hidden" id="gameOverCard">
             
-            <h1 class="text-4xl font-black text-red-400 mb-2 font-['Montserrat']">YERE ÇAKILDIN!</h1>
-            <p class="text-gray-300 text-xs uppercase tracking-widest mb-1 mt-4">Katedilen Mesafe</p>
-            <p id="finalScore" class="text-6xl font-black text-white mb-8 drop-shadow-lg font-['Montserrat']">0m</p>
+            <span class="text-6xl block mb-2">💥</span>
+            <h1 class="text-4xl font-black text-[#FF4757] title-text mb-4">CRASHED!</h1>
             
-            <button onclick="restart()" class="w-full py-4 rounded-xl bg-white text-black font-black text-xl hover:scale-105 transition-transform shadow-[0_10px_30px_rgba(255,255,255,0.2)]">
-                TEKRAR DENE
+            <div class="bg-gray-100 rounded-2xl p-4 mb-6 border-2 border-gray-200">
+                <p class="text-gray-500 text-sm uppercase font-bold mb-1">Distance Reached</p>
+                <p id="finalScore" class="text-5xl font-black text-[#1E90FF] drop-shadow-sm">0m</p>
+            </div>
+            
+            <button onclick="restart()" class="w-full py-4 rounded-2xl bg-[#1E90FF] button-3d !shadow-[0_8px_0_#0060DF] text-white font-black text-xl flex justify-center items-center gap-2">
+                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+                TRY AGAIN
             </button>
             
-            <p class="text-[10px] text-gray-400 mt-4">Ödül sıralamasına girmek için daha uzağa uç!</p>
+            <p class="text-[12px] text-gray-500 font-bold mt-4">Fly further to climb the leaderboard!</p>
         </div>
     </div>
 
@@ -155,7 +152,7 @@ window.addEventListener("resize", resize);
 const STATE = {MENU: 0, PLAY: 1, OVER: 2};
 let gameState = STATE.MENU;
 let balloon, wind, fuel, score, time = 0;
-let chimneys = [], birds = [], fuels = [], particles = [], mountains = [], fgClouds = [];
+let chimneys = [], birds = [], fuels = [], particles = [], mountains = [], fluffyClouds = [];
 let press = false;
 
 // ================= INPUT =================
@@ -166,57 +163,75 @@ window.addEventListener("mouseup", () => press = false);
 
 // ================= RESET =================
 function reset() {
-    balloon = { x: W * 0.3, y: H * 0.5, vy: 0, gravity: 0.16 * scale_f, lift: -0.5 * scale_f, drag: 0.98, r: 25 * scale_f };
-    wind = { force: 1.5 }; // Oyun biraz daha akıcı başlasın
+    balloon = { x: W * 0.3, y: H * 0.5, vy: 0, gravity: 0.16 * scale_f, lift: -0.5 * scale_f, drag: 0.98, r: 30 * scale_f };
+    wind = { force: 1.5 }; 
     fuel = 100;
     score = 0;
     time = 0;
-    chimneys = []; birds = []; fuels = []; particles = []; fgClouds = [];
+    chimneys = []; birds = []; fuels = []; particles = []; fluffyClouds = [];
     
-    // 3 Katmanlı 3D Derinlikli Dağlar (Atmosferik Renkler)
+    // Bright Candy Cartoon Mountains
     mountains = [
-        { y: H * 0.45, color: '#311b42', speed: 0.05, offset: 0, points: [] }, // En arka (göğe karışan renk)
-        { y: H * 0.65, color: '#562744', speed: 0.15, offset: 0, points: [] },
-        { y: H * 0.85, color: '#8a3437', speed: 0.3, offset: 0, points: [] }  // En ön
+        { y: H * 0.55, color: '#A8E6CF', speed: 0.1, offset: 0 }, // Mint
+        { y: H * 0.75, color: '#DCEDC1', speed: 0.2, offset: 0 }, // Limeish
+        { y: H * 0.90, color: '#FFD3B6', speed: 0.4, offset: 0 }  // Peach/Sand
     ];
 }
 reset();
 
-// ================= PARTICLES (Ateş ve 3D Parıltı) =================
+// ================= PARTICLES (Cute Stars & Fire) =================
 function createFireParticles() {
-    if(press && fuel > 0 && Math.random() > 0.3) {
+    if(press && fuel > 0 && Math.random() > 0.4) {
         particles.push({
-            x: balloon.x + (Math.random() - 0.5) * 10 * scale_f,
-            y: balloon.y + balloon.r * 1.05,
+            x: balloon.x + (Math.random() - 0.5) * 15 * scale_f,
+            y: balloon.y + balloon.r * 1.2,
             vx: (Math.random() - 0.5) * 2 * scale_f,
             vy: (Math.random() * 3 + 1) * scale_f,
             life: 1,
-            color: Math.random() > 0.5 ? '#ff2a00' : '#ffb700',
-            size: (Math.random() * 4 + 2) * scale_f
+            color: Math.random() > 0.5 ? '#FFA502' : '#FF4757', // Bright Yellow/Red
+            size: (Math.random() * 5 + 3) * scale_f,
+            type: 'circle'
+        });
+    }
+}
+
+function createStarParticles(x, y) {
+    for(let i=0; i<8; i++){
+        particles.push({
+            x: x, y: y,
+            vx: (Math.random() - 0.5) * 8 * scale_f,
+            vy: (Math.random() - 0.5) * 8 * scale_f,
+            life: 1,
+            color: '#FFF',
+            size: (Math.random() * 6 + 4) * scale_f,
+            type: 'star'
         });
     }
 }
 
 function updateDrawParticles() {
-    ctx.globalCompositeOperation = "lighter";
     for (let i = particles.length - 1; i >= 0; i--) {
         let p = particles[i];
         p.x += p.vx - wind.force * 0.5;
         p.y += p.vy;
-        p.life -= 0.03;
-        p.size *= 0.95;
+        p.life -= 0.04;
+        p.size *= 0.92;
 
         if (p.life <= 0) {
             particles.splice(i, 1);
             continue;
         }
+        
         ctx.globalAlpha = p.life;
         ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
+        
+        if(p.type === 'circle') {
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+        } else {
+            // Draw cute star/sparkle
+            ctx.fillRect(p.x - p.size/2, p.y - p.size/2, p.size, p.size);
+        }
     }
-    ctx.globalCompositeOperation = "source-over";
     ctx.globalAlpha = 1;
 }
 
@@ -224,51 +239,44 @@ function updateDrawParticles() {
 let lastSpawn = 0;
 let lastCloud = 0;
 function spawnObjects(){
-    if(Date.now() - lastSpawn > 1400 - (wind.force * 80)){
+    if(Date.now() - lastSpawn > 1300 - (wind.force * 50)){
         
-        let cType = Math.floor(Math.random() * 3);
         chimneys.push({
             x: W + 150 * scale_f,
-            w: (60 + Math.random()*50) * scale_f,
-            h: (120 + Math.random()*280) * scale_f,
-            type: cType, 
+            w: (70 + Math.random()*40) * scale_f,
+            h: (150 + Math.random()*250) * scale_f,
+            hue: Math.floor(Math.random() * 30) // Slight color variations
         });
 
         if(Math.random() > 0.3){
-            let isEagle = Math.random() > 0.6;
             birds.push({
                 x: W + 150 * scale_f,
-                y: (60 * scale_f) + Math.random() * (H - 200 * scale_f),
-                isEagle: isEagle,
-                size: (isEagle ? 8 : 4) * scale_f,
-                speed: (isEagle ? 2 : 4) * scale_f,
-                flapSpeed: isEagle ? 0.1 : 0.25,
-                color: isEagle ? '#1a1110' : '#000'
+                y: (80 * scale_f) + Math.random() * (H - 250 * scale_f),
+                size: (12 + Math.random()*6) * scale_f,
+                speed: (3 + Math.random()*2) * scale_f,
+                flapSpeed: 0.15 + Math.random() * 0.1
             });
         }
 
-        if(Math.random() > 0.6){
+        if(Math.random() > 0.5){
             fuels.push({
                 x: W + 150 * scale_f,
                 y: (100 * scale_f) + Math.random() * (H - 300 * scale_f),
-                size: 16 * scale_f,
-                pulse: 0
+                size: 18 * scale_f,
+                bob: Math.random() * Math.PI * 2
             });
         }
         lastSpawn = Date.now();
     }
 
-    // Pseudo-3D Ön Plan Objeleri (Kameraya çok yakın geçen flu nesneler)
-    if(Date.now() - lastCloud > 1500) {
-        if(Math.random() > 0.4) {
-            fgClouds.push({
-                x: W + 300,
-                y: Math.random() > 0.5 ? Math.random() * H * 0.3 : H - Math.random() * H * 0.3, // Ya çok üstte ya çok altta
-                size: (100 + Math.random() * 150) * scale_f,
-                speed: 6 + Math.random() * 4, // Çok hızlı geçer (Derinlik algısı)
-                opacity: 0.05 + Math.random() * 0.1
-            });
-        }
+    // Fluffy Background Clouds
+    if(Date.now() - lastCloud > 2000) {
+        fluffyClouds.push({
+            x: W + 200,
+            y: Math.random() * H * 0.5,
+            size: (40 + Math.random() * 40) * scale_f,
+            speed: 1 + Math.random() * 1.5
+        });
         lastCloud = Date.now();
     }
 }
@@ -285,9 +293,8 @@ function updateGame(){
     balloon.vy *= balloon.drag;
     balloon.y += balloon.vy;
 
-    // Balona hafif bir "canlılık" (nefes alma) efekti verelim (3D Scale)
-    let breathe = Math.sin(time * 0.1) * 0.5;
-    balloon.r = (25 + breathe) * scale_f;
+    // Bouncy cartoon feeling
+    balloon.r = (30 + Math.sin(time * 0.15) * 1.5) * scale_f;
 
     if(balloon.y < -80 * scale_f || balloon.y > H + 50 * scale_f) triggerGameOver();
 
@@ -295,9 +302,8 @@ function updateGame(){
 
     for (let i = chimneys.length - 1; i >= 0; i--) {
         let c = chimneys[i];
-        c.x -= wind.force + 1.5 * scale_f;
-        // Hitbox
-        if (balloon.x + balloon.r * 0.7 > c.x && balloon.x - balloon.r * 0.7 < c.x + c.w) {
+        c.x -= wind.force + 2 * scale_f;
+        if (balloon.x + balloon.r * 0.6 > c.x && balloon.x - balloon.r * 0.6 < c.x + c.w) {
             if (balloon.y + balloon.r * 0.8 > H - c.h) triggerGameOver();
         }
         if (c.x < -200 * scale_f) chimneys.splice(i, 1);
@@ -306,11 +312,11 @@ function updateGame(){
     for (let i = birds.length - 1; i >= 0; i--) {
         let b = birds[i];
         b.x -= wind.force + b.speed;
-        b.y += Math.sin(time * b.flapSpeed) * (b.isEagle ? 0.8 : 2) * scale_f;
+        b.y += Math.sin(time * b.flapSpeed) * 2 * scale_f;
         
         let dx = balloon.x - b.x;
         let dy = balloon.y - b.y;
-        if (Math.sqrt(dx*dx + dy*dy) < balloon.r + b.size) triggerGameOver();
+        if (Math.sqrt(dx*dx + dy*dy) < balloon.r + b.size*0.8) triggerGameOver();
         if (b.x < -100 * scale_f) birds.splice(i, 1);
     }
 
@@ -322,15 +328,16 @@ function updateGame(){
         let dy = balloon.y - f.y;
         if (Math.sqrt(dx*dx + dy*dy) < balloon.r + f.size) {
             fuel = Math.min(100, fuel + 25);
+            createStarParticles(f.x, f.y); // Cute collection effect
             fuels.splice(i, 1);
         } else if (f.x < -60 * scale_f) {
             fuels.splice(i, 1);
         }
     }
 
-    for (let i = fgClouds.length - 1; i >= 0; i--) {
-        fgClouds[i].x -= fgClouds[i].speed + wind.force;
-        if (fgClouds[i].x < -400) fgClouds.splice(i, 1);
+    for (let i = fluffyClouds.length - 1; i >= 0; i--) {
+        fluffyClouds[i].x -= fluffyClouds[i].speed;
+        if (fluffyClouds[i].x < -300) fluffyClouds.splice(i, 1);
     }
 
     wind.force += 0.0003;
@@ -343,24 +350,28 @@ function updateGame(){
 
 // ================= DRAWING (GRAPHICS) =================
 function drawSky(){
-    // Canlı 3D eTourGood tarzı gökyüzü (Uzay/Gün batımı geçişi)
+    // Bright cartoon sky (Blue to very soft peach)
     let g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, "#0b0417"); // Çok koyu mor
-    g.addColorStop(0.4, "#41144a"); // Macenta
-    g.addColorStop(0.8, "#b53b26"); // Turuncu
-    g.addColorStop(1, "#e68917"); // Altın
+    g.addColorStop(0, "#4FACFE"); // Bright Sky Blue
+    g.addColorStop(0.7, "#00F2FE"); // Cyan
+    g.addColorStop(1, "#FFF1EB"); // Warm horizon
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
 
-    // Güneş Parlaması (Lens Flare hissiyatı)
-    ctx.globalCompositeOperation = "screen";
-    let sun = ctx.createRadialGradient(W*0.8, H*0.6, 10, W*0.8, H*0.6, 250*scale_f);
-    sun.addColorStop(0, "rgba(255, 200, 100, 0.8)");
-    sun.addColorStop(0.5, "rgba(255, 100, 50, 0.3)");
-    sun.addColorStop(1, "rgba(0, 0, 0, 0)");
-    ctx.fillStyle = sun;
-    ctx.beginPath(); ctx.arc(W*0.8, H*0.6, 250*scale_f, 0, Math.PI*2); ctx.fill();
-    ctx.globalCompositeOperation = "source-over";
+    // Cute Sun
+    ctx.beginPath(); ctx.arc(W*0.8, H*0.25, 45*scale_f, 0, Math.PI*2); 
+    ctx.fillStyle = "#FFEAA7"; ctx.fill();
+    ctx.beginPath(); ctx.arc(W*0.8, H*0.25, 60*scale_f, 0, Math.PI*2); 
+    ctx.fillStyle = "rgba(255, 234, 167, 0.3)"; ctx.fill();
+}
+
+function drawFluffyClouds() {
+    ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+    fluffyClouds.forEach(c => {
+        ctx.beginPath(); ctx.arc(c.x, c.y, c.size, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(c.x + c.size*0.8, c.y + c.size*0.2, c.size*0.8, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(c.x - c.size*0.6, c.y + c.size*0.1, c.size*0.6, 0, Math.PI*2); ctx.fill();
+    });
 }
 
 function drawMountains() {
@@ -369,139 +380,179 @@ function drawMountains() {
         ctx.fillStyle = m.color;
         ctx.beginPath();
         ctx.moveTo(0, H);
-        for (let x = 0; x <= W + 150; x += 150 * scale_f) {
+        for (let x = 0; x <= W + 150; x += 200 * scale_f) {
             let cx = x + m.offset;
-            let cy = m.y + Math.sin(cx * 0.003) * 50 * scale_f;
+            // Very smooth, round hills
+            let cy = m.y + Math.sin(cx * 0.002) * 60 * scale_f;
             ctx.lineTo(x, cy);
         }
         ctx.lineTo(W, H);
         ctx.fill();
+        
+        // Add a bright border on top of mountains for 3D outline effect
+        ctx.strokeStyle = "rgba(255,255,255,0.4)";
+        ctx.lineWidth = 4 * scale_f;
+        ctx.stroke();
     });
 }
 
-// !!! BURASI İLERİDE SVG'LERİNİ KOYACAĞIN YER !!!
-// Şimdilik 3D gölgeli Canvas çizimleri var. İleride: ctx.drawImage(mySvgImage, x, y, c.w, c.h); yapabilirsin.
 function drawChimneys(){
     chimneys.forEach(c => {
         let x = c.x;
         let y = H - c.h;
 
-        // 3D Silindir Hissi Veren Gradient
+        // Bright Clay Color Base
+        let bodyColor = `hsl(${20 + c.hue}, 80%, 65%)`; 
+        let shadowColor = `hsl(${20 + c.hue}, 80%, 50%)`;
+        
         let bodyGrad = ctx.createLinearGradient(x, 0, x + c.w, 0);
-        bodyGrad.addColorStop(0, "#8a3437"); // Sol Gölge
-        bodyGrad.addColorStop(0.3, "#bd483e"); // Işık
-        bodyGrad.addColorStop(1, "#4a191d"); // Sağ Derin Gölge
+        bodyGrad.addColorStop(0, bodyColor); 
+        bodyGrad.addColorStop(0.8, shadowColor); 
         ctx.fillStyle = bodyGrad;
 
+        // Rounded Base
         ctx.beginPath();
-        ctx.moveTo(x - 10 * scale_f, H);
+        ctx.moveTo(x - 5 * scale_f, H);
         ctx.lineTo(x + c.w * 0.2, y);
         ctx.lineTo(x + c.w * 0.8, y);
-        ctx.lineTo(x + c.w + 10 * scale_f, H);
+        ctx.lineTo(x + c.w + 5 * scale_f, H);
         ctx.fill();
 
-        let capGrad = ctx.createLinearGradient(x, y-20*scale_f, x + c.w, y);
-        capGrad.addColorStop(0, "#421e20");
-        capGrad.addColorStop(1, "#1a0b0c");
+        // 3D Rim Light (White shine on the left)
+        ctx.strokeStyle = "rgba(255,255,255,0.6)";
+        ctx.lineWidth = 4 * scale_f;
+        ctx.beginPath();
+        ctx.moveTo(x - 2 * scale_f, H);
+        ctx.lineTo(x + c.w * 0.25, y);
+        ctx.stroke();
+
+        // Cap (Mushroom top)
+        let capColor = `hsl(${280 + c.hue}, 60%, 55%)`; // Purple-ish caps
+        let capShadow = `hsl(${280 + c.hue}, 60%, 40%)`;
+        let capGrad = ctx.createLinearGradient(x, y-25*scale_f, x+c.w, y);
+        capGrad.addColorStop(0, capColor);
+        capGrad.addColorStop(1, capShadow);
         ctx.fillStyle = capGrad;
 
-        if(c.type === 0) {
-            ctx.beginPath(); ctx.ellipse(x + c.w/2, y, c.w*0.8, 15*scale_f, 0, 0, Math.PI*2); ctx.fill();
-        } else if(c.type === 1) {
-            ctx.beginPath(); ctx.moveTo(x - 5*scale_f, y + 5*scale_f); ctx.lineTo(x + c.w/2, y - c.w*1.2); ctx.lineTo(x + c.w + 5*scale_f, y + 5*scale_f); ctx.fill();
-        } else {
-            ctx.beginPath(); ctx.ellipse(x + c.w*0.3, y-5*scale_f, c.w*0.5, 20*scale_f, -0.2, 0, Math.PI*2); ctx.ellipse(x + c.w*0.7, y, c.w*0.4, 15*scale_f, 0.2, 0, Math.PI*2); ctx.fill();
-        }
+        ctx.beginPath(); 
+        ctx.ellipse(x + c.w/2, y, c.w*0.7, 20*scale_f, 0, 0, Math.PI*2); 
+        ctx.fill();
+        
+        // Shine on cap
+        ctx.fillStyle = "rgba(255,255,255,0.4)";
+        ctx.beginPath(); 
+        ctx.ellipse(x + c.w/2 - c.w*0.3, y - 5*scale_f, c.w*0.2, 8*scale_f, -0.2, 0, Math.PI*2); 
+        ctx.fill();
     });
 }
 
 function drawBirds(){
+    // Cute Flappy White Birds (like doves/seagulls)
+    ctx.fillStyle = "#FFF";
     birds.forEach(b => {
-        ctx.save(); ctx.translate(b.x, b.y); ctx.fillStyle = b.color;
-        let flap = Math.sin(time * b.flapSpeed) * (b.isEagle ? 10 : 5) * scale_f;
-        let w = b.isEagle ? 16 * scale_f : 8 * scale_f;
+        ctx.save(); ctx.translate(b.x, b.y);
+        let flap = Math.sin(time * b.flapSpeed) * 8 * scale_f;
+        let w = b.size;
         
-        ctx.beginPath(); ctx.arc(0, 0, b.size * 0.5, 0, Math.PI*2); ctx.fill();
-        ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(-w*0.5, flap - w*0.3, -w, flap); ctx.quadraticCurveTo(-w*0.3, flap + w*0.1, 0, 0); ctx.fill();
-        ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(w*0.5, flap - w*0.3, w, flap); ctx.quadraticCurveTo(w*0.3, flap + w*0.1, 0, 0); ctx.fill();
+        // Shadow/Outline
+        ctx.shadowBlur = 4; ctx.shadowColor = "rgba(0,0,0,0.15)";
+        
+        // Body (Circle)
+        ctx.beginPath(); ctx.arc(0, 0, w*0.6, 0, Math.PI*2); ctx.fill();
+        
+        // Wings (Rounder)
+        ctx.beginPath(); 
+        ctx.moveTo(0, 0); 
+        ctx.quadraticCurveTo(-w*0.8, flap - w*0.5, -w*1.5, flap); 
+        ctx.quadraticCurveTo(-w*0.8, flap + w*0.5, 0, 0); 
+        ctx.fill();
+        
+        ctx.beginPath(); 
+        ctx.moveTo(0, 0); 
+        ctx.quadraticCurveTo(w*0.8, flap - w*0.5, w*1.5, flap); 
+        ctx.quadraticCurveTo(w*0.8, flap + w*0.5, 0, 0); 
+        ctx.fill();
         ctx.restore();
     });
 }
 
 function drawFuel(){
     fuels.forEach(f => {
-        f.pulse += 0.15;
-        let sc = 1 + Math.sin(f.pulse) * 0.15;
-        ctx.save(); ctx.translate(f.x, f.y); ctx.scale(sc, sc);
+        f.bob += 0.1;
+        let yBob = Math.sin(f.bob) * 5 * scale_f;
         
-        ctx.shadowBlur = 20; ctx.shadowColor = "#00ffcc"; // E-Tour Good Neon Vibe
-        let grad = ctx.createLinearGradient(-f.size, -f.size, f.size, f.size);
-        grad.addColorStop(0, "#00ffcc"); grad.addColorStop(1, "#0066ff");
+        ctx.save(); ctx.translate(f.x, f.y + yBob);
         
-        ctx.fillStyle = grad;
+        // Draw 3D Coin/Fuel Tank
+        ctx.fillStyle = "#FFA502"; // Gold Shadow
+        ctx.beginPath(); ctx.arc(0, 4*scale_f, f.size, 0, Math.PI * 2); ctx.fill();
+        
+        ctx.fillStyle = "#ECCC68"; // Bright Gold
         ctx.beginPath(); ctx.arc(0, 0, f.size, 0, Math.PI * 2); ctx.fill();
         
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = "#fff"; ctx.font = `bold ${f.size*1.2}px Poppins`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        ctx.fillText("⚡", 0, 2);
+        // White rim highlight
+        ctx.fillStyle = "rgba(255,255,255,0.6)";
+        ctx.beginPath(); ctx.arc(-f.size*0.3, -f.size*0.3, f.size*0.3, 0, Math.PI * 2); ctx.fill();
+
+        ctx.fillStyle = "#FFF"; ctx.font = `bold ${f.size*1.2}px Nunito`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText("⚡", 0, 1);
         ctx.restore();
     });
 }
 
-// !!! BALON SVG'Nİ İLERİDE BURAYA EKLEYEBİLİRSİN !!!
 function drawBalloon(){
     ctx.save();
     ctx.translate(balloon.x, balloon.y);
     ctx.rotate(balloon.vy * 0.04); 
 
     let r = balloon.r;
-    let basketW = r * 0.45;  
-    let basketH = r * 0.35; 
-    let ropeDrop = r * 1.2; 
+    let basketW = r * 0.5;  
+    let basketH = r * 0.4; 
+    let ropeDrop = r * 1.3; 
 
-    // Ateş
+    // Fire
     if(press && fuel > 0){
-        ctx.fillStyle = "#fff"; ctx.shadowBlur = 15; ctx.shadowColor = "#ff5722";
-        ctx.beginPath(); ctx.moveTo(-basketW/2, ropeDrop); ctx.lineTo(0, ropeDrop + (Math.random()*12 + 8) * scale_f); ctx.lineTo(basketW/2, ropeDrop); ctx.fill();
-        ctx.shadowBlur = 0;
+        ctx.fillStyle = "#FFA502";
+        ctx.beginPath(); ctx.moveTo(-basketW/3, ropeDrop); ctx.lineTo(0, ropeDrop + (Math.random()*15 + 10) * scale_f); ctx.lineTo(basketW/3, ropeDrop); ctx.fill();
     }
 
-    // İpler
-    ctx.strokeStyle = "rgba(255,255,255,0.6)"; ctx.lineWidth = 1 * scale_f;
-    ctx.beginPath(); ctx.moveTo(-r*0.3, r*0.7); ctx.lineTo(-basketW/2 + 1, ropeDrop); ctx.moveTo(r*0.3, r*0.7); ctx.lineTo(basketW/2 - 1, ropeDrop); ctx.stroke();
+    // Ropes (Thicker, cartoon style)
+    ctx.strokeStyle = "#576574"; ctx.lineWidth = 2 * scale_f;
+    ctx.beginPath(); ctx.moveTo(-r*0.3, r*0.8); ctx.lineTo(-basketW/2 + 2, ropeDrop); ctx.moveTo(r*0.3, r*0.8); ctx.lineTo(basketW/2 - 2, ropeDrop); ctx.stroke();
 
-    // Sepet
-    ctx.fillStyle = "#362017"; ctx.fillRect(-basketW/2, ropeDrop, basketW, basketH);
-    ctx.fillStyle = "#1a0b0c"; ctx.fillRect(-basketW/2 - 1, ropeDrop - 1, basketW + 2, basketH * 0.25);
+    // Basket (Smooth brown)
+    ctx.fillStyle = "#C8D6E5"; // Light trim
+    ctx.beginPath(); ctx.roundRect(-basketW/2 - 2, ropeDrop - 2, basketW + 4, basketH + 4, 4); ctx.fill();
+    ctx.fillStyle = "#8395A7"; // Main basket body
+    ctx.beginPath(); ctx.roundRect(-basketW/2, ropeDrop, basketW, basketH, 2); ctx.fill();
 
-    // 3D Hissiyatlı Balon Çizimi
-    ctx.beginPath(); ctx.arc(0, -r*0.1, r, 0, Math.PI*2); ctx.clip(); 
+    // Balloon Envelope 
+    ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI*2); ctx.clip(); 
     
-    // Modern Renkler (eTourGood Konsepti)
-    let colors = ["#ff2a00", "#111", "#ffb700", "#fff"];
-    let stripeW = (r*2) / 4;
+    // Very bright pastel primary colors
+    let colors = ["#FF4757", "#FFF200", "#1E90FF", "#2ED573"];
+    let stripeW = (r*2.2) / 4;
     for(let i = 0; i < 4; i++) {
         ctx.fillStyle = colors[i % colors.length];
-        ctx.fillRect(-r + i * stripeW, -r*1.5, stripeW, r*2.5);
+        ctx.fillRect(-r*1.1 + i * stripeW, -r*1.1, stripeW, r*2.2);
     }
     
-    // Küresel 3D Gölge
-    let sphereGlow = ctx.createRadialGradient(-r*0.4, -r*0.6, r*0.2, 0, 0, r);
-    sphereGlow.addColorStop(0, "rgba(255,255,255,0.5)");
-    sphereGlow.addColorStop(0.5, "rgba(0,0,0,0)");
-    sphereGlow.addColorStop(1, "rgba(0,0,0,0.8)");
-    ctx.fillStyle = sphereGlow;
-    ctx.fillRect(-r*1.5, -r*1.5, r*3, r*3);
+    // 3D Cartoon Shading (Inner shadow & rim light)
+    ctx.globalCompositeOperation = "source-atop";
+    
+    // Dark side shadow
+    let shadow = ctx.createRadialGradient(r*0.5, r*0.5, r*0.5, 0, 0, r*1.5);
+    shadow.addColorStop(0, "rgba(0,0,0,0)");
+    shadow.addColorStop(1, "rgba(0,0,0,0.3)");
+    ctx.fillStyle = shadow;
+    ctx.fillRect(-r*2, -r*2, r*4, r*4);
 
+    // Shiny Rim Light (Top Left)
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    ctx.beginPath(); ctx.ellipse(-r*0.4, -r*0.5, r*0.4, r*0.15, -0.5, 0, Math.PI*2); ctx.fill();
+    
+    ctx.globalCompositeOperation = "source-over";
     ctx.restore();
-}
-
-// Pseudo-3D Ön Plan Blur Efekti
-function drawForeground() {
-    fgClouds.forEach(c => {
-        ctx.fillStyle = `rgba(0, 0, 0, ${c.opacity})`;
-        ctx.beginPath(); ctx.arc(c.x, c.y, c.size, 0, Math.PI*2); ctx.fill();
-    });
 }
 
 // ================= GAME LOOP =================
@@ -513,6 +564,7 @@ function loop(){
     
     ctx.clearRect(0,0,W,H);
     drawSky();
+    drawFluffyClouds();
     drawMountains();
     drawChimneys();
     drawBirds();
@@ -521,37 +573,33 @@ function loop(){
     
     if(gameState !== STATE.MENU) drawBalloon();
 
-    drawForeground(); // En son çizilir ki her şeyin önünde olsun
-
     requestAnimationFrame(loop);
 }
 
 // ================= 3D UI GSAP ANIMATIONS =================
 window.onload = () => {
-    // Menu 3D Giriş Animasyonu
+    // Menu Bouncy Entrance
     gsap.fromTo("#menuCard", 
-        { rotationY: -60, rotationX: 10, z: -500, opacity: 0, scale: 0.5 }, 
-        { rotationY: 0, rotationX: 0, z: 0, opacity: 1, scale: 1, duration: 1.5, ease: "expo.out" }
+        { scale: 0.5, y: 100, opacity: 0 }, 
+        { scale: 1, y: 0, opacity: 1, duration: 1, ease: "elastic.out(1, 0.6)" }
     );
-    
-    gsap.to("#appHeader", { opacity: 1, y: 10, duration: 1, delay: 0.5 });
-    
     loop();
 };
 
 function startGame(){
     reset();
     
-    // Menü 3D Çıkış
+    // Menu Exit
     gsap.to("#menuCard", { 
-        rotationY: 60, z: 300, opacity: 0, duration: 0.6, ease: "power2.in",
+        scale: 0.8, y: -50, opacity: 0, duration: 0.4, ease: "back.in(1.2)",
         onComplete: () => {
             document.getElementById("menu").style.display = "none";
             gameState = STATE.PLAY;
         }
     });
     
-    gsap.to("#hud", { duration: 0.6, y: 10, opacity: 1, delay: 0.6, ease: "back.out(1.5)" });
+    // HUD bouncy enter
+    gsap.to("#hud", { duration: 0.6, y: 10, opacity: 1, delay: 0.4, ease: "elastic.out(1, 0.7)" });
 }
 
 function triggerGameOver(){
@@ -564,22 +612,21 @@ function triggerGameOver(){
     let go = document.getElementById("gameover");
     go.style.display = "flex";
     
-    // Game Over 3D Giriş
     gsap.fromTo("#gameover", {opacity: 0}, {duration: 0.3, opacity: 1});
     gsap.fromTo("#gameOverCard", 
-        { rotationX: -30, y: 100, scale: 0.8, opacity: 0 }, 
-        { rotationX: 0, y: 0, scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.2)", delay: 0.2 }
+        { scale: 0.5, rotation: -10, opacity: 0 }, 
+        { scale: 1, rotation: 0, opacity: 1, duration: 0.7, ease: "elastic.out(1, 0.6)", delay: 0.2 }
     );
 }
 
 function restart(){
-    gsap.to("#gameOverCard", { rotationX: 30, y: -100, opacity: 0, duration: 0.4, ease: "power2.in", onComplete: () => {
+    gsap.to("#gameOverCard", { scale: 0.8, y: 50, opacity: 0, duration: 0.3, ease: "back.in(1.2)", onComplete: () => {
         document.getElementById("gameover").style.display = "none";
         document.getElementById("menu").style.display = "flex";
         
         gsap.fromTo("#menuCard", 
-            { rotationY: -60, z: -500, opacity: 0 }, 
-            { rotationY: 0, z: 0, opacity: 1, duration: 1, ease: "expo.out" }
+            { scale: 0.5, y: 100, opacity: 0 }, 
+            { scale: 1, y: 0, opacity: 1, duration: 0.8, ease: "elastic.out(1, 0.6)" }
         );
         
         gameState = STATE.MENU;
