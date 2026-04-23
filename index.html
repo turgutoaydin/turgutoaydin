@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-<title>Cappadocia Ultimate - 3D Cartoon Edition</title>
+<title>Cappadocia Advanced - 3D Cartoon</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -12,57 +12,36 @@
     @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Nunito:wght@700;900&display=swap');
 
     body { 
-        margin: 0; 
-        overflow: hidden; 
-        background: #87CEEB; /* Fallback bright blue */
-        font-family: 'Fredoka', sans-serif; 
-        -webkit-tap-highlight-color: transparent;
+        margin: 0; overflow: hidden; background: #4FACFE; 
+        font-family: 'Fredoka', sans-serif; -webkit-tap-highlight-color: transparent;
     }
-    
     canvas { display: block; }
-
-    #ui { 
-        position: absolute; 
-        inset: 0; 
-        pointer-events: none; 
-        perspective: 1200px; 
-    }
+    #ui { position: absolute; inset: 0; pointer-events: none; perspective: 1200px; }
     
-    /* Bubbly Light Glassmorphism */
     .glass-light {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border: 4px solid rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+        border: 4px solid rgba(255, 255, 255, 0.9); border-radius: 35px;
         box-shadow: 0 15px 35px rgba(0,0,0,0.1), inset 0 0 15px rgba(255,255,255,1);
-        transform-style: preserve-3d;
-        border-radius: 35px;
     }
-
     .pointer-auto { pointer-events: auto; }
-    
-    /* Text Styles */
-    .title-text {
-        font-family: 'Nunito', sans-serif;
-        color: #FF5E7E;
-        text-shadow: 3px 3px 0px #FFF, 5px 5px 0px rgba(0,0,0,0.1);
-    }
+    .title-text { font-family: 'Nunito', sans-serif; color: #FF5E7E; text-shadow: 3px 3px 0px #FFF, 5px 5px 0px rgba(0,0,0,0.1); }
     
     .button-3d {
         background: linear-gradient(180deg, #FF6B6B 0%, #FF4757 100%);
-        box-shadow: 0 8px 0 #C92A2A, 0 15px 20px rgba(255, 71, 87, 0.4);
-        transition: all 0.1s;
+        box-shadow: 0 8px 0 #C92A2A, 0 15px 20px rgba(255, 71, 87, 0.4); transition: all 0.1s;
     }
-    .button-3d:active {
-        transform: translateY(8px);
-        box-shadow: 0 0px 0 #C92A2A, 0 5px 10px rgba(255, 71, 87, 0.4);
-    }
+    .button-3d:active { transform: translateY(8px); box-shadow: 0 0px 0 #C92A2A, 0 5px 10px rgba(255, 71, 87, 0.4); }
 
-    .float-anim { animation: float 3s ease-in-out infinite; }
-    @keyframes float {
-        0% { transform: translateY(0px); }
-        50% { transform: translateY(-12px); }
-        100% { transform: translateY(0px); }
+    /* Powerup Indicators */
+    .power-icon { transition: all 0.3s ease; filter: grayscale(100%); opacity: 0.5; transform: scale(0.8); }
+    .power-active { filter: grayscale(0%); opacity: 1; transform: scale(1.1); animation: pulse 1s infinite; }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+    
+    /* Stage Alert */
+    #stageAlert {
+        position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%) scale(0);
+        font-family: 'Nunito', sans-serif; font-size: 3rem; font-weight: 900; color: #FFF;
+        text-shadow: 0 5px 15px rgba(0,0,0,0.3), 4px 4px 0 #FF4757; opacity: 0;
     }
 </style>
 </head>
@@ -72,70 +51,65 @@
 
 <div id="ui">
 
-    <div id="hud" class="absolute top-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-white/80 backdrop-blur-md rounded-full p-2 flex justify-between items-center text-gray-800 opacity-0 transition-opacity border-4 border-white shadow-lg">
+    <div id="powerHud" class="absolute top-20 left-1/2 -translate-x-1/2 flex gap-4 opacity-0 transition-opacity">
+        <div id="iconShield" class="power-icon w-10 h-10 bg-blue-400 rounded-full border-2 border-white shadow-lg flex justify-center items-center text-xl">🛡️</div>
+        <div id="iconMagnet" class="power-icon w-10 h-10 bg-purple-400 rounded-full border-2 border-white shadow-lg flex justify-center items-center text-xl relative">
+            🧲 <svg class="absolute -inset-1 w-12 h-12 -rotate-90 hidden" id="magnetProgress"><circle cx="24" cy="24" r="22" stroke="white" stroke-width="3" fill="none" stroke-dasharray="138" stroke-dashoffset="0"/></svg>
+        </div>
+    </div>
+
+    <div id="hud" class="absolute top-4 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-white/90 backdrop-blur-md rounded-full p-2 flex justify-between items-center text-gray-800 opacity-0 transition-opacity border-4 border-white shadow-lg z-10">
         <div class="flex flex-col items-center justify-center w-1/4">
-            <span class="text-[11px] text-gray-500 uppercase font-bold tracking-wider">Distance</span>
+            <span class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Distance</span>
             <span id="score" class="text-xl font-black text-[#FF4757]">0m</span>
         </div>
         <div class="flex-grow flex flex-col gap-1 items-center px-3 border-x-2 border-gray-200">
+            <span id="stageText" class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Stage 1</span>
             <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden border-2 border-gray-300 relative shadow-inner">
-                <div id="fuelFill" class="h-full bg-gradient-to-r from-[#FF6B6B] via-[#FECCA2] to-[#38D39F] w-full transition-all duration-300 relative rounded-full">
+                <div id="fuelFill" class="h-full bg-gradient-to-r from-[#FF6B6B] via-[#FECCA2] to-[#38D39F] w-full transition-all duration-200 relative rounded-full">
                     <div class="absolute top-0 left-0 w-full h-1/2 bg-white/40 rounded-full"></div>
                 </div>
             </div>
         </div>
         <div class="flex flex-col items-center justify-center w-1/4">
-            <span class="text-[11px] text-gray-500 uppercase font-bold tracking-wider">Fuel</span>
+            <span class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Fuel</span>
             <span id="fuelPerc" class="text-lg font-black text-[#2ED573]">100%</span>
         </div>
     </div>
 
+    <div id="stageAlert">STAGE 2!</div>
+
     <div id="menu" class="absolute inset-0 flex justify-center items-center pointer-auto z-50 bg-white/20 backdrop-blur-sm">
-        <div class="glass-light p-8 text-center max-w-sm w-[90%] float-anim" id="menuCard">
-            
-            <div class="w-16 h-16 bg-white rounded-2xl mx-auto mb-3 flex justify-center items-center shadow-md rotate-3">
-                <span class="text-4xl">🎈</span>
-            </div>
-            
-            <h1 class="text-5xl font-black title-text mb-6">CAPPADOCIA</h1>
-            
+        <div class="glass-light p-8 text-center max-w-sm w-[90%]" id="menuCard">
+            <h1 class="text-5xl font-black title-text mb-2">ULTIMATE</h1>
+            <h2 class="text-xl font-bold text-gray-500 mb-6">ADVANCED FLIGHT</h2>
             <button onclick="startGame()" class="relative w-full py-4 rounded-2xl button-3d text-white font-black text-2xl group flex justify-center items-center gap-2 mb-6">
-                PLAY
-                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                PLAY NOW
             </button>
-            
-            <div class="p-4 rounded-2xl bg-[#FFF3E0] border-2 border-[#FFD8A8] relative overflow-hidden">
-                <div class="absolute -right-4 -top-4 w-16 h-16 bg-white/50 rounded-full blur-xl"></div>
-                <h3 class="text-lg font-black text-[#FF8C00] drop-shadow-sm mb-1">🎁 Win a Real Flight!</h3>
-                <p class="text-[13px] text-gray-600 font-medium leading-tight">Sponsored by <b>eTourGood</b>. Top players on the leaderboard win a real hot air balloon ride in Cappadocia!</p>
+            <div class="flex justify-center gap-3 text-sm font-bold text-gray-600 mb-2">
+                <span class="bg-blue-100 p-2 rounded-lg">🛡️ = Extra Life</span>
+                <span class="bg-purple-100 p-2 rounded-lg">🧲 = Pull Fuel</span>
             </div>
         </div>
     </div>
 
-    <div id="gameover" class="absolute inset-0 flex justify-center items-center pointer-auto z-50 bg-black/20 backdrop-blur-md hidden">
-        <div class="glass-light p-8 text-center max-w-sm w-[90%] border-red-400 relative overflow-hidden" id="gameOverCard">
-            
+    <div id="gameover" class="absolute inset-0 flex justify-center items-center pointer-auto z-50 bg-black/40 backdrop-blur-md hidden">
+        <div class="glass-light p-8 text-center max-w-sm w-[90%]" id="gameOverCard">
             <span class="text-6xl block mb-2">💥</span>
             <h1 class="text-4xl font-black text-[#FF4757] title-text mb-4">CRASHED!</h1>
-            
             <div class="bg-gray-100 rounded-2xl p-4 mb-6 border-2 border-gray-200">
-                <p class="text-gray-500 text-sm uppercase font-bold mb-1">Distance Reached</p>
-                <p id="finalScore" class="text-5xl font-black text-[#1E90FF] drop-shadow-sm">0m</p>
+                <p class="text-gray-500 text-sm uppercase font-bold mb-1">Final Distance</p>
+                <p id="finalScore" class="text-5xl font-black text-[#1E90FF]">0m</p>
             </div>
-            
-            <button onclick="restart()" class="w-full py-4 rounded-2xl bg-[#1E90FF] button-3d !shadow-[0_8px_0_#0060DF] text-white font-black text-xl flex justify-center items-center gap-2">
-                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+            <button onclick="restart()" class="w-full py-4 rounded-2xl bg-[#1E90FF] button-3d !shadow-[0_8px_0_#0060DF] text-white font-black text-xl">
                 TRY AGAIN
             </button>
-            
-            <p class="text-[12px] text-gray-500 font-bold mt-4">Fly further to climb the leaderboard!</p>
         </div>
     </div>
-
 </div>
 
 <script>
-// ================= CANVAS SETUP =================
+// ================= ENGINE SETUP =================
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 let W, H, scale_f = 1;
@@ -148,489 +122,419 @@ function resize(){
 resize();
 window.addEventListener("resize", resize);
 
-// ================= VARIABLES =================
+// ================= GAME STATE & VARIABLES =================
 const STATE = {MENU: 0, PLAY: 1, OVER: 2};
 let gameState = STATE.MENU;
-let balloon, wind, fuel, score, time = 0;
-let chimneys = [], birds = [], fuels = [], particles = [], mountains = [], fluffyClouds = [];
-let press = false;
+let time = 0, lastSpawn = 0;
+
+// Player & Progression
+let balloon, wind, fuel, score, stage;
+// Arrays
+let chimneys = [], hazards = [], collectibles = [], particles = [], clouds = [], floatingTexts = [];
+
+// Sky Colors per Stage
+const skyColors = [
+    { top: "#4FACFE", bottom: "#FFF1EB" }, // Stage 1: Day
+    { top: "#ff9a9e", bottom: "#fecfef" }, // Stage 2: Sunset
+    { top: "#6a11cb", bottom: "#2575fc" }, // Stage 3: Evening
+    { top: "#0f2027", bottom: "#203a43" }  // Stage 4: Night
+];
+let currentSky = { top: skyColors[0].top, bottom: skyColors[0].bottom };
 
 // ================= INPUT =================
-window.addEventListener("touchstart", (e) => { if(gameState===STATE.PLAY) press = true; }, {passive: false});
+let press = false;
+window.addEventListener("touchstart", () => { if(gameState===STATE.PLAY) press = true; }, {passive: false});
 window.addEventListener("touchend", () => press = false);
 window.addEventListener("mousedown", () => { if(gameState===STATE.PLAY) press = true; });
 window.addEventListener("mouseup", () => press = false);
 
 // ================= RESET =================
 function reset() {
-    balloon = { x: W * 0.3, y: H * 0.5, vy: 0, gravity: 0.16 * scale_f, lift: -0.5 * scale_f, drag: 0.98, r: 30 * scale_f };
+    balloon = { 
+        x: W * 0.3, y: H * 0.5, vy: 0, gravity: 0.16 * scale_f, lift: -0.5 * scale_f, drag: 0.98, r: 30 * scale_f,
+        hasShield: false, hasMagnet: false, magnetTimer: 0
+    };
     wind = { force: 1.5 }; 
-    fuel = 100;
-    score = 0;
-    time = 0;
-    chimneys = []; birds = []; fuels = []; particles = []; fluffyClouds = [];
-    
-    // Bright Candy Cartoon Mountains
-    mountains = [
-        { y: H * 0.55, color: '#A8E6CF', speed: 0.1, offset: 0 }, // Mint
-        { y: H * 0.75, color: '#DCEDC1', speed: 0.2, offset: 0 }, // Limeish
-        { y: H * 0.90, color: '#FFD3B6', speed: 0.4, offset: 0 }  // Peach/Sand
-    ];
+    fuel = 100; score = 0; stage = 1; time = 0;
+    chimneys = []; hazards = []; collectibles = []; particles = []; clouds = []; floatingTexts = [];
+    currentSky = { top: skyColors[0].top, bottom: skyColors[0].bottom };
+    updateIcons();
 }
 reset();
 
-// ================= PARTICLES (Cute Stars & Fire) =================
-function createFireParticles() {
-    if(press && fuel > 0 && Math.random() > 0.4) {
+// ================= PARTICLES & TEXTS =================
+function spawnFloatingText(txt, x, y, color) {
+    floatingTexts.push({ x: x, y: y, text: txt, life: 1, color: color });
+}
+
+function createExplosion(x, y, color, count) {
+    for(let i=0; i<count; i++){
         particles.push({
-            x: balloon.x + (Math.random() - 0.5) * 15 * scale_f,
-            y: balloon.y + balloon.r * 1.2,
-            vx: (Math.random() - 0.5) * 2 * scale_f,
-            vy: (Math.random() * 3 + 1) * scale_f,
-            life: 1,
-            color: Math.random() > 0.5 ? '#FFA502' : '#FF4757', // Bright Yellow/Red
-            size: (Math.random() * 5 + 3) * scale_f,
-            type: 'circle'
+            x: x, y: y, vx: (Math.random() - 0.5) * 15 * scale_f, vy: (Math.random() - 0.5) * 15 * scale_f,
+            life: 1, color: color, size: (Math.random() * 8 + 4) * scale_f, type: 'circle'
         });
     }
 }
 
-function createStarParticles(x, y) {
-    for(let i=0; i<8; i++){
-        particles.push({
-            x: x, y: y,
-            vx: (Math.random() - 0.5) * 8 * scale_f,
-            vy: (Math.random() - 0.5) * 8 * scale_f,
-            life: 1,
-            color: '#FFF',
-            size: (Math.random() * 6 + 4) * scale_f,
-            type: 'star'
-        });
-    }
-}
-
-function updateDrawParticles() {
-    for (let i = particles.length - 1; i >= 0; i--) {
-        let p = particles[i];
-        p.x += p.vx - wind.force * 0.5;
-        p.y += p.vy;
-        p.life -= 0.04;
-        p.size *= 0.92;
-
-        if (p.life <= 0) {
-            particles.splice(i, 1);
-            continue;
-        }
-        
-        ctx.globalAlpha = p.life;
-        ctx.fillStyle = p.color;
-        
-        if(p.type === 'circle') {
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
-        } else {
-            // Draw cute star/sparkle
-            ctx.fillRect(p.x - p.size/2, p.y - p.size/2, p.size, p.size);
-        }
-    }
-    ctx.globalAlpha = 1;
-}
-
-// ================= SPAWN LOGIC =================
-let lastSpawn = 0;
-let lastCloud = 0;
+// ================= SPAWN LOGIC (PROGRESSIVE) =================
 function spawnObjects(){
-    if(Date.now() - lastSpawn > 1300 - (wind.force * 50)){
+    // Spawn Frequency increases with stage
+    let spawnRate = 1300 - (stage * 150) - (wind.force * 20);
+    
+    if(Date.now() - lastSpawn > Math.max(500, spawnRate)){
         
+        // 1. Always Spawn Terrain (Chimneys)
         chimneys.push({
-            x: W + 150 * scale_f,
-            w: (70 + Math.random()*40) * scale_f,
-            h: (150 + Math.random()*250) * scale_f,
-            hue: Math.floor(Math.random() * 30) // Slight color variations
+            x: W + 150 * scale_f, w: (70 + Math.random()*50) * scale_f, h: (120 + Math.random()*(150 + stage*30)) * scale_f,
+            hue: Math.floor(Math.random() * 30)
         });
 
-        if(Math.random() > 0.3){
-            birds.push({
-                x: W + 150 * scale_f,
-                y: (80 * scale_f) + Math.random() * (H - 250 * scale_f),
-                size: (12 + Math.random()*6) * scale_f,
-                speed: (3 + Math.random()*2) * scale_f,
-                flapSpeed: 0.15 + Math.random() * 0.1
-            });
+        // 2. Spawn Hazards based on Stage
+        let hazardRoll = Math.random();
+        if(hazardRoll > 0.4){
+            if(stage >= 3 && Math.random() > 0.7) {
+                // JET PLANE (Very Fast)
+                hazards.push({ type: 'plane', x: W + 200 * scale_f, y: Math.random() * H * 0.7 + 100, size: 25 * scale_f, speed: (8 + Math.random()*3) * scale_f });
+            } 
+            else if(stage >= 2 && Math.random() > 0.6) {
+                // STORM CLOUD (Lightning)
+                hazards.push({ type: 'storm', x: W + 150 * scale_f, y: Math.random() * H * 0.8, size: 40 * scale_f, speed: (2 + Math.random()) * scale_f, lightningTime: 0 });
+            } 
+            else {
+                // BIRD
+                hazards.push({ type: 'bird', x: W + 150 * scale_f, y: Math.random() * (H - 200 * scale_f) + 100, size: 15 * scale_f, speed: (3 + Math.random()*2) * scale_f, flap: 0.15 + Math.random()*0.1 });
+            }
         }
 
-        if(Math.random() > 0.5){
-            fuels.push({
-                x: W + 150 * scale_f,
-                y: (100 * scale_f) + Math.random() * (H - 300 * scale_f),
-                size: 18 * scale_f,
-                bob: Math.random() * Math.PI * 2
+        // 3. Spawn Collectibles (Fuel / Shield / Magnet)
+        if(Math.random() > 0.4){
+            let r = Math.random();
+            let cType = 'fuel';
+            if(r > 0.9) cType = 'shield';
+            else if(r > 0.8) cType = 'magnet';
+
+            collectibles.push({
+                type: cType, x: W + 150 * scale_f, y: 100 * scale_f + Math.random() * (H - 300 * scale_f),
+                size: 18 * scale_f, bob: Math.random() * Math.PI * 2
             });
         }
         lastSpawn = Date.now();
     }
 
-    // Fluffy Background Clouds
-    if(Date.now() - lastCloud > 2000) {
-        fluffyClouds.push({
-            x: W + 200,
-            y: Math.random() * H * 0.5,
-            size: (40 + Math.random() * 40) * scale_f,
-            speed: 1 + Math.random() * 1.5
-        });
-        lastCloud = Date.now();
-    }
+    // BG Clouds
+    if(Math.random() < 0.01) clouds.push({ x: W + 200, y: Math.random() * H * 0.6, size: (40 + Math.random() * 40) * scale_f, speed: 1 + Math.random() });
 }
 
 // ================= UPDATE LOGIC =================
-function updateGame(){
-    time++;
-
-    if(press && fuel > 0){
-        balloon.vy += balloon.lift;
-        fuel -= 0.15;
+function checkStage() {
+    let newStage = Math.floor(score / 300) + 1;
+    if(newStage > stage && newStage <= 4) {
+        stage = newStage;
+        wind.force += 0.5; // Wind gets stronger
+        document.getElementById("stageText").innerText = "STAGE " + stage;
+        
+        // Show Alert
+        let alert = document.getElementById("stageAlert");
+        alert.innerText = "STAGE " + stage + "!";
+        gsap.fromTo(alert, {scale: 0, opacity: 0}, {scale: 1, opacity: 1, duration: 0.5, yoyo: true, repeat: 1, repeatDelay: 1.5, ease: "back.out(1.5)"});
+        
+        // Change Sky Color smoothly
+        gsap.to(currentSky, { top: skyColors[stage-1].top, bottom: skyColors[stage-1].bottom, duration: 3 });
     }
+}
+
+function updateIcons() {
+    let sIcon = document.getElementById("iconShield");
+    let mIcon = document.getElementById("iconMagnet");
+    balloon.hasShield ? sIcon.classList.add("power-active") : sIcon.classList.remove("power-active");
+    if(balloon.hasMagnet) {
+        mIcon.classList.add("power-active");
+        document.getElementById("magnetProgress").classList.remove("hidden");
+    } else {
+        mIcon.classList.remove("power-active");
+        document.getElementById("magnetProgress").classList.add("hidden");
+    }
+}
+
+function triggerHit(type) {
+    if(balloon.hasShield) {
+        balloon.hasShield = false;
+        createExplosion(balloon.x, balloon.y, "#4FACFE", 30); // Shield break effect
+        spawnFloatingText("SHIELD BROKEN!", balloon.x, balloon.y - 50, "#4FACFE");
+        updateIcons();
+        return false; // Did not die
+    }
+    
+    if(type === 'storm') {
+        // Storm doesn't kill instantly, drains fuel and drops you
+        fuel -= 25;
+        balloon.vy += 8 * scale_f; // Slam down
+        createExplosion(balloon.x, balloon.y, "#FFF", 15);
+        spawnFloatingText("-25 FUEL!", balloon.x, balloon.y - 50, "#FF4757");
+        if(fuel <= 0) triggerGameOver();
+        return false;
+    }
+    
+    triggerGameOver(); // Normal hit (Bird, Chimney, Plane)
+    return true;
+}
+
+function updateGame(){
+    time++; checkStage();
+
+    if(press && fuel > 0){ balloon.vy += balloon.lift; fuel -= 0.15; }
+    // Particle Fire
+    if(press && fuel > 0 && Math.random() > 0.4) {
+        particles.push({ x: balloon.x + (Math.random() - 0.5)*15*scale_f, y: balloon.y + balloon.r*1.2, vx: 0, vy: (Math.random()*3+2)*scale_f, life: 1, color: '#FFA502', size: (Math.random()*5+3)*scale_f, type: 'circle' });
+    }
+
     balloon.vy += balloon.gravity;
     balloon.vy *= balloon.drag;
     balloon.y += balloon.vy;
-
-    // Bouncy cartoon feeling
     balloon.r = (30 + Math.sin(time * 0.15) * 1.5) * scale_f;
 
     if(balloon.y < -80 * scale_f || balloon.y > H + 50 * scale_f) triggerGameOver();
 
-    createFireParticles();
+    // Magnet Logic
+    if(balloon.hasMagnet) {
+        balloon.magnetTimer -= 1/60; // Approx 1 sec per 60 frames
+        document.getElementById("magnetProgress").style.strokeDashoffset = 138 - (138 * (balloon.magnetTimer / 10));
+        if(balloon.magnetTimer <= 0) { balloon.hasMagnet = false; updateIcons(); }
+    }
 
+    // Chimneys (Terrain)
     for (let i = chimneys.length - 1; i >= 0; i--) {
-        let c = chimneys[i];
-        c.x -= wind.force + 2 * scale_f;
-        if (balloon.x + balloon.r * 0.6 > c.x && balloon.x - balloon.r * 0.6 < c.x + c.w) {
-            if (balloon.y + balloon.r * 0.8 > H - c.h) triggerGameOver();
+        let c = chimneys[i]; c.x -= wind.force + 2 * scale_f;
+        if (balloon.x + balloon.r * 0.6 > c.x && balloon.x - balloon.r * 0.6 < c.x + c.w && balloon.y + balloon.r * 0.8 > H - c.h) {
+            if(triggerHit('chimney')) chimneys.splice(i,1); // Destroy chimney if shield saved us
         }
         if (c.x < -200 * scale_f) chimneys.splice(i, 1);
     }
 
-    for (let i = birds.length - 1; i >= 0; i--) {
-        let b = birds[i];
-        b.x -= wind.force + b.speed;
-        b.y += Math.sin(time * b.flapSpeed) * 2 * scale_f;
-        
-        let dx = balloon.x - b.x;
-        let dy = balloon.y - b.y;
-        if (Math.sqrt(dx*dx + dy*dy) < balloon.r + b.size*0.8) triggerGameOver();
-        if (b.x < -100 * scale_f) birds.splice(i, 1);
+    // Hazards (Birds, Clouds, Planes)
+    for (let i = hazards.length - 1; i >= 0; i--) {
+        let h = hazards[i];
+        h.x -= wind.force + h.speed;
+        if(h.type === 'bird') h.y += Math.sin(time * h.flap) * 2 * scale_f;
+        if(h.type === 'storm') h.lightningTime++;
+
+        let hitRadius = h.type === 'storm' ? h.size * 0.8 : h.size;
+        let dx = balloon.x - h.x, dy = balloon.y - h.y;
+        if (Math.sqrt(dx*dx + dy*dy) < balloon.r + hitRadius) {
+            triggerHit(h.type);
+            hazards.splice(i, 1); // Remove hazard on hit
+            continue;
+        }
+        if (h.x < -100 * scale_f) hazards.splice(i, 1);
     }
 
-    for (let i = fuels.length - 1; i >= 0; i--) {
-        let f = fuels[i];
-        f.x -= wind.force + 1.5 * scale_f;
+    // Collectibles
+    for (let i = collectibles.length - 1; i >= 0; i--) {
+        let c = collectibles[i];
+        
+        // Apply Magnet
+        if(balloon.hasMagnet && c.type === 'fuel') {
+            let dx = balloon.x - c.x, dy = balloon.y - c.y;
+            let dist = Math.sqrt(dx*dx + dy*dy);
+            if(dist < 400 * scale_f) { // Pull radius
+                c.x += (dx / dist) * 10 * scale_f;
+                c.y += (dy / dist) * 10 * scale_f;
+            } else { c.x -= wind.force + 1.5 * scale_f; }
+        } else {
+            c.x -= wind.force + 1.5 * scale_f;
+        }
 
-        let dx = balloon.x - f.x;
-        let dy = balloon.y - f.y;
-        if (Math.sqrt(dx*dx + dy*dy) < balloon.r + f.size) {
-            fuel = Math.min(100, fuel + 25);
-            createStarParticles(f.x, f.y); // Cute collection effect
-            fuels.splice(i, 1);
-        } else if (f.x < -60 * scale_f) {
-            fuels.splice(i, 1);
+        let dx2 = balloon.x - c.x, dy2 = balloon.y - c.y;
+        if (Math.sqrt(dx2*dx2 + dy2*dy2) < balloon.r + c.size) {
+            if(c.type === 'fuel') { fuel = Math.min(100, fuel + 25); createExplosion(c.x, c.y, '#FFD700', 10); }
+            else if(c.type === 'shield') { balloon.hasShield = true; spawnFloatingText("SHIELD!", c.x, c.y, "#4FACFE"); updateIcons(); }
+            else if(c.type === 'magnet') { balloon.hasMagnet = true; balloon.magnetTimer = 10; spawnFloatingText("MAGNET!", c.x, c.y, "#A55EEA"); updateIcons(); }
+            collectibles.splice(i, 1);
+        } else if (c.x < -60 * scale_f) {
+            collectibles.splice(i, 1);
         }
     }
 
-    for (let i = fluffyClouds.length - 1; i >= 0; i--) {
-        fluffyClouds[i].x -= fluffyClouds[i].speed;
-        if (fluffyClouds[i].x < -300) fluffyClouds.splice(i, 1);
+    // Particles & BG
+    for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].x += particles[i].vx - wind.force*0.5; particles[i].y += particles[i].vy; particles[i].life -= 0.04; particles[i].size *= 0.92;
+        if(particles[i].life <= 0) particles.splice(i, 1);
+    }
+    for (let i = clouds.length - 1; i >= 0; i--) { clouds[i].x -= clouds[i].speed; if (clouds[i].x < -300) clouds.splice(i, 1); }
+    for (let i = floatingTexts.length - 1; i >= 0; i--) {
+        floatingTexts[i].y -= 1 * scale_f; floatingTexts[i].life -= 0.02;
+        if(floatingTexts[i].life <= 0) floatingTexts.splice(i,1);
     }
 
-    wind.force += 0.0003;
-    score += 0.15 * scale_f;
-
+    wind.force += 0.0003; score += 0.15 * scale_f;
     document.getElementById("score").innerText = Math.floor(score) + "m";
     document.getElementById("fuelFill").style.width = fuel + "%";
     document.getElementById("fuelPerc").innerText = Math.floor(fuel) + "%";
 }
 
-// ================= DRAWING (GRAPHICS) =================
+// ================= DRAWING =================
 function drawSky(){
-    // Bright cartoon sky (Blue to very soft peach)
     let g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, "#4FACFE"); // Bright Sky Blue
-    g.addColorStop(0.7, "#00F2FE"); // Cyan
-    g.addColorStop(1, "#FFF1EB"); // Warm horizon
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
-
-    // Cute Sun
-    ctx.beginPath(); ctx.arc(W*0.8, H*0.25, 45*scale_f, 0, Math.PI*2); 
-    ctx.fillStyle = "#FFEAA7"; ctx.fill();
-    ctx.beginPath(); ctx.arc(W*0.8, H*0.25, 60*scale_f, 0, Math.PI*2); 
-    ctx.fillStyle = "rgba(255, 234, 167, 0.3)"; ctx.fill();
+    g.addColorStop(0, currentSky.top); g.addColorStop(1, currentSky.bottom);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 }
 
-function drawFluffyClouds() {
-    ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-    fluffyClouds.forEach(c => {
-        ctx.beginPath(); ctx.arc(c.x, c.y, c.size, 0, Math.PI*2); ctx.fill();
-        ctx.beginPath(); ctx.arc(c.x + c.size*0.8, c.y + c.size*0.2, c.size*0.8, 0, Math.PI*2); ctx.fill();
-        ctx.beginPath(); ctx.arc(c.x - c.size*0.6, c.y + c.size*0.1, c.size*0.6, 0, Math.PI*2); ctx.fill();
-    });
-}
-
-function drawMountains() {
-    mountains.forEach((m) => {
-        m.offset = (m.offset - m.speed - wind.force * 0.1) % W;
-        ctx.fillStyle = m.color;
-        ctx.beginPath();
-        ctx.moveTo(0, H);
-        for (let x = 0; x <= W + 150; x += 200 * scale_f) {
-            let cx = x + m.offset;
-            // Very smooth, round hills
-            let cy = m.y + Math.sin(cx * 0.002) * 60 * scale_f;
-            ctx.lineTo(x, cy);
+function drawHazards() {
+    hazards.forEach(h => {
+        ctx.save(); ctx.translate(h.x, h.y);
+        if(h.type === 'bird') {
+            let flap = Math.sin(time * h.flap) * 8 * scale_f, w = h.size;
+            ctx.fillStyle = "#FFF"; ctx.beginPath(); ctx.arc(0, 0, w*0.6, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(-w, flap - w*0.5, -w*1.5, flap); ctx.quadraticCurveTo(-w, flap + w*0.5, 0, 0); ctx.fill();
+        } 
+        else if(h.type === 'storm') {
+            ctx.fillStyle = "#2d3436"; // Dark cloud
+            ctx.beginPath(); ctx.arc(0, 0, h.size, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(h.size*0.5, -h.size*0.3, h.size*0.8, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(-h.size*0.6, -h.size*0.1, h.size*0.7, 0, Math.PI*2); ctx.fill();
+            
+            // Lightning flash
+            if(h.lightningTime % 60 < 10) {
+                ctx.strokeStyle = "#FDCB6E"; ctx.lineWidth = 3*scale_f;
+                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(10*scale_f, h.size); ctx.lineTo(-5*scale_f, h.size*1.2); ctx.lineTo(15*scale_f, h.size*2); ctx.stroke();
+            }
         }
-        ctx.lineTo(W, H);
-        ctx.fill();
-        
-        // Add a bright border on top of mountains for 3D outline effect
-        ctx.strokeStyle = "rgba(255,255,255,0.4)";
-        ctx.lineWidth = 4 * scale_f;
-        ctx.stroke();
-    });
-}
-
-function drawChimneys(){
-    chimneys.forEach(c => {
-        let x = c.x;
-        let y = H - c.h;
-
-        // Bright Clay Color Base
-        let bodyColor = `hsl(${20 + c.hue}, 80%, 65%)`; 
-        let shadowColor = `hsl(${20 + c.hue}, 80%, 50%)`;
-        
-        let bodyGrad = ctx.createLinearGradient(x, 0, x + c.w, 0);
-        bodyGrad.addColorStop(0, bodyColor); 
-        bodyGrad.addColorStop(0.8, shadowColor); 
-        ctx.fillStyle = bodyGrad;
-
-        // Rounded Base
-        ctx.beginPath();
-        ctx.moveTo(x - 5 * scale_f, H);
-        ctx.lineTo(x + c.w * 0.2, y);
-        ctx.lineTo(x + c.w * 0.8, y);
-        ctx.lineTo(x + c.w + 5 * scale_f, H);
-        ctx.fill();
-
-        // 3D Rim Light (White shine on the left)
-        ctx.strokeStyle = "rgba(255,255,255,0.6)";
-        ctx.lineWidth = 4 * scale_f;
-        ctx.beginPath();
-        ctx.moveTo(x - 2 * scale_f, H);
-        ctx.lineTo(x + c.w * 0.25, y);
-        ctx.stroke();
-
-        // Cap (Mushroom top)
-        let capColor = `hsl(${280 + c.hue}, 60%, 55%)`; // Purple-ish caps
-        let capShadow = `hsl(${280 + c.hue}, 60%, 40%)`;
-        let capGrad = ctx.createLinearGradient(x, y-25*scale_f, x+c.w, y);
-        capGrad.addColorStop(0, capColor);
-        capGrad.addColorStop(1, capShadow);
-        ctx.fillStyle = capGrad;
-
-        ctx.beginPath(); 
-        ctx.ellipse(x + c.w/2, y, c.w*0.7, 20*scale_f, 0, 0, Math.PI*2); 
-        ctx.fill();
-        
-        // Shine on cap
-        ctx.fillStyle = "rgba(255,255,255,0.4)";
-        ctx.beginPath(); 
-        ctx.ellipse(x + c.w/2 - c.w*0.3, y - 5*scale_f, c.w*0.2, 8*scale_f, -0.2, 0, Math.PI*2); 
-        ctx.fill();
-    });
-}
-
-function drawBirds(){
-    // Cute Flappy White Birds (like doves/seagulls)
-    ctx.fillStyle = "#FFF";
-    birds.forEach(b => {
-        ctx.save(); ctx.translate(b.x, b.y);
-        let flap = Math.sin(time * b.flapSpeed) * 8 * scale_f;
-        let w = b.size;
-        
-        // Shadow/Outline
-        ctx.shadowBlur = 4; ctx.shadowColor = "rgba(0,0,0,0.15)";
-        
-        // Body (Circle)
-        ctx.beginPath(); ctx.arc(0, 0, w*0.6, 0, Math.PI*2); ctx.fill();
-        
-        // Wings (Rounder)
-        ctx.beginPath(); 
-        ctx.moveTo(0, 0); 
-        ctx.quadraticCurveTo(-w*0.8, flap - w*0.5, -w*1.5, flap); 
-        ctx.quadraticCurveTo(-w*0.8, flap + w*0.5, 0, 0); 
-        ctx.fill();
-        
-        ctx.beginPath(); 
-        ctx.moveTo(0, 0); 
-        ctx.quadraticCurveTo(w*0.8, flap - w*0.5, w*1.5, flap); 
-        ctx.quadraticCurveTo(w*0.8, flap + w*0.5, 0, 0); 
-        ctx.fill();
+        else if(h.type === 'plane') {
+            ctx.fillStyle = "#dfe6e9";
+            ctx.beginPath(); ctx.ellipse(0, 0, h.size*1.5, h.size*0.4, 0, 0, Math.PI*2); ctx.fill(); // Body
+            ctx.fillStyle = "#d63031"; ctx.beginPath(); ctx.moveTo(-h.size, 0); ctx.lineTo(-h.size*1.5, -h.size*0.8); ctx.lineTo(-h.size*0.5, 0); ctx.fill(); // Tail
+            // Blinking light
+            if(time % 15 < 7) { ctx.fillStyle = "#ff7675"; ctx.beginPath(); ctx.arc(-h.size, -h.size*0.8, 3*scale_f, 0, Math.PI*2); ctx.fill(); }
+        }
         ctx.restore();
     });
 }
 
-function drawFuel(){
-    fuels.forEach(f => {
-        f.bob += 0.1;
-        let yBob = Math.sin(f.bob) * 5 * scale_f;
+function drawCollectibles(){
+    collectibles.forEach(c => {
+        c.bob += 0.1; let yBob = Math.sin(c.bob) * 5 * scale_f;
+        ctx.save(); ctx.translate(c.x, c.y + yBob);
         
-        ctx.save(); ctx.translate(f.x, f.y + yBob);
-        
-        // Draw 3D Coin/Fuel Tank
-        ctx.fillStyle = "#FFA502"; // Gold Shadow
-        ctx.beginPath(); ctx.arc(0, 4*scale_f, f.size, 0, Math.PI * 2); ctx.fill();
-        
-        ctx.fillStyle = "#ECCC68"; // Bright Gold
-        ctx.beginPath(); ctx.arc(0, 0, f.size, 0, Math.PI * 2); ctx.fill();
-        
-        // White rim highlight
-        ctx.fillStyle = "rgba(255,255,255,0.6)";
-        ctx.beginPath(); ctx.arc(-f.size*0.3, -f.size*0.3, f.size*0.3, 0, Math.PI * 2); ctx.fill();
-
-        ctx.fillStyle = "#FFF"; ctx.font = `bold ${f.size*1.2}px Nunito`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        ctx.fillText("⚡", 0, 1);
+        if(c.type === 'fuel') {
+            ctx.fillStyle = "#FFA502"; ctx.beginPath(); ctx.arc(0, 4*scale_f, c.size, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = "#ECCC68"; ctx.beginPath(); ctx.arc(0, 0, c.size, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = "#FFF"; ctx.font = `bold ${c.size*1.2}px Nunito`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("⚡", 0, 1);
+        } else if(c.type === 'shield') {
+            ctx.fillStyle = "#0984e3"; ctx.beginPath(); ctx.arc(0, 4*scale_f, c.size, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = "#74b9ff"; ctx.beginPath(); ctx.arc(0, 0, c.size, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = "#FFF"; ctx.font = `bold ${c.size*1px}px Arial`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("🛡️", 0, 1);
+        } else if(c.type === 'magnet') {
+            ctx.fillStyle = "#6c5ce7"; ctx.beginPath(); ctx.arc(0, 4*scale_f, c.size, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = "#a29bfe"; ctx.beginPath(); ctx.arc(0, 0, c.size, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = "#FFF"; ctx.font = `bold ${c.size*1px}px Arial`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("🧲", 0, 1);
+        }
         ctx.restore();
     });
 }
 
 function drawBalloon(){
-    ctx.save();
-    ctx.translate(balloon.x, balloon.y);
-    ctx.rotate(balloon.vy * 0.04); 
+    ctx.save(); ctx.translate(balloon.x, balloon.y); ctx.rotate(balloon.vy * 0.04); 
+    let r = balloon.r, basketW = r * 0.5, basketH = r * 0.4, ropeDrop = r * 1.3; 
 
-    let r = balloon.r;
-    let basketW = r * 0.5;  
-    let basketH = r * 0.4; 
-    let ropeDrop = r * 1.3; 
+    // Magnet Aura Effect
+    if(balloon.hasMagnet) {
+        ctx.beginPath(); ctx.arc(0, 0, r*1.5 + Math.sin(time*0.2)*10, 0, Math.PI*2);
+        ctx.strokeStyle = "rgba(162, 155, 254, 0.5)"; ctx.lineWidth = 3*scale_f; ctx.stroke();
+    }
 
-    // Fire
     if(press && fuel > 0){
-        ctx.fillStyle = "#FFA502";
-        ctx.beginPath(); ctx.moveTo(-basketW/3, ropeDrop); ctx.lineTo(0, ropeDrop + (Math.random()*15 + 10) * scale_f); ctx.lineTo(basketW/3, ropeDrop); ctx.fill();
+        ctx.fillStyle = "#FFA502"; ctx.beginPath(); ctx.moveTo(-basketW/3, ropeDrop); ctx.lineTo(0, ropeDrop + (Math.random()*15+10)*scale_f); ctx.lineTo(basketW/3, ropeDrop); ctx.fill();
     }
 
-    // Ropes (Thicker, cartoon style)
     ctx.strokeStyle = "#576574"; ctx.lineWidth = 2 * scale_f;
-    ctx.beginPath(); ctx.moveTo(-r*0.3, r*0.8); ctx.lineTo(-basketW/2 + 2, ropeDrop); ctx.moveTo(r*0.3, r*0.8); ctx.lineTo(basketW/2 - 2, ropeDrop); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-r*0.3, r*0.8); ctx.lineTo(-basketW/2+2, ropeDrop); ctx.moveTo(r*0.3, r*0.8); ctx.lineTo(basketW/2-2, ropeDrop); ctx.stroke();
 
-    // Basket (Smooth brown)
-    ctx.fillStyle = "#C8D6E5"; // Light trim
-    ctx.beginPath(); ctx.roundRect(-basketW/2 - 2, ropeDrop - 2, basketW + 4, basketH + 4, 4); ctx.fill();
-    ctx.fillStyle = "#8395A7"; // Main basket body
-    ctx.beginPath(); ctx.roundRect(-basketW/2, ropeDrop, basketW, basketH, 2); ctx.fill();
+    ctx.fillStyle = "#C8D6E5"; ctx.beginPath(); ctx.roundRect(-basketW/2-2, ropeDrop-2, basketW+4, basketH+4, 4); ctx.fill();
+    ctx.fillStyle = "#8395A7"; ctx.beginPath(); ctx.roundRect(-basketW/2, ropeDrop, basketW, basketH, 2); ctx.fill();
 
-    // Balloon Envelope 
     ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI*2); ctx.clip(); 
+    let colors = ["#FF4757", "#FFF200", "#1E90FF", "#2ED573"]; let stripeW = (r*2.2)/4;
+    for(let i=0; i<4; i++) { ctx.fillStyle = colors[i%colors.length]; ctx.fillRect(-r*1.1 + i*stripeW, -r*1.1, stripeW, r*2.2); }
     
-    // Very bright pastel primary colors
-    let colors = ["#FF4757", "#FFF200", "#1E90FF", "#2ED573"];
-    let stripeW = (r*2.2) / 4;
-    for(let i = 0; i < 4; i++) {
-        ctx.fillStyle = colors[i % colors.length];
-        ctx.fillRect(-r*1.1 + i * stripeW, -r*1.1, stripeW, r*2.2);
-    }
-    
-    // 3D Cartoon Shading (Inner shadow & rim light)
     ctx.globalCompositeOperation = "source-atop";
-    
-    // Dark side shadow
     let shadow = ctx.createRadialGradient(r*0.5, r*0.5, r*0.5, 0, 0, r*1.5);
-    shadow.addColorStop(0, "rgba(0,0,0,0)");
-    shadow.addColorStop(1, "rgba(0,0,0,0.3)");
-    ctx.fillStyle = shadow;
-    ctx.fillRect(-r*2, -r*2, r*4, r*4);
-
-    // Shiny Rim Light (Top Left)
-    ctx.fillStyle = "rgba(255,255,255,0.6)";
-    ctx.beginPath(); ctx.ellipse(-r*0.4, -r*0.5, r*0.4, r*0.15, -0.5, 0, Math.PI*2); ctx.fill();
-    
+    shadow.addColorStop(0, "rgba(0,0,0,0)"); shadow.addColorStop(1, "rgba(0,0,0,0.3)");
+    ctx.fillStyle = shadow; ctx.fillRect(-r*2, -r*2, r*4, r*4);
+    ctx.fillStyle = "rgba(255,255,255,0.6)"; ctx.beginPath(); ctx.ellipse(-r*0.4, -r*0.5, r*0.4, r*0.15, -0.5, 0, Math.PI*2); ctx.fill();
     ctx.globalCompositeOperation = "source-over";
+    
+    // Shield Bubble
+    if(balloon.hasShield) {
+        ctx.beginPath(); ctx.arc(0, 0, r*1.3, 0, Math.PI*2);
+        ctx.fillStyle = "rgba(116, 185, 255, 0.3)"; ctx.fill();
+        ctx.strokeStyle = "rgba(116, 185, 255, 0.8)"; ctx.lineWidth = 3*scale_f; ctx.stroke();
+    }
     ctx.restore();
 }
 
-// ================= GAME LOOP =================
+// ================= LOOP & RENDER =================
 function loop(){
-    if(gameState === STATE.PLAY){
-        updateGame();
-        spawnObjects();
-    }
+    if(gameState === STATE.PLAY){ updateGame(); spawnObjects(); }
     
-    ctx.clearRect(0,0,W,H);
-    drawSky();
-    drawFluffyClouds();
-    drawMountains();
-    drawChimneys();
-    drawBirds();
-    drawFuel();
-    updateDrawParticles();
+    ctx.clearRect(0,0,W,H); drawSky();
     
+    // Clouds
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    clouds.forEach(c => { ctx.beginPath(); ctx.arc(c.x, c.y, c.size, 0, Math.PI*2); ctx.arc(c.x+c.size*0.6, c.y+c.size*0.2, c.size*0.8, 0, Math.PI*2); ctx.fill(); });
+
+    // Chimneys
+    chimneys.forEach(c => {
+        let x = c.x, y = H - c.h;
+        let bGrad = ctx.createLinearGradient(x, 0, x+c.w, 0);
+        bGrad.addColorStop(0, `hsl(${20+c.hue}, 80%, 65%)`); bGrad.addColorStop(0.8, `hsl(${20+c.hue}, 80%, 50%)`);
+        ctx.fillStyle = bGrad; ctx.beginPath(); ctx.moveTo(x-5*scale_f, H); ctx.lineTo(x+c.w*0.2, y); ctx.lineTo(x+c.w*0.8, y); ctx.lineTo(x+c.w+5*scale_f, H); ctx.fill();
+        ctx.strokeStyle="rgba(255,255,255,0.6)"; ctx.lineWidth=4*scale_f; ctx.beginPath(); ctx.moveTo(x-2*scale_f, H); ctx.lineTo(x+c.w*0.25, y); ctx.stroke();
+        
+        let cGrad = ctx.createLinearGradient(x, y-25*scale_f, x+c.w, y);
+        cGrad.addColorStop(0, `hsl(${280+c.hue}, 60%, 55%)`); cGrad.addColorStop(1, `hsl(${280+c.hue}, 60%, 40%)`);
+        ctx.fillStyle = cGrad; ctx.beginPath(); ctx.ellipse(x+c.w/2, y, c.w*0.7, 20*scale_f, 0, 0, Math.PI*2); ctx.fill();
+    });
+
+    drawHazards();
+    drawCollectibles();
+
+    // Particles
+    particles.forEach(p => {
+        ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+    }); ctx.globalAlpha = 1;
+
     if(gameState !== STATE.MENU) drawBalloon();
+
+    // Floating Texts
+    floatingTexts.forEach(t => {
+        ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font = `bold ${24*scale_f}px Nunito`; ctx.textAlign = "center";
+        ctx.fillText(t.text, t.x, t.y);
+    }); ctx.globalAlpha = 1;
 
     requestAnimationFrame(loop);
 }
 
-// ================= 3D UI GSAP ANIMATIONS =================
-window.onload = () => {
-    // Menu Bouncy Entrance
-    gsap.fromTo("#menuCard", 
-        { scale: 0.5, y: 100, opacity: 0 }, 
-        { scale: 1, y: 0, opacity: 1, duration: 1, ease: "elastic.out(1, 0.6)" }
-    );
-    loop();
-};
-
+// ================= UI CONTROLS =================
+window.onload = () => { gsap.fromTo("#menuCard", { scale: 0.5, y: 100, opacity: 0 }, { scale: 1, y: 0, opacity: 1, duration: 1, ease: "elastic.out(1, 0.6)" }); loop(); };
 function startGame(){
     reset();
-    
-    // Menu Exit
-    gsap.to("#menuCard", { 
-        scale: 0.8, y: -50, opacity: 0, duration: 0.4, ease: "back.in(1.2)",
-        onComplete: () => {
-            document.getElementById("menu").style.display = "none";
-            gameState = STATE.PLAY;
-        }
-    });
-    
-    // HUD bouncy enter
+    gsap.to("#menuCard", { scale: 0.8, y: -50, opacity: 0, duration: 0.4, ease: "back.in(1.2)", onComplete: () => { document.getElementById("menu").style.display = "none"; gameState = STATE.PLAY; }});
     gsap.to("#hud", { duration: 0.6, y: 10, opacity: 1, delay: 0.4, ease: "elastic.out(1, 0.7)" });
+    gsap.to("#powerHud", { duration: 0.6, y: 10, opacity: 1, delay: 0.5 });
 }
-
 function triggerGameOver(){
-    if(gameState === STATE.OVER) return;
-    gameState = STATE.OVER;
-    
+    if(gameState === STATE.OVER) return; gameState = STATE.OVER;
     document.getElementById("finalScore").innerText = Math.floor(score) + "m";
-    gsap.to("#hud", { duration: 0.3, opacity: 0, y: -20 });
-
-    let go = document.getElementById("gameover");
-    go.style.display = "flex";
-    
+    gsap.to("#hud", { duration: 0.3, opacity: 0, y: -20 }); gsap.to("#powerHud", { duration: 0.3, opacity: 0, y: -20 });
+    let go = document.getElementById("gameover"); go.style.display = "flex";
     gsap.fromTo("#gameover", {opacity: 0}, {duration: 0.3, opacity: 1});
-    gsap.fromTo("#gameOverCard", 
-        { scale: 0.5, rotation: -10, opacity: 0 }, 
-        { scale: 1, rotation: 0, opacity: 1, duration: 0.7, ease: "elastic.out(1, 0.6)", delay: 0.2 }
-    );
+    gsap.fromTo("#gameOverCard", { scale: 0.5, rotation: -10, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.7, ease: "elastic.out(1, 0.6)", delay: 0.2 });
 }
-
 function restart(){
     gsap.to("#gameOverCard", { scale: 0.8, y: 50, opacity: 0, duration: 0.3, ease: "back.in(1.2)", onComplete: () => {
-        document.getElementById("gameover").style.display = "none";
-        document.getElementById("menu").style.display = "flex";
-        
-        gsap.fromTo("#menuCard", 
-            { scale: 0.5, y: 100, opacity: 0 }, 
-            { scale: 1, y: 0, opacity: 1, duration: 0.8, ease: "elastic.out(1, 0.6)" }
-        );
-        
-        gameState = STATE.MENU;
-        reset();
+        document.getElementById("gameover").style.display = "none"; document.getElementById("menu").style.display = "flex";
+        gsap.fromTo("#menuCard", { scale: 0.5, y: 100, opacity: 0 }, { scale: 1, y: 0, opacity: 1, duration: 0.8, ease: "elastic.out(1, 0.6)" });
+        gameState = STATE.MENU; reset();
     }});
 }
 </script>
