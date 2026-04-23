@@ -87,8 +87,8 @@
                 PLAY NOW
             </button>
             <div class="flex justify-center gap-3 text-sm font-bold text-gray-600 mb-2">
-                <span class="bg-blue-100 p-2 rounded-lg">🛡️ = Extra Life</span>
-                <span class="bg-purple-100 p-2 rounded-lg">🧲 = Pull Fuel</span>
+                <span class="bg-blue-100 p-2 rounded-lg">🛡️ = Kalkan</span>
+                <span class="bg-purple-100 p-2 rounded-lg">🧲 = Mıknatıs</span>
             </div>
         </div>
     </div>
@@ -143,7 +143,7 @@ let currentSky = { top: skyColors[0].top, bottom: skyColors[0].bottom };
 
 // ================= INPUT =================
 let press = false;
-window.addEventListener("touchstart", () => { if(gameState===STATE.PLAY) press = true; }, {passive: false});
+window.addEventListener("touchstart", (e) => { if(gameState===STATE.PLAY) press = true; }, {passive: false});
 window.addEventListener("touchend", () => press = false);
 window.addEventListener("mousedown", () => { if(gameState===STATE.PLAY) press = true; });
 window.addEventListener("mouseup", () => press = false);
@@ -160,7 +160,7 @@ function reset() {
     currentSky = { top: skyColors[0].top, bottom: skyColors[0].bottom };
     updateIcons();
 }
-reset();
+// Bu fonksiyon artık window.onload'da veya startGame'de ilk kez çağrılacağı için hatasız!
 
 // ================= PARTICLES & TEXTS =================
 function spawnFloatingText(txt, x, y, color) {
@@ -194,7 +194,7 @@ function spawnObjects(){
         if(hazardRoll > 0.4){
             if(stage >= 3 && Math.random() > 0.7) {
                 // JET PLANE (Very Fast)
-                hazards.push({ type: 'plane', x: W + 200 * scale_f, y: Math.random() * H * 0.7 + 100, size: 25 * scale_f, speed: (8 + Math.random()*3) * scale_f });
+                hazards.push({ type: 'plane', x: W + 200 * scale_f, y: Math.random() * H * 0.7 + 100, size: 25 * scale_f, speed: (8 + Math.random()*3) * scale_f, lightningTime: 0 });
             } 
             else if(stage >= 2 && Math.random() > 0.6) {
                 // STORM CLOUD (Lightning)
@@ -202,7 +202,7 @@ function spawnObjects(){
             } 
             else {
                 // BIRD
-                hazards.push({ type: 'bird', x: W + 150 * scale_f, y: Math.random() * (H - 200 * scale_f) + 100, size: 15 * scale_f, speed: (3 + Math.random()*2) * scale_f, flap: 0.15 + Math.random()*0.1 });
+                hazards.push({ type: 'bird', x: W + 150 * scale_f, y: Math.random() * (H - 200 * scale_f) + 100, size: 15 * scale_f, speed: (3 + Math.random()*2) * scale_f, flap: 0.15 + Math.random()*0.1, lightningTime: 0 });
             }
         }
 
@@ -422,11 +422,11 @@ function drawCollectibles(){
         } else if(c.type === 'shield') {
             ctx.fillStyle = "#0984e3"; ctx.beginPath(); ctx.arc(0, 4*scale_f, c.size, 0, Math.PI * 2); ctx.fill();
             ctx.fillStyle = "#74b9ff"; ctx.beginPath(); ctx.arc(0, 0, c.size, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = "#FFF"; ctx.font = `bold ${c.size*1px}px Arial`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("🛡️", 0, 1);
+            ctx.fillStyle = "#FFF"; ctx.font = `bold ${c.size}px Arial`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("🛡️", 0, 1);
         } else if(c.type === 'magnet') {
             ctx.fillStyle = "#6c5ce7"; ctx.beginPath(); ctx.arc(0, 4*scale_f, c.size, 0, Math.PI * 2); ctx.fill();
             ctx.fillStyle = "#a29bfe"; ctx.beginPath(); ctx.arc(0, 0, c.size, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = "#FFF"; ctx.font = `bold ${c.size*1px}px Arial`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("🧲", 0, 1);
+            ctx.fillStyle = "#FFF"; ctx.font = `bold ${c.size}px Arial`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("🧲", 0, 1);
         }
         ctx.restore();
     });
@@ -515,7 +515,11 @@ function loop(){
 }
 
 // ================= UI CONTROLS =================
-window.onload = () => { gsap.fromTo("#menuCard", { scale: 0.5, y: 100, opacity: 0 }, { scale: 1, y: 0, opacity: 1, duration: 1, ease: "elastic.out(1, 0.6)" }); loop(); };
+window.onload = () => { 
+    reset(); // Reset'i buraya taşıdık ki DOM tam yüklensin!
+    gsap.fromTo("#menuCard", { scale: 0.5, y: 100, opacity: 0 }, { scale: 1, y: 0, opacity: 1, duration: 1, ease: "elastic.out(1, 0.6)" }); 
+    loop(); 
+};
 function startGame(){
     reset();
     gsap.to("#menuCard", { scale: 0.8, y: -50, opacity: 0, duration: 0.4, ease: "back.in(1.2)", onComplete: () => { document.getElementById("menu").style.display = "none"; gameState = STATE.PLAY; }});
