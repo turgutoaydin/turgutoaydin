@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Kapadokya • Gökyüzü Efsanesi Ultimate</title>
+  <title>Etourgood • Gemini Ultimate</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;800&family=Nunito:wght@700;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&family=Nunito:wght@700;800;900&display=swap');
     
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
-      background: #0a1628; 
+      background: #050b14; 
       overflow: hidden; 
-      font-family: 'Fredoka', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       touch-action: none; 
       -webkit-tap-highlight-color: transparent;
       position: fixed;
@@ -37,103 +37,153 @@
       z-index: 20;
     }
     
+    /* Yeni ve İnce Glassmorphism */
     .glass-panel {
-      background: rgba(15, 25, 45, 0.6);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border-radius: 32px;
-      border: 1px solid rgba(255,255,255,0.15);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+      background: rgba(10, 15, 30, 0.4);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
       color: white;
     }
     
     .play-btn {
-      background: linear-gradient(180deg, #ff5151 0%, #d63031 100%);
-      box-shadow: 0 8px 0 #8b1e1e, 0 15px 30px rgba(214,48,49,0.5);
-      border-radius: 28px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      box-shadow: 0 6px 0 #4c1d95, 0 15px 25px rgba(139, 92, 246, 0.4);
+      border-radius: 20px;
       font-weight: 800;
-      letter-spacing: 1px;
-      transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+      letter-spacing: 1.5px;
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
       border: 1px solid rgba(255,255,255,0.2);
       text-shadow: 0 2px 4px rgba(0,0,0,0.3);
       cursor: pointer;
       pointer-events: auto;
+      text-transform: uppercase;
     }
     .play-btn:active {
-      transform: translateY(8px);
-      box-shadow: 0 0px 0 #8b1e1e, 0 5px 10px rgba(214,48,49,0.6);
+      transform: translateY(6px);
+      box-shadow: 0 0px 0 #4c1d95, 0 5px 10px rgba(139, 92, 246, 0.4);
+    }
+    
+    /* Küçültülmüş, Minimal HUD Tasarımı */
+    .hud-wrapper {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      right: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .score-box {
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    /* Zarif Yakıt Göstergesi */
+    .fuel-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-top: 5px;
     }
     
     .fuel-bar-bg {
-      background: rgba(0,0,0,0.6);
-      border-radius: 20px;
-      height: 16px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 10px;
+      width: 140px;
+      height: 8px;
       overflow: hidden;
-      border: 2px solid rgba(255,255,255,0.2);
-      box-shadow: inset 0 4px 8px rgba(0,0,0,0.8);
+      border: 1px solid rgba(255,255,255,0.15);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
     }
+    
     .fuel-fill {
       height: 100%;
-      background: linear-gradient(90deg, #ff4757, #ffa502, #2ed573);
-      border-radius: 20px;
-      box-shadow: 0 0 15px rgba(255, 165, 2, 0.8);
+      background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
       transition: width 0.1s linear, background-color 0.3s;
     }
     .fuel-fill.low {
-      background: linear-gradient(90deg, #ff4757, #ff6b81);
+      background: linear-gradient(90deg, #ef4444, #f43f5e);
       animation: pulse 0.5s infinite alternate;
     }
+    
     @keyframes pulse {
-      from { box-shadow: 0 0 10px #ff4757; }
-      to { box-shadow: 0 0 25px #ff4757; }
+      from { box-shadow: 0 0 5px #ef4444; }
+      to { box-shadow: 0 0 15px #ef4444; }
+    }
+    
+    /* Küçültülmüş Güç İkonları */
+    .power-row {
+      display: flex;
+      gap: 10px;
     }
     
     .power-icon {
-      width: 50px;
-      height: 50px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 26px;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(10px);
-      border: 2px solid rgba(255,255,255,0.2);
+      font-size: 16px;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.1);
       transition: all 0.3s;
       filter: grayscale(1);
-      opacity: 0.4;
+      opacity: 0.3;
     }
     .power-icon.active {
       filter: grayscale(0);
       opacity: 1;
-      border-color: #f1c40f;
-      box-shadow: 0 0 25px rgba(241, 196, 15, 0.8);
+      border-color: #8b5cf6;
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.8);
       animation: glowPulse 1.5s infinite;
-      transform: scale(1.1);
+      transform: scale(1.05);
     }
     @keyframes glowPulse {
-      0% { box-shadow: 0 0 15px rgba(241,196,15,0.5); }
-      50% { box-shadow: 0 0 40px rgba(241,196,15,1); }
-      100% { box-shadow: 0 0 15px rgba(241,196,15,0.5); }
+      0% { box-shadow: 0 0 10px rgba(139, 92, 246, 0.4); }
+      50% { box-shadow: 0 0 25px rgba(139, 92, 246, 0.9); }
+      100% { box-shadow: 0 0 10px rgba(139, 92, 246, 0.4); }
     }
     
     .stage-pop {
-      font-family: 'Nunito', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 900;
-      font-size: 5rem;
-      color: white;
-      text-shadow: 0 10px 30px rgba(0,0,0,0.8), 5px 5px 0 #d63031;
+      font-size: 4rem;
+      color: transparent;
+      -webkit-text-stroke: 2px rgba(255,255,255,0.9);
+      background: linear-gradient(135deg, #c084fc, #6366f1);
+      -webkit-background-clip: text;
+      text-shadow: 0 10px 30px rgba(0,0,0,0.8);
       position: absolute;
       top: 30%;
       left: 50%;
       transform: translate(-50%, -50%);
       opacity: 0;
       white-space: nowrap;
-      letter-spacing: 4px;
+      letter-spacing: 6px;
     }
 
     #gameOverScreen {
-      background: radial-gradient(circle at center, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.95) 100%);
+      background: radial-gradient(circle at center, rgba(5, 11, 20, 0.8) 0%, rgba(0, 0, 0, 0.98) 100%);
+    }
+
+    /* Etourgood Gradient Text */
+    .premium-text {
+      background: linear-gradient(to right, #818cf8, #c084fc, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
   </style>
 </head>
@@ -141,48 +191,48 @@
   <canvas id="gameCanvas"></canvas>
   
   <div class="ui-layer">
-    <div id="hudContainer" style="position: absolute; top: 25px; left: 20px; right: 20px; display: flex; justify-content: space-between; align-items: center; opacity: 0; transition: opacity 0.5s;">
-      <div class="glass-panel" style="padding: 12px 22px; display: flex; align-items: center; gap: 12px;">
-        <span style="font-size:1.6rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">🏆</span>
-        <span id="distDisplay" style="font-weight:900; font-size:1.6rem; letter-spacing: 1px;">0 m</span>
-      </div>
-      <div class="glass-panel" style="padding: 12px 22px; display: flex; align-items: center; gap: 12px;">
-        <span style="font-size:1.6rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">🔥</span>
-        <span id="fuelDisplay" style="font-weight:900; font-size:1.6rem;">100%</span>
-      </div>
-    </div>
     
-    <div style="position: absolute; top: 115px; left: 25px; right: 25px; opacity: 0; transition: opacity 0.5s;" id="fuelBarContainer">
-      <div class="fuel-bar-bg">
-        <div id="fuelBarFill" class="fuel-fill" style="width: 100%;"></div>
+    <div id="hudContainer" class="hud-wrapper">
+      
+      <div class="glass-panel score-box">
+        <span style="font-size:1.1rem; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));">🎯</span>
+        <span id="distDisplay" style="font-weight:800; font-size:1.1rem; letter-spacing: 0.5px;">0 m</span>
       </div>
-    </div>
-    
-    <div style="position: absolute; top: 155px; left: 50%; transform: translateX(-50%); display: flex; gap: 25px; opacity: 0; transition: opacity 0.5s;" id="powerRow">
-      <div id="shieldPowerIcon" class="power-icon">🛡️</div>
-      <div id="magnetPowerIcon" class="power-icon">🧲</div>
+      
+      <div class="fuel-container">
+        <div class="glass-panel" style="padding: 4px 12px; font-size: 0.8rem; font-weight: 700; color: #a5b4fc; letter-spacing: 1px;">YAKIT <span id="fuelDisplay" style="color: #fff;">100%</span></div>
+        <div class="fuel-bar-bg">
+          <div id="fuelBarFill" class="fuel-fill" style="width: 100%;"></div>
+        </div>
+      </div>
+      
+      <div class="power-row">
+        <div id="shieldPowerIcon" class="power-icon">🛡️</div>
+        <div id="magnetPowerIcon" class="power-icon">🧲</div>
+      </div>
+
     </div>
     
     <div id="stageAnnounce" class="stage-pop">STAGE 2</div>
     
-    <div id="menuScreen" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: auto;">
-      <div class="glass-panel" style="padding: 3.5rem 2.5rem; width: 90%; max-width: 420px; text-align: center;">
-        <div style="font-size: 5.5rem; margin-bottom: 0.5rem; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6)); animation: float 3s ease-in-out infinite;">🎈</div>
-        <h1 style="font-family:'Nunito',sans-serif; font-weight:900; font-size:3.2rem; color:#fff; margin:0; line-height:1.1; text-shadow: 0 6px 15px rgba(0,0,0,0.6);">KAPADOKYA</h1>
-        <p style="color:#94a3b8; font-weight:700; margin-bottom:2.5rem; font-size:1.4rem; letter-spacing: 2px;">ULTIMATE</p>
-        <button id="startBtn" class="play-btn" style="width:100%; padding:20px; color:white; font-size:1.8rem; border:none;">
+    <div id="menuScreen" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: auto; background: radial-gradient(circle, rgba(17,24,39,0.7) 0%, rgba(0,0,0,0.9) 100%);">
+      <div class="glass-panel" style="padding: 3rem 2rem; width: 90%; max-width: 400px; text-align: center; border: 1px solid rgba(139, 92, 246, 0.3);">
+        <div style="font-size: 4rem; margin-bottom: 0.5rem; filter: drop-shadow(0 15px 25px rgba(99, 102, 241, 0.6)); animation: float 3s ease-in-out infinite;">✨🎈</div>
+        <h1 style="font-family:'Montserrat',sans-serif; font-weight:900; font-size:2.6rem; margin:0; line-height:1.1; letter-spacing: 2px;" class="premium-text">ETOURGOOD</h1>
+        <p style="color:#94a3b8; font-weight:600; margin-bottom:2rem; font-size:1.1rem; letter-spacing: 4px; margin-top: 5px;">GEMINI ULTIMATE</p>
+        <button id="startBtn" class="play-btn" style="width:100%; padding:18px; color:white; font-size:1.4rem; border:none;">
           UÇUŞA BAŞLA
         </button>
       </div>
     </div>
     
-    <div id="gameOverScreen" style="position: absolute; inset: 0; display: none; align-items: center; justify-content: center; pointer-events: auto; backdrop-filter: blur(15px);">
-      <div class="glass-panel" style="padding: 3rem 2.5rem; width: 90%; max-width: 400px; text-align: center; border-color: rgba(239, 68, 68, 0.4);">
-        <div style="font-size: 5.5rem; filter: drop-shadow(0 0 20px rgba(239,68,68,0.8));">🔥</div>
-        <h2 style="font-family:'Nunito'; font-weight:900; color:#ff4757; font-size:3rem; margin:0.5rem 0; text-shadow: 0 4px 10px rgba(0,0,0,0.5);">YANDIN!</h2>
-        <p style="color:#94a3b8; font-weight:700; margin-top:15px; font-size: 1.2rem;">Katedilen Mesafe</p>
-        <p id="finalDistText" style="font-size:4rem; font-weight:900; color:#fff; margin:0; text-shadow: 0 4px 15px rgba(255,255,255,0.3);">0 m</p>
-        <button id="retryBtn" class="play-btn" style="background: linear-gradient(180deg, #3742fa 0%, #5352ed 100%); box-shadow: 0 8px 0 #1e272e, 0 15px 30px rgba(55,66,250,0.5); width:100%; padding:18px; color:white; font-size:1.6rem; border:none; margin-top:25px;">
+    <div id="gameOverScreen" style="position: absolute; inset: 0; display: none; align-items: center; justify-content: center; pointer-events: auto; backdrop-filter: blur(10px);">
+      <div class="glass-panel" style="padding: 2.5rem 2rem; width: 90%; max-width: 380px; text-align: center; border-color: rgba(239, 68, 68, 0.3);">
+        <div style="font-size: 4.5rem; filter: drop-shadow(0 0 20px rgba(239,68,68,0.6));">💥</div>
+        <h2 style="font-family:'Montserrat'; font-weight:900; color:#f87171; font-size:2.2rem; margin:0.5rem 0; letter-spacing: 2px;">DÜŞÜŞ!</h2>
+        <p style="color:#94a3b8; font-weight:600; margin-top:10px; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;">Katedilen Mesafe</p>
+        <p id="finalDistText" class="premium-text" style="font-size:3.5rem; font-weight:900; margin:0; text-shadow: 0 4px 15px rgba(255,255,255,0.1);">0 m</p>
+        <button id="retryBtn" class="play-btn" style="background: linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%); box-shadow: 0 6px 0 #1d4ed8, 0 15px 25px rgba(59,130,246,0.3); width:100%; padding:16px; color:white; font-size:1.3rem; border:none; margin-top:20px;">
           YENİDEN DENE
         </button>
       </div>
@@ -192,7 +242,7 @@
   <style>
     @keyframes float {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
+      50% { transform: translateY(-10px); }
     }
   </style>
 
@@ -206,7 +256,8 @@
       function resizeCanvas() {
         W = canvas.width = window.innerWidth;
         H = canvas.height = window.innerHeight;
-        scale = Math.min(W / 420, H / 780);
+        // KAMERA UZAKLAŞTIRILDI: Bölme değerleri büyütülerek tüm objeler küçültüldü. Ekrana daha fazla alan sığıyor.
+        scale = Math.min(W / 550, H / 950);
       }
       window.addEventListener('resize', resizeCanvas);
       resizeCanvas();
@@ -217,16 +268,16 @@
       // Balon
       let balloon = {
         x: 0, y: 0, vy: 0,
-        radius: 36 * scale, // Biraz daha heybetli balon
-        gravity: 0.24 * scale,
-        lift: -0.65 * scale,
+        radius: 36 * scale, // Artık ekrana göre daha küçük duracak
+        gravity: 0.22 * scale,
+        lift: -0.60 * scale,
         drag: 0.98
       };
       
       let fuel = 100;
       let distance = 0;
       let stage = 1;
-      let windSpeed = 3.0;
+      let windSpeed = 3.5;
       
       let chimneys = [];
       let birds = [];
@@ -244,11 +295,12 @@
       
       let pressing = false;
       
+      // Etourgood & Gemini Premium Renk Paleti (Daha derin ve kaliteli renkler)
       const skyPalette = [
-        { top: "#1e3c72", bottom: "#2a5298", m1: "#14254b", m2: "#0d1830" }, // Gece/Sabah
-        { top: "#ff7e5f", bottom: "#feb47b", m1: "#c0392b", m2: "#8e44ad" }, // Gündoğumu
-        { top: "#2980b9", bottom: "#6dd5ed", m1: "#2c3e50", m2: "#1a252f" }, // Gündüz
-        { top: "#8e2de2", bottom: "#4a00e0", m1: "#2c003e", m2: "#12001c" }  // Akşam
+        { top: "#0f172a", bottom: "#1e1b4b", m1: "#1e293b", m2: "#0f172a" }, // Gece/Uzay (Başlangıç)
+        { top: "#4c1d95", bottom: "#9d174d", m1: "#5b21b6", m2: "#312e81" }, // Neon Gündoğumu
+        { top: "#0284c7", bottom: "#38bdf8", m1: "#0369a1", m2: "#0c4a6e" }, // Canlı Gündüz
+        { top: "#86198f", bottom: "#4c1d95", m1: "#701a75", m2: "#3b0764" }  // Premium Akşam
       ];
       let currentSky = { ...skyPalette[0] };
       
@@ -257,8 +309,6 @@
       const fuelDisplay = document.getElementById('fuelDisplay');
       const fuelBarFill = document.getElementById('fuelBarFill');
       const hudContainer = document.getElementById('hudContainer');
-      const fuelBarContainer = document.getElementById('fuelBarContainer');
-      const powerRow = document.getElementById('powerRow');
       const shieldPowerIcon = document.getElementById('shieldPowerIcon');
       const magnetPowerIcon = document.getElementById('magnetPowerIcon');
       const stageAnnounce = document.getElementById('stageAnnounce');
@@ -271,7 +321,7 @@
         fuelDisplay.textContent = Math.floor(fuel) + '%';
         fuelBarFill.style.width = fuel + '%';
         
-        if(fuel < 20) fuelBarFill.classList.add('low');
+        if(fuel < 25) fuelBarFill.classList.add('low');
         else fuelBarFill.classList.remove('low');
         
         if (shieldActive) shieldPowerIcon.classList.add('active');
@@ -284,21 +334,21 @@
         mountains = [];
         for(let i=0; i<3; i++) {
           let layer = [];
-          for(let j=0; j<W/50 + 2; j++) {
-            layer.push({ x: j*100*scale, y: random(H*0.6, H*0.8) + i*50*scale });
+          for(let j=0; j<W/(80*scale) + 2; j++) {
+            layer.push({ x: j*120*scale, y: random(H*0.65, H*0.85) + i*40*scale });
           }
           mountains.push(layer);
         }
       }
 
       function fullReset() {
-        balloon.x = W * 0.32;
+        balloon.x = W * 0.35;
         balloon.y = H * 0.5;
         balloon.vy = 0;
         fuel = 100;
         distance = 0;
         stage = 1;
-        windSpeed = 3.0;
+        windSpeed = 3.5;
         shieldActive = false;
         magnetActive = false;
         magnetTimer = 0;
@@ -318,7 +368,7 @@
       }
       
       function checkStage() {
-        let newStage = Math.floor(distance / 400) + 1;
+        let newStage = Math.floor(distance / 500) + 1; // Mesafe uzatıldı, ekran geniş çünkü
         if (newStage > stage && newStage <= 4) {
           stage = newStage;
           windSpeed += 0.8;
@@ -327,13 +377,13 @@
             bottom: skyPalette[stage-1].bottom,
             m1: skyPalette[stage-1].m1,
             m2: skyPalette[stage-1].m2,
-            duration: 3
+            duration: 4
           });
           stageAnnounce.textContent = `STAGE ${stage}`;
           gsap.fromTo(stageAnnounce, 
-            { scale: 0.1, opacity: 0, y: 50 },
-            { scale: 1, opacity: 1, y: 0, duration: 0.8, ease: "elastic.out(1, 0.4)", 
-              onComplete: () => gsap.to(stageAnnounce, { opacity: 0, y: -50, delay: 1.5, duration: 0.6 })
+            { scale: 0.1, opacity: 0, y: 30 },
+            { scale: 1, opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.5)", 
+              onComplete: () => gsap.to(stageAnnounce, { opacity: 0, y: -30, delay: 1.5, duration: 0.6 })
             }
           );
         }
@@ -342,68 +392,64 @@
       let lastSpawn = 0;
       function spawnObjects() {
         let now = performance.now();
-        let delay = Math.max(400, 1000 - stage * 120);
+        // Ekran genişlediği için objelerin gelme sıklığını biraz ayarladık
+        let delay = Math.max(350, 900 - stage * 100);
         if (now - lastSpawn < delay) return;
         lastSpawn = now;
         
-        // Peri bacaları (Daha organik boyutlar)
-        if (Math.random() < 0.6) {
+        if (Math.random() < 0.65) {
           chimneys.push({
             x: W + 50 * scale,
-            width: random(65, 110) * scale,
-            height: random(130, 250 + stage * 25) * scale,
-            hue: random(25, 45) // Kaya tonları
+            width: random(60, 100) * scale,
+            height: random(150, 300 + stage * 30) * scale,
+            hue: random(260, 290) // Gemini/Etourgood Mor tonları
           });
         }
         
-        // Gerçekçi Kuş Sürüleri
         if (Math.random() < 0.5) {
           let baseY = random(H * 0.1, H * 0.7);
           let count = Math.floor(random(1, 4));
           for(let i=0; i<count; i++) {
             birds.push({
-              x: W + 65 * scale + i*random(15, 40)*scale,
-              y: baseY + random(-20, 20)*scale,
-              size: random(10, 16) * scale,
-              speed: random(3.5, 6) * scale,
+              x: W + 80 * scale + i*random(20, 50)*scale,
+              y: baseY + random(-30, 30)*scale,
+              size: random(10, 14) * scale,
+              speed: random(4, 7) * scale,
               wingOffset: random(0, Math.PI*2),
               bob: random(0, Math.PI*2)
             });
           }
         }
         
-        // Fırtına Bulutları
         if (stage >= 2 && Math.random() < 0.4) {
           stormClouds.push({
-            x: W + 70 * scale,
+            x: W + 100 * scale,
             y: random(H * 0.1, H * 0.8),
-            radius: random(45, 70) * scale,
-            speed: random(2.5, 4) * scale,
+            radius: random(50, 80) * scale,
+            speed: random(3, 5) * scale,
             lightningPhase: 0
           });
         }
         
-        // Uçak
         if (stage >= 3 && Math.random() < 0.35) {
           planes.push({
-            x: W + 90 * scale,
-            y: random(H * 0.1, H * 0.8),
-            size: random(35, 50) * scale,
-            speed: random(7, 11) * scale,
+            x: W + 120 * scale,
+            y: random(H * 0.1, H * 0.7),
+            size: random(40, 55) * scale,
+            speed: random(8, 12) * scale,
           });
         }
         
-        // Koleksiyonlar
         if (Math.random() < 0.6) {
           let r = Math.random();
           let type = 'fuel';
-          if (r > 0.85) type = 'shield';
-          else if (r > 0.75) type = 'magnet';
+          if (r > 0.88) type = 'shield';
+          else if (r > 0.76) type = 'magnet';
           collectibles.push({
             type,
-            x: W + 55 * scale,
-            y: random(H * 0.2, H * 0.75),
-            radius: 18 * scale,
+            x: W + 60 * scale,
+            y: random(H * 0.15, H * 0.8),
+            radius: 16 * scale,
             bobPhase: random(0, Math.PI*2)
           });
         }
@@ -414,25 +460,24 @@
       function addExplosion(x,y,color,count=25) {
         for(let i=0;i<count;i++) particles.push({
           x,y, 
-          vx: (Math.random()-0.5)*18*scale, 
-          vy: (Math.random()-0.5)*18*scale,
+          vx: (Math.random()-0.5)*20*scale, 
+          vy: (Math.random()-0.5)*20*scale,
           life: 1.2, color, 
-          size: random(4, 12)*scale
+          size: random(3, 10)*scale
         });
       }
 
       function addDeathExplosion(x,y) {
-        // Dev yanma/patlama efekti
-        const colors = ['#ff3838', '#ff9f1a', '#fff200', '#4b4b4b'];
-        for(let i=0;i<80;i++) {
+        const colors = ['#f43f5e', '#fbbf24', '#ffffff', '#8b5cf6'];
+        for(let i=0;i<100;i++) {
           particles.push({
-            x: x + random(-20, 20)*scale,
-            y: y + random(-20, 20)*scale,
-            vx: (Math.random()-0.5)*30*scale,
-            vy: (Math.random()-0.5)*30*scale,
-            life: random(1, 2.5),
+            x: x + random(-25, 25)*scale,
+            y: y + random(-25, 25)*scale,
+            vx: (Math.random()-0.5)*35*scale,
+            vy: (Math.random()-0.5)*35*scale,
+            life: random(1, 3),
             color: colors[Math.floor(Math.random()*colors.length)],
-            size: random(5, 20)*scale
+            size: random(4, 18)*scale
           });
         }
       }
@@ -442,21 +487,20 @@
       function handleHit(type, hitX, hitY) {
         if (shieldActive) {
           shieldActive = false;
-          addExplosion(balloon.x, balloon.y, '#74b9ff', 40);
-          addText('KALKAN KIRILDI!', balloon.x, balloon.y-40, '#74b9ff');
+          addExplosion(balloon.x, balloon.y, '#38bdf8', 40);
+          addText('KALKAN KIRILDI!', balloon.x, balloon.y-40*scale, '#38bdf8');
           updateUI();
           return false;
         }
         if (type === 'storm') {
-          fuel = Math.max(0, fuel - 25);
+          fuel = Math.max(0, fuel - 30);
           balloon.vy += 8 * scale;
-          addExplosion(hitX, hitY, '#dfe6e9', 30);
-          addText('-25 YAKIT', balloon.x, balloon.y-35, '#ff4757');
+          addExplosion(hitX, hitY, '#94a3b8', 30);
+          addText('-30 YAKIT', balloon.x, balloon.y-35*scale, '#ef4444');
           if (fuel <= 0) { endGame(); return true; }
           return false;
         }
         
-        // SEPETE VEYA BALONA ÇARPINCA YANMA EFEKTİ
         addDeathExplosion(balloon.x, balloon.y);
         endGame();
         return true;
@@ -464,7 +508,6 @@
       
       function updateGame() {
         if (gameState !== STATE.PLAYING) {
-           // Ölüm ekranındayken parçacıkları güncellemeye devam et
            for(let i=particles.length-1;i>=0;i--) { 
              let p=particles[i]; p.x+=p.vx; p.y+=p.vy; p.life-=0.02; 
              if(p.life<=0) particles.splice(i,1); 
@@ -474,12 +517,13 @@
 
         if (pressing && fuel > 0) {
           balloon.vy += balloon.lift;
-          fuel -= 0.18;
-          // Motor ateşi dumanı
-          if (Math.random()<0.4) particles.push({
-            x: balloon.x+random(-6,6)*scale, y: balloon.y+balloon.radius*1.1,
-            vx: random(-0.5,0.5)*scale, vy: random(1,3)*scale, life:0.7,
-            color:'#ff9f1a', size:random(2,5)*scale
+          fuel -= 0.16;
+          // Premium Ateş Efekti
+          if (Math.random()<0.5) particles.push({
+            x: balloon.x+random(-5,5)*scale, y: balloon.y+balloon.radius*1.1,
+            vx: random(-0.4,0.4)*scale, vy: random(1,4)*scale, life:0.8,
+            color: Math.random() > 0.5 ? '#f59e0b' : '#10b981', // Etourgood neon ateşi
+            size: random(2,6)*scale
           });
         }
         
@@ -487,8 +531,7 @@
         balloon.vy *= balloon.drag;
         balloon.y += balloon.vy;
         
-        // Tavan ve Taban kontrolü (Hitbox sepeti de sayar: r*1.45)
-        if (balloon.y - balloon.radius < -100*scale || balloon.y + balloon.radius*1.45 > H+20*scale) { 
+        if (balloon.y - balloon.radius < -150*scale || balloon.y + balloon.radius*1.45 > H+30*scale) { 
            addDeathExplosion(balloon.x, balloon.y);
            endGame(); 
            return; 
@@ -499,27 +542,24 @@
           if (magnetTimer <= 0) { magnetActive = false; updateUI(); }
         }
         
-        // Hitbox sınırları: Balon Yuvarlağı + Altındaki Sepet
-        // Çarpışmayı daha hassas yapmak için Balon Bounding Box
         let bLeft = balloon.x - balloon.radius * 0.85;
         let bRight = balloon.x + balloon.radius * 0.85;
         let bTop = balloon.y - balloon.radius * 0.9;
-        let bBottom = balloon.y + balloon.radius * 1.45; // SEPET DAHİL ALT SINIR (Sepet %50 küçültüldü, r*1.45'e kadar iniyor)
+        let bBottom = balloon.y + balloon.radius * 1.45; 
 
         // Peri bacaları
         for(let i=chimneys.length-1;i>=0;i--) {
           let c=chimneys[i]; 
           c.x -= windSpeed*1.1;
           
-          let cLeft = c.x + c.width*0.1; // Bacaların uç kısımları daha dar
+          let cLeft = c.x + c.width*0.1;
           let cRight = c.x + c.width*0.9;
           let cTop = H - c.height;
 
-          // Hitbox kontrolü (Sepete çarpınca da yanar!)
           if(bRight > cLeft && bLeft < cRight && bBottom > cTop) {
             if(handleHit('chimney', balloon.x, bBottom)) return;
           }
-          if(c.x < -160*scale) chimneys.splice(i,1);
+          if(c.x < -200*scale) chimneys.splice(i,1);
         }
         
         // Kuşlar
@@ -530,7 +570,7 @@
           if(b.x > bLeft && b.x < bRight && b.y > bTop && b.y < bBottom) {
             if(handleHit('bird', b.x, b.y)) return;
           }
-          if(b.x < -50) birds.splice(i,1);
+          if(b.x < -100*scale) birds.splice(i,1);
         }
         
         // Fırtına
@@ -540,7 +580,7 @@
           if(dist < balloon.radius + s.radius*0.8) {
             handleHit('storm', s.x, s.y); stormClouds.splice(i,1); continue;
           }
-          if(s.x < -150) stormClouds.splice(i,1);
+          if(s.x < -200*scale) stormClouds.splice(i,1);
         }
         
         // Uçak
@@ -549,7 +589,7 @@
           if(p.x > bLeft - p.size && p.x < bRight + p.size && p.y > bTop - p.size*0.5 && p.y < bBottom + p.size*0.5) {
             if(handleHit('plane', p.x, p.y)) return;
           }
-          if(p.x < -150) planes.splice(i,1);
+          if(p.x < -200*scale) planes.splice(i,1);
         }
         
         // Toplanabilir
@@ -558,16 +598,16 @@
           if(magnetActive && c.type==='fuel') {
             let ang=Math.atan2(balloon.y-c.y, balloon.x-c.x);
             let dist=Math.hypot(balloon.x-c.x, balloon.y-c.y);
-            if(dist<350*scale) { c.x+=Math.cos(ang)*12*scale; c.y+=Math.sin(ang)*12*scale; }
+            if(dist<450*scale) { c.x+=Math.cos(ang)*15*scale; c.y+=Math.sin(ang)*15*scale; }
             else c.x -= windSpeed*0.8;
           } else c.x -= windSpeed*0.8;
           
           if(c.x > bLeft && c.x < bRight && c.y > bTop && c.y < bBottom) {
-            if(c.type==='fuel') { fuel=Math.min(100,fuel+25); addExplosion(c.x,c.y,'#f1c40f',15); }
-            else if(c.type==='shield') { shieldActive=true; addText('KALKAN AKTİF!',c.x,c.y-25,'#74b9ff'); }
-            else if(c.type==='magnet') { magnetActive=true; magnetTimer=10; addText('MIKNATIS!',c.x,c.y-25,'#a29bfe'); }
+            if(c.type==='fuel') { fuel=Math.min(100,fuel+25); addExplosion(c.x,c.y,'#10b981',15); }
+            else if(c.type==='shield') { shieldActive=true; addText('KALKAN!',c.x,c.y-25*scale,'#38bdf8'); }
+            else if(c.type==='magnet') { magnetActive=true; magnetTimer=12; addText('MIKNATIS!',c.x,c.y-25*scale,'#a855f7'); }
             updateUI(); collectibles.splice(i,1);
-          } else if(c.x<-70) collectibles.splice(i,1);
+          } else if(c.x<-100*scale) collectibles.splice(i,1);
         }
         
         // Dağ Paralaksı
@@ -576,29 +616,30 @@
           for(let j=0; j<mountains[i].length; j++) {
             mountains[i][j].x -= speed;
           }
-          if(mountains[i][0].x < -100*scale) {
+          if(mountains[i][0].x < -150*scale) {
             mountains[i].shift();
             let lastX = mountains[i][mountains[i].length-1].x;
-            mountains[i].push({ x: lastX + 100*scale, y: random(H*0.6, H*0.8) + i*50*scale });
+            mountains[i].push({ x: lastX + 120*scale, y: random(H*0.65, H*0.85) + i*40*scale });
           }
         }
 
-        // Bulut Paralaksı
-        if (Math.random() < 0.02) {
+        // Bulut & Uzay Tozu
+        if (Math.random() < 0.03) {
           bgClouds.push({
-            x: W + 80,
-            y: random(0, H * 0.5),
-            size: random(60, 120) * scale,
-            speed: random(0.2, 0.8)
+            x: W + 100*scale,
+            y: random(0, H * 0.6),
+            size: random(40, 100) * scale,
+            speed: random(0.2, 0.6),
+            opacity: random(0.05, 0.2)
           });
         }
 
         for(let i=particles.length-1;i>=0;i--) { let p=particles[i]; p.x+=p.vx; p.y+=p.vy; p.life-=0.025; if(p.life<=0) particles.splice(i,1); }
         for(let i=floatingTexts.length-1;i>=0;i--) { floatingTexts[i].y-=1.5*scale; floatingTexts[i].life-=0.02; if(floatingTexts[i].life<=0) floatingTexts.splice(i,1); }
-        for(let i=bgClouds.length-1;i>=0;i--) { bgClouds[i].x -= windSpeed*0.3 + bgClouds[i].speed; if(bgClouds[i].x<-250) bgClouds.splice(i,1); }
+        for(let i=bgClouds.length-1;i>=0;i--) { bgClouds[i].x -= windSpeed*0.3 + bgClouds[i].speed; if(bgClouds[i].x<-200*scale) bgClouds.splice(i,1); }
         
-        windSpeed+=0.001;
-        distance+= (windSpeed * 0.1);
+        windSpeed+=0.0008; // Yavaş ama istikrarlı hızlanma
+        distance+= (windSpeed * 0.12);
         checkStage();
         updateUI();
       }
@@ -612,11 +653,10 @@
 
       function drawMountains() {
         for(let i=0; i<mountains.length; i++) {
-          ctx.fillStyle = i === 0 ? currentSky.m1 : (i === 1 ? currentSky.m2 : '#050a14');
+          ctx.fillStyle = i === 0 ? currentSky.m1 : (i === 1 ? currentSky.m2 : '#030712');
           ctx.beginPath();
           ctx.moveTo(mountains[i][0].x, H);
           for(let j=0; j<mountains[i].length; j++) {
-            // Yumuşak tepeler
             let next = mountains[i][j+1];
             if(next) {
               let cx = (mountains[i][j].x + next.x) / 2;
@@ -626,15 +666,15 @@
               ctx.lineTo(mountains[i][j].x, mountains[i][j].y);
             }
           }
-          ctx.lineTo(W+100, H);
+          ctx.lineTo(W+200*scale, H);
           ctx.lineTo(0, H);
           ctx.fill();
         }
       }
       
       function drawBgClouds() {
-        ctx.fillStyle='rgba(255,255,255,0.25)';
         bgClouds.forEach(c=>{
+          ctx.fillStyle=`rgba(255,255,255,${c.opacity})`;
           ctx.beginPath(); ctx.arc(c.x,c.y,c.size,0,Math.PI*2);
           ctx.arc(c.x+c.size*0.6,c.y-c.size*0.3,c.size*0.8,0,Math.PI*2);
           ctx.arc(c.x-c.size*0.5,c.y+c.size*0.2,c.size*0.7,0,Math.PI*2);
@@ -646,24 +686,21 @@
         chimneys.forEach(c=>{
           let x=c.x, yBase=H-c.height, w=c.width;
           
-          // Kaya Gövdesi (Katmanlı Gradient)
           let grad=ctx.createLinearGradient(x, 0, x+w, 0);
-          grad.addColorStop(0, `hsl(${c.hue},30%,45%)`);
-          grad.addColorStop(0.3, `hsl(${c.hue},45%,60%)`);
-          grad.addColorStop(0.8, `hsl(${c.hue},35%,35%)`);
-          grad.addColorStop(1, `hsl(${c.hue},25%,20%)`);
+          grad.addColorStop(0, `hsl(${c.hue}, 40%, 30%)`);
+          grad.addColorStop(0.3, `hsl(${c.hue}, 50%, 45%)`);
+          grad.addColorStop(0.8, `hsl(${c.hue}, 30%, 20%)`);
+          grad.addColorStop(1, `hsl(${c.hue}, 20%, 10%)`);
           
           ctx.fillStyle = grad;
           ctx.beginPath();
-          // Taban geniş, yukarı doğru daralan organik form
           ctx.moveTo(x - w*0.15, H);
           ctx.quadraticCurveTo(x + w*0.1, yBase + c.height*0.5, x + w*0.25, yBase);
           ctx.lineTo(x + w*0.75, yBase);
           ctx.quadraticCurveTo(x + w*0.9, yBase + c.height*0.5, x + w*1.15, H);
           ctx.fill();
 
-          // Yatay kaya katmanları çizgileri (Texture)
-          ctx.strokeStyle = `rgba(0,0,0,0.15)`;
+          ctx.strokeStyle = `rgba(0,0,0,0.2)`;
           ctx.lineWidth = 2*scale;
           for(let k=1; k<5; k++) {
             let ly = H - c.height*(k/5);
@@ -673,10 +710,9 @@
             ctx.stroke();
           }
           
-          // Mantar Şapka (Cap)
           let capGrad = ctx.createRadialGradient(x+w*0.5, yBase-10*scale, 0, x+w*0.5, yBase, w);
-          capGrad.addColorStop(0, `hsl(${c.hue-10},20%,30%)`);
-          capGrad.addColorStop(1, `hsl(${c.hue-15},15%,15%)`);
+          capGrad.addColorStop(0, `hsl(${c.hue-20}, 30%, 20%)`);
+          capGrad.addColorStop(1, `hsl(${c.hue-30}, 20%, 8%)`);
           ctx.fillStyle = capGrad;
           
           ctx.beginPath();
@@ -691,34 +727,12 @@
         birds.forEach(b=>{
           ctx.save(); ctx.translate(b.x,b.y);
           let wingY = Math.sin(performance.now()*0.02 + b.wingOffset) * b.size * 1.2;
+          ctx.fillStyle='#cbd5e1'; 
           
-          ctx.fillStyle='#111'; // Silüet tarzı
-          
-          // Gövde
-          ctx.beginPath();
-          ctx.ellipse(0, 0, b.size, b.size*0.35, -0.1, 0, Math.PI*2);
-          ctx.fill();
-          
-          // Gaga
-          ctx.beginPath();
-          ctx.moveTo(-b.size*0.8, 0);
-          ctx.lineTo(-b.size*1.3, b.size*0.1);
-          ctx.lineTo(-b.size*0.8, b.size*0.2);
-          ctx.fill();
-
-          // Kuyruk
-          ctx.beginPath();
-          ctx.moveTo(b.size*0.8, 0);
-          ctx.lineTo(b.size*1.5, -b.size*0.3);
-          ctx.lineTo(b.size*1.4, b.size*0.3);
-          ctx.fill();
-          
-          // Kanatlar (Hareketli)
-          ctx.beginPath();
-          ctx.moveTo(-b.size*0.3, -b.size*0.1);
-          ctx.quadraticCurveTo(b.size*0.2, wingY - b.size, b.size*0.8, wingY);
-          ctx.lineTo(b.size*0.2, wingY*0.5);
-          ctx.fill();
+          ctx.beginPath(); ctx.ellipse(0, 0, b.size, b.size*0.35, -0.1, 0, Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.moveTo(-b.size*0.8, 0); ctx.lineTo(-b.size*1.3, b.size*0.1); ctx.lineTo(-b.size*0.8, b.size*0.2); ctx.fill();
+          ctx.beginPath(); ctx.moveTo(b.size*0.8, 0); ctx.lineTo(b.size*1.5, -b.size*0.3); ctx.lineTo(b.size*1.4, b.size*0.3); ctx.fill();
+          ctx.beginPath(); ctx.moveTo(-b.size*0.3, -b.size*0.1); ctx.quadraticCurveTo(b.size*0.2, wingY - b.size, b.size*0.8, wingY); ctx.lineTo(b.size*0.2, wingY*0.5); ctx.fill();
 
           ctx.restore();
         });
@@ -727,17 +741,16 @@
       function drawStormClouds() {
         stormClouds.forEach(s=>{
           let grad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.radius);
-          grad.addColorStop(0, '#34495e');
-          grad.addColorStop(1, '#1a252f');
+          grad.addColorStop(0, '#1e293b');
+          grad.addColorStop(1, '#020617');
           ctx.fillStyle = grad;
           
           ctx.beginPath(); ctx.arc(s.x, s.y, s.radius, 0, Math.PI*2); ctx.fill();
           ctx.beginPath(); ctx.arc(s.x+s.radius*0.5, s.y-s.radius*0.4, s.radius*0.7, 0, Math.PI*2); ctx.fill();
           ctx.beginPath(); ctx.arc(s.x-s.radius*0.4, s.y-s.radius*0.2, s.radius*0.8, 0, Math.PI*2); ctx.fill();
           
-          // Gerçekçi Şimşek
-          if(s.lightningPhase % 60 < 10) {
-            ctx.strokeStyle='#f9ca24';
+          if(s.lightningPhase % 70 < 8) {
+            ctx.strokeStyle='#a78bfa'; // Mor şimşek (Gemini style)
             ctx.lineWidth=3*scale;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
@@ -746,14 +759,13 @@
             let lx = s.x; let ly = s.y;
             ctx.moveTo(lx, ly);
             for(let i=0; i<4; i++) {
-              lx += random(-15, 20)*scale;
-              ly += random(15, 30)*scale;
+              lx += random(-20, 20)*scale;
+              ly += random(20, 40)*scale;
               ctx.lineTo(lx, ly);
             }
             ctx.stroke();
             
-            // Şimşek parlaması
-            ctx.fillStyle = 'rgba(249, 202, 36, 0.15)';
+            ctx.fillStyle = 'rgba(167, 139, 250, 0.1)';
             ctx.beginPath(); ctx.arc(s.x, s.y, s.radius*1.5, 0, Math.PI*2); ctx.fill();
           }
         });
@@ -762,25 +774,21 @@
       function drawPlanes() {
         planes.forEach(p=>{
           ctx.save(); ctx.translate(p.x, p.y);
-          // Gövde Gradient
           let grad = ctx.createLinearGradient(0, -p.size, 0, p.size);
-          grad.addColorStop(0, '#ecf0f1'); grad.addColorStop(1, '#95a5a6');
+          grad.addColorStop(0, '#f8fafc'); grad.addColorStop(1, '#64748b');
           ctx.fillStyle = grad;
           ctx.beginPath(); ctx.ellipse(0, 0, p.size*1.5, p.size*0.35, 0, 0, Math.PI*2); ctx.fill();
           
-          // Kanat
-          ctx.fillStyle = '#7f8c8d';
+          ctx.fillStyle = '#475569';
           ctx.beginPath(); ctx.moveTo(-p.size*0.2, p.size*0.2); ctx.lineTo(-p.size*0.8, p.size*1.2); ctx.lineTo(0, p.size*0.3); ctx.fill();
           
-          // Kuyruk
-          ctx.fillStyle='#eb4d4b';
+          ctx.fillStyle='#8b5cf6';
           ctx.beginPath(); ctx.moveTo(p.size*0.8, -p.size*0.2); ctx.lineTo(p.size*1.4, -p.size*1); ctx.lineTo(p.size*1.2, 0); ctx.fill();
           
-          // Işık yanıp sönme
           if(Math.floor(performance.now()/150)%2===0) {
-            ctx.fillStyle='#ff4757';
+            ctx.fillStyle='#38bdf8';
             ctx.beginPath(); ctx.arc(-p.size*1.2, 0, 4*scale, 0, Math.PI*2); ctx.fill();
-            ctx.shadowBlur = 10; ctx.shadowColor = '#ff4757'; ctx.fill(); ctx.shadowBlur = 0;
+            ctx.shadowBlur = 12; ctx.shadowColor = '#38bdf8'; ctx.fill(); ctx.shadowBlur = 0;
           }
           ctx.restore();
         });
@@ -788,117 +796,108 @@
       
       function drawBalloon() {
         ctx.save(); ctx.translate(balloon.x, balloon.y);
-        ctx.rotate(balloon.vy*0.03); // Dönüş açısı yumuşatıldı
+        ctx.rotate(balloon.vy*0.025); 
         let r=balloon.radius;
         
-        // Mıknatıs aurası
         if(magnetActive) {
-          ctx.beginPath(); ctx.arc(0,0,r*2,0,Math.PI*2);
-          ctx.fillStyle='rgba(162, 155, 254, 0.15)'; ctx.fill();
-          ctx.strokeStyle='rgba(108, 92, 231, 0.8)'; ctx.lineWidth=3*scale; ctx.stroke();
+          ctx.beginPath(); ctx.arc(0,0,r*2.2,0,Math.PI*2);
+          ctx.fillStyle='rgba(139, 92, 246, 0.1)'; ctx.fill();
+          ctx.strokeStyle='rgba(167, 139, 250, 0.6)'; ctx.lineWidth=2*scale; ctx.stroke();
         }
         
-        // %50 KÜÇÜLTÜLMÜŞ SEPET
-        let basketW = r * 0.6;   // Eskiden 1.2 idi
-        let basketH = r * 0.25;  // Eskiden 0.45 idi
-        let basketY = r * 1.2;
+        let basketW = r * 0.6;   
+        let basketH = r * 0.3;  
+        let basketY = r * 1.25;
         
-        // İpler (Sepete göre daraltıldı)
-        ctx.strokeStyle='#2d3436'; ctx.lineWidth=2*scale;
+        ctx.strokeStyle='#94a3b8'; ctx.lineWidth=1.5*scale;
         ctx.beginPath(); 
         ctx.moveTo(-r*0.4, r*0.7); ctx.lineTo(-basketW*0.4, basketY);
         ctx.moveTo(r*0.4, r*0.7); ctx.lineTo(basketW*0.4, basketY);
         ctx.stroke();
 
-        // Ateşleyici Alevi (Pressing)
         if(pressing && fuel > 0) {
-          ctx.fillStyle = '#ff9f1a';
+          ctx.fillStyle = '#10b981'; // Neon yeşil-sarı alev
           ctx.beginPath();
           ctx.moveTo(-r*0.15, basketY);
           ctx.lineTo(r*0.15, basketY);
-          ctx.lineTo(0, r*0.6 + Math.random()*r*0.4); // Titreyen ateş
+          ctx.lineTo(0, r*0.5 + Math.random()*r*0.5); 
           ctx.fill();
           
-          ctx.fillStyle = '#fff200';
+          ctx.fillStyle = '#fbbf24';
           ctx.beginPath();
           ctx.moveTo(-r*0.08, basketY);
           ctx.lineTo(r*0.08, basketY);
-          ctx.lineTo(0, r*0.8 + Math.random()*r*0.2);
+          ctx.lineTo(0, r*0.7 + Math.random()*r*0.3);
           ctx.fill();
         }
         
-        // Sepet (3D Küçültülmüş)
         let bGrad = ctx.createLinearGradient(-basketW/2, 0, basketW/2, 0);
-        bGrad.addColorStop(0, '#8e44ad'); // Özel sepet rengi
-        bGrad.addColorStop(1, '#2c3e50');
+        bGrad.addColorStop(0, '#4c1d95'); 
+        bGrad.addColorStop(1, '#1e1b4b');
         ctx.fillStyle = bGrad;
         ctx.fillRect(-basketW/2, basketY, basketW, basketH);
         
-        // Sepet üst bandı
-        ctx.fillStyle='#34495e';
-        ctx.fillRect(-basketW/2 - 2*scale, basketY, basketW + 4*scale, basketH*0.3);
+        ctx.fillStyle='#6366f1';
+        ctx.fillRect(-basketW/2 - 2*scale, basketY, basketW + 4*scale, basketH*0.25);
         
-        // Balon gövdesi (3D Küresel Form)
         ctx.save();
         ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.clip();
         
-        // Renk dilimleri
-        let colors=['#ff4757','#ffa502','#2ed573','#1e90ff'];
+        // Etourgood Renkleri
+        let colors=['#8b5cf6','#ec4899','#3b82f6','#10b981'];
         let sw=r*2.2/4;
         for(let i=0;i<4;i++){ 
           let sliceGrad = ctx.createLinearGradient(-r*1.1+i*sw, -r, -r*1.1+(i+1)*sw, r);
           sliceGrad.addColorStop(0, colors[i]);
-          sliceGrad.addColorStop(1, '#2f3542'); // Alt kısımlar gölgeli
+          sliceGrad.addColorStop(1, '#0f172a');
           ctx.fillStyle = sliceGrad; 
           ctx.fillRect(-r*1.1+i*sw, -r*1.2, sw, r*2.4); 
         }
         
-        // Küresel Gölge ve Parlama (3D Etkisi)
         let shadow=ctx.createRadialGradient(-r*0.3,-r*0.3,r*0.1, 0,0,r);
-        shadow.addColorStop(0,'rgba(255,255,255,0.4)'); // Işık vuran yer
-        shadow.addColorStop(0.7,'rgba(0,0,0,0)');
-        shadow.addColorStop(1,'rgba(0,0,0,0.6)'); // Kenar gölgeleri
+        shadow.addColorStop(0,'rgba(255,255,255,0.4)'); 
+        shadow.addColorStop(0.6,'rgba(0,0,0,0)');
+        shadow.addColorStop(1,'rgba(0,0,0,0.7)'); 
         ctx.fillStyle=shadow; ctx.fillRect(-r*2,-r*2,r*4,r*4);
         ctx.restore();
         
-        // Kalkan balonu
         if(shieldActive) {
-          ctx.beginPath(); ctx.arc(0,0,r*1.5,0,Math.PI*2);
-          ctx.fillStyle='rgba(116, 185, 255, 0.2)'; ctx.fill();
-          ctx.strokeStyle='#0984e3'; ctx.lineWidth=4*scale; ctx.stroke();
+          ctx.beginPath(); ctx.arc(0,0,r*1.6,0,Math.PI*2);
+          ctx.fillStyle='rgba(56, 189, 248, 0.15)'; ctx.fill();
+          ctx.strokeStyle='#38bdf8'; ctx.lineWidth=3*scale; ctx.stroke();
         }
         ctx.restore();
       }
       
       function drawCollectibles() {
         collectibles.forEach(c=>{
-          let bob=Math.sin(performance.now()*0.01+c.bobPhase)*6*scale;
+          let bob=Math.sin(performance.now()*0.01+c.bobPhase)*5*scale;
           ctx.save(); ctx.translate(c.x, c.y+bob);
           
           ctx.shadowBlur = 15;
           
           if(c.type==='fuel') {
-            ctx.shadowColor = '#ffa502';
-            ctx.fillStyle='#ff7f50'; ctx.beginPath(); ctx.arc(0,2*scale,c.radius,0,Math.PI*2); ctx.fill();
-            ctx.fillStyle='#ffa502'; ctx.beginPath(); ctx.arc(0,-1*scale,c.radius*0.85,0,Math.PI*2); ctx.fill();
-            ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius}px Nunito`; ctx.textAlign='center'; ctx.fillText('🔥',0,4*scale);
+            ctx.shadowColor = '#10b981';
+            ctx.fillStyle='#059669'; ctx.beginPath(); ctx.arc(0,2*scale,c.radius,0,Math.PI*2); ctx.fill();
+            ctx.fillStyle='#34d399'; ctx.beginPath(); ctx.arc(0,-1*scale,c.radius*0.85,0,Math.PI*2); ctx.fill();
+            ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius*1.1}px Nunito`; ctx.textAlign='center'; ctx.fillText('🔥',0,4*scale);
           } else if(c.type==='shield') {
-            ctx.shadowColor = '#0984e3';
-            ctx.fillStyle='#0984e3'; ctx.beginPath(); ctx.arc(0,2*scale,c.radius,0,Math.PI*2); ctx.fill();
-            ctx.fillStyle='#74b9ff'; ctx.beginPath(); ctx.arc(0,-1*scale,c.radius*0.85,0,Math.PI*2); ctx.fill();
-            ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius}px Nunito`; ctx.textAlign='center'; ctx.fillText('🛡️',0,4*scale);
+            ctx.shadowColor = '#38bdf8';
+            ctx.fillStyle='#0284c7'; ctx.beginPath(); ctx.arc(0,2*scale,c.radius,0,Math.PI*2); ctx.fill();
+            ctx.fillStyle='#7dd3fc'; ctx.beginPath(); ctx.arc(0,-1*scale,c.radius*0.85,0,Math.PI*2); ctx.fill();
+            ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius*1.1}px Nunito`; ctx.textAlign='center'; ctx.fillText('🛡️',0,4*scale);
           } else {
-            ctx.shadowColor = '#6c5ce7';
-            ctx.fillStyle='#6c5ce7'; ctx.beginPath(); ctx.arc(0,2*scale,c.radius,0,Math.PI*2); ctx.fill();
-            ctx.fillStyle='#a29bfe'; ctx.beginPath(); ctx.arc(0,-1*scale,c.radius*0.85,0,Math.PI*2); ctx.fill();
-            ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius}px Nunito`; ctx.textAlign='center'; ctx.fillText('🧲',0,4*scale);
+            ctx.shadowColor = '#a855f7';
+            ctx.fillStyle='#7e22ce'; ctx.beginPath(); ctx.arc(0,2*scale,c.radius,0,Math.PI*2); ctx.fill();
+            ctx.fillStyle='#c084fc'; ctx.beginPath(); ctx.arc(0,-1*scale,c.radius*0.85,0,Math.PI*2); ctx.fill();
+            ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius*1.1}px Nunito`; ctx.textAlign='center'; ctx.fillText('🧲',0,4*scale);
           }
           ctx.restore();
         });
       }
       
       function drawParticles() {
-        ctx.globalCompositeOperation = 'lighter'; // Ateş parlaması için
+        ctx.globalCompositeOperation = 'lighter'; 
         particles.forEach(p=>{
           ctx.globalAlpha=Math.max(0, p.life);
           ctx.fillStyle=p.color;
@@ -912,9 +911,9 @@
         floatingTexts.forEach(t=>{
           ctx.globalAlpha=Math.max(0, t.life);
           ctx.fillStyle=t.color;
-          ctx.font=`900 ${22*scale}px Nunito`;
+          ctx.font=`800 ${18*scale}px Montserrat`;
           ctx.textAlign='center';
-          ctx.shadowBlur = 4; ctx.shadowColor = '#000';
+          ctx.shadowBlur = 5; ctx.shadowColor = 'rgba(0,0,0,0.8)';
           ctx.fillText(t.text, t.x, t.y);
           ctx.shadowBlur = 0;
         });
@@ -929,7 +928,7 @@
         drawStormClouds();
         drawPlanes();
         drawCollectibles();
-        drawBirds(); // Kuşlar balonun önünden veya arkasından geçebilir
+        drawBirds(); 
         if(gameState !== STATE.MENU && gameState !== STATE.CRASHING) drawBalloon();
         drawParticles();
         drawFloatingTexts();
@@ -950,18 +949,14 @@
         menuScreen.style.display = 'none';
         gameOverScreen.style.display = 'none';
         hudContainer.style.opacity = '1';
-        fuelBarContainer.style.opacity = '1';
-        powerRow.style.opacity = '1';
         updateUI();
       }
       
       function endGame() {
         if (gameState === STATE.CRASHING || gameState === STATE.OVER) return;
-        gameState = STATE.CRASHING; // Patlama anı için kısa geçiş
+        gameState = STATE.CRASHING; 
         
         hudContainer.style.opacity = '0';
-        fuelBarContainer.style.opacity = '0';
-        powerRow.style.opacity = '0';
 
         setTimeout(() => {
           gameState = STATE.OVER;
@@ -969,10 +964,10 @@
           gameOverScreen.style.display = 'flex';
           
           gsap.fromTo(gameOverScreen.querySelector('.glass-panel'), 
-            { scale: 0.5, opacity: 0 }, 
-            { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.5)" }
+            { scale: 0.8, opacity: 0, y: 50 }, 
+            { scale: 1, opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }
           );
-        }, 800); // Patlama izlendikten sonra menü gelsin
+        }, 800); 
       }
       
       function restartGame() {
@@ -980,7 +975,6 @@
         startGame();
       }
       
-      // Olay dinleyicileri
       canvas.addEventListener('touchstart', (e) => { 
         if(e.target.tagName !== 'BUTTON') e.preventDefault(); 
         if(gameState===STATE.PLAYING) pressing = true; 
@@ -997,7 +991,6 @@
       document.getElementById('startBtn').addEventListener('click', startGame);
       document.getElementById('retryBtn').addEventListener('click', restartGame);
       
-      // Başlangıç
       fullReset();
       gameLoop();
     })();
