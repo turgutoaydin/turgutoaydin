@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Etourgood • Cappadocia</title>
+  <title>Etourgood • Cappadocia Uçuşu</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -13,7 +13,7 @@
     
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
-      background: #451a03; /* Sıcak toprak rengi başlangıç */
+      background: #ea580c; 
       overflow: hidden; 
       font-family: 'Inter', system-ui, sans-serif;
       touch-action: none; 
@@ -39,24 +39,23 @@
     }
     
     .glass-panel {
-      background: rgba(69, 26, 3, 0.4);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 24px;
-      border: 1px solid rgba(249, 115, 22, 0.25);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+      background: rgba(69, 26, 3, 0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 16px;
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
       color: #fffbeb;
     }
     
     .play-btn {
       background: linear-gradient(135deg, #f97316 0%, #e11d48 100%);
-      box-shadow: 0 8px 0 #9a3412, 0 20px 30px rgba(234, 88, 12, 0.4);
-      border-radius: 20px;
+      box-shadow: 0 6px 0 #9a3412, 0 15px 25px rgba(234, 88, 12, 0.4);
+      border-radius: 16px;
       font-weight: 800;
-      letter-spacing: 2px;
-      transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
-      border: 1px solid rgba(255,255,255,0.25);
-      text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      letter-spacing: 1px;
+      transition: all 0.1s;
+      border: 1px solid rgba(255,255,255,0.2);
       cursor: pointer;
       pointer-events: auto;
       text-transform: uppercase;
@@ -65,144 +64,127 @@
     }
     .play-btn:active {
       transform: translateY(6px);
-      box-shadow: 0 2px 0 #9a3412, 0 8px 15px rgba(234, 88, 12, 0.5);
+      box-shadow: 0 0px 0 #9a3412, 0 5px 10px rgba(234, 88, 12, 0.5);
     }
     
     .hud-wrapper {
       position: absolute;
-      top: max(15px, env(safe-area-inset-top));
-      left: max(15px, env(safe-area-inset-left));
-      right: max(15px, env(safe-area-inset-right));
+      top: max(10px, env(safe-area-inset-top));
+      left: max(10px, env(safe-area-inset-left));
+      right: max(10px, env(safe-area-inset-right));
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       opacity: 0;
       transition: opacity 0.6s;
-      gap: 12px;
-      flex-wrap: wrap;
+      gap: 6px;
+      padding: 0 5px;
     }
 
-    .score-box {
-      padding: 10px 18px;
+    .hud-item {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-weight: 700;
-    }
-    
-    .fuel-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
+      gap: 6px;
+      padding: 6px 12px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      white-space: nowrap;
     }
     
     .fuel-bar-bg {
-      background: rgba(0,0,0,0.6);
-      border-radius: 12px;
-      width: 140px;
-      height: 12px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 8px;
+      width: 70px;
+      height: 8px;
       overflow: hidden;
       border: 1px solid rgba(255,255,255,0.2);
-      box-shadow: inset 0 3px 6px rgba(0,0,0,0.5);
+      margin-left: 4px;
     }
     
     .fuel-fill {
       height: 100%;
       background: linear-gradient(90deg, #ef4444, #f97316, #fde047);
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(249, 115, 22, 0.7);
-      transition: width 0.08s linear, background-color 0.3s;
+      border-radius: 8px;
+      transition: width 0.1s linear;
     }
     .fuel-fill.low {
-      background: linear-gradient(90deg, #ef4444, #991b1b);
-      animation: pulseFuel 0.4s infinite alternate;
+      background: #ef4444;
+      animation: pulseFuel 0.3s infinite alternate;
     }
     
     @keyframes pulseFuel {
-      from { box-shadow: 0 0 5px #ef4444; }
-      to { box-shadow: 0 0 20px #ef4444; }
+      from { opacity: 1; }
+      to { opacity: 0.5; }
     }
     
     .power-row {
       display: flex;
-      gap: 12px;
+      gap: 6px;
     }
     
     .power-icon {
-      width: 38px;
-      height: 38px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
-      background: rgba(0,0,0,0.4);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.15);
-      transition: all 0.3s;
+      font-size: 16px;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.2s;
       filter: grayscale(1);
-      opacity: 0.35;
+      opacity: 0.4;
     }
     .power-icon.active {
       filter: grayscale(0);
       opacity: 1;
       border-color: #f97316;
-      box-shadow: 0 0 20px rgba(249, 115, 22, 0.9);
-      animation: glowPulse 1.5s infinite;
-      transform: scale(1.08);
-    }
-    @keyframes glowPulse {
-      0% { box-shadow: 0 0 8px rgba(249, 115, 22, 0.5); }
-      50% { box-shadow: 0 0 28px rgba(249, 115, 22, 1); }
-      100% { box-shadow: 0 0 8px rgba(249, 115, 22, 0.5); }
+      box-shadow: 0 0 15px rgba(249, 115, 22, 0.8);
+      transform: scale(1.1);
     }
     
     .stage-pop {
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 900;
-      font-size: clamp(3rem, 8vw, 5rem);
+      font-size: clamp(2.5rem, 6vw, 4rem);
       color: transparent;
       -webkit-text-stroke: 2px rgba(255,255,255,0.9);
       background: linear-gradient(135deg, #fcd34d, #f97316);
       -webkit-background-clip: text;
-      text-shadow: 0 15px 40px rgba(0,0,0,0.5);
       position: absolute;
-      top: 30%;
+      top: 25%;
       left: 50%;
       transform: translate(-50%, -50%);
       opacity: 0;
       white-space: nowrap;
-      letter-spacing: 8px;
+      letter-spacing: 6px;
       pointer-events: none;
     }
     
     .etourgood-gradient {
-      background: linear-gradient(135deg, #fcd34d 0%, #f97316 50%, #e11d48 100%);
+      background: linear-gradient(135deg, #fcd34d 0%, #f97316 40%, #e11d48 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .logo-icon {
-      font-size: 3.5rem;
-      filter: drop-shadow(0 0 25px rgba(249, 115, 22, 0.6));
-      animation: floatLogo 3s ease-in-out infinite;
-    }
-    @keyframes floatLogo {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-12px); }
-    }
-    
-    .high-score-badge {
-      background: rgba(249, 115, 22, 0.2);
-      border: 1px solid rgba(249, 115, 22, 0.4);
-      border-radius: 12px;
-      padding: 6px 18px;
-      font-size: 0.9rem;
-      font-weight: 700;
+    .toast-msg {
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
       color: #fde047;
-      letter-spacing: 0.5px;
+      padding: 10px 24px;
+      border-radius: 20px;
+      font-weight: 800;
+      font-size: 1rem;
+      border: 1px solid #f97316;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 50;
     }
   </style>
 </head>
@@ -212,17 +194,12 @@
   <div class="ui-layer">
     
     <div id="hudContainer" class="hud-wrapper">
-      
-      <div class="glass-panel score-box">
-        <span style="font-size:1.2rem; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));">📍</span>
-        <span id="distDisplay" style="font-weight:800; font-size:1.1rem; letter-spacing: 0.5px;">0 m</span>
+      <div class="glass-panel hud-item">
+        📍 <span id="distDisplay">0m</span>
       </div>
       
-      <div class="fuel-container">
-        <div class="glass-panel" style="padding: 4px 14px; font-size: 0.8rem; font-weight: 800; color: #fde047; letter-spacing: 1px;">YAKIT <span id="fuelDisplay" style="color: #fff;">100%</span></div>
-        <div class="fuel-bar-bg">
-          <div id="fuelBarFill" class="fuel-fill" style="width: 100%;"></div>
-        </div>
+      <div class="glass-panel hud-item" style="color: #fde047;">
+        ⛽ <div class="fuel-bar-bg"><div id="fuelBarFill" class="fuel-fill" style="width: 100%;"></div></div>
       </div>
       
       <div class="power-row">
@@ -234,36 +211,43 @@
     
     <div id="stageAnnounce" class="stage-pop">SEVİYE 2</div>
     
-    <div id="menuScreen" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: auto; background: radial-gradient(circle at 50% 30%, rgba(69, 26, 3, 0.6) 0%, rgba(30, 27, 75, 0.9) 100%);">
-      <div class="glass-panel" style="padding: 3rem 2rem; width: 90%; max-width: 420px; text-align: center; border: 1px solid rgba(249, 115, 22, 0.4);">
-        <div class="logo-icon">🎈🌅</div>
-        <h1 style="font-family:'Space Grotesk',sans-serif; font-weight:900; font-size:3.2rem; margin:0; line-height:1; letter-spacing: 2px;" class="etourgood-gradient">ETOURGOOD</h1>
-        <p style="color:#fdba74; font-weight:800; margin-bottom:1.8rem; font-size:1.1rem; letter-spacing: 4px; margin-top: 12px; text-transform: uppercase;">Cappadocia</p>
-        <div id="highScoreMenu" class="high-score-badge" style="margin-bottom: 24px; display: none;">🏆 En İyi Uçuş: <span id="highScoreMenuText">0 m</span></div>
-        <button id="startBtn" class="play-btn" style="width:100%; padding:20px; color:white; font-size:1.4rem; border:none;">
+    <div id="menuScreen" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: auto; background: radial-gradient(circle at 50% 100%, rgba(234, 88, 12, 0.4) 0%, rgba(30, 27, 75, 0.9) 100%);">
+      <div class="glass-panel" style="padding: 2.5rem 1.5rem; width: 90%; max-width: 380px; text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 10px;">🎈🌅</div>
+        <h1 style="font-family:'Space Grotesk'; font-weight:900; font-size:clamp(2.2rem, 8vw, 3.2rem); margin:0; line-height:1; letter-spacing: 1px;" class="etourgood-gradient">ETOURGOOD</h1>
+        <p style="color:#fdba74; font-weight:800; font-size:1rem; letter-spacing: 4px; margin-top: 8px; margin-bottom: 20px;">CAPPADOCIA</p>
+        
+        <div id="highScoreMenu" style="background: rgba(249,115,22,0.2); border: 1px solid rgba(249,115,22,0.4); border-radius: 12px; padding: 6px; font-size: 0.9rem; font-weight: 700; color: #fde047; margin-bottom: 20px; display:none;">
+          🏆 En İyi Uçuş: <span id="highScoreMenuText">0 m</span>
+        </div>
+        
+        <button id="startBtn" class="play-btn" style="width:100%; padding:18px; font-size:1.3rem; margin-bottom: 12px;">
           UÇUŞA BAŞLA
         </button>
-        <p style="color:#fcd34d; opacity: 0.8; font-size:0.8rem; margin-top:16px; font-weight:600;">Ekrana basılı tutarak yüksel • Bırakarak süzül</p>
+        
+        <button id="leaderboardBtn" class="play-btn" style="width:100%; padding:14px; font-size:1rem; background: rgba(255,255,255,0.1); box-shadow: 0 4px 0 rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.2);">
+          📊 LİDERLİK TABLOSU
+        </button>
+        
+        <p style="color:#fcd34d; opacity: 0.8; font-size:0.75rem; margin-top:16px; font-weight:600;">Ekrana basılı tutarak yüksel • Bırakarak süzül</p>
       </div>
     </div>
     
-    <div id="gameOverScreen" style="position: absolute; inset: 0; display: none; align-items: center; justify-content: center; pointer-events: auto; background: radial-gradient(circle at center, rgba(69, 26, 3, 0.8) 0%, rgba(0, 0, 0, 0.95) 100%); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
-      <div class="glass-panel" style="padding: 2.5rem 2rem; width: 90%; max-width: 400px; text-align: center; border-color: rgba(239, 68, 68, 0.5);">
-        <div style="font-size: 4.5rem; filter: drop-shadow(0 0 25px rgba(239,68,68,0.8));">💥</div>
-        <h2 style="font-family:'Space Grotesk'; font-weight:900; color:#f87171; font-size:2.2rem; margin:0.5rem 0; letter-spacing: 2px;">SERT İNİŞ!</h2>
-        <p style="color:#fdba74; font-weight:600; margin-top:12px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Gezilen Mesafe</p>
-        <p id="finalDistText" class="etourgood-gradient" style="font-size:3.8rem; font-weight:900; margin:0; text-shadow: 0 4px 20px rgba(249,115,22,0.4);">0 m</p>
-        <div id="newHighScoreBadge" style="display: none; color: #fde047; font-weight: 900; margin: 8px 0; letter-spacing: 2px; animation: pulseFuel 0.6s infinite alternate;">🌟 YENİ REKOR! 🌟</div>
-        <div style="display: flex; gap: 12px; margin-top: 24px;">
-          <button id="retryBtn" class="play-btn" style="flex:1; padding:16px; color:white; font-size:1.1rem; border:none;">
-            TEKRAR
-          </button>
-          <button id="menuBtn" class="play-btn" style="background: rgba(255,255,255,0.1); box-shadow: 0 6px 0 rgba(0,0,0,0.4), 0 15px 25px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); flex:1; padding:16px; color:white; font-size:1.1rem;">
-            MENÜ
-          </button>
+    <div id="gameOverScreen" style="position: absolute; inset: 0; display: none; align-items: center; justify-content: center; pointer-events: auto; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);">
+      <div class="glass-panel" style="padding: 2.5rem 1.5rem; width: 90%; max-width: 380px; text-align: center; border-color: #ef4444;">
+        <div style="font-size: 4rem;">💥</div>
+        <h2 style="font-family:'Space Grotesk'; font-weight:900; color:#f87171; font-size:2rem; margin:0.5rem 0;">SERT İNİŞ!</h2>
+        <p style="color:#fdba74; font-weight:600; font-size: 0.9rem;">Gezilen Mesafe</p>
+        <p id="finalDistText" class="etourgood-gradient" style="font-size:3.5rem; font-weight:900; margin:0;">0 m</p>
+        <div id="newHighScoreBadge" style="display: none; color: #fde047; font-weight: 900; margin: 8px 0; animation: pulseFuel 0.6s infinite alternate;">🌟 YENİ REKOR! 🌟</div>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <button id="retryBtn" class="play-btn" style="flex:1; padding:14px; font-size:1rem;">TEKRAR</button>
+          <button id="menuBtn" class="play-btn" style="flex:1; padding:14px; font-size:1rem; background: rgba(255,255,255,0.1); box-shadow: 0 4px 0 rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.2);">MENÜ</button>
         </div>
       </div>
     </div>
+
+    <div id="toastMsg" class="toast-msg">Çok Yakında!</div>
   </div>
 
   <script>
@@ -276,38 +260,32 @@
       function resizeCanvas() {
         W = canvas.width = window.innerWidth;
         H = canvas.height = window.innerHeight;
-        scale = Math.min(W / 550, H / 950);
+        // Kamera biraz uzaklaştırıldı (eski 550 iken 650 yapıldı)
+        scale = Math.min(W / 650, H / 1050); 
       }
       window.addEventListener('resize', resizeCanvas);
       resizeCanvas();
       
+      // -- Ses Motoru --
       let audioCtx = null;
       function initAudio() {
         if (audioCtx) return;
-        try {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        } catch(e) {
-          audioCtx = null;
-        }
+        try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
       }
-      function playTone(freq, type='sine', duration=0.15, vol=0.08, rampDown=true) {
+      function playTone(freq, type='sine', duration=0.15, vol=0.08) {
         if (!audioCtx) return;
         const now = audioCtx.currentTime;
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, now);
+        osc.type = type; osc.frequency.setValueAtTime(freq, now);
         gain.gain.setValueAtTime(vol, now);
-        if (rampDown) gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(now);
-        osc.stop(now + duration + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(now); osc.stop(now + duration + 0.05);
       }
       function sfxCollect() { playTone(880, 'sine', 0.1, 0.1); setTimeout(() => playTone(1100, 'sine', 0.1, 0.1), 80); }
-      function sfxShieldBreak() { playTone(200, 'triangle', 0.3, 0.12); }
-      function sfxExplosion() { playTone(50, 'sawtooth', 0.5, 0.15, false); playTone(30, 'square', 0.6, 0.1, false); }
-      function sfxStageUp() { playTone(660, 'sine', 0.2, 0.12); setTimeout(() => playTone(880, 'sine', 0.2, 0.12), 150); }
+      function sfxShieldBreak() { playTone(150, 'sawtooth', 0.4, 0.15); }
+      function sfxExplosion() { playTone(50, 'square', 0.5, 0.2); }
       function sfxClick() { playTone(600, 'sine', 0.06, 0.04); }
       
       const STATE = { MENU: 0, PLAYING: 1, OVER: 2, CRASHING: 3 };
@@ -315,27 +293,25 @@
       
       let balloon = {
         x: 0, y: 0, vy: 0,
-        radius: 38 * scale,
-        gravity: 0.22 * scale,
-        lift: -0.62 * scale,
+        radius: 28 * scale, // Balon boyutu küçültüldü
+        gravity: 0.25 * scale,
+        lift: -0.65 * scale,
         drag: 0.98
       };
       
       let fuel = 100;
       let distance = 0;
       let stage = 1;
-      let windSpeed = 3.5;
+      let windSpeed = 3.8;
       
       let chimneys = [];
       let birds = [];
-      let stormClouds = [];
       let rivalBalloons = [];
       let collectibles = [];
       let particles = [];
       let floatingTexts = [];
       let bgClouds = [];
       let mountains = [];
-      let stars = [];
       
       let shieldActive = false;
       let magnetActive = false;
@@ -347,418 +323,211 @@
       let screenShake = 0;
       
       let highScore = 0;
-      try {
-        const saved = localStorage.getItem('etourgood_sky_high');
-        if (saved) highScore = parseInt(saved, 10) || 0;
-      } catch(e) {}
+      try { const saved = localStorage.getItem('etourgood_sky_high'); if (saved) highScore = parseInt(saved, 10); } catch(e) {}
       
-      // Kapadokya Gün Doğumu Renk Paleti (Gece -> Gün Doğumu -> Sabah -> Gündüz)
+      // Gerçekçi Gün Doğumu Renkleri (Yıldızsız)
       const skyPalette = [
-        { top: "#1e1b4b", bottom: "#9a3412", m1: "#451a03", m2: "#290f02" }, // Safak
-        { top: "#4c1d95", bottom: "#f97316", m1: "#78350f", m2: "#451a03" }, // Gunes Dogusu
-        { top: "#0284c7", bottom: "#fcd34d", m1: "#9a3412", m2: "#78350f" }, // Sabah
-        { top: "#38bdf8", bottom: "#fef08a", m1: "#b45309", m2: "#9a3412" }  // Oglen
+        { top: "#3b82f6", bottom: "#f97316", m1: "#9a3412", m2: "#451a03" }, // Şafak
+        { top: "#0284c7", bottom: "#fcd34d", m1: "#b45309", m2: "#78350f" }, // Sabah
+        { top: "#0ea5e9", bottom: "#fef08a", m1: "#d97706", m2: "#9a3412" }  // Gündüz
       ];
       let currentSky = { ...skyPalette[0] };
-      let currentStarAlpha = 1;
-      
-      const distDisplay = document.getElementById('distDisplay');
-      const fuelDisplay = document.getElementById('fuelDisplay');
-      const fuelBarFill = document.getElementById('fuelBarFill');
-      const hudContainer = document.getElementById('hudContainer');
-      const shieldPowerIcon = document.getElementById('shieldPowerIcon');
-      const magnetPowerIcon = document.getElementById('magnetPowerIcon');
-      const boostPowerIcon = document.getElementById('boostPowerIcon');
-      const stageAnnounce = document.getElementById('stageAnnounce');
-      const menuScreen = document.getElementById('menuScreen');
-      const gameOverScreen = document.getElementById('gameOverScreen');
-      const finalDistText = document.getElementById('finalDistText');
-      const newHighScoreBadge = document.getElementById('newHighScoreBadge');
-      const highScoreMenu = document.getElementById('highScoreMenu');
-      const highScoreMenuText = document.getElementById('highScoreMenuText');
       
       function updateUI() {
-        distDisplay.textContent = Math.floor(distance) + ' m';
-        fuelDisplay.textContent = Math.floor(fuel) + '%';
-        fuelBarFill.style.width = fuel + '%';
+        document.getElementById('distDisplay').textContent = Math.floor(distance) + 'm';
+        document.getElementById('fuelBarFill').style.width = fuel + '%';
+        if(fuel < 25) document.getElementById('fuelBarFill').classList.add('low');
+        else document.getElementById('fuelBarFill').classList.remove('low');
         
-        if(fuel < 25) fuelBarFill.classList.add('low');
-        else fuelBarFill.classList.remove('low');
-        
-        if (shieldActive) shieldPowerIcon.classList.add('active');
-        else shieldPowerIcon.classList.remove('active');
-        if (magnetActive) magnetPowerIcon.classList.add('active');
-        else magnetPowerIcon.classList.remove('active');
-        if (boostActive) boostPowerIcon.classList.add('active');
-        else boostPowerIcon.classList.remove('active');
+        document.getElementById('shieldPowerIcon').classList.toggle('active', shieldActive);
+        document.getElementById('magnetPowerIcon').classList.toggle('active', magnetActive);
+        document.getElementById('boostPowerIcon').classList.toggle('active', boostActive);
       }
       
-      function updateHighScoreUI() {
-        if (highScore > 0) {
-          highScoreMenu.style.display = 'inline-block';
-          highScoreMenuText.textContent = highScore + ' m';
-        } else {
-          highScoreMenu.style.display = 'none';
-        }
+      function showToast() {
+        sfxClick();
+        const toast = document.getElementById('toastMsg');
+        toast.style.opacity = '1';
+        setTimeout(() => toast.style.opacity = '0', 2000);
       }
-      updateHighScoreUI();
-      
-      function initStars() {
-        stars = [];
-        for(let i=0; i<150; i++) {
-          stars.push({
-            x: Math.random() * W,
-            y: Math.random() * H * 0.6,
-            radius: Math.random() * 1.5 + 0.5,
-            twinkle: Math.random() * Math.PI * 2,
-            speed: Math.random() * 0.2 + 0.1
-          });
-        }
-      }
+      document.getElementById('leaderboardBtn').addEventListener('click', showToast);
       
       function initMountains() {
         mountains = [];
         for(let i=0; i<3; i++) {
           let layer = [];
-          for(let j=0; j<W/(80*scale) + 2; j++) {
-            // Kapadokya vadi engebesi
-            layer.push({ x: j*120*scale, y: random(H*0.7, H*0.85) + i*35*scale });
+          for(let j=0; j<W/(100*scale) + 2; j++) {
+            layer.push({ x: j*140*scale, y: random(H*0.7, H*0.9) + i*30*scale });
           }
           mountains.push(layer);
         }
       }
 
       function fullReset() {
-        balloon.x = W * 0.35;
+        balloon.x = W * 0.3;
         balloon.y = H * 0.5;
         balloon.vy = 0;
-        fuel = 100;
-        distance = 0;
-        stage = 1;
-        windSpeed = 3.5;
-        shieldActive = false;
-        magnetActive = false;
-        magnetTimer = 0;
-        boostActive = false;
-        boostTimer = 0;
-        screenShake = 0;
-        currentStarAlpha = 1;
-        
-        chimneys = [];
-        birds = [];
-        stormClouds = [];
-        rivalBalloons = [];
-        collectibles = [];
-        particles = [];
-        floatingTexts = [];
-        bgClouds = [];
-        
-        initStars();
+        fuel = 100; distance = 0; stage = 1; windSpeed = 3.8;
+        shieldActive = magnetActive = boostActive = false;
+        chimneys = []; birds = []; rivalBalloons = []; collectibles = []; particles = []; bgClouds = [];
         initMountains();
         currentSky = { ...skyPalette[0] };
         updateUI();
       }
       
       function checkStage() {
-        let newStage = Math.floor(distance / 500) + 1;
-        if (newStage > stage && newStage <= 4) {
+        let newStage = Math.floor(distance / 600) + 1;
+        if (newStage > stage && newStage <= 3) {
           stage = newStage;
-          windSpeed += 0.8;
-          sfxStageUp();
-          
-          gsap.to(currentSky, {
-            top: skyPalette[stage-1].top,
-            bottom: skyPalette[stage-1].bottom,
-            m1: skyPalette[stage-1].m1,
-            m2: skyPalette[stage-1].m2,
-            duration: 5
-          });
-          
-          gsap.to(window, {
-            currentStarAlpha: stage === 1 ? 1 : (stage === 2 ? 0.4 : 0),
-            duration: 5
-          });
-
-          stageAnnounce.textContent = stage === 4 ? "GÜNDÜZ VAKTİ" : `SEVİYE ${stage}`;
-          gsap.fromTo(stageAnnounce, 
-            { scale: 0.1, opacity: 0, y: 30 },
-            { scale: 1, opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.7)", 
-              onComplete: () => gsap.to(stageAnnounce, { opacity: 0, y: -30, delay: 1.8, duration: 0.6 })
-            }
-          );
+          windSpeed += 1.2; // İlerledikçe belirgin hızlanma
+          gsap.to(currentSky, { top: skyPalette[stage-1].top, bottom: skyPalette[stage-1].bottom, m1: skyPalette[stage-1].m1, m2: skyPalette[stage-1].m2, duration: 4 });
+          let announce = document.getElementById('stageAnnounce');
+          announce.textContent = `SEVİYE ${stage}`;
+          gsap.fromTo(announce, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out", onComplete: () => gsap.to(announce, { opacity: 0, delay: 1.5 }) });
         }
       }
       
       let lastSpawn = 0;
       function spawnObjects() {
         let now = performance.now();
-        let delay = Math.max(380, 900 - stage * 80);
+        let delay = Math.max(300, 800 - stage * 120); // Giderek daha yoğun
         if (now - lastSpawn < delay) return;
         lastSpawn = now;
         
-        // Peri bacaları (Zemin engeli)
-        if (Math.random() < 0.6) {
+        // Peri bacaları (Daha yoğun çıkıyor)
+        if (Math.random() < 0.7) {
           chimneys.push({
             x: W + 50 * scale,
-            width: random(80, 130) * scale,
-            height: random(180, 350 + stage * 20) * scale,
-            hue: random(25, 45) // Toprak/tüf renkleri
+            width: random(90, 160) * scale,
+            height: random(200, H*0.6),
+            type: Math.floor(random(0,3)) // Farklı kaya tipleri
           });
         }
         
-        // Güvercinler/Kuşlar
-        if (Math.random() < 0.5) {
-          let baseY = random(H * 0.1, H * 0.7);
-          let count = Math.floor(random(2, 5));
-          for(let i=0; i<count; i++) {
-            birds.push({
-              x: W + 80 * scale + i*random(20, 50)*scale,
-              y: baseY + random(-40, 40)*scale,
-              size: random(10, 15) * scale,
-              speed: random(3.5, 6) * scale,
-              wingOffset: random(0, Math.PI*2),
-              bob: random(0, Math.PI*2)
-            });
-          }
+        if (Math.random() < 0.4) {
+          let baseY = random(H * 0.1, H * 0.6);
+          let count = Math.floor(random(2, 6));
+          for(let i=0; i<count; i++) birds.push({ x: W + 80*scale + i*random(20,50)*scale, y: baseY + random(-30,30)*scale, size: random(8,12)*scale, speed: random(4, 7)*scale, bob: random(0, Math.PI*2) });
         }
         
-        // Kötü Hava / Fırtına Bulutları
-        if (stage >= 2 && Math.random() < 0.3) {
-          stormClouds.push({
-            x: W + 100 * scale,
-            y: random(H * 0.1, H * 0.8),
-            radius: random(50, 80) * scale,
-            speed: random(2, 4) * scale,
-            lightningPhase: 0
-          });
+        if (stage >= 2 && Math.random() < 0.35) {
+          rivalBalloons.push({ x: W + 100*scale, y: random(H*0.1, H*0.6), size: random(20,30)*scale, speed: random(1,4)*scale, hue: random(0,360) });
         }
         
-        // Rakip Turist Balonları (Uçakların yerine)
-        if (stage >= 2 && Math.random() < 0.4) {
-          rivalBalloons.push({
-            x: W + 120 * scale,
-            y: random(H * 0.1, H * 0.65),
-            size: random(25, 35) * scale,
-            speed: random(1, 3) * scale, // Balonlar uçağa göre daha yavaş
-            bobPhase: random(0, Math.PI*2),
-            colorHue: random(0, 360)
-          });
-        }
-        
-        // Toplanabilirler
         if (Math.random() < 0.6) {
-          let r = Math.random();
-          let type = 'fuel';
-          if (r > 0.9) type = 'shield';
-          else if (r > 0.8) type = 'magnet';
-          else if (r > 0.7 && stage >= 2) type = 'boost';
-          collectibles.push({
-            type,
-            x: W + 60 * scale,
-            y: random(H * 0.15, H * 0.8),
-            radius: 18 * scale,
-            bobPhase: random(0, Math.PI*2)
-          });
+          let r = Math.random(), type = 'fuel';
+          if (r > 0.9) type = 'shield'; else if (r > 0.8) type = 'magnet'; else if (r > 0.7 && stage >= 2) type = 'boost';
+          collectibles.push({ type, x: W + 60*scale, y: random(H*0.2, H*0.8), radius: 15*scale, bob: random(0, Math.PI*2) });
         }
       }
       
       function random(a,b) { return Math.random()*(b-a)+a; }
       
       function addExplosion(x,y,color,count=25) {
-        for(let i=0;i<count;i++) particles.push({
-          x,y, 
-          vx: (Math.random()-0.5)*20*scale, 
-          vy: (Math.random()-0.5)*20*scale,
-          life: 1.2, color, 
-          size: random(3, 10)*scale
-        });
+        for(let i=0;i<count;i++) particles.push({ x,y, vx: (Math.random()-0.5)*25*scale, vy: (Math.random()-0.5)*25*scale, life: 1.2, color, size: random(4,12)*scale });
       }
 
-      function addDeathExplosion(x,y) {
-        screenShake = 12 * scale;
-        sfxExplosion();
-        const colors = ['#f97316', '#facc15', '#ffffff', '#e11d48', '#451a03'];
-        for(let i=0;i<120;i++) {
-          particles.push({
-            x: x + random(-30, 30)*scale,
-            y: y + random(-30, 30)*scale,
-            vx: (Math.random()-0.5)*40*scale,
-            vy: (Math.random()-0.5)*40*scale,
-            life: random(1, 3.5),
-            color: colors[Math.floor(Math.random()*colors.length)],
-            size: random(4, 22)*scale
-          });
-        }
-      }
-
-      function addText(txt,x,y,color) { floatingTexts.push({text:txt,x,y,life:1.4,color}); }
-      
       function handleHit(type, hitX, hitY) {
         if (shieldActive) {
           shieldActive = false;
           sfxShieldBreak();
-          addExplosion(balloon.x, balloon.y, '#fcd34d', 50);
-          addText('KALKAN KIRILDI!', balloon.x, balloon.y-40*scale, '#fcd34d');
+          addExplosion(hitX, hitY, '#fcd34d', 40); // Engel patlıyor
+          floatingTexts.push({text:'KALKAN KORUDU!', x:balloon.x, y:balloon.y-40*scale, life:1.5, color:'#fcd34d'});
           updateUI();
-          return false;
+          return 'shielded'; // Kalkan kurtardı
         }
-        if (type === 'storm') {
-          fuel = Math.max(0, fuel - 30);
-          balloon.vy += 8 * scale;
-          addExplosion(hitX, hitY, '#94a3b8', 30);
-          addText('-30 YAKIT', balloon.x, balloon.y-35*scale, '#ef4444');
-          if (fuel <= 0) { endGame(); return true; }
-          return false;
-        }
-        
-        addDeathExplosion(balloon.x, balloon.y);
+        screenShake = 15 * scale; sfxExplosion();
+        addExplosion(balloon.x, balloon.y, '#f97316', 60);
+        addExplosion(balloon.x, balloon.y, '#451a03', 40);
         endGame();
-        return true;
+        return 'dead';
       }
       
       function updateGame() {
         if (gameState !== STATE.PLAYING) {
-           for(let i=particles.length-1;i>=0;i--) { 
-             let p=particles[i]; p.x+=p.vx; p.y+=p.vy; p.life-=0.02; 
-             if(p.life<=0) particles.splice(i,1); 
-           }
+           particles.forEach((p,i) => { p.x+=p.vx; p.y+=p.vy; p.life-=0.02; if(p.life<=0) particles.splice(i,1); });
            if (screenShake > 0) screenShake *= 0.9;
            return;
         }
 
         if (pressing && fuel > 0) {
-          let liftPower = balloon.lift;
-          if (boostActive) liftPower *= 1.5;
-          balloon.vy += liftPower;
-          fuel -= 0.15;
-          if (Math.random()<0.6) particles.push({
-            x: balloon.x+random(-6,6)*scale, y: balloon.y+balloon.radius*1.1,
-            vx: random(-0.5,0.5)*scale, vy: random(1,5)*scale, life:0.8,
-            color: boostActive ? '#fcd34d' : (Math.random() > 0.5 ? '#f97316' : '#facc15'),
-            size: random(3,8)*scale
-          });
+          balloon.vy += boostActive ? balloon.lift * 1.5 : balloon.lift; fuel -= 0.15;
+          if (Math.random()<0.6) particles.push({ x: balloon.x+random(-5,5)*scale, y: balloon.y+balloon.radius*1.5, vx: random(-1,1)*scale, vy: random(2,6)*scale, life:0.8, color: boostActive?'#fcd34d':'#f97316', size: random(3,8)*scale });
         }
         
-        balloon.vy += balloon.gravity;
-        balloon.vy *= balloon.drag;
-        balloon.y += balloon.vy;
+        balloon.vy += balloon.gravity; balloon.vy *= balloon.drag; balloon.y += balloon.vy;
         
-        if (balloon.y - balloon.radius < -150*scale || balloon.y + balloon.radius*1.45 > H+30*scale) { 
-           addDeathExplosion(balloon.x, balloon.y);
-           endGame(); 
-           return; 
-        }
+        if (balloon.y < -50*scale || balloon.y > H+30*scale) { handleHit('bounds', balloon.x, balloon.y); return; }
         
-        if (magnetActive) {
-          magnetTimer -= 0.016;
-          if (magnetTimer <= 0) { magnetActive = false; updateUI(); }
-        }
-        if (boostActive) {
-          boostTimer -= 0.016;
-          if (boostTimer <= 0) { boostActive = false; updateUI(); }
-        }
+        if (magnetActive && (magnetTimer -= 0.016) <= 0) { magnetActive = false; updateUI(); }
+        if (boostActive && (boostTimer -= 0.016) <= 0) { boostActive = false; updateUI(); }
         
-        let bLeft = balloon.x - balloon.radius * 0.85;
-        let bRight = balloon.x + balloon.radius * 0.85;
-        let bTop = balloon.y - balloon.radius * 0.9;
-        let bBottom = balloon.y + balloon.radius * 1.45; 
+        let bR = balloon.radius * 0.8; 
 
+        // Kalkanlı Çarpışma Kontrolleri (Engel Yok Etme Mantığı)
         for(let i=chimneys.length-1;i>=0;i--) {
-          let c=chimneys[i]; 
-          c.x -= windSpeed*1.1;
-          // Hitbox for fairy chimney
-          let cLeft = c.x - c.width*0.2;
-          let cRight = c.x + c.width*1.2;
-          let cTop = H - c.height;
-          if(bRight > cLeft && bLeft < cRight && bBottom > cTop) {
-            // Rough triangle collision approximation
-            let chimneyCenter = c.x + c.width/2;
-            let widthAtBalloonY = c.width * 1.5 * ((H - bBottom) / c.height); 
-            if(Math.abs(balloon.x - chimneyCenter) < Math.max(c.width*0.4, widthAtBalloonY)) {
-               if(handleHit('chimney', balloon.x, bBottom)) return;
-            }
+          let c=chimneys[i]; c.x -= windSpeed*1.1;
+          let cL = c.x - c.width*0.3, cR = c.x + c.width*1.1, cT = H - c.height;
+          
+          if(balloon.x+bR > cL && balloon.x-bR < cR && balloon.y+bR*1.5 > cT) {
+             let hit = handleHit('chimney', c.x+c.width/2, cT);
+             if(hit === 'dead') return;
+             if(hit === 'shielded') { chimneys.splice(i,1); continue; } // Engeli sil yoluna devam et!
           }
           if(c.x < -300*scale) chimneys.splice(i,1);
         }
         
         for(let i=birds.length-1;i>=0;i--) {
-          let b=birds[i]; b.x -= windSpeed*0.8 + b.speed;
-          b.y += Math.sin(performance.now()*0.005 + b.bob)*1.5*scale;
-          if(b.x > bLeft && b.x < bRight && b.y > bTop && b.y < bBottom) {
-            if(handleHit('bird', b.x, b.y)) return;
+          let b=birds[i]; b.x -= windSpeed*0.8 + b.speed; b.y += Math.sin(performance.now()*0.01 + b.bob)*2*scale;
+          if(Math.hypot(balloon.x-b.x, balloon.y-b.y) < bR + b.size) {
+            let hit = handleHit('bird', b.x, b.y);
+            if(hit === 'dead') return;
+            if(hit === 'shielded') { birds.splice(i,1); continue; }
           }
           if(b.x < -100*scale) birds.splice(i,1);
         }
         
-        for(let i=stormClouds.length-1;i>=0;i--) {
-          let s=stormClouds[i]; s.x -= windSpeed*0.9 + s.speed; s.lightningPhase++;
-          let dist = Math.hypot(balloon.x-s.x, balloon.y-s.y);
-          if(dist < balloon.radius + s.radius*0.8) {
-            handleHit('storm', s.x, s.y); stormClouds.splice(i,1); continue;
-          }
-          if(s.x < -200*scale) stormClouds.splice(i,1);
-        }
-        
         for(let i=rivalBalloons.length-1;i>=0;i--) {
-          let rb=rivalBalloons[i]; 
-          rb.x -= windSpeed*0.9 + rb.speed;
-          rb.y += Math.sin(performance.now()*0.003 + rb.bobPhase)*0.8*scale;
-          
-          let dist = Math.hypot(balloon.x-rb.x, balloon.y-rb.y);
-          if(dist < balloon.radius + rb.size) {
-            if(handleHit('rivalBalloon', rb.x, rb.y)) return;
+          let rb=rivalBalloons[i]; rb.x -= windSpeed*0.9 + rb.speed; rb.y += Math.sin(performance.now()*0.005)*scale;
+          if(Math.hypot(balloon.x-rb.x, balloon.y-rb.y) < bR + rb.size) {
+            let hit = handleHit('rival', rb.x, rb.y);
+            if(hit === 'dead') return;
+            if(hit === 'shielded') { rivalBalloons.splice(i,1); continue; }
           }
           if(rb.x < -200*scale) rivalBalloons.splice(i,1);
         }
         
         for(let i=collectibles.length-1;i>=0;i--) {
           let c=collectibles[i];
-          if(magnetActive && c.type==='fuel') {
-            let ang=Math.atan2(balloon.y-c.y, balloon.x-c.x);
-            let dist=Math.hypot(balloon.x-c.x, balloon.y-c.y);
-            if(dist<500*scale) { c.x+=Math.cos(ang)*18*scale; c.y+=Math.sin(ang)*18*scale; }
-            else c.x -= windSpeed*0.8;
+          if(magnetActive && c.type==='fuel' && Math.hypot(balloon.x-c.x, balloon.y-c.y)<400*scale) {
+            let ang=Math.atan2(balloon.y-c.y, balloon.x-c.x); c.x+=Math.cos(ang)*15*scale; c.y+=Math.sin(ang)*15*scale;
           } else c.x -= windSpeed*0.8;
           
-          if(c.x > bLeft && c.x < bRight && c.y > bTop && c.y < bBottom) {
-            if(c.type==='fuel') { fuel=Math.min(100,fuel+25); sfxCollect(); addExplosion(c.x,c.y,'#f97316',15); }
-            else if(c.type==='shield') { shieldActive=true; sfxCollect(); addText('KALKAN!',c.x,c.y-25*scale,'#38bdf8'); }
-            else if(c.type==='magnet') { magnetActive=true; magnetTimer=15; sfxCollect(); addText('MIKNATIS!',c.x,c.y-25*scale,'#a855f7'); }
-            else if(c.type==='boost') { boostActive=true; boostTimer=8; sfxCollect(); addText('HIZ!',c.x,c.y-25*scale,'#facc15'); }
+          if(Math.hypot(balloon.x-c.x, balloon.y-c.y) < bR + c.radius) {
+            sfxCollect();
+            if(c.type==='fuel') { fuel=Math.min(100,fuel+30); addExplosion(c.x,c.y,'#f97316',15); }
+            else if(c.type==='shield') { shieldActive=true; floatingTexts.push({text:'KALKAN', x:c.x, y:c.y-20*scale, life:1, color:'#38bdf8'}); }
+            else if(c.type==='magnet') { magnetActive=true; magnetTimer=15; floatingTexts.push({text:'MIKNATIS', x:c.x, y:c.y-20*scale, life:1, color:'#a855f7'}); }
+            else if(c.type==='boost') { boostActive=true; boostTimer=8; floatingTexts.push({text:'HIZ', x:c.x, y:c.y-20*scale, life:1, color:'#facc15'}); }
             updateUI(); collectibles.splice(i,1);
           } else if(c.x<-100*scale) collectibles.splice(i,1);
         }
         
-        for(let i=0; i<mountains.length; i++) {
+        mountains.forEach((layer, i) => {
           let speed = windSpeed * (0.15 + i*0.1);
-          for(let j=0; j<mountains[i].length; j++) {
-            mountains[i][j].x -= speed;
+          layer.forEach(pt => pt.x -= speed);
+          if(layer[0].x < -150*scale) {
+            layer.shift(); layer.push({ x: layer[layer.length-1].x + 140*scale, y: random(H*0.7, H*0.9) + i*30*scale });
           }
-          if(mountains[i][0].x < -150*scale) {
-            mountains[i].shift();
-            let lastX = mountains[i][mountains[i].length-1].x;
-            mountains[i].push({ x: lastX + 120*scale, y: random(H*0.7, H*0.85) + i*35*scale });
-          }
-        }
+        });
 
-        if (Math.random() < 0.03) {
-          bgClouds.push({
-            x: W + 100*scale,
-            y: random(0, H * 0.6),
-            size: random(50, 120) * scale,
-            speed: random(0.2, 0.7),
-            opacity: random(0.05, 0.2)
-          });
-        }
+        if (Math.random() < 0.02) bgClouds.push({ x: W + 100*scale, y: random(0, H*0.5), size: random(50, 150)*scale, speed: random(0.2, 0.8), op: random(0.1, 0.3) });
 
-        for(let i=particles.length-1;i>=0;i--) { let p=particles[i]; p.x+=p.vx; p.y+=p.vy; p.life-=0.025; if(p.life<=0) particles.splice(i,1); }
-        for(let i=floatingTexts.length-1;i>=0;i--) { floatingTexts[i].y-=1.5*scale; floatingTexts[i].life-=0.02; if(floatingTexts[i].life<=0) floatingTexts.splice(i,1); }
-        for(let i=bgClouds.length-1;i>=0;i--) { bgClouds[i].x -= windSpeed*0.4 + bgClouds[i].speed; if(bgClouds[i].x<-250*scale) bgClouds.splice(i,1); }
-        for(let i=stars.length-1;i>=0;i--) { stars[i].x -= stars[i].speed * 0.2; if(stars[i].x < -10) { stars[i].x = W + 10; stars[i].y = Math.random() * H * 0.6; } }
+        particles.forEach((p,i) => { p.x+=p.vx; p.y+=p.vy; p.life-=0.025; if(p.life<=0) particles.splice(i,1); });
+        floatingTexts.forEach((t,i) => { t.y-=1.5*scale; t.life-=0.02; if(t.life<=0) floatingTexts.splice(i,1); });
+        bgClouds.forEach((c,i) => { c.x -= windSpeed*0.4 + c.speed; if(c.x<-300*scale) bgClouds.splice(i,1); });
         
-        windSpeed+=0.0006;
-        distance+= (windSpeed * (boostActive ? 0.20 : 0.12));
-        checkStage();
+        windSpeed+=0.0005; distance+= (windSpeed * (boostActive ? 0.2 : 0.12)); checkStage();
         if (screenShake > 0) screenShake *= 0.85;
         updateUI();
       }
@@ -767,407 +536,160 @@
         let g=ctx.createLinearGradient(0,0,0,H);
         g.addColorStop(0,currentSky.top); g.addColorStop(1,currentSky.bottom);
         ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-        
-        if (currentStarAlpha > 0.01) {
-          stars.forEach(s=>{
-            let alpha = (0.5 + Math.sin(performance.now()*0.002 + s.twinkle) * 0.5) * currentStarAlpha;
-            ctx.fillStyle = `rgba(255,255,255,${alpha})`;
-            ctx.beginPath(); ctx.arc(s.x, s.y, s.radius, 0, Math.PI*2); ctx.fill();
-          });
-        }
       }
 
       function drawMountains() {
-        for(let i=0; i<mountains.length; i++) {
-          ctx.fillStyle = i === 0 ? currentSky.m1 : (i === 1 ? currentSky.m2 : '#290f02');
-          ctx.beginPath();
-          ctx.moveTo(mountains[i][0].x, H);
-          for(let j=0; j<mountains[i].length; j++) {
-            let next = mountains[i][j+1];
-            if(next) {
-              let cx = (mountains[i][j].x + next.x) / 2;
-              let cy = (mountains[i][j].y + next.y) / 2;
-              ctx.quadraticCurveTo(mountains[i][j].x, mountains[i][j].y, cx, cy);
-            } else {
-              ctx.lineTo(mountains[i][j].x, mountains[i][j].y);
-            }
+        mountains.forEach((layer, i) => {
+          ctx.fillStyle = i===0 ? currentSky.m1 : currentSky.m2;
+          ctx.beginPath(); ctx.moveTo(layer[0].x, H);
+          for(let j=0; j<layer.length-1; j++) {
+            let cx = (layer[j].x + layer[j+1].x)/2, cy = (layer[j].y + layer[j+1].y)/2;
+            ctx.quadraticCurveTo(layer[j].x, layer[j].y, cx, cy);
           }
-          ctx.lineTo(W+200*scale, H);
-          ctx.lineTo(0, H);
-          ctx.fill();
-        }
+          ctx.lineTo(W+200*scale, H); ctx.lineTo(0, H); ctx.fill();
+        });
       }
       
       function drawBgClouds() {
         bgClouds.forEach(c=>{
-          // Şafağa göre bulut rengi
-          let color = stage >= 3 ? `rgba(255,255,255,${c.opacity})` : `rgba(253,186,116,${c.opacity*1.5})`;
-          ctx.fillStyle= color;
+          ctx.fillStyle=`rgba(255,255,255,${c.op})`;
           ctx.beginPath(); ctx.arc(c.x,c.y,c.size,0,Math.PI*2);
-          ctx.arc(c.x+c.size*0.6,c.y-c.size*0.3,c.size*0.8,0,Math.PI*2);
-          ctx.arc(c.x-c.size*0.5,c.y+c.size*0.2,c.size*0.7,0,Math.PI*2);
-          ctx.fill();
+          ctx.arc(c.x+c.size*0.5,c.y-c.size*0.2,c.size*0.8,0,Math.PI*2);
+          ctx.arc(c.x-c.size*0.4,c.y+c.size*0.1,c.size*0.6,0,Math.PI*2); ctx.fill();
         });
       }
       
       function drawChimneys() {
         chimneys.forEach(c=>{
-          let x=c.x, yBase=H-c.height, w=c.width;
+          let x=c.x, y=H-c.height, w=c.width;
           
-          // Peri Bacası Gövdesi (Konik alt taraf)
-          let grad=ctx.createLinearGradient(x-w*0.2, 0, x+w*1.2, 0);
-          grad.addColorStop(0, `hsl(${c.hue}, 40%, 35%)`);
-          grad.addColorStop(0.5, `hsl(${c.hue}, 50%, 55%)`);
-          grad.addColorStop(1, `hsl(${c.hue}, 30%, 20%)`);
-          
-          ctx.fillStyle = grad;
+          // Kaya Dokulu Gövde
+          ctx.fillStyle = '#78350f'; 
           ctx.beginPath();
-          ctx.moveTo(x - w*0.3, H); 
-          ctx.lineTo(x + w*0.1, yBase);
-          ctx.lineTo(x + w*0.9, yBase);
-          ctx.lineTo(x + w*1.3, H);
+          ctx.moveTo(x-w*0.3, H);
+          ctx.lineTo(x-w*0.1, y+20*scale); // Sol tırtık
+          ctx.lineTo(x+w*0.9, y+20*scale); // Sağ üst
+          ctx.lineTo(x+w*1.1, H);
           ctx.fill();
           
-          // Tüf/Kaya dokusu çizgileri
-          ctx.strokeStyle = `rgba(0,0,0,0.15)`;
-          ctx.lineWidth = 3*scale;
-          for(let k=1; k<4; k++) {
-            let ly = H - c.height*(k/4);
-            ctx.beginPath();
-            ctx.moveTo(x - w*0.1, ly);
-            ctx.quadraticCurveTo(x + w*0.5, ly + 20*scale, x + w*1.1, ly);
-            ctx.stroke();
-          }
-          
-          // Peri Bacası Şapkası (Mantar Kısım)
-          let capGrad = ctx.createRadialGradient(x+w*0.5, yBase-20*scale, 0, x+w*0.5, yBase, w);
-          capGrad.addColorStop(0, `hsl(${c.hue-15}, 25%, 30%)`);
-          capGrad.addColorStop(1, `hsl(${c.hue-25}, 35%, 15%)`);
-          
-          ctx.fillStyle = capGrad;
-          ctx.beginPath();
-          ctx.moveTo(x - w*0.25, yBase + 10*scale); // Sol alt
-          ctx.lineTo(x + w*0.5, yBase - w*0.9); // Tepe noktası
-          ctx.lineTo(x + w*1.25, yBase + 10*scale); // Sağ alt
-          ctx.quadraticCurveTo(x + w*0.5, yBase + w*0.3, x - w*0.25, yBase + 10*scale); // Kavisli alt
-          ctx.fill();
-        });
-      }
-      
-      function drawBirds() {
-        birds.forEach(b=>{
-          ctx.save(); ctx.translate(b.x,b.y);
-          let wingY = Math.sin(performance.now()*0.02 + b.wingOffset) * b.size * 1.3;
-          // Güvercin benzeri açık renkler
-          ctx.fillStyle='#f8fafc';
-          ctx.beginPath(); ctx.ellipse(0, 0, b.size, b.size*0.35, -0.1, 0, Math.PI*2); ctx.fill();
-          ctx.beginPath(); ctx.moveTo(-b.size*0.8, 0); ctx.lineTo(-b.size*1.3, b.size*0.1); ctx.lineTo(-b.size*0.8, b.size*0.2); ctx.fill();
-          ctx.fillStyle='#e2e8f0';
-          ctx.beginPath(); ctx.moveTo(b.size*0.8, 0); ctx.lineTo(b.size*1.4, -b.size*0.2); ctx.lineTo(b.size*1.3, b.size*0.3); ctx.fill();
-          ctx.fillStyle='#cbd5e1';
-          ctx.beginPath(); ctx.moveTo(-b.size*0.3, -b.size*0.1); ctx.quadraticCurveTo(b.size*0.2, wingY - b.size, b.size*0.8, wingY); ctx.lineTo(b.size*0.2, wingY*0.5); ctx.fill();
-          ctx.restore();
-        });
-      }
-      
-      function drawStormClouds() {
-        stormClouds.forEach(s=>{
-          let grad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.radius);
-          grad.addColorStop(0, '#334155');
-          grad.addColorStop(1, '#0f172a');
-          ctx.fillStyle = grad;
-          ctx.beginPath(); ctx.arc(s.x, s.y, s.radius, 0, Math.PI*2); ctx.fill();
-          ctx.beginPath(); ctx.arc(s.x+s.radius*0.5, s.y-s.radius*0.4, s.radius*0.7, 0, Math.PI*2); ctx.fill();
-          ctx.beginPath(); ctx.arc(s.x-s.radius*0.4, s.y-s.radius*0.2, s.radius*0.8, 0, Math.PI*2); ctx.fill();
-          if(s.lightningPhase % 60 < 6) {
-            ctx.strokeStyle='#fcd34d';
-            ctx.lineWidth=3*scale;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.beginPath();
-            let lx = s.x; let ly = s.y;
-            ctx.moveTo(lx, ly);
-            for(let i=0; i<4; i++) {
-              lx += random(-15, 15)*scale;
-              ly += random(20, 35)*scale;
-              ctx.lineTo(lx, ly);
-            }
-            ctx.stroke();
-            ctx.fillStyle = 'rgba(252, 211, 77, 0.15)';
-            ctx.beginPath(); ctx.arc(s.x, s.y, s.radius*1.4, 0, Math.PI*2); ctx.fill();
-          }
-        });
-      }
-      
-      function drawRivalBalloons() {
-        rivalBalloons.forEach(rb=>{
-          ctx.save(); ctx.translate(rb.x, rb.y);
-          let r = rb.size;
-          
-          // Sepet
-          let basketW = r * 0.5;   
-          let basketY = r * 1.3;
-          ctx.strokeStyle='#78350f'; ctx.lineWidth=1*scale;
-          ctx.beginPath(); 
-          ctx.moveTo(-r*0.3, r*0.7); ctx.lineTo(-basketW*0.4, basketY);
-          ctx.moveTo(r*0.3, r*0.7); ctx.lineTo(basketW*0.4, basketY);
-          ctx.stroke();
+          // Gölge / Doku
           ctx.fillStyle = '#451a03';
-          ctx.fillRect(-basketW/2, basketY, basketW, r*0.3);
+          ctx.beginPath();
+          ctx.moveTo(x+w*0.4, H); ctx.lineTo(x+w*0.3, y+20*scale);
+          ctx.lineTo(x+w*0.9, y+20*scale); ctx.lineTo(x+w*1.1, H); ctx.fill();
 
-          // Balon Gövdesi
-          ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.clip();
-          let sliceW = r*2.2/3;
-          for(let i=0; i<3; i++){ 
-            let hue = (rb.colorHue + i*40) % 360;
-            ctx.fillStyle = `hsl(${hue}, 70%, 50%)`;
-            ctx.fillRect(-r*1.1+i*sliceW, -r*1.2, sliceW, r*2.4); 
-          }
-          let shadow=ctx.createRadialGradient(-r*0.3,-r*0.3,r*0.1, 0,0,r);
-          shadow.addColorStop(0,'rgba(255,255,255,0.3)'); 
-          shadow.addColorStop(0.6,'rgba(0,0,0,0)');
-          shadow.addColorStop(1,'rgba(0,0,0,0.6)'); 
-          ctx.fillStyle=shadow; ctx.fillRect(-r*2,-r*2,r*4,r*4);
-          ctx.restore();
+          // Kaya Şapka (Kapadokya Mantarı)
+          let capY = y - 10*scale;
+          ctx.fillStyle = '#290f02';
+          ctx.beginPath();
+          ctx.moveTo(x-w*0.4, capY+30*scale); // Sol alt uç
+          ctx.quadraticCurveTo(x+w*0.4, capY-w*0.5, x+w*1.2, capY+30*scale); // Kavisli tepe
+          ctx.quadraticCurveTo(x+w*0.4, capY+50*scale, x-w*0.4, capY+30*scale); // Kavisli alt taban
+          ctx.fill();
         });
       }
       
       function drawBalloon() {
-        ctx.save(); ctx.translate(balloon.x, balloon.y);
-        ctx.rotate(balloon.vy*0.025); 
+        ctx.save(); ctx.translate(balloon.x, balloon.y); ctx.rotate(balloon.vy*0.03); 
         let r=balloon.radius;
         
-        if(magnetActive) {
-          ctx.beginPath(); ctx.arc(0,0,r*2.2,0,Math.PI*2);
-          ctx.fillStyle='rgba(168, 85, 247, 0.1)'; ctx.fill();
-          ctx.strokeStyle='rgba(192, 132, 252, 0.7)'; ctx.lineWidth=2*scale; ctx.stroke();
-        }
-        if(boostActive) {
-          ctx.beginPath(); ctx.arc(0,0,r*1.8,0,Math.PI*2);
-          ctx.strokeStyle='rgba(250, 204, 21, 0.6)'; ctx.lineWidth=3*scale; ctx.setLineDash([10*scale, 8*scale]); ctx.stroke(); ctx.setLineDash([]);
-        }
+        if(magnetActive) { ctx.beginPath(); ctx.arc(0,0,r*2,0,Math.PI*2); ctx.fillStyle='rgba(168,85,247,0.1)'; ctx.fill(); ctx.strokeStyle='rgba(192,132,252,0.6)'; ctx.lineWidth=2; ctx.stroke(); }
+        if(boostActive) { ctx.beginPath(); ctx.arc(0,0,r*1.6,0,Math.PI*2); ctx.strokeStyle='rgba(250,204,21,0.6)'; ctx.lineWidth=3; ctx.setLineDash([8, 6]); ctx.stroke(); ctx.setLineDash([]); }
         
-        let basketW = r * 0.6;   
-        let basketH = r * 0.35;  
-        let basketY = r * 1.25;
-        
-        // İpler
-        ctx.strokeStyle='#78350f'; ctx.lineWidth=1.5*scale;
-        ctx.beginPath(); 
-        ctx.moveTo(-r*0.4, r*0.7); ctx.lineTo(-basketW*0.4, basketY);
-        ctx.moveTo(r*0.4, r*0.7); ctx.lineTo(basketW*0.4, basketY);
-        ctx.stroke();
+        // Sepet İpleri
+        ctx.strokeStyle='#451a03'; ctx.lineWidth=1.5*scale;
+        ctx.beginPath(); ctx.moveTo(-r*0.3, r*1.2); ctx.lineTo(-r*0.2, r*1.8); ctx.moveTo(r*0.3, r*1.2); ctx.lineTo(r*0.2, r*1.8); ctx.stroke();
 
-        // Alev (Etourgood sıcak turuncu/sarı)
+        // Alev
         if(pressing && fuel > 0) {
-          let flameColor = boostActive ? '#fef08a' : '#facc15';
-          ctx.fillStyle = flameColor;
-          ctx.beginPath();
-          ctx.moveTo(-r*0.15, basketY);
-          ctx.lineTo(r*0.15, basketY);
-          ctx.lineTo(0, r*0.4 + Math.random()*r*0.5); 
-          ctx.fill();
-          ctx.fillStyle = '#f97316';
-          ctx.beginPath();
-          ctx.moveTo(-r*0.08, basketY);
-          ctx.lineTo(r*0.08, basketY);
-          ctx.lineTo(0, r*0.6 + Math.random()*r*0.3);
-          ctx.fill();
+          ctx.fillStyle = boostActive ? '#fef08a' : '#facc15'; ctx.beginPath(); ctx.moveTo(-r*0.1, r*1.8); ctx.lineTo(r*0.1, r*1.8); ctx.lineTo(0, r*1.2+Math.random()*r*0.3); ctx.fill();
         }
         
-        // Sepet (Hasır Rengi)
-        let bGrad = ctx.createLinearGradient(-basketW/2, 0, basketW/2, 0);
-        bGrad.addColorStop(0, '#9a3412'); 
-        bGrad.addColorStop(1, '#451a03');
-        ctx.fillStyle = bGrad;
-        ctx.fillRect(-basketW/2, basketY, basketW, basketH);
-        ctx.fillStyle='#f59e0b'; // Sepet detayı
-        ctx.fillRect(-basketW/2 - 2*scale, basketY, basketW + 4*scale, basketH*0.25);
+        // Sepet
+        ctx.fillStyle = '#9a3412'; ctx.fillRect(-r*0.3, r*1.8, r*0.6, r*0.4);
         
-        // Balon Gövdesi (Etourgood Renkleri)
+        // Gerçekçi Balon Formu (Armut/Damla Şekli)
         ctx.save();
-        ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.clip();
-        let colors=['#ea580c','#facc15','#ffffff','#f43f5e']; // Turuncu, Sarı, Beyaz, Kırmızı
+        ctx.beginPath();
+        ctx.moveTo(r, 0);
+        ctx.arc(0, 0, r, 0, Math.PI, true); // Üst kubbe
+        ctx.bezierCurveTo(-r, r*0.8, -r*0.4, r*1.3, -r*0.35, r*1.5); // Sol daralma
+        ctx.lineTo(r*0.35, r*1.5); // Alt düzlük
+        ctx.bezierCurveTo(r*0.4, r*1.3, r, r*0.8, r, 0); // Sağ daralma
+        ctx.closePath();
+        ctx.clip(); // Boyama alanı
+        
+        // Renk Dilimleri
+        let colors=['#ea580c','#facc15','#ffffff','#f43f5e']; 
         let sw=r*2.2/4;
         for(let i=0;i<4;i++){ 
-          let sliceGrad = ctx.createLinearGradient(-r*1.1+i*sw, -r, -r*1.1+(i+1)*sw, r);
-          sliceGrad.addColorStop(0, colors[i]);
-          sliceGrad.addColorStop(1, '#9a3412');
-          ctx.fillStyle = sliceGrad; 
-          ctx.fillRect(-r*1.1+i*sw, -r*1.2, sw, r*2.4); 
+          let gr = ctx.createLinearGradient(0, -r, 0, r*1.5); gr.addColorStop(0, colors[i]); gr.addColorStop(1, '#9a3412');
+          ctx.fillStyle = gr; ctx.fillRect(-r*1.1+i*sw, -r*1.2, sw, r*3); 
         }
-        let shadow=ctx.createRadialGradient(-r*0.3,-r*0.3,r*0.1, 0,0,r);
-        shadow.addColorStop(0,'rgba(255,255,255,0.4)'); 
-        shadow.addColorStop(0.6,'rgba(0,0,0,0)');
-        shadow.addColorStop(1,'rgba(0,0,0,0.6)'); 
+        // Gölgelendirme (3D etki)
+        let shadow=ctx.createRadialGradient(-r*0.4,-r*0.4,r*0.1, 0,0,r*1.5);
+        shadow.addColorStop(0,'rgba(255,255,255,0.4)'); shadow.addColorStop(0.5,'rgba(0,0,0,0)'); shadow.addColorStop(1,'rgba(0,0,0,0.6)'); 
         ctx.fillStyle=shadow; ctx.fillRect(-r*2,-r*2,r*4,r*4);
         ctx.restore();
         
-        if(shieldActive) {
-          ctx.beginPath(); ctx.arc(0,0,r*1.6,0,Math.PI*2);
-          ctx.fillStyle='rgba(56, 189, 248, 0.15)'; ctx.fill();
-          ctx.strokeStyle='#7dd3fc'; ctx.lineWidth=3*scale; ctx.stroke();
-        }
+        if(shieldActive) { ctx.beginPath(); ctx.arc(0,0,r*1.8,0,Math.PI*2); ctx.fillStyle='rgba(56,189,248,0.15)'; ctx.fill(); ctx.strokeStyle='#7dd3fc'; ctx.lineWidth=3; ctx.stroke(); }
         ctx.restore();
       }
       
-      function drawCollectibles() {
-        collectibles.forEach(c=>{
-          let bob=Math.sin(performance.now()*0.01+c.bobPhase)*5*scale;
-          ctx.save(); ctx.translate(c.x, c.y+bob);
-          ctx.shadowBlur = 15;
-          if(c.type==='fuel') {
-            ctx.shadowColor = '#ea580c'; ctx.fillStyle='#c2410c'; ctx.beginPath(); ctx.arc(0,2*scale,c.radius,0,Math.PI*2); ctx.fill();
-            ctx.fillStyle='#f97316'; ctx.beginPath(); ctx.arc(0,-1*scale,c.radius*0.85,0,Math.PI*2); ctx.fill();
-            ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius*1.1}px Inter`; ctx.textAlign='center'; ctx.fillText('🔥',0,4*scale);
-          } else if(c.type==='shield') {
-            ctx.shadowColor = '#0284c7'; ctx.fillStyle='#0369a1'; ctx.beginPath(); ctx.arc(0,2*scale,c.radius,0,Math.PI*2); ctx.fill();
-            ctx.fillStyle='#38bdf8'; ctx.beginPath(); ctx.arc(0,-1*scale,c.radius*0.85,0,Math.PI*2); ctx.fill();
-            ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius*1.1}px Inter`; ctx.textAlign='center'; ctx.fillText('🛡️',0,4*scale);
-          } else if(c.type==='magnet') {
-            ctx.shadowColor = '#9333ea'; ctx.fillStyle='#7e22ce'; ctx.beginPath(); ctx.arc(0,2*scale,c.radius,0,Math.PI*2); ctx.fill();
-            ctx.fillStyle='#a855f7'; ctx.beginPath(); ctx.arc(0,-1*scale,c.radius*0.85,0,Math.PI*2); ctx.fill();
-            ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius*1.1}px Inter`; ctx.textAlign='center'; ctx.fillText('🧲',0,4*scale);
-          } else if(c.type==='boost') {
-            ctx.shadowColor = '#ca8a04'; ctx.fillStyle='#a16207'; ctx.beginPath(); ctx.arc(0,2*scale,c.radius,0,Math.PI*2); ctx.fill();
-            ctx.fillStyle='#facc15'; ctx.beginPath(); ctx.arc(0,-1*scale,c.radius*0.85,0,Math.PI*2); ctx.fill();
-            ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius*1.1}px Inter`; ctx.textAlign='center'; ctx.fillText('⚡',0,4*scale);
-          }
-          ctx.restore();
-        });
-      }
-      
-      function drawParticles() {
-        ctx.globalCompositeOperation = 'lighter'; 
-        particles.forEach(p=>{
-          ctx.globalAlpha=Math.max(0, p.life);
-          ctx.fillStyle=p.color;
-          ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
-        });
-        ctx.globalAlpha=1;
-        ctx.globalCompositeOperation = 'source-over';
-      }
-      
-      function drawFloatingTexts() {
-        floatingTexts.forEach(t=>{
-          ctx.globalAlpha=Math.max(0, t.life);
-          ctx.fillStyle=t.color;
-          ctx.font=`800 ${18*scale}px Inter`;
-          ctx.textAlign='center';
-          ctx.shadowBlur = 6; ctx.shadowColor = 'rgba(0,0,0,0.8)';
-          ctx.fillText(t.text, t.x, t.y);
-          ctx.shadowBlur = 0;
-        });
-        ctx.globalAlpha=1;
-      }
+      // Çizim fonksiyonları (Kuşlar, Rakip Balonlar, Itemler vs kısaltıldı/optimize edildi)
+      function drawBirds() { birds.forEach(b=>{ ctx.save(); ctx.translate(b.x,b.y); ctx.fillStyle='#f8fafc'; ctx.beginPath(); ctx.arc(0,0,b.size*0.6,0,Math.PI*2); ctx.fill(); let wy = Math.sin(performance.now()*0.02 + b.bob)*b.size; ctx.beginPath(); ctx.moveTo(-b.size*0.5,0); ctx.lineTo(b.size,wy); ctx.lineTo(b.size*0.5,0); ctx.fill(); ctx.restore(); }); }
+      function drawRivalBalloons() { rivalBalloons.forEach(rb=>{ ctx.save(); ctx.translate(rb.x, rb.y); let r=rb.size; ctx.fillStyle='#451a03'; ctx.fillRect(-r*0.2, r*1.2, r*0.4, r*0.3); ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.fillStyle=`hsl(${rb.hue},80%,50%)`; ctx.fill(); ctx.restore(); }); }
+      function drawCollectibles() { collectibles.forEach(c=>{ let b=Math.sin(performance.now()*0.01+c.bob)*4*scale; ctx.save(); ctx.translate(c.x, c.y+b); ctx.shadowBlur=10; ctx.beginPath(); ctx.arc(0,0,c.radius,0,Math.PI*2); if(c.type==='fuel'){ ctx.shadowColor='#ea580c'; ctx.fillStyle='#f97316'; ctx.fill(); ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius}px Inter`; ctx.textAlign='center'; ctx.fillText('⛽',0,4*scale); } else if(c.type==='shield'){ ctx.shadowColor='#0284c7'; ctx.fillStyle='#38bdf8'; ctx.fill(); ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius}px Inter`; ctx.textAlign='center'; ctx.fillText('🛡',0,4*scale); } else if(c.type==='magnet'){ ctx.shadowColor='#9333ea'; ctx.fillStyle='#a855f7'; ctx.fill(); ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius}px Inter`; ctx.textAlign='center'; ctx.fillText('🧲',0,4*scale); } else if(c.type==='boost'){ ctx.shadowColor='#ca8a04'; ctx.fillStyle='#facc15'; ctx.fill(); ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius}px Inter`; ctx.textAlign='center'; ctx.fillText('⚡',0,4*scale); } ctx.restore(); }); }
+      function drawParticles() { ctx.globalCompositeOperation = 'lighter'; particles.forEach(p=>{ ctx.globalAlpha=Math.max(0, p.life); ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill(); }); ctx.globalAlpha=1; ctx.globalCompositeOperation = 'source-over'; }
+      function drawFloatingTexts() { floatingTexts.forEach(t=>{ ctx.globalAlpha=Math.max(0, t.life); ctx.fillStyle=t.color; ctx.font=`800 ${16*scale}px Inter`; ctx.textAlign='center'; ctx.shadowBlur=4; ctx.shadowColor='#000'; ctx.fillText(t.text, t.x, t.y); ctx.shadowBlur=0; }); ctx.globalAlpha=1; }
       
       function render() {
         ctx.save();
-        if (screenShake > 0.5) {
-          let shakeX = (Math.random() - 0.5) * screenShake;
-          let shakeY = (Math.random() - 0.5) * screenShake;
-          ctx.translate(shakeX, shakeY);
-        }
-        drawSky();
-        drawMountains();
-        drawBgClouds();
-        drawChimneys();
-        drawStormClouds();
-        drawRivalBalloons();
-        drawCollectibles();
-        drawBirds(); 
+        if (screenShake > 0.5) ctx.translate((Math.random()-0.5)*screenShake, (Math.random()-0.5)*screenShake);
+        drawSky(); drawMountains(); drawBgClouds(); drawChimneys(); drawRivalBalloons(); drawCollectibles(); drawBirds(); 
         if(gameState !== STATE.MENU && gameState !== STATE.CRASHING) drawBalloon();
-        drawParticles();
-        drawFloatingTexts();
+        drawParticles(); drawFloatingTexts();
         ctx.restore();
       }
       
       function gameLoop() {
-        if (gameState === STATE.PLAYING || gameState === STATE.CRASHING) {
-          if(gameState === STATE.PLAYING) spawnObjects();
-          updateGame();
-        } else {
-          updateGame();
-        }
-        render();
-        requestAnimationFrame(gameLoop);
+        if (gameState === STATE.PLAYING || gameState === STATE.CRASHING) { if(gameState===STATE.PLAYING) spawnObjects(); updateGame(); }
+        render(); requestAnimationFrame(gameLoop);
       }
       
       function startGame() {
-        initAudio();
-        sfxClick();
-        fullReset();
-        gameState = STATE.PLAYING;
-        menuScreen.style.display = 'none';
-        gameOverScreen.style.display = 'none';
-        hudContainer.style.opacity = '1';
-        updateUI();
+        initAudio(); sfxClick(); fullReset(); gameState = STATE.PLAYING;
+        document.getElementById('menuScreen').style.display = 'none'; document.getElementById('gameOverScreen').style.display = 'none';
+        document.getElementById('hudContainer').style.opacity = '1'; updateUI();
       }
       
       function endGame() {
         if (gameState === STATE.CRASHING || gameState === STATE.OVER) return;
-        gameState = STATE.CRASHING; 
-        hudContainer.style.opacity = '0';
-        
+        gameState = STATE.CRASHING; document.getElementById('hudContainer').style.opacity = '0';
         let isNewHigh = false;
-        if (distance > highScore) {
-          highScore = Math.floor(distance);
-          try { localStorage.setItem('etourgood_sky_high', highScore); } catch(e) {}
-          isNewHigh = true;
-          updateHighScoreUI();
-        }
-
+        if (distance > highScore) { highScore = Math.floor(distance); try { localStorage.setItem('etourgood_sky_high', highScore); } catch(e){} isNewHigh = true; updateHighScoreUI(); }
         setTimeout(() => {
-          gameState = STATE.OVER;
-          finalDistText.textContent = Math.floor(distance) + ' m';
-          if (isNewHigh) {
-            newHighScoreBadge.style.display = 'block';
-          } else {
-            newHighScoreBadge.style.display = 'none';
-          }
-          gameOverScreen.style.display = 'flex';
-          gsap.fromTo(gameOverScreen.querySelector('.glass-panel'), 
-            { scale: 0.8, opacity: 0, y: 50 }, 
-            { scale: 1, opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }
-          );
+          gameState = STATE.OVER; document.getElementById('finalDistText').textContent = Math.floor(distance) + ' m';
+          document.getElementById('newHighScoreBadge').style.display = isNewHigh ? 'block' : 'none';
+          document.getElementById('gameOverScreen').style.display = 'flex';
         }, 800); 
       }
       
-      function restartGame() {
-        sfxClick();
-        gameOverScreen.style.display = 'none';
-        startGame();
-      }
-
-      function goToMenu() {
-        sfxClick();
-        gameState = STATE.MENU;
-        gameOverScreen.style.display = 'none';
-        hudContainer.style.opacity = '0';
-        menuScreen.style.display = 'flex';
-        updateHighScoreUI();
-        fullReset();
+      function updateHighScoreUI() {
+        const hsMenu = document.getElementById('highScoreMenu');
+        if (highScore > 0) { hsMenu.style.display = 'inline-block'; document.getElementById('highScoreMenuText').textContent = highScore + ' m'; }
       }
       
-      canvas.addEventListener('touchstart', (e) => { 
-        if(e.target.tagName !== 'BUTTON') e.preventDefault(); 
-        if(gameState===STATE.PLAYING) { pressing = true; initAudio(); }
-      }, {passive: false});
-      canvas.addEventListener('touchend', (e) => { 
-        if(e.target.tagName !== 'BUTTON') e.preventDefault(); 
-        pressing = false; 
-      }, {passive: false});
-      canvas.addEventListener('mousedown', (e) => { 
-        if(gameState===STATE.PLAYING && e.target.tagName !== 'BUTTON') { pressing = true; initAudio(); }
-      });
+      canvas.addEventListener('touchstart', (e) => { if(e.target.tagName !== 'BUTTON') e.preventDefault(); if(gameState===STATE.PLAYING) { pressing = true; initAudio(); } }, {passive: false});
+      canvas.addEventListener('touchend', (e) => { if(e.target.tagName !== 'BUTTON') e.preventDefault(); pressing = false; }, {passive: false});
+      canvas.addEventListener('mousedown', (e) => { if(gameState===STATE.PLAYING && e.target.tagName !== 'BUTTON') { pressing = true; initAudio(); } });
       canvas.addEventListener('mouseup', () => pressing = false);
       
       document.getElementById('startBtn').addEventListener('click', startGame);
-      document.getElementById('retryBtn').addEventListener('click', restartGame);
-      document.getElementById('menuBtn').addEventListener('click', goToMenu);
+      document.getElementById('retryBtn').addEventListener('click', () => { sfxClick(); document.getElementById('gameOverScreen').style.display = 'none'; startGame(); });
+      document.getElementById('menuBtn').addEventListener('click', () => { sfxClick(); gameState = STATE.MENU; document.getElementById('gameOverScreen').style.display = 'none'; document.getElementById('menuScreen').style.display = 'flex'; updateHighScoreUI(); fullReset(); });
       
-      fullReset();
-      gameLoop();
+      updateHighScoreUI(); fullReset(); gameLoop();
     })();
   </script>
 </body>
