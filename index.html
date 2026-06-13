@@ -14,474 +14,653 @@
         }
 
         body {
-            background: #2a2418;
-            min-height: 100vh;
+            background: linear-gradient(#2c2419, #1f1a12);
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: system-ui, 'Segoe UI', 'Poppins', -apple-system, sans-serif;
-            padding: 12px;
+            color: #ffe6b3;
+            overflow: hidden;
         }
 
-        .game-wrapper {
-            background: #e2caa4;
-            border-radius: 42px;
+        .game-container {
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+            background: #3c2a1f;
+            border-radius: 48px;
             padding: 12px;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.5);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7),
+                        inset 0 0 80px rgba(139, 99, 55, 0.3);
+            overflow: hidden;
         }
 
         canvas {
             display: block;
-            margin: 0 auto;
-            border-radius: 28px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
             width: 100%;
             height: auto;
-            cursor: pointer;
+            border-radius: 36px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            background: #2a2118;
             touch-action: none;
         }
 
-        .info-bar {
+        .ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 14px;
-            padding: 0 10px;
+            padding: 18px 20px 0;
             gap: 12px;
-            flex-wrap: wrap;
         }
 
-        .score-card {
-            background: #2f241b;
-            padding: 6px 18px;
+        .score-display {
+            background: rgba(47, 36, 27, 0.95);
+            padding: 8px 22px;
             border-radius: 50px;
-            color: #ffe6b3;
-            font-weight: bold;
-            font-size: 1.35rem;
+            font-size: 1.45rem;
+            font-weight: 700;
             font-family: monospace;
-            letter-spacing: 1px;
-            box-shadow: inset 0 1px 3px #00000033, 0 4px 8px rgba(0,0,0,0.2);
-            backdrop-filter: blur(2px);
+            letter-spacing: 2px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4),
+                        inset 0 2px 4px rgba(255,230,179,0.2);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .best-card {
-            background: #5c3f28;
+        .best-display {
+            background: rgba(92, 63, 40, 0.95);
             padding: 6px 18px;
             border-radius: 50px;
-            color: #ffefcf;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .restart-mobile {
-            background: #c68e5a;
-            border: none;
-            font-weight: bold;
             font-size: 1rem;
-            padding: 8px 26px;
-            border-radius: 60px;
-            color: #2c1e12;
-            font-family: inherit;
-            cursor: pointer;
-            transition: 0.1s linear;
-            box-shadow: 0 4px 0 #6f4a2a;
-            touch-action: manipulation;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         }
 
-        .restart-mobile:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #6f4a2a;
-        }
-
-        .jump-hint {
-            background: #5e3f28aa;
-            backdrop-filter: blur(8px);
-            margin-top: 12px;
-            padding: 8px 12px;
-            border-radius: 60px;
-            font-size: 0.75rem;
-            color: #fff0cf;
-            text-align: center;
-            font-weight: 500;
-            display: inline-block;
-            width: auto;
-        }
-
-        .footer-control {
+        .controls {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            justify-content: center;
-            margin-top: 8px;
+            gap: 12px;
+            pointer-events: all;
         }
 
-        @media (max-width: 600px) {
-            .score-card { font-size: 1rem; padding: 4px 14px; }
-            .best-card { font-size: 0.85rem; padding: 4px 14px; }
-            .restart-mobile { padding: 6px 20px; font-size: 0.85rem; }
-            .jump-hint { font-size: 0.65rem; }
+        .btn {
+            background: #c68e5a;
+            color: #2c1e12;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            box-shadow: 0 6px 0 #9c6a44;
+            transition: all 0.1s;
+            cursor: pointer;
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #9c6a44;
+        }
+
+        .hint {
+            position: absolute;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(94, 63, 40, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 0.82rem;
+            text-align: center;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .start-screen, .game-over-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(28, 22, 16, 0.92);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            border-radius: 36px;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .title {
+            font-size: 2.4rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            color: #ffeb9f;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #d4a46f;
+            margin-bottom: 40px;
+        }
+
+        .cultural-icon {
+            font-size: 4.5rem;
+            margin-bottom: 16px;
         }
     </style>
 </head>
 <body>
-<div>
-    <div class="game-wrapper">
-        <canvas id="gameCanvas" width="750" height="420" style="width:100%; height:auto; max-width:750px; aspect-ratio:750/420"></canvas>
-        <div class="info-bar">
-            <div class="score-card">🏃‍♂️ <span id="scoreValue">0</span></div>
-            <div class="best-card">🏅 REKOR <span id="bestValue">0</span></div>
-            <button class="restart-mobile" id="restartButton">🔄 YENİDEN</button>
+    <div class="game-container" id="gameContainer">
+        <canvas id="gameCanvas" width="420" height="750"></canvas>
+        
+        <!-- UI Overlay -->
+        <div class="ui-overlay">
+            <div class="top-bar">
+                <div class="score-display">
+                    🏃‍♂️ <span id="scoreValue">0</span>
+                </div>
+                <div class="best-display">
+                    🏆 REKOR <span id="bestValue">0</span>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn" id="restartBtn">🔄</button>
+            </div>
+
+            <div class="hint" id="hintText">
+                👆 EKRANA DOKUN → ZİPLA
+            </div>
         </div>
-        <div class="footer-control">
-            <div class="jump-hint">
-                👆 EKRANA DOKUN / TIKLA → ZIPLA  |  Mardin Taş Arası Koşu
+
+        <!-- Start Screen -->
+        <div class="start-screen" id="startScreen">
+            <div class="cultural-icon">🏛️</div>
+            <div class="title">MARDİN KOŞUSU</div>
+            <div class="subtitle">Taş Sokakların Efsanesi</div>
+            <button class="btn" id="startBtn" style="font-size:1.3rem; padding:16px 48px;">KOŞMAYA BAŞLA</button>
+            <p style="margin-top:40px; font-size:0.85rem; opacity:0.8;">Mardin'in kadim sokaklarında koş!</p>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div class="game-over-screen" id="gameOverScreen" style="display:none;">
+            <div class="cultural-icon">🏁</div>
+            <div class="title" style="font-size:2.1rem;">KOŞU BİTTİ</div>
+            <div style="margin:20px 0; font-size:1.6rem; font-weight:700;" id="finalScore">Skor: 0</div>
+            
+            <div style="margin:15px 0; background:rgba(255,255,255,0.1); padding:12px 40px; border-radius:30px;" id="newBest">🎉 YENİ REKOR!</div>
+            
+            <button class="btn" id="restartGameBtn" style="margin-top:20px;">TEKRAR DENE</button>
+            
+            <div style="margin-top:50px; font-size:0.9rem; opacity:0.7;">
+                Mardin'in taşları seni bekliyor...
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    (function(){
-        // ---------- canvas ve mobil uyum ----------
+    <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         
-        // Sabit oran: 750x420 (mobilde rahat)
-        const W = 750;
-        const H = 420;
+        // Vertical mobile friendly dimensions
+        const W = 420;
+        const H = 750;
         canvas.width = W;
         canvas.height = H;
-        
-        // ---------- Oyun değişkenleri ----------
-        let gameRunning = true;
+
+        let gameRunning = false;
         let score = 0;
-        let bestScore = localStorage.getItem('mardinBestMob') ? parseInt(localStorage.getItem('mardinBestMob')) : 0;
+        let bestScore = localStorage.getItem('mardinBestVertical') ? parseInt(localStorage.getItem('mardinBestVertical')) : 0;
         let frame = 0;
-        let groundY = H - 58;   // zemin seviyesi (taş yol)
+        let groundY = H - 110;
         
-        // KARAKTER (Mardinli koşucu)
-        const PLAYER_W = 26;
-        const PLAYER_H = 30;
-        let playerX = 90;
+        // Player
+        const PLAYER_W = 42;
+        const PLAYER_H = 52;
+        let playerX = 80;
         let playerY = groundY - PLAYER_H;
         let playerVy = 0;
         let isOnGround = true;
-        const GRAVITY = 0.68;
-        const JUMP_POWER = -9.6;
+        let playerFrame = 0;
         
-        // Engeller (taş süsler / dar çıkmalar)
+        const GRAVITY = 0.72;
+        const JUMP_POWER = -15.5;
+        
+        // Obstacles & Collectibles
         let obstacles = [];
-        const OBSTACLE_W = 20;
-        const OBSTACLE_H_MIN = 26;
-        const OBSTACLE_H_MAX = 48;
-        let spawnGap = 70;
-        let lastSpawnFrame = 0;
+        let collectibles = [];
         
-        // görsel animasyon
         let bgOffset = 0;
+        let speed = 3.8;
         
-        // UI elementler
+        // UI
         const scoreSpan = document.getElementById('scoreValue');
         const bestSpan = document.getElementById('bestValue');
-        bestSpan.innerText = bestScore;
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const finalScoreEl = document.getElementById('finalScore');
+        const newBestEl = document.getElementById('newBest');
         
+        bestSpan.innerText = bestScore;
+
         function updateUI() {
             scoreSpan.innerText = Math.floor(score);
-            if(score > bestScore) {
+            if (score > bestScore) {
                 bestScore = Math.floor(score);
                 bestSpan.innerText = bestScore;
-                localStorage.setItem('mardinBestMob', bestScore);
+                localStorage.setItem('mardinBestVertical', bestScore);
             }
         }
-        
-        // Zıplama (mobil / dokunma için özel)
+
         function jump() {
-            if(!gameRunning) return;
-            if(isOnGround) {
-                playerVy = JUMP_POWER;
-                isOnGround = false;
-                // hafif dokunsal geri bildirim (vibrasyon - isteğe bağlı sessiz)
-                if(navigator.vibrate) navigator.vibrate(20);
-            }
+            if (!gameRunning || !isOnGround) return;
+            playerVy = JUMP_POWER;
+            isOnGround = false;
+            if (navigator.vibrate) navigator.vibrate(25);
         }
-        
-        // Fizik
+
         function updatePhysics() {
-            if(!gameRunning) return;
+            if (!gameRunning) return;
+            
             playerVy += GRAVITY;
             playerY += playerVy;
             
-            if(playerY + PLAYER_H >= groundY) {
+            if (playerY + PLAYER_H >= groundY) {
                 playerY = groundY - PLAYER_H;
                 playerVy = 0;
                 isOnGround = true;
             }
-            if(playerY < 0) {
-                playerY = 0;
-                if(playerVy < 0) playerVy = 0;
-            }
         }
-        
-        // Engel üret
-        function trySpawnObstacle(currentFrame) {
-            if(!gameRunning) return;
-            if(currentFrame - lastSpawnFrame >= spawnGap) {
-                let height = Math.floor(Math.random() * (OBSTACLE_H_MAX - OBSTACLE_H_MIN + 1) + OBSTACLE_H_MIN);
-                obstacles.push({
-                    x: W,
-                    y: groundY - height,
-                    width: OBSTACLE_W,
-                    height: height,
-                    passed: false
-                });
-                lastSpawnFrame = currentFrame;
-                // skora göre hafif hızlanma ama çok agresif değil
-                let newGap = Math.max(44, 70 - Math.floor(score / 150));
-                spawnGap = newGap;
-            }
-        }
-        
-        // Engel güncelle + çarpışma
-        function updateObstacles() {
-            if(!gameRunning) return;
-            for(let i=0; i<obstacles.length; i++) {
-                obstacles[i].x -= 3.9;   // akıcı mobil koşu
-            }
-            obstacles = obstacles.filter(obs => obs.x + obs.width > 0);
+
+        function spawnObstacle() {
+            const types = ['low', 'high', 'gap'];
+            const type = types[Math.floor(Math.random() * types.length)];
             
-            // skor artırma
-            for(let i=0; i<obstacles.length; i++) {
-                const obs = obstacles[i];
-                if(!obs.passed && obs.x + obs.width < playerX) {
-                    obs.passed = true;
+            let obs = { 
+                x: W + 50,
+                width: 32,
+                passed: false,
+                type: type
+            };
+            
+            if (type === 'low') {
+                obs.y = groundY - 48;
+                obs.height = 48;
+            } else if (type === 'high') {
+                obs.y = groundY - 110;
+                obs.height = 110;
+            } else {
+                obs.y = groundY - 65;
+                obs.height = 65;
+                obs.width = 22;
+            }
+            
+            obstacles.push(obs);
+        }
+
+        function spawnCollectible() {
+            if (Math.random() < 0.4) {
+                collectibles.push({
+                    x: W + 80,
+                    y: groundY - 140 - Math.random() * 140,
+                    size: 22,
+                    collected: false
+                });
+            }
+        }
+
+        function updateEntities() {
+            if (!gameRunning) return;
+            
+            // Move obstacles
+            for (let i = 0; i < obstacles.length; i++) {
+                obstacles[i].x -= speed;
+            }
+            obstacles = obstacles.filter(o => o.x + o.width > -50);
+            
+            // Move collectibles
+            for (let i = 0; i < collectibles.length; i++) {
+                collectibles[i].x -= speed * 0.98;
+            }
+            collectibles = collectibles.filter(c => c.x + c.size > -50 && !c.collected);
+            
+            // Score
+            for (let i = 0; i < obstacles.length; i++) {
+                const o = obstacles[i];
+                if (!o.passed && o.x + o.width < playerX) {
+                    o.passed = true;
                     score += 1;
                     updateUI();
                 }
             }
             
-            const playerRect = { x: playerX, y: playerY, w: PLAYER_W, h: PLAYER_H };
-            for(let obs of obstacles) {
-                const obsRect = { x: obs.x, y: obs.y, w: obs.width, h: obs.height };
-                if(playerRect.x < obsRect.x + obsRect.w &&
-                   playerRect.x + playerRect.w > obsRect.x &&
-                   playerRect.y < obsRect.y + obsRect.h &&
-                   playerRect.y + playerRect.h > obsRect.y) {
-                    gameRunning = false;
-                    if(navigator.vibrate) navigator.vibrate(100);
-                    break;
+            // Collision with obstacles
+            const pRect = {x: playerX, y: playerY, w: PLAYER_W, h: PLAYER_H};
+            for (let obs of obstacles) {
+                if (
+                    pRect.x < obs.x + obs.width &&
+                    pRect.x + pRect.w > obs.x &&
+                    pRect.y < obs.y + obs.height &&
+                    pRect.y + pRect.h > obs.y
+                ) {
+                    endGame();
+                    return;
+                }
+            }
+            
+            // Collectibles
+            for (let i = 0; i < collectibles.length; i++) {
+                const c = collectibles[i];
+                if (
+                    Math.hypot(
+                        (playerX + PLAYER_W/2) - (c.x + c.size/2),
+                        (playerY + PLAYER_H/2) - (c.y + c.size/2)
+                    ) < 38
+                ) {
+                    c.collected = true;
+                    score += 3;
+                    updateUI();
+                    if (navigator.vibrate) navigator.vibrate(15);
                 }
             }
         }
-        
-        // ----- GÖRSEL: Mardin atmosferi (mobilde net) -----
+
         function drawBackground() {
-            // Gökyüzü soft Mardin tonu
-            const gradSky = ctx.createLinearGradient(0, 0, 0, H*0.65);
-            gradSky.addColorStop(0, '#faeac2');
-            gradSky.addColorStop(1, '#e2be8c');
-            ctx.fillStyle = gradSky;
+            // Sky gradient - Mardin golden hour
+            const sky = ctx.createLinearGradient(0, 0, 0, H * 0.6);
+            sky.addColorStop(0, '#f8e8c4');
+            sky.addColorStop(1, '#d4a46f');
+            ctx.fillStyle = sky;
             ctx.fillRect(0, 0, W, H);
             
-            // Uzak tepeler / Mezopotamya ovası
-            ctx.fillStyle = '#b28354';
+            // Distant mountains
+            ctx.fillStyle = '#a37d5a';
             ctx.beginPath();
-            ctx.moveTo(0, H-112);
-            for(let i=0; i<14; i++) {
-                ctx.lineTo(i*65, H-122 + Math.sin(i*0.5)*8);
-            }
-            ctx.lineTo(W, H-112);
-            ctx.lineTo(W, groundY-6);
-            ctx.lineTo(0, groundY-6);
+            ctx.moveTo(0, H * 0.58);
+            ctx.quadraticCurveTo(W*0.3, H*0.38, W*0.6, H*0.55);
+            ctx.quadraticCurveTo(W*0.85, H*0.32, W, H*0.52);
+            ctx.lineTo(W, H);
+            ctx.lineTo(0, H);
             ctx.fill();
             
-            // Zemin (taş sokak)
-            ctx.fillStyle = '#8f673f';
-            ctx.fillRect(0, groundY-6, W, 64);
-            ctx.fillStyle = '#c19765';
-            for(let i=0;i<60;i++) {
-                ctx.beginPath();
-                ctx.arc( (i*41 + bgOffset*0.9)%W, groundY-3 + Math.sin(i)*3, 2.2, 0, Math.PI*2);
-                ctx.fill();
+            // Mardin stone buildings - parallax
+            ctx.fillStyle = '#8c6648';
+            const buildingOffset = (bgOffset * 0.3) % (W * 1.6);
+            for (let i = -1; i < 5; i++) {
+                const bx = (i * 135 + buildingOffset) % (W * 2) - 80;
+                ctx.fillRect(bx, H - 260, 72, 180);
+                // Windows / details
+                ctx.fillStyle = '#f5d9a0';
+                ctx.fillRect(bx + 18, H - 220, 12, 12);
+                ctx.fillRect(bx + 48, H - 185, 12, 12);
+                ctx.fillStyle = '#8c6648';
             }
             
-            // Mardin evleri (silüet)
-            ctx.fillStyle = '#b8814b';
-            for(let i=0; i<12; i++) {
-                let baseX = (i*82 + bgOffset*0.2) % (W+120) - 60;
-                if(baseX > -40 && baseX < W+40) {
-                    ctx.fillRect(baseX, H-128, 30, 44);
-                    ctx.fillStyle = '#9c6942';
-                    ctx.fillRect(baseX+5, H-138, 20, 14);
-                    ctx.fillStyle = '#f7d99e';
-                    ctx.fillRect(baseX+12, H-133, 7, 7);
-                    ctx.fillStyle = '#b8814b';
-                }
+            // Ground - ancient stone path
+            ctx.fillStyle = '#6b4a2f';
+            ctx.fillRect(0, groundY - 18, W, H - groundY + 40);
+            
+            // Stone texture
+            ctx.fillStyle = '#b38a5f';
+            for (let i = 0; i < 28; i++) {
+                const tx = (i * 38 + bgOffset * 1.1) % (W + 60) - 20;
+                ctx.fillRect(tx, groundY + (i % 3) * 4 - 8, 32, 7);
             }
-            // yol çizgileri (taş desen)
-            ctx.beginPath();
-            ctx.strokeStyle = '#efdfb7';
-            ctx.lineWidth = 1.8;
-            for(let i=0;i<18;i++) {
-                let lx = (i*52 + bgOffset*1.5) % W;
+            
+            // Road lines
+            ctx.strokeStyle = '#e8d4a2';
+            ctx.lineWidth = 6;
+            for (let i = 0; i < 12; i++) {
+                const lx = (i * 68 + bgOffset * 1.8) % (W + 100) - 30;
                 ctx.beginPath();
-                ctx.moveTo(lx, groundY-4);
-                ctx.lineTo(lx+22, groundY-10);
+                ctx.moveTo(lx, groundY + 12);
+                ctx.lineTo(lx + 38, groundY + 28);
                 ctx.stroke();
             }
         }
-        
-        // Mardinli Koşucu (karakter detayı)
+
         function drawPlayer() {
-            ctx.shadowBlur = 4;
-            ctx.shadowColor = "rgba(0,0,0,0.2)";
-            // elbise
-            ctx.fillStyle = '#4f321c';
-            ctx.fillRect(playerX+4, playerY+6, PLAYER_W-8, PLAYER_H-10);
-            ctx.fillStyle = '#cc9f6b';
-            ctx.fillRect(playerX+2, playerY+2, PLAYER_W-4, 12);
-            // başlık / puşi
-            ctx.fillStyle = '#b57542';
+            ctx.save();
+            ctx.shadowColor = "rgba(0,0,0,0.35)";
+            ctx.shadowBlur = 8;
+            ctx.shadowOffsetY = 6;
+            
+            // Body
+            ctx.fillStyle = '#3f2a1c';
+            ctx.fillRect(playerX + 8, playerY + 12, PLAYER_W - 16, PLAYER_H - 22);
+            
+            // Vest
+            ctx.fillStyle = '#e8b87a';
+            ctx.fillRect(playerX + 11, playerY + 18, PLAYER_W - 22, 22);
+            
+            // Headscarf / Puşi
+            ctx.fillStyle = '#c96e3d';
             ctx.beginPath();
-            ctx.ellipse(playerX+PLAYER_W/2, playerY-2, 11, 9, 0, 0, Math.PI*2);
+            ctx.ellipse(playerX + PLAYER_W/2, playerY + 14, 17, 14, 0, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillStyle = '#fceabd';
+            
+            // Face
+            ctx.fillStyle = '#f5d9b8';
             ctx.beginPath();
-            ctx.arc(playerX+PLAYER_W/2, playerY+5, 8.5, 0, Math.PI*2);
+            ctx.arc(playerX + PLAYER_W/2 + 2, playerY + 16, 11, 0, Math.PI * 2);
             ctx.fill();
-            // göz
-            ctx.fillStyle = '#3c2a19';
+            
+            // Eyes
+            ctx.fillStyle = '#2c2118';
             ctx.beginPath();
-            ctx.arc(playerX+PLAYER_W*0.35, playerY+3, 1.8, 0, Math.PI*2);
-            ctx.arc(playerX+PLAYER_W*0.65, playerY+3, 1.8, 0, Math.PI*2);
+            ctx.arc(playerX + PLAYER_W/2 - 4, playerY + 14, 2.5, 0, Math.PI * 2);
+            ctx.arc(playerX + PLAYER_W/2 + 7, playerY + 14, 2.5, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillStyle = '#e1a56b';
+            
+            // Mustache
+            ctx.strokeStyle = '#3a2a20';
+            ctx.lineWidth = 2.5;
             ctx.beginPath();
-            ctx.ellipse(playerX+PLAYER_W/2, playerY+8, 4.5, 3, 0, 0, Math.PI*2);
-            ctx.fill();
-            // bıyık ince
-            ctx.beginPath();
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = '#472f1c';
-            ctx.moveTo(playerX+7, playerY+9);
-            ctx.lineTo(playerX+11, playerY+11);
-            ctx.moveTo(playerX+PLAYER_W-7, playerY+9);
-            ctx.lineTo(playerX+PLAYER_W-11, playerY+11);
+            ctx.moveTo(playerX + 12, playerY + 22);
+            ctx.quadraticCurveTo(playerX + PLAYER_W/2, playerY + 27, playerX + PLAYER_W - 11, playerY + 22);
             ctx.stroke();
-            // koşu animasyonu
-            let stepAnim = (frame % 18 < 9) ? 3 : -2;
-            ctx.fillStyle = '#684f30';
-            ctx.fillRect(playerX+5, playerY+PLAYER_H-7, 5, 8);
-            ctx.fillRect(playerX+PLAYER_W-10, playerY+PLAYER_H-7+stepAnim*0.6, 5, 8);
-            ctx.shadowBlur = 0;
+            
+            // Legs animation
+            const legSwing = Math.sin(frame / 5) * 6;
+            ctx.fillStyle = '#2f2119';
+            // Left leg
+            ctx.fillRect(playerX + 12, playerY + PLAYER_H - 18, 9, 22);
+            ctx.fillRect(playerX + 12, playerY + PLAYER_H - 4 + legSwing, 9, 10);
+            // Right leg
+            ctx.fillRect(playerX + PLAYER_W - 20, playerY + PLAYER_H - 18, 9, 22);
+            ctx.fillRect(playerX + PLAYER_W - 20, playerY + PLAYER_H - 4 - legSwing * 0.7, 9, 10);
+            
+            ctx.restore();
         }
-        
-        // engeller (Mardin taş işleme)
+
         function drawObstacles() {
-            for(let obs of obstacles) {
-                ctx.fillStyle = '#a16e3e';
-                ctx.shadowBlur = 2;
+            for (let obs of obstacles) {
+                ctx.shadowBlur = 6;
+                ctx.shadowColor = "#3a2a1f";
+                
+                ctx.fillStyle = '#7a5a3f';
                 ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
-                ctx.fillStyle = '#ddb582';
-                for(let i=0;i<3;i++) {
-                    ctx.fillRect(obs.x+3, obs.y+obs.height-12 - i*9, obs.width-6, 3);
-                }
-                ctx.fillStyle = '#f3e1b3';
-                ctx.fillRect(obs.x+4, obs.y+7, obs.width-8, 10);
-                ctx.fillStyle = '#7c5a38';
-                ctx.fillRect(obs.x+6, obs.y+9, 3, 6);
-                ctx.fillRect(obs.x+obs.width-9, obs.y+9, 3, 6);
-            }
-            ctx.shadowBlur = 0;
-        }
-        
-        // Game Over ekranı (mobil dokunma dostu)
-        function drawGameOver() {
-            if(!gameRunning) {
-                ctx.fillStyle = 'rgba(25, 18, 11, 0.85)';
-                ctx.fillRect(0, 0, W, H);
-                ctx.font = 'bold 32px system-ui, "Segoe UI"';
-                ctx.fillStyle = '#ffecb3';
+                
+                // Stone carving detail
+                ctx.fillStyle = '#a88b62';
+                ctx.fillRect(obs.x + 6, obs.y + 12, obs.width - 12, 8);
+                ctx.fillRect(obs.x + 6, obs.y + obs.height - 22, obs.width - 12, 8);
+                
                 ctx.shadowBlur = 0;
-                ctx.fillText("🏁 KOŞU BİTTİ", W/2-125, H/2-45);
-                ctx.font = '20px monospace';
-                ctx.fillStyle = '#fde3a5';
-                ctx.fillText(`Skorun: ${Math.floor(score)}`, W/2-70, H/2+20);
-                ctx.font = '14px system-ui';
-                ctx.fillStyle = '#e7cca2';
-                ctx.fillText("Mardin sokaklarında tekrar dene", W/2-120, H/2+78);
             }
         }
-        
-        // döngü
-        let animFrame;
-        function gameLoop() {
-            if(gameRunning) {
-                frame++;
-                bgOffset = (bgOffset + 0.7) % 360;
-                updatePhysics();
-                trySpawnObstacle(frame);
-                updateObstacles();
+
+        function drawCollectibles() {
+            for (let c of collectibles) {
+                if (c.collected) continue;
+                
+                ctx.save();
+                ctx.translate(c.x + c.size/2, c.y + c.size/2);
+                ctx.rotate(frame / 12);
+                
+                ctx.fillStyle = '#f4d56c';
+                ctx.beginPath();
+                ctx.moveTo(0, -c.size/2);
+                for (let i = 0; i < 5; i++) {
+                    ctx.lineTo(Math.cos((i*2+1)*Math.PI/5) * c.size/2.2, Math.sin((i*2+1)*Math.PI/5) * c.size/2.2);
+                    ctx.lineTo(Math.cos((i*2+2)*Math.PI/5) * c.size/2.8, Math.sin((i*2+2)*Math.PI/5) * c.size/2.8);
+                }
+                ctx.closePath();
+                ctx.fill();
+                
+                ctx.fillStyle = '#d4a13a';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('✧', 0, 5);
+                
+                ctx.restore();
             }
+        }
+
+        function drawGroundDetails() {
+            ctx.strokeStyle = '#d4b88a';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 20; i++) {
+                const x = (i * 31 + bgOffset * 1.6) % (W + 50);
+                ctx.beginPath();
+                ctx.moveTo(x, groundY + 8);
+                ctx.lineTo(x + 18, groundY + 22);
+                ctx.stroke();
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+            
             drawBackground();
             drawObstacles();
+            drawCollectibles();
             drawPlayer();
-            drawGameOver();
-            animFrame = requestAnimationFrame(gameLoop);
+            drawGroundDetails();
         }
-        
-        // Oyun resetleme
-        function restartGame() {
+
+        function gameLoop() {
+            frame++;
+            bgOffset -= 1.4;
+            
+            if (gameRunning) {
+                updatePhysics();
+                updateEntities();
+                
+                // Spawn logic
+                if (frame % 48 === 0) spawnObstacle();
+                if (frame % 26 === 0) spawnCollectible();
+                
+                // Gradual speed increase
+                if (frame % 280 === 0 && speed < 6.2) speed += 0.18;
+            }
+            
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function startGame() {
+            startScreen.style.display = 'none';
             gameRunning = true;
             score = 0;
-            updateUI();
+            speed = 3.8;
             obstacles = [];
+            collectibles = [];
             playerY = groundY - PLAYER_H;
             playerVy = 0;
-            isOnGround = true;
             frame = 0;
-            lastSpawnFrame = 0;
-            spawnGap = 70;
+            updateUI();
         }
-        
-        // ---------- MOBİL DOKUNMA & KLavye ----------
-        function attachMobileEvents() {
-            // dokunmatik olaylar (canvas'a)
-            canvas.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                jump();
-            });
-            canvas.addEventListener('mousedown', (e) => {
-                e.preventDefault();
-                jump();
-            });
-            // klavye desteği
-            window.addEventListener('keydown', (e) => {
-                if(e.code === 'Space' || e.code === 'ArrowUp') {
+
+        function endGame() {
+            gameRunning = false;
+            if (navigator.vibrate) navigator.vibrate([80, 50, 120]);
+            
+            finalScoreEl.textContent = `Skor: ${Math.floor(score)}`;
+            
+            if (score > bestScore) {
+                newBestEl.style.display = 'block';
+            } else {
+                newBestEl.style.display = 'none';
+            }
+            
+            gameOverScreen.style.display = 'flex';
+        }
+
+        function resetGame() {
+            gameOverScreen.style.display = 'none';
+            startScreen.style.display = 'flex';
+        }
+
+        // Event listeners
+        function setupEvents() {
+            const jumpTriggers = [canvas];
+            
+            jumpTriggers.forEach(el => {
+                el.addEventListener('touchstart', e => {
                     e.preventDefault();
                     jump();
-                }
-                if(e.code === 'KeyR') {
+                });
+                
+                el.addEventListener('mousedown', e => {
                     e.preventDefault();
-                    restartGame();
+                    jump();
+                });
+            });
+            
+            // Keyboard
+            window.addEventListener('keydown', e => {
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    if (gameRunning) jump();
+                }
+                if (e.code === 'KeyR' && !gameRunning) {
+                    resetGame();
                 }
             });
-            // buton yeniden başlat
-            const restartBtn = document.getElementById('restartButton');
-            restartBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                restartGame();
+            
+            document.getElementById('startBtn').addEventListener('click', startGame);
+            document.getElementById('restartGameBtn').addEventListener('click', () => {
+                gameOverScreen.style.display = 'none';
+                startGame();
             });
-            restartBtn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                restartGame();
+            document.getElementById('restartBtn').addEventListener('click', () => {
+                if (confirm('Yeniden başlamak istediğine emin misin?')) {
+                    resetGame();
+                }
             });
         }
+
+        // Initialize
+        function init() {
+            bestSpan.innerText = bestScore;
+            setupEvents();
+            gameLoop();
+        }
         
-        // başlangıç
-        bestSpan.innerText = bestScore;
-        updateUI();
-        restartGame(); // başlangıç hazır
-        attachMobileEvents();
-        gameLoop();
-    })();
-</script>
+        window.onload = init;
+    </script>
 </body>
 </html>
