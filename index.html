@@ -1,696 +1,487 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Etourgood • Cappadocia Uçuşu</title>
-  
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Space+Grotesk:wght@600;700;900&display=swap');
-    
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      background: #ea580c; 
-      overflow: hidden; 
-      font-family: 'Inter', system-ui, sans-serif;
-      touch-action: none; 
-      -webkit-tap-highlight-color: transparent;
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-    canvas { 
-      display: block; 
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Mardin Koşusu | Taş Sokaklar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
 
-    .ui-layer {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 20;
-    }
-    
-    .glass-panel {
-      background: rgba(69, 26, 3, 0.5);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 16px;
-      border: 1px solid rgba(249, 115, 22, 0.3);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      color: #fffbeb;
-    }
-    
-    .play-btn {
-      background: linear-gradient(135deg, #f97316 0%, #e11d48 100%);
-      box-shadow: 0 6px 0 #9a3412, 0 15px 25px rgba(234, 88, 12, 0.4);
-      border-radius: 16px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      transition: all 0.1s;
-      border: 1px solid rgba(255,255,255,0.2);
-      cursor: pointer;
-      pointer-events: auto;
-      text-transform: uppercase;
-      color: white;
-      font-family: 'Inter', sans-serif;
-    }
-    .play-btn:active {
-      transform: translateY(6px);
-      box-shadow: 0 0px 0 #9a3412, 0 5px 10px rgba(234, 88, 12, 0.5);
-    }
-    
-    .hud-wrapper {
-      position: absolute;
-      top: max(10px, env(safe-area-inset-top));
-      left: max(10px, env(safe-area-inset-left));
-      right: max(10px, env(safe-area-inset-right));
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      opacity: 0;
-      transition: opacity 0.6s;
-      gap: 6px;
-      padding: 0 5px;
-    }
+        body {
+            background: #2a2418;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: system-ui, 'Segoe UI', 'Poppins', -apple-system, sans-serif;
+            padding: 12px;
+        }
 
-    .hud-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      font-size: 0.9rem;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-    
-    .fuel-bar-bg {
-      background: rgba(0,0,0,0.7);
-      border-radius: 8px;
-      width: 70px;
-      height: 8px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.2);
-      margin-left: 4px;
-    }
-    
-    .fuel-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #ef4444, #f97316, #fde047);
-      border-radius: 8px;
-      transition: width 0.1s linear;
-    }
-    .fuel-fill.low {
-      background: #ef4444;
-      animation: pulseFuel 0.3s infinite alternate;
-    }
-    
-    @keyframes pulseFuel {
-      from { opacity: 1; }
-      to { opacity: 0.5; }
-    }
-    
-    .power-row {
-      display: flex;
-      gap: 6px;
-    }
-    
-    .power-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      background: rgba(0,0,0,0.5);
-      border: 1px solid rgba(255,255,255,0.1);
-      transition: all 0.2s;
-      filter: grayscale(1);
-      opacity: 0.4;
-    }
-    .power-icon.active {
-      filter: grayscale(0);
-      opacity: 1;
-      border-color: #f97316;
-      box-shadow: 0 0 15px rgba(249, 115, 22, 0.8);
-      transform: scale(1.1);
-    }
-    
-    .stage-pop {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 900;
-      font-size: clamp(2.5rem, 6vw, 4rem);
-      color: transparent;
-      -webkit-text-stroke: 2px rgba(255,255,255,0.9);
-      background: linear-gradient(135deg, #fcd34d, #f97316);
-      -webkit-background-clip: text;
-      position: absolute;
-      top: 25%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      opacity: 0;
-      white-space: nowrap;
-      letter-spacing: 6px;
-      pointer-events: none;
-    }
-    
-    .etourgood-gradient {
-      background: linear-gradient(135deg, #fcd34d 0%, #f97316 40%, #e11d48 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+        .game-wrapper {
+            background: #e2caa4;
+            border-radius: 42px;
+            padding: 12px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.5);
+        }
 
-    .toast-msg {
-      position: absolute;
-      bottom: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.8);
-      color: #fde047;
-      padding: 10px 24px;
-      border-radius: 20px;
-      font-weight: 800;
-      font-size: 1rem;
-      border: 1px solid #f97316;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-      z-index: 50;
-    }
-  </style>
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 28px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            width: 100%;
+            height: auto;
+            cursor: pointer;
+            touch-action: none;
+        }
+
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 14px;
+            padding: 0 10px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .score-card {
+            background: #2f241b;
+            padding: 6px 18px;
+            border-radius: 50px;
+            color: #ffe6b3;
+            font-weight: bold;
+            font-size: 1.35rem;
+            font-family: monospace;
+            letter-spacing: 1px;
+            box-shadow: inset 0 1px 3px #00000033, 0 4px 8px rgba(0,0,0,0.2);
+            backdrop-filter: blur(2px);
+        }
+
+        .best-card {
+            background: #5c3f28;
+            padding: 6px 18px;
+            border-radius: 50px;
+            color: #ffefcf;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .restart-mobile {
+            background: #c68e5a;
+            border: none;
+            font-weight: bold;
+            font-size: 1rem;
+            padding: 8px 26px;
+            border-radius: 60px;
+            color: #2c1e12;
+            font-family: inherit;
+            cursor: pointer;
+            transition: 0.1s linear;
+            box-shadow: 0 4px 0 #6f4a2a;
+            touch-action: manipulation;
+        }
+
+        .restart-mobile:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #6f4a2a;
+        }
+
+        .jump-hint {
+            background: #5e3f28aa;
+            backdrop-filter: blur(8px);
+            margin-top: 12px;
+            padding: 8px 12px;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            color: #fff0cf;
+            text-align: center;
+            font-weight: 500;
+            display: inline-block;
+            width: auto;
+        }
+
+        .footer-control {
+            display: flex;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .score-card { font-size: 1rem; padding: 4px 14px; }
+            .best-card { font-size: 0.85rem; padding: 4px 14px; }
+            .restart-mobile { padding: 6px 20px; font-size: 0.85rem; }
+            .jump-hint { font-size: 0.65rem; }
+        }
+    </style>
 </head>
 <body>
-  <canvas id="gameCanvas"></canvas>
-  
-  <div class="ui-layer">
-    
-    <div id="hudContainer" class="hud-wrapper">
-      <div class="glass-panel hud-item">
-        📍 <span id="distDisplay">0m</span>
-      </div>
-      
-      <div class="glass-panel hud-item" style="color: #fde047;">
-        ⛽ <div class="fuel-bar-bg"><div id="fuelBarFill" class="fuel-fill" style="width: 100%;"></div></div>
-      </div>
-      
-      <div class="power-row">
-        <div id="shieldPowerIcon" class="power-icon">🛡️</div>
-        <div id="magnetPowerIcon" class="power-icon">🧲</div>
-        <div id="boostPowerIcon" class="power-icon">⚡</div>
-      </div>
-    </div>
-    
-    <div id="stageAnnounce" class="stage-pop">SEVİYE 2</div>
-    
-    <div id="menuScreen" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: auto; background: radial-gradient(circle at 50% 100%, rgba(234, 88, 12, 0.4) 0%, rgba(30, 27, 75, 0.9) 100%);">
-      <div class="glass-panel" style="padding: 2.5rem 1.5rem; width: 90%; max-width: 380px; text-align: center;">
-        <div style="font-size: 3rem; margin-bottom: 10px;">🎈🌅</div>
-        <h1 style="font-family:'Space Grotesk'; font-weight:900; font-size:clamp(2.2rem, 8vw, 3.2rem); margin:0; line-height:1; letter-spacing: 1px;" class="etourgood-gradient">ETOURGOOD</h1>
-        <p style="color:#fdba74; font-weight:800; font-size:1rem; letter-spacing: 4px; margin-top: 8px; margin-bottom: 20px;">CAPPADOCIA</p>
-        
-        <div id="highScoreMenu" style="background: rgba(249,115,22,0.2); border: 1px solid rgba(249,115,22,0.4); border-radius: 12px; padding: 6px; font-size: 0.9rem; font-weight: 700; color: #fde047; margin-bottom: 20px; display:none;">
-          🏆 En İyi Uçuş: <span id="highScoreMenuText">0 m</span>
+<div>
+    <div class="game-wrapper">
+        <canvas id="gameCanvas" width="750" height="420" style="width:100%; height:auto; max-width:750px; aspect-ratio:750/420"></canvas>
+        <div class="info-bar">
+            <div class="score-card">🏃‍♂️ <span id="scoreValue">0</span></div>
+            <div class="best-card">🏅 REKOR <span id="bestValue">0</span></div>
+            <button class="restart-mobile" id="restartButton">🔄 YENİDEN</button>
         </div>
-        
-        <button id="startBtn" class="play-btn" style="width:100%; padding:18px; font-size:1.3rem; margin-bottom: 12px;">
-          UÇUŞA BAŞLA
-        </button>
-        
-        <button id="leaderboardBtn" class="play-btn" style="width:100%; padding:14px; font-size:1rem; background: rgba(255,255,255,0.1); box-shadow: 0 4px 0 rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.2);">
-          📊 LİDERLİK TABLOSU
-        </button>
-        
-        <p style="color:#fcd34d; opacity: 0.8; font-size:0.75rem; margin-top:16px; font-weight:600;">Ekrana basılı tutarak yüksel • Bırakarak süzül</p>
-      </div>
-    </div>
-    
-    <div id="gameOverScreen" style="position: absolute; inset: 0; display: none; align-items: center; justify-content: center; pointer-events: auto; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);">
-      <div class="glass-panel" style="padding: 2.5rem 1.5rem; width: 90%; max-width: 380px; text-align: center; border-color: #ef4444;">
-        <div style="font-size: 4rem;">💥</div>
-        <h2 style="font-family:'Space Grotesk'; font-weight:900; color:#f87171; font-size:2rem; margin:0.5rem 0;">SERT İNİŞ!</h2>
-        <p style="color:#fdba74; font-weight:600; font-size: 0.9rem;">Gezilen Mesafe</p>
-        <p id="finalDistText" class="etourgood-gradient" style="font-size:3.5rem; font-weight:900; margin:0;">0 m</p>
-        <div id="newHighScoreBadge" style="display: none; color: #fde047; font-weight: 900; margin: 8px 0; animation: pulseFuel 0.6s infinite alternate;">🌟 YENİ REKOR! 🌟</div>
-        <div style="display: flex; gap: 10px; margin-top: 20px;">
-          <button id="retryBtn" class="play-btn" style="flex:1; padding:14px; font-size:1rem;">TEKRAR</button>
-          <button id="menuBtn" class="play-btn" style="flex:1; padding:14px; font-size:1rem; background: rgba(255,255,255,0.1); box-shadow: 0 4px 0 rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.2);">MENÜ</button>
+        <div class="footer-control">
+            <div class="jump-hint">
+                👆 EKRANA DOKUN / TIKLA → ZIPLA  |  Mardin Taş Arası Koşu
+            </div>
         </div>
-      </div>
     </div>
+</div>
 
-    <div id="toastMsg" class="toast-msg">Çok Yakında!</div>
-  </div>
-
-  <script>
-    (function() {
-      const canvas = document.getElementById('gameCanvas');
-      const ctx = canvas.getContext('2d');
-      
-      let W, H, scale;
-      
-      function resizeCanvas() {
-        W = canvas.width = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-        // Kamera biraz uzaklaştırıldı (eski 550 iken 650 yapıldı)
-        scale = Math.min(W / 650, H / 1050); 
-      }
-      window.addEventListener('resize', resizeCanvas);
-      resizeCanvas();
-      
-      // -- Ses Motoru --
-      let audioCtx = null;
-      function initAudio() {
-        if (audioCtx) return;
-        try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
-      }
-      function playTone(freq, type='sine', duration=0.15, vol=0.08) {
-        if (!audioCtx) return;
-        const now = audioCtx.currentTime;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type; osc.frequency.setValueAtTime(freq, now);
-        gain.gain.setValueAtTime(vol, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(now); osc.stop(now + duration + 0.05);
-      }
-      function sfxCollect() { playTone(880, 'sine', 0.1, 0.1); setTimeout(() => playTone(1100, 'sine', 0.1, 0.1), 80); }
-      function sfxShieldBreak() { playTone(150, 'sawtooth', 0.4, 0.15); }
-      function sfxExplosion() { playTone(50, 'square', 0.5, 0.2); }
-      function sfxClick() { playTone(600, 'sine', 0.06, 0.04); }
-      
-      const STATE = { MENU: 0, PLAYING: 1, OVER: 2, CRASHING: 3 };
-      let gameState = STATE.MENU;
-      
-      let balloon = {
-        x: 0, y: 0, vy: 0,
-        radius: 28 * scale, // Balon boyutu küçültüldü
-        gravity: 0.25 * scale,
-        lift: -0.65 * scale,
-        drag: 0.98
-      };
-      
-      let fuel = 100;
-      let distance = 0;
-      let stage = 1;
-      let windSpeed = 3.8;
-      
-      let chimneys = [];
-      let birds = [];
-      let rivalBalloons = [];
-      let collectibles = [];
-      let particles = [];
-      let floatingTexts = [];
-      let bgClouds = [];
-      let mountains = [];
-      
-      let shieldActive = false;
-      let magnetActive = false;
-      let magnetTimer = 0;
-      let boostActive = false;
-      let boostTimer = 0;
-      
-      let pressing = false;
-      let screenShake = 0;
-      
-      let highScore = 0;
-      try { const saved = localStorage.getItem('etourgood_sky_high'); if (saved) highScore = parseInt(saved, 10); } catch(e) {}
-      
-      // Gerçekçi Gün Doğumu Renkleri (Yıldızsız)
-      const skyPalette = [
-        { top: "#3b82f6", bottom: "#f97316", m1: "#9a3412", m2: "#451a03" }, // Şafak
-        { top: "#0284c7", bottom: "#fcd34d", m1: "#b45309", m2: "#78350f" }, // Sabah
-        { top: "#0ea5e9", bottom: "#fef08a", m1: "#d97706", m2: "#9a3412" }  // Gündüz
-      ];
-      let currentSky = { ...skyPalette[0] };
-      
-      function updateUI() {
-        document.getElementById('distDisplay').textContent = Math.floor(distance) + 'm';
-        document.getElementById('fuelBarFill').style.width = fuel + '%';
-        if(fuel < 25) document.getElementById('fuelBarFill').classList.add('low');
-        else document.getElementById('fuelBarFill').classList.remove('low');
+<script>
+    (function(){
+        // ---------- canvas ve mobil uyum ----------
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
         
-        document.getElementById('shieldPowerIcon').classList.toggle('active', shieldActive);
-        document.getElementById('magnetPowerIcon').classList.toggle('active', magnetActive);
-        document.getElementById('boostPowerIcon').classList.toggle('active', boostActive);
-      }
-      
-      function showToast() {
-        sfxClick();
-        const toast = document.getElementById('toastMsg');
-        toast.style.opacity = '1';
-        setTimeout(() => toast.style.opacity = '0', 2000);
-      }
-      document.getElementById('leaderboardBtn').addEventListener('click', showToast);
-      
-      function initMountains() {
-        mountains = [];
-        for(let i=0; i<3; i++) {
-          let layer = [];
-          for(let j=0; j<W/(100*scale) + 2; j++) {
-            layer.push({ x: j*140*scale, y: random(H*0.7, H*0.9) + i*30*scale });
-          }
-          mountains.push(layer);
+        // Sabit oran: 750x420 (mobilde rahat)
+        const W = 750;
+        const H = 420;
+        canvas.width = W;
+        canvas.height = H;
+        
+        // ---------- Oyun değişkenleri ----------
+        let gameRunning = true;
+        let score = 0;
+        let bestScore = localStorage.getItem('mardinBestMob') ? parseInt(localStorage.getItem('mardinBestMob')) : 0;
+        let frame = 0;
+        let groundY = H - 58;   // zemin seviyesi (taş yol)
+        
+        // KARAKTER (Mardinli koşucu)
+        const PLAYER_W = 26;
+        const PLAYER_H = 30;
+        let playerX = 90;
+        let playerY = groundY - PLAYER_H;
+        let playerVy = 0;
+        let isOnGround = true;
+        const GRAVITY = 0.68;
+        const JUMP_POWER = -9.6;
+        
+        // Engeller (taş süsler / dar çıkmalar)
+        let obstacles = [];
+        const OBSTACLE_W = 20;
+        const OBSTACLE_H_MIN = 26;
+        const OBSTACLE_H_MAX = 48;
+        let spawnGap = 70;
+        let lastSpawnFrame = 0;
+        
+        // görsel animasyon
+        let bgOffset = 0;
+        
+        // UI elementler
+        const scoreSpan = document.getElementById('scoreValue');
+        const bestSpan = document.getElementById('bestValue');
+        bestSpan.innerText = bestScore;
+        
+        function updateUI() {
+            scoreSpan.innerText = Math.floor(score);
+            if(score > bestScore) {
+                bestScore = Math.floor(score);
+                bestSpan.innerText = bestScore;
+                localStorage.setItem('mardinBestMob', bestScore);
+            }
         }
-      }
-
-      function fullReset() {
-        balloon.x = W * 0.3;
-        balloon.y = H * 0.5;
-        balloon.vy = 0;
-        fuel = 100; distance = 0; stage = 1; windSpeed = 3.8;
-        shieldActive = magnetActive = boostActive = false;
-        chimneys = []; birds = []; rivalBalloons = []; collectibles = []; particles = []; bgClouds = [];
-        initMountains();
-        currentSky = { ...skyPalette[0] };
+        
+        // Zıplama (mobil / dokunma için özel)
+        function jump() {
+            if(!gameRunning) return;
+            if(isOnGround) {
+                playerVy = JUMP_POWER;
+                isOnGround = false;
+                // hafif dokunsal geri bildirim (vibrasyon - isteğe bağlı sessiz)
+                if(navigator.vibrate) navigator.vibrate(20);
+            }
+        }
+        
+        // Fizik
+        function updatePhysics() {
+            if(!gameRunning) return;
+            playerVy += GRAVITY;
+            playerY += playerVy;
+            
+            if(playerY + PLAYER_H >= groundY) {
+                playerY = groundY - PLAYER_H;
+                playerVy = 0;
+                isOnGround = true;
+            }
+            if(playerY < 0) {
+                playerY = 0;
+                if(playerVy < 0) playerVy = 0;
+            }
+        }
+        
+        // Engel üret
+        function trySpawnObstacle(currentFrame) {
+            if(!gameRunning) return;
+            if(currentFrame - lastSpawnFrame >= spawnGap) {
+                let height = Math.floor(Math.random() * (OBSTACLE_H_MAX - OBSTACLE_H_MIN + 1) + OBSTACLE_H_MIN);
+                obstacles.push({
+                    x: W,
+                    y: groundY - height,
+                    width: OBSTACLE_W,
+                    height: height,
+                    passed: false
+                });
+                lastSpawnFrame = currentFrame;
+                // skora göre hafif hızlanma ama çok agresif değil
+                let newGap = Math.max(44, 70 - Math.floor(score / 150));
+                spawnGap = newGap;
+            }
+        }
+        
+        // Engel güncelle + çarpışma
+        function updateObstacles() {
+            if(!gameRunning) return;
+            for(let i=0; i<obstacles.length; i++) {
+                obstacles[i].x -= 3.9;   // akıcı mobil koşu
+            }
+            obstacles = obstacles.filter(obs => obs.x + obs.width > 0);
+            
+            // skor artırma
+            for(let i=0; i<obstacles.length; i++) {
+                const obs = obstacles[i];
+                if(!obs.passed && obs.x + obs.width < playerX) {
+                    obs.passed = true;
+                    score += 1;
+                    updateUI();
+                }
+            }
+            
+            const playerRect = { x: playerX, y: playerY, w: PLAYER_W, h: PLAYER_H };
+            for(let obs of obstacles) {
+                const obsRect = { x: obs.x, y: obs.y, w: obs.width, h: obs.height };
+                if(playerRect.x < obsRect.x + obsRect.w &&
+                   playerRect.x + playerRect.w > obsRect.x &&
+                   playerRect.y < obsRect.y + obsRect.h &&
+                   playerRect.y + playerRect.h > obsRect.y) {
+                    gameRunning = false;
+                    if(navigator.vibrate) navigator.vibrate(100);
+                    break;
+                }
+            }
+        }
+        
+        // ----- GÖRSEL: Mardin atmosferi (mobilde net) -----
+        function drawBackground() {
+            // Gökyüzü soft Mardin tonu
+            const gradSky = ctx.createLinearGradient(0, 0, 0, H*0.65);
+            gradSky.addColorStop(0, '#faeac2');
+            gradSky.addColorStop(1, '#e2be8c');
+            ctx.fillStyle = gradSky;
+            ctx.fillRect(0, 0, W, H);
+            
+            // Uzak tepeler / Mezopotamya ovası
+            ctx.fillStyle = '#b28354';
+            ctx.beginPath();
+            ctx.moveTo(0, H-112);
+            for(let i=0; i<14; i++) {
+                ctx.lineTo(i*65, H-122 + Math.sin(i*0.5)*8);
+            }
+            ctx.lineTo(W, H-112);
+            ctx.lineTo(W, groundY-6);
+            ctx.lineTo(0, groundY-6);
+            ctx.fill();
+            
+            // Zemin (taş sokak)
+            ctx.fillStyle = '#8f673f';
+            ctx.fillRect(0, groundY-6, W, 64);
+            ctx.fillStyle = '#c19765';
+            for(let i=0;i<60;i++) {
+                ctx.beginPath();
+                ctx.arc( (i*41 + bgOffset*0.9)%W, groundY-3 + Math.sin(i)*3, 2.2, 0, Math.PI*2);
+                ctx.fill();
+            }
+            
+            // Mardin evleri (silüet)
+            ctx.fillStyle = '#b8814b';
+            for(let i=0; i<12; i++) {
+                let baseX = (i*82 + bgOffset*0.2) % (W+120) - 60;
+                if(baseX > -40 && baseX < W+40) {
+                    ctx.fillRect(baseX, H-128, 30, 44);
+                    ctx.fillStyle = '#9c6942';
+                    ctx.fillRect(baseX+5, H-138, 20, 14);
+                    ctx.fillStyle = '#f7d99e';
+                    ctx.fillRect(baseX+12, H-133, 7, 7);
+                    ctx.fillStyle = '#b8814b';
+                }
+            }
+            // yol çizgileri (taş desen)
+            ctx.beginPath();
+            ctx.strokeStyle = '#efdfb7';
+            ctx.lineWidth = 1.8;
+            for(let i=0;i<18;i++) {
+                let lx = (i*52 + bgOffset*1.5) % W;
+                ctx.beginPath();
+                ctx.moveTo(lx, groundY-4);
+                ctx.lineTo(lx+22, groundY-10);
+                ctx.stroke();
+            }
+        }
+        
+        // Mardinli Koşucu (karakter detayı)
+        function drawPlayer() {
+            ctx.shadowBlur = 4;
+            ctx.shadowColor = "rgba(0,0,0,0.2)";
+            // elbise
+            ctx.fillStyle = '#4f321c';
+            ctx.fillRect(playerX+4, playerY+6, PLAYER_W-8, PLAYER_H-10);
+            ctx.fillStyle = '#cc9f6b';
+            ctx.fillRect(playerX+2, playerY+2, PLAYER_W-4, 12);
+            // başlık / puşi
+            ctx.fillStyle = '#b57542';
+            ctx.beginPath();
+            ctx.ellipse(playerX+PLAYER_W/2, playerY-2, 11, 9, 0, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = '#fceabd';
+            ctx.beginPath();
+            ctx.arc(playerX+PLAYER_W/2, playerY+5, 8.5, 0, Math.PI*2);
+            ctx.fill();
+            // göz
+            ctx.fillStyle = '#3c2a19';
+            ctx.beginPath();
+            ctx.arc(playerX+PLAYER_W*0.35, playerY+3, 1.8, 0, Math.PI*2);
+            ctx.arc(playerX+PLAYER_W*0.65, playerY+3, 1.8, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = '#e1a56b';
+            ctx.beginPath();
+            ctx.ellipse(playerX+PLAYER_W/2, playerY+8, 4.5, 3, 0, 0, Math.PI*2);
+            ctx.fill();
+            // bıyık ince
+            ctx.beginPath();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#472f1c';
+            ctx.moveTo(playerX+7, playerY+9);
+            ctx.lineTo(playerX+11, playerY+11);
+            ctx.moveTo(playerX+PLAYER_W-7, playerY+9);
+            ctx.lineTo(playerX+PLAYER_W-11, playerY+11);
+            ctx.stroke();
+            // koşu animasyonu
+            let stepAnim = (frame % 18 < 9) ? 3 : -2;
+            ctx.fillStyle = '#684f30';
+            ctx.fillRect(playerX+5, playerY+PLAYER_H-7, 5, 8);
+            ctx.fillRect(playerX+PLAYER_W-10, playerY+PLAYER_H-7+stepAnim*0.6, 5, 8);
+            ctx.shadowBlur = 0;
+        }
+        
+        // engeller (Mardin taş işleme)
+        function drawObstacles() {
+            for(let obs of obstacles) {
+                ctx.fillStyle = '#a16e3e';
+                ctx.shadowBlur = 2;
+                ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                ctx.fillStyle = '#ddb582';
+                for(let i=0;i<3;i++) {
+                    ctx.fillRect(obs.x+3, obs.y+obs.height-12 - i*9, obs.width-6, 3);
+                }
+                ctx.fillStyle = '#f3e1b3';
+                ctx.fillRect(obs.x+4, obs.y+7, obs.width-8, 10);
+                ctx.fillStyle = '#7c5a38';
+                ctx.fillRect(obs.x+6, obs.y+9, 3, 6);
+                ctx.fillRect(obs.x+obs.width-9, obs.y+9, 3, 6);
+            }
+            ctx.shadowBlur = 0;
+        }
+        
+        // Game Over ekranı (mobil dokunma dostu)
+        function drawGameOver() {
+            if(!gameRunning) {
+                ctx.fillStyle = 'rgba(25, 18, 11, 0.85)';
+                ctx.fillRect(0, 0, W, H);
+                ctx.font = 'bold 32px system-ui, "Segoe UI"';
+                ctx.fillStyle = '#ffecb3';
+                ctx.shadowBlur = 0;
+                ctx.fillText("🏁 KOŞU BİTTİ", W/2-125, H/2-45);
+                ctx.font = '20px monospace';
+                ctx.fillStyle = '#fde3a5';
+                ctx.fillText(`Skorun: ${Math.floor(score)}`, W/2-70, H/2+20);
+                ctx.font = '14px system-ui';
+                ctx.fillStyle = '#e7cca2';
+                ctx.fillText("Mardin sokaklarında tekrar dene", W/2-120, H/2+78);
+            }
+        }
+        
+        // döngü
+        let animFrame;
+        function gameLoop() {
+            if(gameRunning) {
+                frame++;
+                bgOffset = (bgOffset + 0.7) % 360;
+                updatePhysics();
+                trySpawnObstacle(frame);
+                updateObstacles();
+            }
+            drawBackground();
+            drawObstacles();
+            drawPlayer();
+            drawGameOver();
+            animFrame = requestAnimationFrame(gameLoop);
+        }
+        
+        // Oyun resetleme
+        function restartGame() {
+            gameRunning = true;
+            score = 0;
+            updateUI();
+            obstacles = [];
+            playerY = groundY - PLAYER_H;
+            playerVy = 0;
+            isOnGround = true;
+            frame = 0;
+            lastSpawnFrame = 0;
+            spawnGap = 70;
+        }
+        
+        // ---------- MOBİL DOKUNMA & KLavye ----------
+        function attachMobileEvents() {
+            // dokunmatik olaylar (canvas'a)
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                jump();
+            });
+            canvas.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                jump();
+            });
+            // klavye desteği
+            window.addEventListener('keydown', (e) => {
+                if(e.code === 'Space' || e.code === 'ArrowUp') {
+                    e.preventDefault();
+                    jump();
+                }
+                if(e.code === 'KeyR') {
+                    e.preventDefault();
+                    restartGame();
+                }
+            });
+            // buton yeniden başlat
+            const restartBtn = document.getElementById('restartButton');
+            restartBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                restartGame();
+            });
+            restartBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                restartGame();
+            });
+        }
+        
+        // başlangıç
+        bestSpan.innerText = bestScore;
         updateUI();
-      }
-      
-      function checkStage() {
-        let newStage = Math.floor(distance / 600) + 1;
-        if (newStage > stage && newStage <= 3) {
-          stage = newStage;
-          windSpeed += 1.2; // İlerledikçe belirgin hızlanma
-          gsap.to(currentSky, { top: skyPalette[stage-1].top, bottom: skyPalette[stage-1].bottom, m1: skyPalette[stage-1].m1, m2: skyPalette[stage-1].m2, duration: 4 });
-          let announce = document.getElementById('stageAnnounce');
-          announce.textContent = `SEVİYE ${stage}`;
-          gsap.fromTo(announce, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out", onComplete: () => gsap.to(announce, { opacity: 0, delay: 1.5 }) });
-        }
-      }
-      
-      let lastSpawn = 0;
-      function spawnObjects() {
-        let now = performance.now();
-        let delay = Math.max(300, 800 - stage * 120); // Giderek daha yoğun
-        if (now - lastSpawn < delay) return;
-        lastSpawn = now;
-        
-        // Peri bacaları (Daha yoğun çıkıyor)
-        if (Math.random() < 0.7) {
-          chimneys.push({
-            x: W + 50 * scale,
-            width: random(90, 160) * scale,
-            height: random(200, H*0.6),
-            type: Math.floor(random(0,3)) // Farklı kaya tipleri
-          });
-        }
-        
-        if (Math.random() < 0.4) {
-          let baseY = random(H * 0.1, H * 0.6);
-          let count = Math.floor(random(2, 6));
-          for(let i=0; i<count; i++) birds.push({ x: W + 80*scale + i*random(20,50)*scale, y: baseY + random(-30,30)*scale, size: random(8,12)*scale, speed: random(4, 7)*scale, bob: random(0, Math.PI*2) });
-        }
-        
-        if (stage >= 2 && Math.random() < 0.35) {
-          rivalBalloons.push({ x: W + 100*scale, y: random(H*0.1, H*0.6), size: random(20,30)*scale, speed: random(1,4)*scale, hue: random(0,360) });
-        }
-        
-        if (Math.random() < 0.6) {
-          let r = Math.random(), type = 'fuel';
-          if (r > 0.9) type = 'shield'; else if (r > 0.8) type = 'magnet'; else if (r > 0.7 && stage >= 2) type = 'boost';
-          collectibles.push({ type, x: W + 60*scale, y: random(H*0.2, H*0.8), radius: 15*scale, bob: random(0, Math.PI*2) });
-        }
-      }
-      
-      function random(a,b) { return Math.random()*(b-a)+a; }
-      
-      function addExplosion(x,y,color,count=25) {
-        for(let i=0;i<count;i++) particles.push({ x,y, vx: (Math.random()-0.5)*25*scale, vy: (Math.random()-0.5)*25*scale, life: 1.2, color, size: random(4,12)*scale });
-      }
-
-      function handleHit(type, hitX, hitY) {
-        if (shieldActive) {
-          shieldActive = false;
-          sfxShieldBreak();
-          addExplosion(hitX, hitY, '#fcd34d', 40); // Engel patlıyor
-          floatingTexts.push({text:'KALKAN KORUDU!', x:balloon.x, y:balloon.y-40*scale, life:1.5, color:'#fcd34d'});
-          updateUI();
-          return 'shielded'; // Kalkan kurtardı
-        }
-        screenShake = 15 * scale; sfxExplosion();
-        addExplosion(balloon.x, balloon.y, '#f97316', 60);
-        addExplosion(balloon.x, balloon.y, '#451a03', 40);
-        endGame();
-        return 'dead';
-      }
-      
-      function updateGame() {
-        if (gameState !== STATE.PLAYING) {
-           particles.forEach((p,i) => { p.x+=p.vx; p.y+=p.vy; p.life-=0.02; if(p.life<=0) particles.splice(i,1); });
-           if (screenShake > 0) screenShake *= 0.9;
-           return;
-        }
-
-        if (pressing && fuel > 0) {
-          balloon.vy += boostActive ? balloon.lift * 1.5 : balloon.lift; fuel -= 0.15;
-          if (Math.random()<0.6) particles.push({ x: balloon.x+random(-5,5)*scale, y: balloon.y+balloon.radius*1.5, vx: random(-1,1)*scale, vy: random(2,6)*scale, life:0.8, color: boostActive?'#fcd34d':'#f97316', size: random(3,8)*scale });
-        }
-        
-        balloon.vy += balloon.gravity; balloon.vy *= balloon.drag; balloon.y += balloon.vy;
-        
-        if (balloon.y < -50*scale || balloon.y > H+30*scale) { handleHit('bounds', balloon.x, balloon.y); return; }
-        
-        if (magnetActive && (magnetTimer -= 0.016) <= 0) { magnetActive = false; updateUI(); }
-        if (boostActive && (boostTimer -= 0.016) <= 0) { boostActive = false; updateUI(); }
-        
-        let bR = balloon.radius * 0.8; 
-
-        // Kalkanlı Çarpışma Kontrolleri (Engel Yok Etme Mantığı)
-        for(let i=chimneys.length-1;i>=0;i--) {
-          let c=chimneys[i]; c.x -= windSpeed*1.1;
-          let cL = c.x - c.width*0.3, cR = c.x + c.width*1.1, cT = H - c.height;
-          
-          if(balloon.x+bR > cL && balloon.x-bR < cR && balloon.y+bR*1.5 > cT) {
-             let hit = handleHit('chimney', c.x+c.width/2, cT);
-             if(hit === 'dead') return;
-             if(hit === 'shielded') { chimneys.splice(i,1); continue; } // Engeli sil yoluna devam et!
-          }
-          if(c.x < -300*scale) chimneys.splice(i,1);
-        }
-        
-        for(let i=birds.length-1;i>=0;i--) {
-          let b=birds[i]; b.x -= windSpeed*0.8 + b.speed; b.y += Math.sin(performance.now()*0.01 + b.bob)*2*scale;
-          if(Math.hypot(balloon.x-b.x, balloon.y-b.y) < bR + b.size) {
-            let hit = handleHit('bird', b.x, b.y);
-            if(hit === 'dead') return;
-            if(hit === 'shielded') { birds.splice(i,1); continue; }
-          }
-          if(b.x < -100*scale) birds.splice(i,1);
-        }
-        
-        for(let i=rivalBalloons.length-1;i>=0;i--) {
-          let rb=rivalBalloons[i]; rb.x -= windSpeed*0.9 + rb.speed; rb.y += Math.sin(performance.now()*0.005)*scale;
-          if(Math.hypot(balloon.x-rb.x, balloon.y-rb.y) < bR + rb.size) {
-            let hit = handleHit('rival', rb.x, rb.y);
-            if(hit === 'dead') return;
-            if(hit === 'shielded') { rivalBalloons.splice(i,1); continue; }
-          }
-          if(rb.x < -200*scale) rivalBalloons.splice(i,1);
-        }
-        
-        for(let i=collectibles.length-1;i>=0;i--) {
-          let c=collectibles[i];
-          if(magnetActive && c.type==='fuel' && Math.hypot(balloon.x-c.x, balloon.y-c.y)<400*scale) {
-            let ang=Math.atan2(balloon.y-c.y, balloon.x-c.x); c.x+=Math.cos(ang)*15*scale; c.y+=Math.sin(ang)*15*scale;
-          } else c.x -= windSpeed*0.8;
-          
-          if(Math.hypot(balloon.x-c.x, balloon.y-c.y) < bR + c.radius) {
-            sfxCollect();
-            if(c.type==='fuel') { fuel=Math.min(100,fuel+30); addExplosion(c.x,c.y,'#f97316',15); }
-            else if(c.type==='shield') { shieldActive=true; floatingTexts.push({text:'KALKAN', x:c.x, y:c.y-20*scale, life:1, color:'#38bdf8'}); }
-            else if(c.type==='magnet') { magnetActive=true; magnetTimer=15; floatingTexts.push({text:'MIKNATIS', x:c.x, y:c.y-20*scale, life:1, color:'#a855f7'}); }
-            else if(c.type==='boost') { boostActive=true; boostTimer=8; floatingTexts.push({text:'HIZ', x:c.x, y:c.y-20*scale, life:1, color:'#facc15'}); }
-            updateUI(); collectibles.splice(i,1);
-          } else if(c.x<-100*scale) collectibles.splice(i,1);
-        }
-        
-        mountains.forEach((layer, i) => {
-          let speed = windSpeed * (0.15 + i*0.1);
-          layer.forEach(pt => pt.x -= speed);
-          if(layer[0].x < -150*scale) {
-            layer.shift(); layer.push({ x: layer[layer.length-1].x + 140*scale, y: random(H*0.7, H*0.9) + i*30*scale });
-          }
-        });
-
-        if (Math.random() < 0.02) bgClouds.push({ x: W + 100*scale, y: random(0, H*0.5), size: random(50, 150)*scale, speed: random(0.2, 0.8), op: random(0.1, 0.3) });
-
-        particles.forEach((p,i) => { p.x+=p.vx; p.y+=p.vy; p.life-=0.025; if(p.life<=0) particles.splice(i,1); });
-        floatingTexts.forEach((t,i) => { t.y-=1.5*scale; t.life-=0.02; if(t.life<=0) floatingTexts.splice(i,1); });
-        bgClouds.forEach((c,i) => { c.x -= windSpeed*0.4 + c.speed; if(c.x<-300*scale) bgClouds.splice(i,1); });
-        
-        windSpeed+=0.0005; distance+= (windSpeed * (boostActive ? 0.2 : 0.12)); checkStage();
-        if (screenShake > 0) screenShake *= 0.85;
-        updateUI();
-      }
-      
-      function drawSky() {
-        let g=ctx.createLinearGradient(0,0,0,H);
-        g.addColorStop(0,currentSky.top); g.addColorStop(1,currentSky.bottom);
-        ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-      }
-
-      function drawMountains() {
-        mountains.forEach((layer, i) => {
-          ctx.fillStyle = i===0 ? currentSky.m1 : currentSky.m2;
-          ctx.beginPath(); ctx.moveTo(layer[0].x, H);
-          for(let j=0; j<layer.length-1; j++) {
-            let cx = (layer[j].x + layer[j+1].x)/2, cy = (layer[j].y + layer[j+1].y)/2;
-            ctx.quadraticCurveTo(layer[j].x, layer[j].y, cx, cy);
-          }
-          ctx.lineTo(W+200*scale, H); ctx.lineTo(0, H); ctx.fill();
-        });
-      }
-      
-      function drawBgClouds() {
-        bgClouds.forEach(c=>{
-          ctx.fillStyle=`rgba(255,255,255,${c.op})`;
-          ctx.beginPath(); ctx.arc(c.x,c.y,c.size,0,Math.PI*2);
-          ctx.arc(c.x+c.size*0.5,c.y-c.size*0.2,c.size*0.8,0,Math.PI*2);
-          ctx.arc(c.x-c.size*0.4,c.y+c.size*0.1,c.size*0.6,0,Math.PI*2); ctx.fill();
-        });
-      }
-      
-      function drawChimneys() {
-        chimneys.forEach(c=>{
-          let x=c.x, y=H-c.height, w=c.width;
-          
-          // Kaya Dokulu Gövde
-          ctx.fillStyle = '#78350f'; 
-          ctx.beginPath();
-          ctx.moveTo(x-w*0.3, H);
-          ctx.lineTo(x-w*0.1, y+20*scale); // Sol tırtık
-          ctx.lineTo(x+w*0.9, y+20*scale); // Sağ üst
-          ctx.lineTo(x+w*1.1, H);
-          ctx.fill();
-          
-          // Gölge / Doku
-          ctx.fillStyle = '#451a03';
-          ctx.beginPath();
-          ctx.moveTo(x+w*0.4, H); ctx.lineTo(x+w*0.3, y+20*scale);
-          ctx.lineTo(x+w*0.9, y+20*scale); ctx.lineTo(x+w*1.1, H); ctx.fill();
-
-          // Kaya Şapka (Kapadokya Mantarı)
-          let capY = y - 10*scale;
-          ctx.fillStyle = '#290f02';
-          ctx.beginPath();
-          ctx.moveTo(x-w*0.4, capY+30*scale); // Sol alt uç
-          ctx.quadraticCurveTo(x+w*0.4, capY-w*0.5, x+w*1.2, capY+30*scale); // Kavisli tepe
-          ctx.quadraticCurveTo(x+w*0.4, capY+50*scale, x-w*0.4, capY+30*scale); // Kavisli alt taban
-          ctx.fill();
-        });
-      }
-      
-      function drawBalloon() {
-        ctx.save(); ctx.translate(balloon.x, balloon.y); ctx.rotate(balloon.vy*0.03); 
-        let r=balloon.radius;
-        
-        if(magnetActive) { ctx.beginPath(); ctx.arc(0,0,r*2,0,Math.PI*2); ctx.fillStyle='rgba(168,85,247,0.1)'; ctx.fill(); ctx.strokeStyle='rgba(192,132,252,0.6)'; ctx.lineWidth=2; ctx.stroke(); }
-        if(boostActive) { ctx.beginPath(); ctx.arc(0,0,r*1.6,0,Math.PI*2); ctx.strokeStyle='rgba(250,204,21,0.6)'; ctx.lineWidth=3; ctx.setLineDash([8, 6]); ctx.stroke(); ctx.setLineDash([]); }
-        
-        // Sepet İpleri
-        ctx.strokeStyle='#451a03'; ctx.lineWidth=1.5*scale;
-        ctx.beginPath(); ctx.moveTo(-r*0.3, r*1.2); ctx.lineTo(-r*0.2, r*1.8); ctx.moveTo(r*0.3, r*1.2); ctx.lineTo(r*0.2, r*1.8); ctx.stroke();
-
-        // Alev
-        if(pressing && fuel > 0) {
-          ctx.fillStyle = boostActive ? '#fef08a' : '#facc15'; ctx.beginPath(); ctx.moveTo(-r*0.1, r*1.8); ctx.lineTo(r*0.1, r*1.8); ctx.lineTo(0, r*1.2+Math.random()*r*0.3); ctx.fill();
-        }
-        
-        // Sepet
-        ctx.fillStyle = '#9a3412'; ctx.fillRect(-r*0.3, r*1.8, r*0.6, r*0.4);
-        
-        // Gerçekçi Balon Formu (Armut/Damla Şekli)
-        ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(r, 0);
-        ctx.arc(0, 0, r, 0, Math.PI, true); // Üst kubbe
-        ctx.bezierCurveTo(-r, r*0.8, -r*0.4, r*1.3, -r*0.35, r*1.5); // Sol daralma
-        ctx.lineTo(r*0.35, r*1.5); // Alt düzlük
-        ctx.bezierCurveTo(r*0.4, r*1.3, r, r*0.8, r, 0); // Sağ daralma
-        ctx.closePath();
-        ctx.clip(); // Boyama alanı
-        
-        // Renk Dilimleri
-        let colors=['#ea580c','#facc15','#ffffff','#f43f5e']; 
-        let sw=r*2.2/4;
-        for(let i=0;i<4;i++){ 
-          let gr = ctx.createLinearGradient(0, -r, 0, r*1.5); gr.addColorStop(0, colors[i]); gr.addColorStop(1, '#9a3412');
-          ctx.fillStyle = gr; ctx.fillRect(-r*1.1+i*sw, -r*1.2, sw, r*3); 
-        }
-        // Gölgelendirme (3D etki)
-        let shadow=ctx.createRadialGradient(-r*0.4,-r*0.4,r*0.1, 0,0,r*1.5);
-        shadow.addColorStop(0,'rgba(255,255,255,0.4)'); shadow.addColorStop(0.5,'rgba(0,0,0,0)'); shadow.addColorStop(1,'rgba(0,0,0,0.6)'); 
-        ctx.fillStyle=shadow; ctx.fillRect(-r*2,-r*2,r*4,r*4);
-        ctx.restore();
-        
-        if(shieldActive) { ctx.beginPath(); ctx.arc(0,0,r*1.8,0,Math.PI*2); ctx.fillStyle='rgba(56,189,248,0.15)'; ctx.fill(); ctx.strokeStyle='#7dd3fc'; ctx.lineWidth=3; ctx.stroke(); }
-        ctx.restore();
-      }
-      
-      // Çizim fonksiyonları (Kuşlar, Rakip Balonlar, Itemler vs kısaltıldı/optimize edildi)
-      function drawBirds() { birds.forEach(b=>{ ctx.save(); ctx.translate(b.x,b.y); ctx.fillStyle='#f8fafc'; ctx.beginPath(); ctx.arc(0,0,b.size*0.6,0,Math.PI*2); ctx.fill(); let wy = Math.sin(performance.now()*0.02 + b.bob)*b.size; ctx.beginPath(); ctx.moveTo(-b.size*0.5,0); ctx.lineTo(b.size,wy); ctx.lineTo(b.size*0.5,0); ctx.fill(); ctx.restore(); }); }
-      function drawRivalBalloons() { rivalBalloons.forEach(rb=>{ ctx.save(); ctx.translate(rb.x, rb.y); let r=rb.size; ctx.fillStyle='#451a03'; ctx.fillRect(-r*0.2, r*1.2, r*0.4, r*0.3); ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.fillStyle=`hsl(${rb.hue},80%,50%)`; ctx.fill(); ctx.restore(); }); }
-      function drawCollectibles() { collectibles.forEach(c=>{ let b=Math.sin(performance.now()*0.01+c.bob)*4*scale; ctx.save(); ctx.translate(c.x, c.y+b); ctx.shadowBlur=10; ctx.beginPath(); ctx.arc(0,0,c.radius,0,Math.PI*2); if(c.type==='fuel'){ ctx.shadowColor='#ea580c'; ctx.fillStyle='#f97316'; ctx.fill(); ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius}px Inter`; ctx.textAlign='center'; ctx.fillText('⛽',0,4*scale); } else if(c.type==='shield'){ ctx.shadowColor='#0284c7'; ctx.fillStyle='#38bdf8'; ctx.fill(); ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius}px Inter`; ctx.textAlign='center'; ctx.fillText('🛡',0,4*scale); } else if(c.type==='magnet'){ ctx.shadowColor='#9333ea'; ctx.fillStyle='#a855f7'; ctx.fill(); ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius}px Inter`; ctx.textAlign='center'; ctx.fillText('🧲',0,4*scale); } else if(c.type==='boost'){ ctx.shadowColor='#ca8a04'; ctx.fillStyle='#facc15'; ctx.fill(); ctx.fillStyle='#fff'; ctx.font=`bold ${c.radius}px Inter`; ctx.textAlign='center'; ctx.fillText('⚡',0,4*scale); } ctx.restore(); }); }
-      function drawParticles() { ctx.globalCompositeOperation = 'lighter'; particles.forEach(p=>{ ctx.globalAlpha=Math.max(0, p.life); ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill(); }); ctx.globalAlpha=1; ctx.globalCompositeOperation = 'source-over'; }
-      function drawFloatingTexts() { floatingTexts.forEach(t=>{ ctx.globalAlpha=Math.max(0, t.life); ctx.fillStyle=t.color; ctx.font=`800 ${16*scale}px Inter`; ctx.textAlign='center'; ctx.shadowBlur=4; ctx.shadowColor='#000'; ctx.fillText(t.text, t.x, t.y); ctx.shadowBlur=0; }); ctx.globalAlpha=1; }
-      
-      function render() {
-        ctx.save();
-        if (screenShake > 0.5) ctx.translate((Math.random()-0.5)*screenShake, (Math.random()-0.5)*screenShake);
-        drawSky(); drawMountains(); drawBgClouds(); drawChimneys(); drawRivalBalloons(); drawCollectibles(); drawBirds(); 
-        if(gameState !== STATE.MENU && gameState !== STATE.CRASHING) drawBalloon();
-        drawParticles(); drawFloatingTexts();
-        ctx.restore();
-      }
-      
-      function gameLoop() {
-        if (gameState === STATE.PLAYING || gameState === STATE.CRASHING) { if(gameState===STATE.PLAYING) spawnObjects(); updateGame(); }
-        render(); requestAnimationFrame(gameLoop);
-      }
-      
-      function startGame() {
-        initAudio(); sfxClick(); fullReset(); gameState = STATE.PLAYING;
-        document.getElementById('menuScreen').style.display = 'none'; document.getElementById('gameOverScreen').style.display = 'none';
-        document.getElementById('hudContainer').style.opacity = '1'; updateUI();
-      }
-      
-      function endGame() {
-        if (gameState === STATE.CRASHING || gameState === STATE.OVER) return;
-        gameState = STATE.CRASHING; document.getElementById('hudContainer').style.opacity = '0';
-        let isNewHigh = false;
-        if (distance > highScore) { highScore = Math.floor(distance); try { localStorage.setItem('etourgood_sky_high', highScore); } catch(e){} isNewHigh = true; updateHighScoreUI(); }
-        setTimeout(() => {
-          gameState = STATE.OVER; document.getElementById('finalDistText').textContent = Math.floor(distance) + ' m';
-          document.getElementById('newHighScoreBadge').style.display = isNewHigh ? 'block' : 'none';
-          document.getElementById('gameOverScreen').style.display = 'flex';
-        }, 800); 
-      }
-      
-      function updateHighScoreUI() {
-        const hsMenu = document.getElementById('highScoreMenu');
-        if (highScore > 0) { hsMenu.style.display = 'inline-block'; document.getElementById('highScoreMenuText').textContent = highScore + ' m'; }
-      }
-      
-      canvas.addEventListener('touchstart', (e) => { if(e.target.tagName !== 'BUTTON') e.preventDefault(); if(gameState===STATE.PLAYING) { pressing = true; initAudio(); } }, {passive: false});
-      canvas.addEventListener('touchend', (e) => { if(e.target.tagName !== 'BUTTON') e.preventDefault(); pressing = false; }, {passive: false});
-      canvas.addEventListener('mousedown', (e) => { if(gameState===STATE.PLAYING && e.target.tagName !== 'BUTTON') { pressing = true; initAudio(); } });
-      canvas.addEventListener('mouseup', () => pressing = false);
-      
-      document.getElementById('startBtn').addEventListener('click', startGame);
-      document.getElementById('retryBtn').addEventListener('click', () => { sfxClick(); document.getElementById('gameOverScreen').style.display = 'none'; startGame(); });
-      document.getElementById('menuBtn').addEventListener('click', () => { sfxClick(); gameState = STATE.MENU; document.getElementById('gameOverScreen').style.display = 'none'; document.getElementById('menuScreen').style.display = 'flex'; updateHighScoreUI(); fullReset(); });
-      
-      updateHighScoreUI(); fullReset(); gameLoop();
+        restartGame(); // başlangıç hazır
+        attachMobileEvents();
+        gameLoop();
     })();
-  </script>
+</script>
 </body>
 </html>
