@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>101 Okey · Dikey Mobil</title>
+  <title>101 Okey · Okey Masası</title>
   <style>
-    * { 
+    * {
       box-sizing: border-box;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
@@ -13,91 +13,87 @@
       padding: 0;
     }
     body {
-      background: #1a3a2b;
+      background: #1a2e1f;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-      touch-action: pan-y;
-      padding: 8px;
+      padding: 6px;
       margin: 0;
     }
     #game {
-      max-width: 420px;
+      max-width: 450px;
       width: 100%;
       background: #2d5e3f;
-      background-image: radial-gradient(circle at 20% 30%, #3e7a52, #1f452f);
-      border-radius: 48px 48px 32px 32px;
-      padding: 16px 12px 20px;
+      background-image: radial-gradient(circle at 30% 30%, #3e7a52, #1f452f);
+      border-radius: 60px 60px 36px 36px;
+      padding: 14px 10px 18px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.7), inset 0 1px 3px rgba(255,255,200,0.3);
-      border: 1px solid #b8a06b;
+      border: 2px solid #b8a06b;
       position: relative;
     }
-    /* başlık */
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 6px 10px 6px;
+      padding: 0 4px 10px 4px;
       color: #f7f0d6;
       text-shadow: 0 2px 3px #1f2f1a;
       font-weight: bold;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
     .header span {
       background: #1f3a28;
-      padding: 6px 14px;
+      padding: 4px 14px;
       border-radius: 40px;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       box-shadow: inset 0 -2px 0 #4f7a4a;
       border: 1px solid #b1985a;
-      backdrop-filter: blur(2px);
     }
     .header .turn-indicator {
       background: #c9b37a;
       color: #1f3a1f;
       padding: 4px 14px;
       border-radius: 30px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
-      box-shadow: 0 2px 0 #4f3f1f;
     }
-    /* bilgisayar alanları */
+
+    /* PC alanları - masa üstü */
     .pc-area {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      margin-bottom: 8px;
+      gap: 6px;
+      margin-bottom: 6px;
     }
     .pc-hand {
       background: #213d2bcc;
       backdrop-filter: blur(2px);
-      padding: 8px 6px;
-      border-radius: 60px;
+      padding: 6px 6px;
+      border-radius: 40px;
       border: 1px solid #b8a06b;
       box-shadow: inset 0 0 12px #0f1f12;
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       align-items: center;
-      min-height: 44px;
-      gap: 4px;
+      min-height: 38px;
+      gap: 3px;
     }
     .pc-hand .tile {
       background: #d9cba4;
-      width: 32px;
-      height: 42px;
-      border-radius: 6px 6px 10px 10px;
-      font-size: 0.7rem;
+      width: 28px;
+      height: 38px;
+      border-radius: 5px 5px 8px 8px;
+      font-size: 0.6rem;
       font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #1f2f1a;
-      box-shadow: 0 3px 0 #7a6a42, 0 5px 8px rgba(0,0,0,0.4);
+      box-shadow: 0 3px 0 #7a6a42, 0 4px 8px rgba(0,0,0,0.4);
       border: 1px solid #ede3c0;
-      transition: 0.1s;
     }
     .pc-hand .tile.face-down {
       background: #37634b;
@@ -109,32 +105,32 @@
     .pc-hand .tile.face-down::before {
       content: "?";
       color: #d9cba4;
-      font-size: 1.2rem;
+      font-size: 1rem;
       opacity: 0.3;
     }
     .pc-label {
       color: #efeacb;
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 600;
-      padding: 0 8px;
-      letter-spacing: 0.5px;
+      padding: 0 6px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
     .pc-label .badge {
       background: #2f4f2f;
-      padding: 0 12px;
+      padding: 0 10px;
       border-radius: 30px;
       border: 1px solid #b1985a;
     }
-    /* oyuncu eli */
+
+    /* OYUNCU ALANI - OKEY İSTAKASI */
     .player-area {
       background: #1c3a28cc;
       backdrop-filter: blur(3px);
-      border-radius: 40px 40px 24px 24px;
-      padding: 12px 4px 8px;
-      margin: 8px 0 6px;
+      border-radius: 40px 40px 28px 28px;
+      padding: 10px 4px 8px;
+      margin: 6px 0 4px;
       border: 2px solid #b8a06b;
       box-shadow: inset 0 0 20px #0f2a18;
     }
@@ -142,21 +138,21 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 6px;
-      min-height: 68px;
-      padding: 6px 2px;
+      gap: 5px;
+      min-height: 64px;
+      padding: 4px 2px;
     }
     .tile {
       background: #f2e5c7;
       background: linear-gradient(145deg, #faf0d6, #e8dbb8);
-      width: 42px;
-      height: 56px;
-      border-radius: 8px 8px 14px 14px;
+      width: 40px;
+      height: 52px;
+      border-radius: 6px 6px 12px 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       color: #1f2f1a;
       box-shadow: 0 4px 0 #7a6a42, 0 6px 12px rgba(0,0,0,0.5);
       border: 1px solid #f7efd0;
@@ -166,7 +162,7 @@
       touch-action: manipulation;
     }
     .tile.selected {
-      transform: translateY(-12px);
+      transform: translateY(-10px);
       box-shadow: 0 8px 0 #7a6a42, 0 12px 20px black;
       border-color: #ffe484;
     }
@@ -185,19 +181,18 @@
     }
     .action-bar {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 10px 4px;
+      justify-content: center;
       gap: 8px;
+      padding: 8px 6px 2px;
       flex-wrap: wrap;
     }
     .btn {
       background: #d4c28b;
       border: none;
       border-radius: 60px;
-      padding: 8px 18px;
+      padding: 6px 14px;
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 0.7rem;
       color: #1f2f1a;
       box-shadow: 0 4px 0 #7a6a42, 0 4px 10px rgba(0,0,0,0.4);
       border: 1px solid #ede3b0;
@@ -205,7 +200,7 @@
       touch-action: manipulation;
       cursor: pointer;
       flex: 1 1 auto;
-      min-width: 60px;
+      min-width: 56px;
       text-align: center;
       background: linear-gradient(145deg, #e6d8ae, #c9b87a);
     }
@@ -224,20 +219,26 @@
       background: linear-gradient(145deg, #efd48c, #c7a458);
       border-color: #f5e5a0;
       color: #1f2a0f;
-      flex: 2;
+      flex: 1.5;
+    }
+    .btn-success {
+      background: #7aaa6a;
+      background: linear-gradient(145deg, #8fc07a, #5f8a4a);
+      border-color: #b0d090;
+      color: #1f2f0a;
     }
     .info-row {
       display: flex;
       justify-content: space-between;
       color: #efeacb;
       padding: 2px 12px;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 500;
       text-shadow: 0 2px 2px #0f1f0a;
     }
     .info-row .chip {
       background: #1f3a24;
-      padding: 2px 16px;
+      padding: 2px 14px;
       border-radius: 30px;
       border: 1px solid #b1985a;
     }
@@ -245,40 +246,43 @@
       background: #1f2f1acc;
       backdrop-filter: blur(2px);
       border-radius: 60px;
-      padding: 6px 16px;
+      padding: 5px 14px;
       color: #f7f0d6;
       font-weight: 500;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       text-align: center;
       border: 1px solid #b8a06b;
-      margin: 6px 0 2px;
+      margin: 4px 0 2px;
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .footer {
       color: #b8a06b;
-      font-size: 0.55rem;
+      font-size: 0.5rem;
       text-align: center;
-      padding: 12px 0 2px;
+      padding: 8px 0 0;
       opacity: 0.7;
       letter-spacing: 1px;
     }
-    /* katlamalı/katlamasız göstergesi */
     .fold-indicator {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       justify-content: center;
       align-items: center;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       color: #d4cba0;
     }
     .fold-indicator span {
       background: #1f3a24;
-      padding: 2px 12px;
+      padding: 1px 12px;
       border-radius: 20px;
       border: 1px solid #7a8a5a;
     }
     @media (max-width: 400px) {
-      .tile { width: 36px; height: 48px; font-size: 0.7rem; }
-      .pc-hand .tile { width: 26px; height: 36px; }
+      .tile { width: 34px; height: 44px; font-size: 0.7rem; }
+      .pc-hand .tile { width: 24px; height: 32px; }
     }
   </style>
 </head>
@@ -289,45 +293,48 @@
     <span class="turn-indicator" id="turnIndicator">Sıra: Siz</span>
   </div>
 
-  <!-- Bilgisayar 1,2,3 -->
+  <!-- Bilgisayarlar -->
   <div class="pc-area">
-    <div class="pc-hand" id="pc1Hand"><div class="pc-label">💻 Bilgisayar 1 <span class="badge" id="pc1Count">0</span></div></div>
-    <div class="pc-hand" id="pc2Hand"><div class="pc-label">💻 Bilgisayar 2 <span class="badge" id="pc2Count">0</span></div></div>
-    <div class="pc-hand" id="pc3Hand"><div class="pc-label">💻 Bilgisayar 3 <span class="badge" id="pc3Count">0</span></div></div>
+    <div class="pc-hand" id="pc1Hand"><div class="pc-label">💻 PC 1 <span class="badge" id="pc1Count">0</span></div></div>
+    <div class="pc-hand" id="pc2Hand"><div class="pc-label">💻 PC 2 <span class="badge" id="pc2Count">0</span></div></div>
+    <div class="pc-hand" id="pc3Hand"><div class="pc-label">💻 PC 3 <span class="badge" id="pc3Count">0</span></div></div>
   </div>
 
-  <!-- oyuncu -->
+  <!-- Oyuncu - Okey Istakası -->
   <div class="player-area">
     <div class="player-hand" id="playerHand"></div>
     <div class="action-bar">
       <button class="btn" id="drawBtn">🔄 Taş Çek</button>
+      <button class="btn btn-success" id="sortSeriBtn">📊 Seri Diz</button>
+      <button class="btn btn-success" id="sortCiftBtn">♊ Çift Diz</button>
       <button class="btn btn-primary" id="foldBtn">📤 Katla</button>
       <button class="btn" id="passBtn">⏭️ Pas</button>
     </div>
     <div class="info-row">
       <span class="chip" id="playerCount">0 taş</span>
       <span class="fold-indicator"><span id="foldStatus">Katlamasız</span></span>
+      <span class="chip" id="seriesInfo">Seri: -</span>
     </div>
   </div>
 
-  <div id="messageBox" class="message-box">✨ Oyun başladı. Taş çek veya katla.</div>
-  <div class="footer">101 Okey · 3 bilgisayar · mobil dikey</div>
+  <div id="messageBox" class="message-box">✨ Okey masası hazır. Taş çek veya katla.</div>
+  <div class="footer">101 Okey · 3 PC · Okey Istakası</div>
 </div>
 <script>
   (function(){
     // --- OYUN DURUMU ---
     const state = {
       deck: [],
-      players: [[], [], [], []], // 0:oyuncu, 1-3:pc
-      currentPlayer: 0, // 0 insan, 1-3 pc
-      phase: 'draw', // 'draw' veya 'fold'
+      players: [[], [], [], []],
+      currentPlayer: 0,
+      phase: 'draw',
       turnLock: false,
       gameOver: false,
       selectedTileIndex: -1,
-      foldMode: false, // katlamalı (true) / katlamasız (false)
+      foldMode: false, // false: katlamasız, true: katlamalı
     };
 
-    // DOM referansları
+    // DOM
     const playerHandEl = document.getElementById('playerHand');
     const pc1HandEl = document.getElementById('pc1Hand');
     const pc2HandEl = document.getElementById('pc2Hand');
@@ -341,25 +348,26 @@
     const turnIndicator = document.getElementById('turnIndicator');
     const messageBox = document.getElementById('messageBox');
     const foldStatusEl = document.getElementById('foldStatus');
+    const seriesInfoEl = document.getElementById('seriesInfo');
     const drawBtn = document.getElementById('drawBtn');
+    const sortSeriBtn = document.getElementById('sortSeriBtn');
+    const sortCiftBtn = document.getElementById('sortCiftBtn');
     const foldBtn = document.getElementById('foldBtn');
     const passBtn = document.getElementById('passBtn');
 
     // --- yardımcılar ---
     function createDeck() {
-      const colors = ['k', 'm', 's', 'y']; // kırmızı, mavi, siyah, yeşil
+      const colors = ['k', 'm', 's', 'y'];
       const deck = [];
       for (let c of colors) {
         for (let i = 1; i <= 13; i++) {
           deck.push({ color: c, value: i, id: `${c}${i}` });
         }
       }
-      // 2 sahte joker (renksiz 0)
       deck.push({ color: 'joker', value: 0, id: 'j1' });
       deck.push({ color: 'joker', value: 0, id: 'j2' });
       return shuffle(deck);
     }
-
     function shuffle(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -368,7 +376,6 @@
       return arr;
     }
 
-    // taş görünümü
     function tileHTML(tile, faceDown = false) {
       if (faceDown) return `<div class="tile face-down"></div>`;
       let cls = 'tile';
@@ -377,62 +384,122 @@
       return `<div class="${cls}" data-id="${tile.id}">${label}</div>`;
     }
 
-    // elle render
+    // Seri / çift hesaplama (gösterge)
+    function analyzeHand(hand) {
+      if (hand.length === 0) return { seri: false, cift: false, info: 'Boş' };
+      // basit kontrol: tüm aynı renk ve ardışık -> seri
+      let allSameColor = true;
+      let firstColor = hand[0].color;
+      if (firstColor === 'joker') return { seri: false, cift: false, info: 'Joker' };
+      for (let t of hand) {
+        if (t.color !== firstColor || t.color === 'joker') { allSameColor = false; break; }
+      }
+      let values = hand.map(t => t.value).sort((a,b)=>a-b);
+      let isConsecutive = true;
+      for (let i = 1; i < values.length; i++) {
+        if (values[i] !== values[i-1] + 1) { isConsecutive = false; break; }
+      }
+      if (allSameColor && isConsecutive && hand.length >= 3) {
+        return { seri: true, cift: false, info: 'Seri ✓' };
+      }
+      // çift: tüm aynı değer
+      let allSameValue = true;
+      let firstVal = hand[0].value;
+      for (let t of hand) {
+        if (t.value !== firstVal || t.color === 'joker') { allSameValue = false; break; }
+      }
+      if (allSameValue && hand.length >= 3) {
+        return { seri: false, cift: true, info: 'Çift ✓' };
+      }
+      return { seri: false, cift: false, info: 'Normal' };
+    }
+
+    // --- SIRALAMA (Seri / Çift) ---
+    function sortBySeri(hand) {
+      // renk bazında grupla, ardından değere göre sırala
+      const grouped = {};
+      for (let t of hand) {
+        if (t.color === 'joker') { grouped['joker'] = grouped['joker'] || []; grouped['joker'].push(t); continue; }
+        grouped[t.color] = grouped[t.color] || [];
+        grouped[t.color].push(t);
+      }
+      let result = [];
+      for (let color in grouped) {
+        if (color === 'joker') { result = result.concat(grouped[color]); continue; }
+        const sorted = grouped[color].sort((a,b) => a.value - b.value);
+        result = result.concat(sorted);
+      }
+      return result;
+    }
+
+    function sortByCift(hand) {
+      // değere göre grupla
+      const grouped = {};
+      for (let t of hand) {
+        const key = t.value;
+        grouped[key] = grouped[key] || [];
+        grouped[key].push(t);
+      }
+      const keys = Object.keys(grouped).sort((a,b) => parseInt(a) - parseInt(b));
+      let result = [];
+      for (let k of keys) {
+        result = result.concat(grouped[k]);
+      }
+      return result;
+    }
+
+    // --- RENDER ---
     function render() {
-      // oyuncu
       const playerTiles = state.players[0];
       playerHandEl.innerHTML = playerTiles.map((t, idx) => {
         let html = tileHTML(t, false);
         if (state.selectedTileIndex === idx && state.phase === 'fold') {
-          // seçili vurgusu (ekstra class)
-          return html.replace('tile', 'tile selected');
+          html = html.replace('tile', 'tile selected');
         }
         return html;
       }).join('');
 
-      // pc'ler (kapalı)
       for (let i = 0; i < 3; i++) {
         const pcHand = state.players[i+1];
         const container = [pc1HandEl, pc2HandEl, pc3HandEl][i];
         const countLabel = pcCounts[i];
-        // pc elinde kaç taş olduğunu göster, kapalı olarak göster (hepsi face-down)
         const handHTML = pcHand.map(t => tileHTML(t, true)).join('');
-        // label + taşlar
-        container.innerHTML = `<div class="pc-label">💻 Bilgisayar ${i+1} <span class="badge" id="pc${i+1}Count">${pcHand.length}</span></div>` + 
-          `<div style="display:flex; flex-wrap:wrap; gap:4px; justify-content:center;">${handHTML}</div>`;
+        container.innerHTML = `<div class="pc-label">💻 PC ${i+1} <span class="badge">${pcHand.length}</span></div>` + 
+          `<div style="display:flex; flex-wrap:wrap; gap:3px; justify-content:center;">${handHTML}</div>`;
         countLabel.textContent = pcHand.length;
       }
 
       playerCountEl.textContent = state.players[0].length + ' taş';
-      // sıra
-      const playerNames = ['Siz', 'PC 1', 'PC 2', 'PC 3'];
-      turnIndicator.textContent = `Sıra: ${playerNames[state.currentPlayer]}`;
-      // katlama durumu
+      const names = ['Siz', 'PC 1', 'PC 2', 'PC 3'];
+      turnIndicator.textContent = `Sıra: ${names[state.currentPlayer]}`;
       foldStatusEl.textContent = state.foldMode ? 'Katlamalı' : 'Katlamasız';
 
-      // butonlar
+      // analiz
+      const analysis = analyzeHand(state.players[0]);
+      seriesInfoEl.textContent = analysis.info;
+
       const isPlayerTurn = state.currentPlayer === 0 && !state.gameOver;
       drawBtn.disabled = !isPlayerTurn || state.phase !== 'draw' || state.turnLock;
       foldBtn.disabled = !isPlayerTurn || state.phase !== 'fold' || state.turnLock;
       passBtn.disabled = !isPlayerTurn || state.phase !== 'fold' || state.turnLock;
+      sortSeriBtn.disabled = !isPlayerTurn || state.turnLock;
+      sortCiftBtn.disabled = !isPlayerTurn || state.turnLock;
 
-      // mesaj
       if (state.gameOver) {
-        messageBox.textContent = '🏆 Oyun bitti! Yeniden başlatmak için sayfayı yenileyin.';
+        messageBox.textContent = '🏆 Oyun bitti! Sayfayı yenileyin.';
       } else if (!isPlayerTurn && !state.gameOver) {
         messageBox.textContent = '🤖 Bilgisayar düşünüyor...';
       } else if (isPlayerTurn && state.phase === 'draw') {
-        messageBox.textContent = '🎯 Taş çek veya katla (katlamak için taş seç)';
+        messageBox.textContent = '🎯 Taş çek veya Katla (katlamak için taş seç)';
       } else if (isPlayerTurn && state.phase === 'fold') {
-        messageBox.textContent = '📤 Katlamak için bir taş seç, sonra "Katla" ya da "Pas" geç.';
+        messageBox.textContent = '📤 Katlamak için taş seç, sonra "Katla" veya "Pas"';
       }
     }
 
-    // --- OYUN MANTIĞI ---
+    // --- OYUN BAŞLATMA ---
     function initGame() {
       state.deck = createDeck();
       state.players = [[], [], [], []];
-      // her oyuncuya 14 taş dağıt
       for (let i = 0; i < 4; i++) {
         state.players[i] = state.deck.splice(0, 14);
       }
@@ -441,21 +508,17 @@
       state.turnLock = false;
       state.gameOver = false;
       state.selectedTileIndex = -1;
-      state.foldMode = false; // başlangıçta katlamasız
+      state.foldMode = false;
       render();
     }
 
-    // taş çek (sadece oyuncu)
+    // --- OYUNCU HAREKETLERİ ---
     function playerDraw() {
       if (state.currentPlayer !== 0 || state.phase !== 'draw' || state.turnLock || state.gameOver) return;
-      if (state.deck.length === 0) {
-        messageBox.textContent = '⚠️ Deste bitti!';
-        return;
-      }
+      if (state.deck.length === 0) { messageBox.textContent = '⚠️ Deste bitti!'; return; }
       state.turnLock = true;
       const drawn = state.deck.pop();
       state.players[0].push(drawn);
-      // katlama modu aktif
       state.phase = 'fold';
       state.selectedTileIndex = -1;
       render();
@@ -463,7 +526,6 @@
       state.turnLock = false;
     }
 
-    // oyuncu katla (seçili taşı atar)
     function playerFold() {
       if (state.currentPlayer !== 0 || state.phase !== 'fold' || state.turnLock || state.gameOver) return;
       const idx = state.selectedTileIndex;
@@ -471,36 +533,26 @@
         messageBox.textContent = '⚠️ Lütfen katlamak için bir taş seç.';
         return;
       }
-      state.turnLock = true;
-      // taşı elden çıkar (desteğe geri ekle veya at - basitçe diziden kaldır)
-      const removed = state.players[0].splice(idx, 1)[0];
-      // katlamalı/katlamasız kontrol: katlamalı ise bu taş atılır, katlamasız ise el değişmez (ama biz katlama işlemi yapıyoruz)
       if (!state.foldMode) {
-        // katlamasız: taş atılmaz, geri ekle (yani katlama iptal)
-        state.players[0].splice(idx, 0, removed);
-        state.turnLock = false;
+        messageBox.textContent = '⚠️ Katlamasız modda katlama yapılamaz. Pas geç.';
         state.selectedTileIndex = -1;
-        messageBox.textContent = '⚠️ Katlamasız modda katlama yapılamaz. Pas geçin.';
         render();
         return;
       }
-      // Katlamalı: taş atıldı. (atılan taşı desteye ekleme, basit oyun)
-      // bilgisayar sırasına geç
+      state.turnLock = true;
+      state.players[0].splice(idx, 1);
       state.selectedTileIndex = -1;
       state.phase = 'draw';
       state.currentPlayer = (state.currentPlayer + 1) % 4;
       state.turnLock = false;
       render();
       messageBox.textContent = '📤 Taş katlandı. Sıra bilgisayarda.';
-      // bilgisayar hamlesini başlat
-      setTimeout(() => computerTurn(), 600);
+      setTimeout(() => computerTurn(), 500);
     }
 
-    // pas geç
     function playerPass() {
       if (state.currentPlayer !== 0 || state.phase !== 'fold' || state.turnLock || state.gameOver) return;
       state.turnLock = true;
-      // pas: seçimi temizle, sırayı geç
       state.selectedTileIndex = -1;
       state.phase = 'draw';
       state.currentPlayer = (state.currentPlayer + 1) % 4;
@@ -510,60 +562,58 @@
       setTimeout(() => computerTurn(), 500);
     }
 
-    // --- BİLGİSAYAR TURU (basit) ---
+    // --- SIRALAMA BUTONLARI ---
+    function sortSeri() {
+      if (state.currentPlayer !== 0 || state.turnLock || state.gameOver) return;
+      state.players[0] = sortBySeri(state.players[0]);
+      render();
+      messageBox.textContent = '📊 Seri dizilimi uygulandı.';
+    }
+    function sortCift() {
+      if (state.currentPlayer !== 0 || state.turnLock || state.gameOver) return;
+      state.players[0] = sortByCift(state.players[0]);
+      render();
+      messageBox.textContent = '♊ Çift dizilimi uygulandı.';
+    }
+
+    // --- BİLGİSAYAR TURU ---
     function computerTurn() {
       if (state.gameOver) return;
-      if (state.currentPlayer === 0) {
-        // insan sırası
-        render();
-        return;
-      }
+      if (state.currentPlayer === 0) { render(); return; }
       state.turnLock = true;
       const playerIdx = state.currentPlayer;
       const hand = state.players[playerIdx];
-      // bilgisayar: ya taş çeker ya da katlama yapar (rastgele)
-      const action = Math.random() > 0.4 ? 'draw' : 'fold'; 
       if (state.deck.length === 0) {
-        // destede taş yoksa pas
         state.currentPlayer = (state.currentPlayer + 1) % 4;
         state.turnLock = false;
         render();
         setTimeout(() => computerTurn(), 300);
         return;
       }
-
+      // bilgisayar: %60 taş çek, %40 katla
+      const action = Math.random() > 0.4 ? 'draw' : 'fold';
       if (action === 'draw' || state.phase === 'draw') {
-        // taş çek
         const drawn = state.deck.pop();
         hand.push(drawn);
         state.phase = 'fold';
-        // katlama yap (bir taş at)
         if (hand.length > 14 && state.foldMode) {
-          // rastgele bir taş at (katlama)
           const discardIdx = Math.floor(Math.random() * hand.length);
           hand.splice(discardIdx, 1);
-        } else {
-          // katlamasız veya elde 14 taş varsa katlama yapma (pas)
-          // ama katlamasız modda atma
-          if (!state.foldMode) {
-            // katlamasız: taş çek ama katlama yok
-            // sadece sırayı geç
-          } else {
-            // eğer 15 taş varsa at
-            if (hand.length > 14) {
-              hand.splice(Math.floor(Math.random() * hand.length), 1);
-            }
-          }
+        } else if (!state.foldMode && hand.length > 14) {
+          // katlamasız: atma
         }
-        // sırayı geç
         state.phase = 'draw';
         state.currentPlayer = (state.currentPlayer + 1) % 4;
         state.turnLock = false;
         render();
-        messageBox.textContent = `💻 Bilgisayar ${playerIdx} taş çekti.`;
+        messageBox.textContent = `💻 PC ${playerIdx} taş çekti.`;
         setTimeout(() => computerTurn(), 500);
       } else {
-        // katla / pas (basit)
+        // katla / pas
+        if (state.foldMode && hand.length > 0) {
+          const idx = Math.floor(Math.random() * hand.length);
+          hand.splice(idx, 1);
+        }
         state.phase = 'draw';
         state.currentPlayer = (state.currentPlayer + 1) % 4;
         state.turnLock = false;
@@ -572,13 +622,11 @@
       }
     }
 
-    // --- olay dinleyiciler ---
-    // taş seçimi (oyuncu)
+    // --- EVENTLER ---
     playerHandEl.addEventListener('click', (e) => {
       const tileDiv = e.target.closest('.tile');
       if (!tileDiv) return;
       if (state.currentPlayer !== 0 || state.phase !== 'fold' || state.turnLock || state.gameOver) return;
-      // index bul
       const tiles = playerHandEl.querySelectorAll('.tile');
       let idx = -1;
       for (let i = 0; i < tiles.length; i++) {
@@ -593,18 +641,14 @@
     drawBtn.addEventListener('click', playerDraw);
     foldBtn.addEventListener('click', playerFold);
     passBtn.addEventListener('click', playerPass);
+    sortSeriBtn.addEventListener('click', sortSeri);
+    sortCiftBtn.addEventListener('click', sortCift);
 
-    // bilgisayar turunu başlat (eğer oyuncu değilse)
-    function startComputerIfNeeded() {
-      if (state.currentPlayer !== 0 && !state.gameOver) {
-        setTimeout(() => computerTurn(), 400);
-      }
-    }
-
-    // oyun başlat
+    // başlat
     initGame();
-    // ilk turda bilgisayar kontrolü
-    setTimeout(startComputerIfNeeded, 300);
+    setTimeout(() => {
+      if (state.currentPlayer !== 0) computerTurn();
+    }, 400);
   })();
 </script>
 </body>
