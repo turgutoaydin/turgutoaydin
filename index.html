@@ -1,666 +1,611 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Mardin Koşusu | Taş Sokaklar</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-        }
-
-        body {
-            background: linear-gradient(#2c2419, #1f1a12);
-            min-height: 100dvh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: system-ui, 'Segoe UI', 'Poppins', -apple-system, sans-serif;
-            color: #ffe6b3;
-            overflow: hidden;
-        }
-
-        .game-container {
-            position: relative;
-            width: 100%;
-            max-width: 420px;
-            background: #3c2a1f;
-            border-radius: 48px;
-            padding: 12px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.7),
-                        inset 0 0 80px rgba(139, 99, 55, 0.3);
-            overflow: hidden;
-        }
-
-        canvas {
-            display: block;
-            width: 100%;
-            height: auto;
-            border-radius: 36px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-            background: #2a2118;
-            touch-action: none;
-        }
-
-        .ui-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 18px 20px 0;
-            gap: 12px;
-        }
-
-        .score-display {
-            background: rgba(47, 36, 27, 0.95);
-            padding: 8px 22px;
-            border-radius: 50px;
-            font-size: 1.45rem;
-            font-weight: 700;
-            font-family: monospace;
-            letter-spacing: 2px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4),
-                        inset 0 2px 4px rgba(255,230,179,0.2);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .best-display {
-            background: rgba(92, 63, 40, 0.95);
-            padding: 6px 18px;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-        }
-
-        .controls {
-            position: absolute;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 12px;
-            pointer-events: all;
-        }
-
-        .btn {
-            background: #c68e5a;
-            color: #2c1e12;
-            border: none;
-            padding: 12px 28px;
-            border-radius: 60px;
-            font-weight: 700;
-            font-size: 1.05rem;
-            box-shadow: 0 6px 0 #9c6a44;
-            transition: all 0.1s;
-            cursor: pointer;
-        }
-
-        .btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #9c6a44;
-        }
-
-        .hint {
-            position: absolute;
-            bottom: 90px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(94, 63, 40, 0.85);
-            backdrop-filter: blur(12px);
-            padding: 10px 24px;
-            border-radius: 50px;
-            font-size: 0.82rem;
-            text-align: center;
-            white-space: nowrap;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-
-        .start-screen, .game-over-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(28, 22, 16, 0.92);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            border-radius: 36px;
-            text-align: center;
-            padding: 40px 20px;
-        }
-
-        .title {
-            font-size: 2.4rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-            text-shadow: 0 4px 12px rgba(0,0,0,0.6);
-            color: #ffeb9f;
-        }
-
-        .subtitle {
-            font-size: 1.1rem;
-            color: #d4a46f;
-            margin-bottom: 40px;
-        }
-
-        .cultural-icon {
-            font-size: 4.5rem;
-            margin-bottom: 16px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>101 Okey · Dikey Mobil</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: #1a3a2b;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      touch-action: pan-y;
+      padding: 8px;
+      margin: 0;
+    }
+    #game {
+      max-width: 420px;
+      width: 100%;
+      background: #2d5e3f;
+      background-image: radial-gradient(circle at 20% 30%, #3e7a52, #1f452f);
+      border-radius: 48px 48px 32px 32px;
+      padding: 16px 12px 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.7), inset 0 1px 3px rgba(255,255,200,0.3);
+      border: 1px solid #b8a06b;
+      position: relative;
+    }
+    /* başlık */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 6px 10px 6px;
+      color: #f7f0d6;
+      text-shadow: 0 2px 3px #1f2f1a;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .header span {
+      background: #1f3a28;
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      box-shadow: inset 0 -2px 0 #4f7a4a;
+      border: 1px solid #b1985a;
+      backdrop-filter: blur(2px);
+    }
+    .header .turn-indicator {
+      background: #c9b37a;
+      color: #1f3a1f;
+      padding: 4px 14px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      box-shadow: 0 2px 0 #4f3f1f;
+    }
+    /* bilgisayar alanları */
+    .pc-area {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .pc-hand {
+      background: #213d2bcc;
+      backdrop-filter: blur(2px);
+      padding: 8px 6px;
+      border-radius: 60px;
+      border: 1px solid #b8a06b;
+      box-shadow: inset 0 0 12px #0f1f12;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      min-height: 44px;
+      gap: 4px;
+    }
+    .pc-hand .tile {
+      background: #d9cba4;
+      width: 32px;
+      height: 42px;
+      border-radius: 6px 6px 10px 10px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1f2f1a;
+      box-shadow: 0 3px 0 #7a6a42, 0 5px 8px rgba(0,0,0,0.4);
+      border: 1px solid #ede3c0;
+      transition: 0.1s;
+    }
+    .pc-hand .tile.face-down {
+      background: #37634b;
+      background-image: repeating-linear-gradient(45deg, #2f523a 0px, #2f523a 4px, #4c7a5a 4px, #4c7a5a 8px);
+      border-color: #5f7a4a;
+      box-shadow: 0 3px 0 #1f3a1f;
+      color: transparent;
+    }
+    .pc-hand .tile.face-down::before {
+      content: "?";
+      color: #d9cba4;
+      font-size: 1.2rem;
+      opacity: 0.3;
+    }
+    .pc-label {
+      color: #efeacb;
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 0 8px;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pc-label .badge {
+      background: #2f4f2f;
+      padding: 0 12px;
+      border-radius: 30px;
+      border: 1px solid #b1985a;
+    }
+    /* oyuncu eli */
+    .player-area {
+      background: #1c3a28cc;
+      backdrop-filter: blur(3px);
+      border-radius: 40px 40px 24px 24px;
+      padding: 12px 4px 8px;
+      margin: 8px 0 6px;
+      border: 2px solid #b8a06b;
+      box-shadow: inset 0 0 20px #0f2a18;
+    }
+    .player-hand {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      min-height: 68px;
+      padding: 6px 2px;
+    }
+    .tile {
+      background: #f2e5c7;
+      background: linear-gradient(145deg, #faf0d6, #e8dbb8);
+      width: 42px;
+      height: 56px;
+      border-radius: 8px 8px 14px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: #1f2f1a;
+      box-shadow: 0 4px 0 #7a6a42, 0 6px 12px rgba(0,0,0,0.5);
+      border: 1px solid #f7efd0;
+      transition: all 0.08s;
+      cursor: pointer;
+      position: relative;
+      touch-action: manipulation;
+    }
+    .tile.selected {
+      transform: translateY(-12px);
+      box-shadow: 0 8px 0 #7a6a42, 0 12px 20px black;
+      border-color: #ffe484;
+    }
+    .tile.joker {
+      background: #e0c87a;
+      background: radial-gradient(circle at 30% 20%, #fae68c, #c9ae4a);
+      border-color: #f5d742;
+      color: #1f2a0f;
+      box-shadow: 0 4px 0 #9e8230, 0 6px 12px black;
+    }
+    .tile.taş-çek {
+      background: #aac7b0;
+      background: radial-gradient(circle at 30% 20%, #d4ebd0, #7fa585);
+      border-color: #b8d0a0;
+      box-shadow: 0 4px 0 #4f6a4a;
+    }
+    .action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 10px 4px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      background: #d4c28b;
+      border: none;
+      border-radius: 60px;
+      padding: 8px 18px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #1f2f1a;
+      box-shadow: 0 4px 0 #7a6a42, 0 4px 10px rgba(0,0,0,0.4);
+      border: 1px solid #ede3b0;
+      transition: 0.06s linear;
+      touch-action: manipulation;
+      cursor: pointer;
+      flex: 1 1 auto;
+      min-width: 60px;
+      text-align: center;
+      background: linear-gradient(145deg, #e6d8ae, #c9b87a);
+    }
+    .btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #7a6a42;
+    }
+    .btn:disabled {
+      opacity: 0.4;
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #5f4f2a;
+      pointer-events: none;
+    }
+    .btn-primary {
+      background: #d6b06a;
+      background: linear-gradient(145deg, #efd48c, #c7a458);
+      border-color: #f5e5a0;
+      color: #1f2a0f;
+      flex: 2;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      color: #efeacb;
+      padding: 2px 12px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-shadow: 0 2px 2px #0f1f0a;
+    }
+    .info-row .chip {
+      background: #1f3a24;
+      padding: 2px 16px;
+      border-radius: 30px;
+      border: 1px solid #b1985a;
+    }
+    .message-box {
+      background: #1f2f1acc;
+      backdrop-filter: blur(2px);
+      border-radius: 60px;
+      padding: 6px 16px;
+      color: #f7f0d6;
+      font-weight: 500;
+      font-size: 0.8rem;
+      text-align: center;
+      border: 1px solid #b8a06b;
+      margin: 6px 0 2px;
+    }
+    .footer {
+      color: #b8a06b;
+      font-size: 0.55rem;
+      text-align: center;
+      padding: 12px 0 2px;
+      opacity: 0.7;
+      letter-spacing: 1px;
+    }
+    /* katlamalı/katlamasız göstergesi */
+    .fold-indicator {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.7rem;
+      color: #d4cba0;
+    }
+    .fold-indicator span {
+      background: #1f3a24;
+      padding: 2px 12px;
+      border-radius: 20px;
+      border: 1px solid #7a8a5a;
+    }
+    @media (max-width: 400px) {
+      .tile { width: 36px; height: 48px; font-size: 0.7rem; }
+      .pc-hand .tile { width: 26px; height: 36px; }
+    }
+  </style>
 </head>
 <body>
-    <div class="game-container" id="gameContainer">
-        <canvas id="gameCanvas" width="420" height="750"></canvas>
-        
-        <!-- UI Overlay -->
-        <div class="ui-overlay">
-            <div class="top-bar">
-                <div class="score-display">
-                    🏃‍♂️ <span id="scoreValue">0</span>
-                </div>
-                <div class="best-display">
-                    🏆 REKOR <span id="bestValue">0</span>
-                </div>
-            </div>
+<div id="game">
+  <div class="header">
+    <span>🎲 101 OKEY</span>
+    <span class="turn-indicator" id="turnIndicator">Sıra: Siz</span>
+  </div>
 
-            <div class="controls">
-                <button class="btn" id="restartBtn">🔄</button>
-            </div>
+  <!-- Bilgisayar 1,2,3 -->
+  <div class="pc-area">
+    <div class="pc-hand" id="pc1Hand"><div class="pc-label">💻 Bilgisayar 1 <span class="badge" id="pc1Count">0</span></div></div>
+    <div class="pc-hand" id="pc2Hand"><div class="pc-label">💻 Bilgisayar 2 <span class="badge" id="pc2Count">0</span></div></div>
+    <div class="pc-hand" id="pc3Hand"><div class="pc-label">💻 Bilgisayar 3 <span class="badge" id="pc3Count">0</span></div></div>
+  </div>
 
-            <div class="hint" id="hintText">
-                👆 EKRANA DOKUN → ZİPLA
-            </div>
-        </div>
-
-        <!-- Start Screen -->
-        <div class="start-screen" id="startScreen">
-            <div class="cultural-icon">🏛️</div>
-            <div class="title">MARDİN KOŞUSU</div>
-            <div class="subtitle">Taş Sokakların Efsanesi</div>
-            <button class="btn" id="startBtn" style="font-size:1.3rem; padding:16px 48px;">KOŞMAYA BAŞLA</button>
-            <p style="margin-top:40px; font-size:0.85rem; opacity:0.8;">Mardin'in kadim sokaklarında koş!</p>
-        </div>
-
-        <!-- Game Over Screen -->
-        <div class="game-over-screen" id="gameOverScreen" style="display:none;">
-            <div class="cultural-icon">🏁</div>
-            <div class="title" style="font-size:2.1rem;">KOŞU BİTTİ</div>
-            <div style="margin:20px 0; font-size:1.6rem; font-weight:700;" id="finalScore">Skor: 0</div>
-            
-            <div style="margin:15px 0; background:rgba(255,255,255,0.1); padding:12px 40px; border-radius:30px;" id="newBest">🎉 YENİ REKOR!</div>
-            
-            <button class="btn" id="restartGameBtn" style="margin-top:20px;">TEKRAR DENE</button>
-            
-            <div style="margin-top:50px; font-size:0.9rem; opacity:0.7;">
-                Mardin'in taşları seni bekliyor...
-            </div>
-        </div>
+  <!-- oyuncu -->
+  <div class="player-area">
+    <div class="player-hand" id="playerHand"></div>
+    <div class="action-bar">
+      <button class="btn" id="drawBtn">🔄 Taş Çek</button>
+      <button class="btn btn-primary" id="foldBtn">📤 Katla</button>
+      <button class="btn" id="passBtn">⏭️ Pas</button>
     </div>
+    <div class="info-row">
+      <span class="chip" id="playerCount">0 taş</span>
+      <span class="fold-indicator"><span id="foldStatus">Katlamasız</span></span>
+    </div>
+  </div>
 
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        // Vertical mobile friendly dimensions
-        const W = 420;
-        const H = 750;
-        canvas.width = W;
-        canvas.height = H;
+  <div id="messageBox" class="message-box">✨ Oyun başladı. Taş çek veya katla.</div>
+  <div class="footer">101 Okey · 3 bilgisayar · mobil dikey</div>
+</div>
+<script>
+  (function(){
+    // --- OYUN DURUMU ---
+    const state = {
+      deck: [],
+      players: [[], [], [], []], // 0:oyuncu, 1-3:pc
+      currentPlayer: 0, // 0 insan, 1-3 pc
+      phase: 'draw', // 'draw' veya 'fold'
+      turnLock: false,
+      gameOver: false,
+      selectedTileIndex: -1,
+      foldMode: false, // katlamalı (true) / katlamasız (false)
+    };
 
-        let gameRunning = false;
-        let score = 0;
-        let bestScore = localStorage.getItem('mardinBestVertical') ? parseInt(localStorage.getItem('mardinBestVertical')) : 0;
-        let frame = 0;
-        let groundY = H - 110;
-        
-        // Player
-        const PLAYER_W = 42;
-        const PLAYER_H = 52;
-        let playerX = 80;
-        let playerY = groundY - PLAYER_H;
-        let playerVy = 0;
-        let isOnGround = true;
-        let playerFrame = 0;
-        
-        const GRAVITY = 0.72;
-        const JUMP_POWER = -15.5;
-        
-        // Obstacles & Collectibles
-        let obstacles = [];
-        let collectibles = [];
-        
-        let bgOffset = 0;
-        let speed = 3.8;
-        
-        // UI
-        const scoreSpan = document.getElementById('scoreValue');
-        const bestSpan = document.getElementById('bestValue');
-        const startScreen = document.getElementById('startScreen');
-        const gameOverScreen = document.getElementById('gameOverScreen');
-        const finalScoreEl = document.getElementById('finalScore');
-        const newBestEl = document.getElementById('newBest');
-        
-        bestSpan.innerText = bestScore;
+    // DOM referansları
+    const playerHandEl = document.getElementById('playerHand');
+    const pc1HandEl = document.getElementById('pc1Hand');
+    const pc2HandEl = document.getElementById('pc2Hand');
+    const pc3HandEl = document.getElementById('pc3Hand');
+    const pcCounts = [
+      document.getElementById('pc1Count'),
+      document.getElementById('pc2Count'),
+      document.getElementById('pc3Count')
+    ];
+    const playerCountEl = document.getElementById('playerCount');
+    const turnIndicator = document.getElementById('turnIndicator');
+    const messageBox = document.getElementById('messageBox');
+    const foldStatusEl = document.getElementById('foldStatus');
+    const drawBtn = document.getElementById('drawBtn');
+    const foldBtn = document.getElementById('foldBtn');
+    const passBtn = document.getElementById('passBtn');
 
-        function updateUI() {
-            scoreSpan.innerText = Math.floor(score);
-            if (score > bestScore) {
-                bestScore = Math.floor(score);
-                bestSpan.innerText = bestScore;
-                localStorage.setItem('mardinBestVertical', bestScore);
+    // --- yardımcılar ---
+    function createDeck() {
+      const colors = ['k', 'm', 's', 'y']; // kırmızı, mavi, siyah, yeşil
+      const deck = [];
+      for (let c of colors) {
+        for (let i = 1; i <= 13; i++) {
+          deck.push({ color: c, value: i, id: `${c}${i}` });
+        }
+      }
+      // 2 sahte joker (renksiz 0)
+      deck.push({ color: 'joker', value: 0, id: 'j1' });
+      deck.push({ color: 'joker', value: 0, id: 'j2' });
+      return shuffle(deck);
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // taş görünümü
+    function tileHTML(tile, faceDown = false) {
+      if (faceDown) return `<div class="tile face-down"></div>`;
+      let cls = 'tile';
+      if (tile.color === 'joker') cls += ' joker';
+      const label = tile.color === 'joker' ? '⭐' : `${tile.value}`;
+      return `<div class="${cls}" data-id="${tile.id}">${label}</div>`;
+    }
+
+    // elle render
+    function render() {
+      // oyuncu
+      const playerTiles = state.players[0];
+      playerHandEl.innerHTML = playerTiles.map((t, idx) => {
+        let html = tileHTML(t, false);
+        if (state.selectedTileIndex === idx && state.phase === 'fold') {
+          // seçili vurgusu (ekstra class)
+          return html.replace('tile', 'tile selected');
+        }
+        return html;
+      }).join('');
+
+      // pc'ler (kapalı)
+      for (let i = 0; i < 3; i++) {
+        const pcHand = state.players[i+1];
+        const container = [pc1HandEl, pc2HandEl, pc3HandEl][i];
+        const countLabel = pcCounts[i];
+        // pc elinde kaç taş olduğunu göster, kapalı olarak göster (hepsi face-down)
+        const handHTML = pcHand.map(t => tileHTML(t, true)).join('');
+        // label + taşlar
+        container.innerHTML = `<div class="pc-label">💻 Bilgisayar ${i+1} <span class="badge" id="pc${i+1}Count">${pcHand.length}</span></div>` + 
+          `<div style="display:flex; flex-wrap:wrap; gap:4px; justify-content:center;">${handHTML}</div>`;
+        countLabel.textContent = pcHand.length;
+      }
+
+      playerCountEl.textContent = state.players[0].length + ' taş';
+      // sıra
+      const playerNames = ['Siz', 'PC 1', 'PC 2', 'PC 3'];
+      turnIndicator.textContent = `Sıra: ${playerNames[state.currentPlayer]}`;
+      // katlama durumu
+      foldStatusEl.textContent = state.foldMode ? 'Katlamalı' : 'Katlamasız';
+
+      // butonlar
+      const isPlayerTurn = state.currentPlayer === 0 && !state.gameOver;
+      drawBtn.disabled = !isPlayerTurn || state.phase !== 'draw' || state.turnLock;
+      foldBtn.disabled = !isPlayerTurn || state.phase !== 'fold' || state.turnLock;
+      passBtn.disabled = !isPlayerTurn || state.phase !== 'fold' || state.turnLock;
+
+      // mesaj
+      if (state.gameOver) {
+        messageBox.textContent = '🏆 Oyun bitti! Yeniden başlatmak için sayfayı yenileyin.';
+      } else if (!isPlayerTurn && !state.gameOver) {
+        messageBox.textContent = '🤖 Bilgisayar düşünüyor...';
+      } else if (isPlayerTurn && state.phase === 'draw') {
+        messageBox.textContent = '🎯 Taş çek veya katla (katlamak için taş seç)';
+      } else if (isPlayerTurn && state.phase === 'fold') {
+        messageBox.textContent = '📤 Katlamak için bir taş seç, sonra "Katla" ya da "Pas" geç.';
+      }
+    }
+
+    // --- OYUN MANTIĞI ---
+    function initGame() {
+      state.deck = createDeck();
+      state.players = [[], [], [], []];
+      // her oyuncuya 14 taş dağıt
+      for (let i = 0; i < 4; i++) {
+        state.players[i] = state.deck.splice(0, 14);
+      }
+      state.currentPlayer = 0;
+      state.phase = 'draw';
+      state.turnLock = false;
+      state.gameOver = false;
+      state.selectedTileIndex = -1;
+      state.foldMode = false; // başlangıçta katlamasız
+      render();
+    }
+
+    // taş çek (sadece oyuncu)
+    function playerDraw() {
+      if (state.currentPlayer !== 0 || state.phase !== 'draw' || state.turnLock || state.gameOver) return;
+      if (state.deck.length === 0) {
+        messageBox.textContent = '⚠️ Deste bitti!';
+        return;
+      }
+      state.turnLock = true;
+      const drawn = state.deck.pop();
+      state.players[0].push(drawn);
+      // katlama modu aktif
+      state.phase = 'fold';
+      state.selectedTileIndex = -1;
+      render();
+      messageBox.textContent = '📥 Taş çektin. Katlamak için taş seç.';
+      state.turnLock = false;
+    }
+
+    // oyuncu katla (seçili taşı atar)
+    function playerFold() {
+      if (state.currentPlayer !== 0 || state.phase !== 'fold' || state.turnLock || state.gameOver) return;
+      const idx = state.selectedTileIndex;
+      if (idx === -1 || idx >= state.players[0].length) {
+        messageBox.textContent = '⚠️ Lütfen katlamak için bir taş seç.';
+        return;
+      }
+      state.turnLock = true;
+      // taşı elden çıkar (desteğe geri ekle veya at - basitçe diziden kaldır)
+      const removed = state.players[0].splice(idx, 1)[0];
+      // katlamalı/katlamasız kontrol: katlamalı ise bu taş atılır, katlamasız ise el değişmez (ama biz katlama işlemi yapıyoruz)
+      if (!state.foldMode) {
+        // katlamasız: taş atılmaz, geri ekle (yani katlama iptal)
+        state.players[0].splice(idx, 0, removed);
+        state.turnLock = false;
+        state.selectedTileIndex = -1;
+        messageBox.textContent = '⚠️ Katlamasız modda katlama yapılamaz. Pas geçin.';
+        render();
+        return;
+      }
+      // Katlamalı: taş atıldı. (atılan taşı desteye ekleme, basit oyun)
+      // bilgisayar sırasına geç
+      state.selectedTileIndex = -1;
+      state.phase = 'draw';
+      state.currentPlayer = (state.currentPlayer + 1) % 4;
+      state.turnLock = false;
+      render();
+      messageBox.textContent = '📤 Taş katlandı. Sıra bilgisayarda.';
+      // bilgisayar hamlesini başlat
+      setTimeout(() => computerTurn(), 600);
+    }
+
+    // pas geç
+    function playerPass() {
+      if (state.currentPlayer !== 0 || state.phase !== 'fold' || state.turnLock || state.gameOver) return;
+      state.turnLock = true;
+      // pas: seçimi temizle, sırayı geç
+      state.selectedTileIndex = -1;
+      state.phase = 'draw';
+      state.currentPlayer = (state.currentPlayer + 1) % 4;
+      state.turnLock = false;
+      render();
+      messageBox.textContent = '⏭️ Pas geçtin. Sıra bilgisayarda.';
+      setTimeout(() => computerTurn(), 500);
+    }
+
+    // --- BİLGİSAYAR TURU (basit) ---
+    function computerTurn() {
+      if (state.gameOver) return;
+      if (state.currentPlayer === 0) {
+        // insan sırası
+        render();
+        return;
+      }
+      state.turnLock = true;
+      const playerIdx = state.currentPlayer;
+      const hand = state.players[playerIdx];
+      // bilgisayar: ya taş çeker ya da katlama yapar (rastgele)
+      const action = Math.random() > 0.4 ? 'draw' : 'fold'; 
+      if (state.deck.length === 0) {
+        // destede taş yoksa pas
+        state.currentPlayer = (state.currentPlayer + 1) % 4;
+        state.turnLock = false;
+        render();
+        setTimeout(() => computerTurn(), 300);
+        return;
+      }
+
+      if (action === 'draw' || state.phase === 'draw') {
+        // taş çek
+        const drawn = state.deck.pop();
+        hand.push(drawn);
+        state.phase = 'fold';
+        // katlama yap (bir taş at)
+        if (hand.length > 14 && state.foldMode) {
+          // rastgele bir taş at (katlama)
+          const discardIdx = Math.floor(Math.random() * hand.length);
+          hand.splice(discardIdx, 1);
+        } else {
+          // katlamasız veya elde 14 taş varsa katlama yapma (pas)
+          // ama katlamasız modda atma
+          if (!state.foldMode) {
+            // katlamasız: taş çek ama katlama yok
+            // sadece sırayı geç
+          } else {
+            // eğer 15 taş varsa at
+            if (hand.length > 14) {
+              hand.splice(Math.floor(Math.random() * hand.length), 1);
             }
+          }
         }
+        // sırayı geç
+        state.phase = 'draw';
+        state.currentPlayer = (state.currentPlayer + 1) % 4;
+        state.turnLock = false;
+        render();
+        messageBox.textContent = `💻 Bilgisayar ${playerIdx} taş çekti.`;
+        setTimeout(() => computerTurn(), 500);
+      } else {
+        // katla / pas (basit)
+        state.phase = 'draw';
+        state.currentPlayer = (state.currentPlayer + 1) % 4;
+        state.turnLock = false;
+        render();
+        setTimeout(() => computerTurn(), 400);
+      }
+    }
 
-        function jump() {
-            if (!gameRunning || !isOnGround) return;
-            playerVy = JUMP_POWER;
-            isOnGround = false;
-            if (navigator.vibrate) navigator.vibrate(25);
-        }
+    // --- olay dinleyiciler ---
+    // taş seçimi (oyuncu)
+    playerHandEl.addEventListener('click', (e) => {
+      const tileDiv = e.target.closest('.tile');
+      if (!tileDiv) return;
+      if (state.currentPlayer !== 0 || state.phase !== 'fold' || state.turnLock || state.gameOver) return;
+      // index bul
+      const tiles = playerHandEl.querySelectorAll('.tile');
+      let idx = -1;
+      for (let i = 0; i < tiles.length; i++) {
+        if (tiles[i] === tileDiv) { idx = i; break; }
+      }
+      if (idx === -1) return;
+      state.selectedTileIndex = idx;
+      render();
+      messageBox.textContent = `✅ Taş seçildi (${idx+1}). "Katla" veya "Pas".`;
+    });
 
-        function updatePhysics() {
-            if (!gameRunning) return;
-            
-            playerVy += GRAVITY;
-            playerY += playerVy;
-            
-            if (playerY + PLAYER_H >= groundY) {
-                playerY = groundY - PLAYER_H;
-                playerVy = 0;
-                isOnGround = true;
-            }
-        }
+    drawBtn.addEventListener('click', playerDraw);
+    foldBtn.addEventListener('click', playerFold);
+    passBtn.addEventListener('click', playerPass);
 
-        function spawnObstacle() {
-            const types = ['low', 'high', 'gap'];
-            const type = types[Math.floor(Math.random() * types.length)];
-            
-            let obs = { 
-                x: W + 50,
-                width: 32,
-                passed: false,
-                type: type
-            };
-            
-            if (type === 'low') {
-                obs.y = groundY - 48;
-                obs.height = 48;
-            } else if (type === 'high') {
-                obs.y = groundY - 110;
-                obs.height = 110;
-            } else {
-                obs.y = groundY - 65;
-                obs.height = 65;
-                obs.width = 22;
-            }
-            
-            obstacles.push(obs);
-        }
+    // bilgisayar turunu başlat (eğer oyuncu değilse)
+    function startComputerIfNeeded() {
+      if (state.currentPlayer !== 0 && !state.gameOver) {
+        setTimeout(() => computerTurn(), 400);
+      }
+    }
 
-        function spawnCollectible() {
-            if (Math.random() < 0.4) {
-                collectibles.push({
-                    x: W + 80,
-                    y: groundY - 140 - Math.random() * 140,
-                    size: 22,
-                    collected: false
-                });
-            }
-        }
-
-        function updateEntities() {
-            if (!gameRunning) return;
-            
-            // Move obstacles
-            for (let i = 0; i < obstacles.length; i++) {
-                obstacles[i].x -= speed;
-            }
-            obstacles = obstacles.filter(o => o.x + o.width > -50);
-            
-            // Move collectibles
-            for (let i = 0; i < collectibles.length; i++) {
-                collectibles[i].x -= speed * 0.98;
-            }
-            collectibles = collectibles.filter(c => c.x + c.size > -50 && !c.collected);
-            
-            // Score
-            for (let i = 0; i < obstacles.length; i++) {
-                const o = obstacles[i];
-                if (!o.passed && o.x + o.width < playerX) {
-                    o.passed = true;
-                    score += 1;
-                    updateUI();
-                }
-            }
-            
-            // Collision with obstacles
-            const pRect = {x: playerX, y: playerY, w: PLAYER_W, h: PLAYER_H};
-            for (let obs of obstacles) {
-                if (
-                    pRect.x < obs.x + obs.width &&
-                    pRect.x + pRect.w > obs.x &&
-                    pRect.y < obs.y + obs.height &&
-                    pRect.y + pRect.h > obs.y
-                ) {
-                    endGame();
-                    return;
-                }
-            }
-            
-            // Collectibles
-            for (let i = 0; i < collectibles.length; i++) {
-                const c = collectibles[i];
-                if (
-                    Math.hypot(
-                        (playerX + PLAYER_W/2) - (c.x + c.size/2),
-                        (playerY + PLAYER_H/2) - (c.y + c.size/2)
-                    ) < 38
-                ) {
-                    c.collected = true;
-                    score += 3;
-                    updateUI();
-                    if (navigator.vibrate) navigator.vibrate(15);
-                }
-            }
-        }
-
-        function drawBackground() {
-            // Sky gradient - Mardin golden hour
-            const sky = ctx.createLinearGradient(0, 0, 0, H * 0.6);
-            sky.addColorStop(0, '#f8e8c4');
-            sky.addColorStop(1, '#d4a46f');
-            ctx.fillStyle = sky;
-            ctx.fillRect(0, 0, W, H);
-            
-            // Distant mountains
-            ctx.fillStyle = '#a37d5a';
-            ctx.beginPath();
-            ctx.moveTo(0, H * 0.58);
-            ctx.quadraticCurveTo(W*0.3, H*0.38, W*0.6, H*0.55);
-            ctx.quadraticCurveTo(W*0.85, H*0.32, W, H*0.52);
-            ctx.lineTo(W, H);
-            ctx.lineTo(0, H);
-            ctx.fill();
-            
-            // Mardin stone buildings - parallax
-            ctx.fillStyle = '#8c6648';
-            const buildingOffset = (bgOffset * 0.3) % (W * 1.6);
-            for (let i = -1; i < 5; i++) {
-                const bx = (i * 135 + buildingOffset) % (W * 2) - 80;
-                ctx.fillRect(bx, H - 260, 72, 180);
-                // Windows / details
-                ctx.fillStyle = '#f5d9a0';
-                ctx.fillRect(bx + 18, H - 220, 12, 12);
-                ctx.fillRect(bx + 48, H - 185, 12, 12);
-                ctx.fillStyle = '#8c6648';
-            }
-            
-            // Ground - ancient stone path
-            ctx.fillStyle = '#6b4a2f';
-            ctx.fillRect(0, groundY - 18, W, H - groundY + 40);
-            
-            // Stone texture
-            ctx.fillStyle = '#b38a5f';
-            for (let i = 0; i < 28; i++) {
-                const tx = (i * 38 + bgOffset * 1.1) % (W + 60) - 20;
-                ctx.fillRect(tx, groundY + (i % 3) * 4 - 8, 32, 7);
-            }
-            
-            // Road lines
-            ctx.strokeStyle = '#e8d4a2';
-            ctx.lineWidth = 6;
-            for (let i = 0; i < 12; i++) {
-                const lx = (i * 68 + bgOffset * 1.8) % (W + 100) - 30;
-                ctx.beginPath();
-                ctx.moveTo(lx, groundY + 12);
-                ctx.lineTo(lx + 38, groundY + 28);
-                ctx.stroke();
-            }
-        }
-
-        function drawPlayer() {
-            ctx.save();
-            ctx.shadowColor = "rgba(0,0,0,0.35)";
-            ctx.shadowBlur = 8;
-            ctx.shadowOffsetY = 6;
-            
-            // Body
-            ctx.fillStyle = '#3f2a1c';
-            ctx.fillRect(playerX + 8, playerY + 12, PLAYER_W - 16, PLAYER_H - 22);
-            
-            // Vest
-            ctx.fillStyle = '#e8b87a';
-            ctx.fillRect(playerX + 11, playerY + 18, PLAYER_W - 22, 22);
-            
-            // Headscarf / Puşi
-            ctx.fillStyle = '#c96e3d';
-            ctx.beginPath();
-            ctx.ellipse(playerX + PLAYER_W/2, playerY + 14, 17, 14, 0, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Face
-            ctx.fillStyle = '#f5d9b8';
-            ctx.beginPath();
-            ctx.arc(playerX + PLAYER_W/2 + 2, playerY + 16, 11, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Eyes
-            ctx.fillStyle = '#2c2118';
-            ctx.beginPath();
-            ctx.arc(playerX + PLAYER_W/2 - 4, playerY + 14, 2.5, 0, Math.PI * 2);
-            ctx.arc(playerX + PLAYER_W/2 + 7, playerY + 14, 2.5, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Mustache
-            ctx.strokeStyle = '#3a2a20';
-            ctx.lineWidth = 2.5;
-            ctx.beginPath();
-            ctx.moveTo(playerX + 12, playerY + 22);
-            ctx.quadraticCurveTo(playerX + PLAYER_W/2, playerY + 27, playerX + PLAYER_W - 11, playerY + 22);
-            ctx.stroke();
-            
-            // Legs animation
-            const legSwing = Math.sin(frame / 5) * 6;
-            ctx.fillStyle = '#2f2119';
-            // Left leg
-            ctx.fillRect(playerX + 12, playerY + PLAYER_H - 18, 9, 22);
-            ctx.fillRect(playerX + 12, playerY + PLAYER_H - 4 + legSwing, 9, 10);
-            // Right leg
-            ctx.fillRect(playerX + PLAYER_W - 20, playerY + PLAYER_H - 18, 9, 22);
-            ctx.fillRect(playerX + PLAYER_W - 20, playerY + PLAYER_H - 4 - legSwing * 0.7, 9, 10);
-            
-            ctx.restore();
-        }
-
-        function drawObstacles() {
-            for (let obs of obstacles) {
-                ctx.shadowBlur = 6;
-                ctx.shadowColor = "#3a2a1f";
-                
-                ctx.fillStyle = '#7a5a3f';
-                ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
-                
-                // Stone carving detail
-                ctx.fillStyle = '#a88b62';
-                ctx.fillRect(obs.x + 6, obs.y + 12, obs.width - 12, 8);
-                ctx.fillRect(obs.x + 6, obs.y + obs.height - 22, obs.width - 12, 8);
-                
-                ctx.shadowBlur = 0;
-            }
-        }
-
-        function drawCollectibles() {
-            for (let c of collectibles) {
-                if (c.collected) continue;
-                
-                ctx.save();
-                ctx.translate(c.x + c.size/2, c.y + c.size/2);
-                ctx.rotate(frame / 12);
-                
-                ctx.fillStyle = '#f4d56c';
-                ctx.beginPath();
-                ctx.moveTo(0, -c.size/2);
-                for (let i = 0; i < 5; i++) {
-                    ctx.lineTo(Math.cos((i*2+1)*Math.PI/5) * c.size/2.2, Math.sin((i*2+1)*Math.PI/5) * c.size/2.2);
-                    ctx.lineTo(Math.cos((i*2+2)*Math.PI/5) * c.size/2.8, Math.sin((i*2+2)*Math.PI/5) * c.size/2.8);
-                }
-                ctx.closePath();
-                ctx.fill();
-                
-                ctx.fillStyle = '#d4a13a';
-                ctx.font = 'bold 14px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('✧', 0, 5);
-                
-                ctx.restore();
-            }
-        }
-
-        function drawGroundDetails() {
-            ctx.strokeStyle = '#d4b88a';
-            ctx.lineWidth = 2;
-            for (let i = 0; i < 20; i++) {
-                const x = (i * 31 + bgOffset * 1.6) % (W + 50);
-                ctx.beginPath();
-                ctx.moveTo(x, groundY + 8);
-                ctx.lineTo(x + 18, groundY + 22);
-                ctx.stroke();
-            }
-        }
-
-        function draw() {
-            ctx.clearRect(0, 0, W, H);
-            
-            drawBackground();
-            drawObstacles();
-            drawCollectibles();
-            drawPlayer();
-            drawGroundDetails();
-        }
-
-        function gameLoop() {
-            frame++;
-            bgOffset -= 1.4;
-            
-            if (gameRunning) {
-                updatePhysics();
-                updateEntities();
-                
-                // Spawn logic
-                if (frame % 48 === 0) spawnObstacle();
-                if (frame % 26 === 0) spawnCollectible();
-                
-                // Gradual speed increase
-                if (frame % 280 === 0 && speed < 6.2) speed += 0.18;
-            }
-            
-            draw();
-            requestAnimationFrame(gameLoop);
-        }
-
-        function startGame() {
-            startScreen.style.display = 'none';
-            gameRunning = true;
-            score = 0;
-            speed = 3.8;
-            obstacles = [];
-            collectibles = [];
-            playerY = groundY - PLAYER_H;
-            playerVy = 0;
-            frame = 0;
-            updateUI();
-        }
-
-        function endGame() {
-            gameRunning = false;
-            if (navigator.vibrate) navigator.vibrate([80, 50, 120]);
-            
-            finalScoreEl.textContent = `Skor: ${Math.floor(score)}`;
-            
-            if (score > bestScore) {
-                newBestEl.style.display = 'block';
-            } else {
-                newBestEl.style.display = 'none';
-            }
-            
-            gameOverScreen.style.display = 'flex';
-        }
-
-        function resetGame() {
-            gameOverScreen.style.display = 'none';
-            startScreen.style.display = 'flex';
-        }
-
-        // Event listeners
-        function setupEvents() {
-            const jumpTriggers = [canvas];
-            
-            jumpTriggers.forEach(el => {
-                el.addEventListener('touchstart', e => {
-                    e.preventDefault();
-                    jump();
-                });
-                
-                el.addEventListener('mousedown', e => {
-                    e.preventDefault();
-                    jump();
-                });
-            });
-            
-            // Keyboard
-            window.addEventListener('keydown', e => {
-                if (e.code === 'Space') {
-                    e.preventDefault();
-                    if (gameRunning) jump();
-                }
-                if (e.code === 'KeyR' && !gameRunning) {
-                    resetGame();
-                }
-            });
-            
-            document.getElementById('startBtn').addEventListener('click', startGame);
-            document.getElementById('restartGameBtn').addEventListener('click', () => {
-                gameOverScreen.style.display = 'none';
-                startGame();
-            });
-            document.getElementById('restartBtn').addEventListener('click', () => {
-                if (confirm('Yeniden başlamak istediğine emin misin?')) {
-                    resetGame();
-                }
-            });
-        }
-
-        // Initialize
-        function init() {
-            bestSpan.innerText = bestScore;
-            setupEvents();
-            gameLoop();
-        }
-        
-        window.onload = init;
-    </script>
+    // oyun başlat
+    initGame();
+    // ilk turda bilgisayar kontrolü
+    setTimeout(startComputerIfNeeded, 300);
+  })();
+</script>
 </body>
 </html>
