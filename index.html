@@ -1,512 +1,426 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>101 Okey Plus</title>
-<style>
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
-  body{
-    background:#0b4d28;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-    color:#fff;
-    height:100dvh;
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-  }
-
-  /* Üst bar */
-  .topbar{
-    background:linear-gradient(#1a3a2a,#0f2a1c);
-    padding:8px 12px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    font-size:13px;
-    border-bottom:2px solid #2e7d32;
-  }
-  .score-box{
-    background:#1b5e20;
-    padding:4px 12px;
-    border-radius:20px;
-    font-weight:700;
-    font-size:14px;
-  }
-  .btn-new{
-    background:#c62828;
-    border:none;
-    color:#fff;
-    width:32px;height:32px;
-    border-radius:50%;
-    font-size:16px;
-  }
-
-  /* Oyuncular */
-  .players{
-    display:flex;
-    justify-content:space-around;
-    padding:6px 4px;
-    background:rgba(0,0,0,.25);
-    font-size:11px;
-  }
-  .player{text-align:center;opacity:.65}
-  .player.active{opacity:1;color:#ffd54f;font-weight:700}
-  .player .cnt{
-    background:rgba(255,255,255,.12);
-    border-radius:10px;
-    padding:1px 7px;
-    margin-top:2px;
-    display:inline-block;
-  }
-
-  /* Masa alanı */
-  .table-area{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    padding:6px;
-    gap:6px;
-    overflow:hidden;
-  }
-
-  /* Atılan taş + çek */
-  .center-row{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:16px;
-    padding:4px 0;
-  }
-  .discard{
-    width:38px;height:52px;
-    background:rgba(0,0,0,.35);
-    border:2px dashed rgba(255,255,255,.25);
-    border-radius:5px;
-    position:relative;
-    display:flex;align-items:center;justify-content:center;
-  }
-  .draw-btn{
-    background:linear-gradient(#ffca28,#f9a825);
-    color:#222;
-    border:none;
-    padding:8px 18px;
-    border-radius:22px;
-    font-weight:800;
-    font-size:13px;
-    box-shadow:0 3px 0 #c79100;
-  }
-  .draw-btn:disabled{opacity:.45;box-shadow:none}
-
-  /* Oyuncunun masa setleri */
-  .board{
-    flex:1;
-    background:rgba(0,0,0,.18);
-    border:2px solid #2e7d32;
-    border-radius:10px;
-    padding:6px;
-    overflow-y:auto;
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-  }
-  .board-title{
-    font-size:11px;
-    opacity:.7;
-    text-align:center;
-  }
-  .set-row{
-    display:flex;
-    flex-wrap:wrap;
-    gap:3px;
-    background:rgba(0,0,0,.2);
-    border-radius:6px;
-    padding:4px;
-    min-height:42px;
-    align-items:center;
-  }
-  .set-row.empty{
-    justify-content:center;
-    color:rgba(255,255,255,.3);
-    font-size:11px;
-  }
-
-  /* El alanı */
-  .hand-area{
-    background:linear-gradient(#1b3a28,#0f2a1c);
-    border-top:3px solid #2e7d32;
-    padding:6px 6px 12px;
-  }
-  .hand-tools{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:5px;
-    font-size:12px;
-  }
-  .tools{
-    display:flex;
-    gap:4px;
-  }
-  .tools button{
-    background:rgba(255,255,255,.12);
-    border:none;
-    color:#fff;
-    padding:4px 9px;
-    border-radius:14px;
-    font-size:11px;
-  }
-  .tools button.primary{background:#2e7d32}
-  .hand{
-    display:flex;
-    flex-wrap:wrap;
-    gap:3px;
-    justify-content:center;
-    max-height:110px;
-    overflow-y:auto;
-    padding:2px;
-  }
-
-  /* Taş */
-  .tile{
-    width:32px;
-    height:44px;
-    border-radius:4px;
-    background:#f5f0e0;
-    box-shadow:0 1px 3px rgba(0,0,0,.45);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    font-weight:800;
-    font-size:14px;
-    position:relative;
-    transition:transform .12s;
-  }
-  .tile.selected{
-    transform:translateY(-10px);
-    outline:2.5px solid #ffd54f;
-    z-index:5;
-  }
-  .tile .n{line-height:1}
-  .tile .d{
-    width:6px;height:6px;
-    border-radius:50%;
-    margin-top:2px;
-  }
-  .tile.black{color:#111}.tile.black .d{background:#111}
-  .tile.red{color:#c62828}.tile.red .d{background:#c62828}
-  .tile.blue{color:#1565c0}.tile.blue .d{background:#1565c0}
-  .tile.yellow{color:#f9a825}.tile.yellow .d{background:#f9a825}
-  .tile.okey{
-    background:linear-gradient(#fff8e1,#ffecb3);
-    color:#e65100;
-  }
-  .tile.okey .d{background:#e65100}
-
-  /* Mesaj */
-  .msg{
-    position:fixed;
-    top:45%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    background:rgba(0,0,0,.88);
-    padding:10px 18px;
-    border-radius:12px;
-    font-size:14px;
-    z-index:99;
-    display:none;
-    max-width:85%;
-    text-align:center;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Satranç - Dikey Mobil</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            background: #1e1e2a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 10px;
+        }
+        .container {
+            max-width: 400px;
+            width: 100%;
+            background: #2c2c3e;
+            border-radius: 24px;
+            padding: 16px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+        }
+        h1 {
+            color: #f0e6d0;
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        #status {
+            color: #b8b0a0;
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 12px;
+            background: #3a3a4e;
+            padding: 8px;
+            border-radius: 30px;
+        }
+        .board-wrapper {
+            display: flex;
+            justify-content: center;
+        }
+        canvas {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: #d2b48c;
+            border-radius: 16px;
+            box-shadow: inset 0 0 0 2px #4a3f33;
+            touch-action: none;
+            cursor: pointer;
+            max-width: 400px;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 14px;
+            gap: 10px;
+        }
+        button {
+            flex: 1;
+            background: #4a4a62;
+            border: none;
+            color: white;
+            font-size: 18px;
+            padding: 12px 0;
+            border-radius: 40px;
+            font-weight: bold;
+            transition: 0.2s;
+            box-shadow: 0 4px 0 #2a2a3a;
+        }
+        button:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #2a2a3a;
+        }
+        #turn-indicator {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 15px;
+            color: #c0b8a8;
+        }
+    </style>
 </head>
 <body>
-
-<div class="topbar">
-  <div>101 Okey Plus</div>
-  <div class="score-box">Puan: <span id="score">0</span></div>
-  <button class="btn-new" onclick="init()">↺</button>
-</div>
-
-<div class="players">
-  <div class="player active" id="p0"><div>Sen</div><div class="cnt"><span id="c0">14</span></div></div>
-  <div class="player" id="p1"><div>Bot1</div><div class="cnt"><span id="c1">14</span></div></div>
-  <div class="player" id="p2"><div>Bot2</div><div class="cnt"><span id="c2">14</span></div></div>
-  <div class="player" id="p3"><div>Bot3</div><div class="cnt"><span id="c3">14</span></div></div>
-</div>
-
-<div class="table-area">
-  <div class="center-row">
-    <div class="discard" id="discard"></div>
-    <button class="draw-btn" id="drawBtn" onclick="draw()">Taş Çek</button>
-  </div>
-
-  <div class="board" id="board">
-    <div class="board-title">Masandaki Setler (Seri / Çift)</div>
-    <div class="set-row empty" id="emptyHint">Henüz set yok • Taş seçip “Masaya” bas</div>
-  </div>
-</div>
-
-<div class="hand-area">
-  <div class="hand-tools">
-    <span>Elin (<span id="hcnt">14</span>)</span>
-    <div class="tools">
-      <button onclick="autoSeri()">Seri Diz</button>
-      <button onclick="autoCift()">Çift Diz</button>
-      <button onclick="sortHand()">Sırala</button>
-      <button class="primary" onclick="toBoard()">Masaya</button>
-      <button onclick="discardSel()">At</button>
+<div class="container">
+    <h1>♚ Satranç</h1>
+    <div id="status">Beyaz'ın hamlesi</div>
+    <div class="board-wrapper">
+        <canvas id="chessCanvas" width="400" height="400"></canvas>
     </div>
-  </div>
-  <div class="hand" id="hand"></div>
+    <div class="controls">
+        <button id="resetBtn">⟳ Yeni Oyun</button>
+        <button id="undoBtn">↩ Geri Al</button>
+    </div>
+    <div id="turn-indicator">⚪ Beyaz oynuyor</div>
 </div>
-
-<div class="msg" id="msg"></div>
 
 <script>
-const COLORS = ['black','red','blue','yellow'];
-const CN = {black:'Siyah',red:'Kırmızı',blue:'Mavi',yellow:'Sarı'};
+    (function() {
+        // ---- SATRANÇ MOTORU (BASİT) ----
+        const canvas = document.getElementById('chessCanvas');
+        const ctx = canvas.getContext('2d');
+        const statusDiv = document.getElementById('status');
+        const turnDiv = document.getElementById('turn-indicator');
 
-let deck=[], hand=[], boardSets=[], discard=[], selected=new Set(), score=0, turn=0, over=false;
+        let board = [];
+        let turn = 'w'; // 'w' veya 'b'
+        let selected = null; // {row, col}
+        let moveHistory = [];
+        let gameOver = false;
 
-function makeDeck(){
-  deck=[];
-  for(const c of COLORS){
-    for(let n=1;n<=13;n++){
-      deck.push({n,c,id:c+n+'a'});
-      deck.push({n,c,id:c+n+'b'});
-    }
-  }
-  deck.push({n:0,c:'okey',id:'ok1'});
-  deck.push({n:0,c:'okey',id:'ok2'});
-  for(let i=deck.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [deck[i],deck[j]]=[deck[j],deck[i]];
-  }
-}
+        // Başlangıç dizilimi
+        function initBoard() {
+            const backRank = ['r','n','b','q','k','b','n','r'];
+            board = [];
+            board.push(backRank.map(p => 'b'+p));
+            board.push(Array(8).fill('bp'));
+            for(let r=2; r<6; r++) board.push(Array(8).fill(''));
+            board.push(Array(8).fill('wp'));
+            board.push(backRank.map(p => 'w'+p));
+        }
 
-function init(){
-  makeDeck();
-  hand=[]; boardSets=[]; discard=[]; selected.clear();
-  score=0; turn=0; over=false;
-  for(let i=0;i<14;i++) hand.push(deck.pop());
-  if(deck.length) discard.push(deck.pop());
-  document.getElementById('score').textContent=score;
-  render();
-  show('Oyun başladı • Seri/Çift dizebilirsin');
-}
+        // Kopya
+        function copyBoard(b) { return b.map(row => [...row]); }
 
-function tileEl(t, idx, sel=false){
-  const d=document.createElement('div');
-  d.className=`tile ${t.c}`+(sel?' selected':'');
-  d.innerHTML=`<div class="n">${t.n===0?'★':t.n}</div><div class="d"></div>`;
-  if(idx!==undefined) d.onclick=()=>toggle(idx);
-  return d;
-}
+        // Hamle geçmişine ekle
+        function pushHistory(from, to, captured) {
+            moveHistory.push({ from, to, captured, boardState: copyBoard(board) });
+        }
 
-function render(){
-  // El
-  const h=document.getElementById('hand');
-  h.innerHTML='';
-  hand.forEach((t,i)=>h.appendChild(tileEl(t,i,selected.has(i))));
-  document.getElementById('hcnt').textContent=hand.length;
-  document.getElementById('c0').textContent=hand.length;
+        // Geri al
+        function undoMove() {
+            if(gameOver) {
+                gameOver = false;
+                turn = 'w';
+                selected = null;
+                moveHistory = [];
+                initBoard();
+                updateUI();
+                return;
+            }
+            if(moveHistory.length === 0) return;
+            const last = moveHistory.pop();
+            board = last.boardState;
+            turn = (turn === 'w' ? 'b' : 'w');
+            selected = null;
+            gameOver = false;
+            updateUI();
+        }
 
-  // Atılan
-  const disc=document.getElementById('discard');
-  disc.innerHTML='';
-  if(discard.length){
-    const t=discard[discard.length-1];
-    disc.appendChild(tileEl(t));
-  }
+        // ---- HAREKET KURALLARI (basit, şah kontrolü yok) ----
+        function getLegalMoves(row, col) {
+            const piece = board[row][col];
+            if(!piece) return [];
+            const color = piece[0];
+            const type = piece[1];
+            const moves = [];
+            const enemy = (color === 'w' ? 'b' : 'w');
 
-  // Board setleri
-  const b=document.getElementById('board');
-  b.innerHTML='<div class="board-title">Masandaki Setler (Seri / Çift)</div>';
-  if(boardSets.length===0){
-    const e=document.createElement('div');
-    e.className='set-row empty';
-    e.textContent='Henüz set yok • Taş seçip “Masaya” bas';
-    b.appendChild(e);
-  }else{
-    boardSets.forEach((set,si)=>{
-      const row=document.createElement('div');
-      row.className='set-row';
-      set.forEach(t=>row.appendChild(tileEl(t)));
-      // set sil
-      const del=document.createElement('button');
-      del.textContent='×';
-      del.style.cssText='background:#c62828;border:none;color:#fff;width:22px;height:22px;border-radius:50%;font-size:12px;margin-left:4px';
-      del.onclick=()=>{
-        hand.push(...boardSets[si]);
-        boardSets.splice(si,1);
-        selected.clear();
-        calcScore();
-        render();
-      };
-      row.appendChild(del);
-      b.appendChild(row);
-    });
-  }
+            const addMove = (r, c) => {
+                if(r<0||r>7||c<0||c>7) return false;
+                const target = board[r][c];
+                if(target && target[0] === color) return false;
+                moves.push({row:r, col:c});
+                return !target; // boşsa devam et
+            };
 
-  document.getElementById('drawBtn').disabled = turn!==0 || over;
-}
+            switch(type) {
+                case 'p': {
+                    const dir = (color === 'w' ? -1 : 1);
+                    const startRow = (color === 'w' ? 6 : 1);
+                    // ileri
+                    if(board[row+dir] && board[row+dir][col] === '') {
+                        moves.push({row: row+dir, col});
+                        if(row === startRow && board[row+2*dir] && board[row+2*dir][col] === '') {
+                            moves.push({row: row+2*dir, col});
+                        }
+                    }
+                    // çapraz yeme
+                    for(let dc of [-1,1]) {
+                        const nc = col+dc;
+                        if(nc<0||nc>7) continue;
+                        const nr = row+dir;
+                        if(nr<0||nr>7) continue;
+                        const target = board[nr][nc];
+                        if(target && target[0] === enemy) moves.push({row:nr, col:nc});
+                    }
+                    break;
+                }
+                case 'n': {
+                    const offsets = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+                    for(let [dr,dc] of offsets) {
+                        const nr = row+dr, nc = col+dc;
+                        if(nr<0||nr>7||nc<0||nc>7) continue;
+                        const target = board[nr][nc];
+                        if(!target || target[0] !== color) moves.push({row:nr, col:nc});
+                    }
+                    break;
+                }
+                case 'b': {
+                    for(let dr of [-1,1]) for(let dc of [-1,1]) {
+                        for(let i=1; i<8; i++) {
+                            if(!addMove(row+dr*i, col+dc*i)) break;
+                        }
+                    }
+                    break;
+                }
+                case 'r': {
+                    for(let dr of [-1,1]) {
+                        for(let i=1; i<8; i++) {
+                            if(!addMove(row+dr*i, col)) break;
+                        }
+                    }
+                    for(let dc of [-1,1]) {
+                        for(let i=1; i<8; i++) {
+                            if(!addMove(row, col+dc*i)) break;
+                        }
+                    }
+                    break;
+                }
+                case 'q': {
+                    for(let dr of [-1,0,1]) for(let dc of [-1,0,1]) {
+                        if(dr===0 && dc===0) continue;
+                        for(let i=1; i<8; i++) {
+                            if(!addMove(row+dr*i, col+dc*i)) break;
+                        }
+                    }
+                    break;
+                }
+                case 'k': {
+                    for(let dr of [-1,0,1]) for(let dc of [-1,0,1]) {
+                        if(dr===0 && dc===0) continue;
+                        addMove(row+dr, col+dc);
+                    }
+                    break;
+                }
+            }
+            return moves;
+        }
 
-function toggle(i){
-  if(turn!==0||over) return;
-  selected.has(i)?selected.delete(i):selected.add(i);
-  render();
-}
+        // ---- OYUN MANTIĞI ----
+        function makeMove(from, to) {
+            const piece = board[from.row][from.col];
+            const captured = board[to.row][to.col];
+            pushHistory(from, to, captured);
+            board[to.row][to.col] = piece;
+            board[from.row][from.col] = '';
+            // Piyon terfisi (basit: otomatik Vezir)
+            if(piece[1] === 'p' && (to.row === 0 || to.row === 7)) {
+                board[to.row][to.col] = piece[0] + 'q';
+            }
+            turn = (turn === 'w' ? 'b' : 'w');
+            selected = null;
+            checkGameOver();
+            updateUI();
+        }
 
-function show(t){
-  const m=document.getElementById('msg');
-  m.textContent=t;
-  m.style.display='block';
-  setTimeout(()=>m.style.display='none',2000);
-}
+        function checkGameOver() {
+            // çok basit: hiç hamle yoksa oyun bitti
+            let hasMove = false;
+            for(let r=0; r<8; r++) {
+                for(let c=0; c<8; c++) {
+                    const p = board[r][c];
+                    if(p && p[0] === turn) {
+                        if(getLegalMoves(r,c).length > 0) hasMove = true;
+                    }
+                }
+            }
+            if(!hasMove) gameOver = true;
+        }
 
-function draw(){
-  if(turn!==0||over||!deck.length) return;
-  hand.push(deck.pop());
-  selected.clear();
-  render();
-  show('Taş çektin • Şimdi at veya masaya koy');
-}
+        // ---- TIKLAMA / DOKUNMATİK ----
+        function handleClick(e) {
+            if(gameOver) return;
+            const rect = canvas.getBoundingClientRect();
+            const size = rect.width;
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            const col = Math.floor(x / size * 8);
+            const row = Math.floor(y / size * 8);
+            if(row<0||row>7||col<0||col>7) return;
 
-function discardSel(){
-  if(turn!==0||over) return;
-  if(selected.size!==1){show('Sadece 1 taş seçip at');return;}
-  const i=[...selected][0];
-  discard.push(hand.splice(i,1)[0]);
-  selected.clear();
-  calcScore();
-  render();
-  show('Taş atıldı');
-  // basit bot geçişi
-  setTimeout(()=>{
-    turn=1;
-    render();
-    setTimeout(()=>{
-      // bot rastgele at
-      if(deck.length) deck.pop(); // simüle
-      turn=0;
-      render();
-      show('Sıra sende');
-    },900);
-  },600);
-}
+            const piece = board[row][col];
+            // Eğer seçili yoksa ve kendi taşıysa seç
+            if(!selected) {
+                if(piece && piece[0] === turn) {
+                    const moves = getLegalMoves(row, col);
+                    if(moves.length > 0) {
+                        selected = {row, col, moves};
+                        updateUI();
+                    }
+                }
+                return;
+            }
 
-function sortHand(){
-  hand.sort((a,b)=>{
-    if(a.c==='okey') return 1;
-    if(b.c==='okey') return -1;
-    if(a.c!==b.c) return COLORS.indexOf(a.c)-COLORS.indexOf(b.c);
-    return a.n-b.n;
-  });
-  selected.clear();
-  render();
-}
+            // Seçili varken
+            // Aynı kareye tekrar tıkla -> seçimi kaldır
+            if(selected.row === row && selected.col === col) {
+                selected = null;
+                updateUI();
+                return;
+            }
 
-// ===== OTOMATİK SERİ =====
-function autoSeri(){
-  // aynı renkte peş peşe 3+ taşları öne al
-  const byColor={};
-  hand.forEach((t,i)=>{
-    if(t.c==='okey') return;
-    if(!byColor[t.c]) byColor[t.c]=[];
-    byColor[t.c].push({...t,idx:i});
-  });
-  let newOrder=[];
-  const used=new Set();
-  for(const c of COLORS){
-    if(!byColor[c]) continue;
-    byColor[c].sort((a,b)=>a.n-b.n);
-    let run=[];
-    for(const t of byColor[c]){
-      if(run.length===0 || t.n===run[run.length-1].n+1){
-        run.push(t);
-      }else{
-        if(run.length>=3) run.forEach(x=>{newOrder.push(hand[x.idx]);used.add(x.idx);});
-        run=[t];
-      }
-    }
-    if(run.length>=3) run.forEach(x=>{newOrder.push(hand[x.idx]);used.add(x.idx);});
-  }
-  // kalanlar
-  hand.forEach((t,i)=>{if(!used.has(i)) newOrder.push(t);});
-  hand=newOrder;
-  selected.clear();
-  render();
-  show('Seriler öne alındı');
-}
+            // Hamle mi?
+            const isLegal = selected.moves.some(m => m.row === row && m.col === col);
+            if(isLegal) {
+                makeMove({row:selected.row, col:selected.col}, {row, col});
+            } else {
+                // başka bir kendi taşına tıklandıysa değiştir
+                if(piece && piece[0] === turn) {
+                    const moves = getLegalMoves(row, col);
+                    if(moves.length > 0) {
+                        selected = {row, col, moves};
+                        updateUI();
+                    } else {
+                        selected = null;
+                        updateUI();
+                    }
+                } else {
+                    selected = null;
+                    updateUI();
+                }
+            }
+        }
 
-// ===== OTOMATİK ÇİFT =====
-function autoCift(){
-  const byNum={};
-  hand.forEach((t,i)=>{
-    if(t.c==='okey') return;
-    if(!byNum[t.n]) byNum[t.n]=[];
-    byNum[t.n].push({...t,idx:i});
-  });
-  let newOrder=[];
-  const used=new Set();
-  for(let n=1;n<=13;n++){
-    if(!byNum[n] || byNum[n].length<2) continue;
-    // aynı sayıdan en az 2 tane (çift veya 3-4)
-    byNum[n].forEach(x=>{
-      newOrder.push(hand[x.idx]);
-      used.add(x.idx);
-    });
-  }
-  hand.forEach((t,i)=>{if(!used.has(i)) newOrder.push(t);});
-  hand=newOrder;
-  selected.clear();
-  render();
-  show('Çiftler / gruplar öne alındı');
-}
+        // ---- ÇİZİM ----
+        function drawBoard() {
+            const size = 400;
+            ctx.clearRect(0,0,size,size);
+            const colors = ['#f0d9b5','#b58863'];
+            for(let r=0; r<8; r++) {
+                for(let c=0; c<8; c++) {
+                    ctx.fillStyle = colors[(r+c)%2];
+                    ctx.fillRect(c*50, r*50, 50, 50);
+                }
+            }
 
-// ===== MASAYA KOY =====
-function toBoard(){
-  if(selected.size<3){show('En az 3 taş seç (seri veya aynı sayı)');return;}
-  const idxs=[...selected].sort((a,b)=>a-b);
-  const tiles=idxs.map(i=>hand[i]);
+            // Seçili kare
+            if(selected) {
+                ctx.fillStyle = 'rgba(255,255,100,0.4)';
+                ctx.fillRect(selected.col*50, selected.row*50, 50, 50);
+                // yasal hamleleri göster
+                for(let m of selected.moves) {
+                    ctx.beginPath();
+                    ctx.arc(m.col*50+25, m.row*50+25, 12, 0, 2*Math.PI);
+                    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+                    ctx.fill();
+                }
+            }
 
-  // basit kontrol: hepsi aynı sayı mı? veya aynı renk peş peşe mi?
-  const nums=tiles.map(t=>t.n).filter(n=>n>0);
-  const cols=tiles.map(t=>t.c).filter(c=>c!=='okey');
-  const allSameNum = nums.length && nums.every(n=>n===nums[0]);
-  const allSameCol = cols.length && cols.every(c=>c===cols[0]);
-  let isRun=false;
-  if(allSameCol){
-    const sorted=[...nums].sort((a,b)=>a-b);
-    isRun=sorted.every((n,i)=>i===0||n===sorted[i-1]+1);
-  }
+            // Taşlar
+            const unicode = {
+                'w': { 'k':'♔','q':'♕','r':'♖','b':'♗','n':'♘','p':'♙' },
+                'b': { 'k':'♚','q':'♛','r':'♜','b':'♝','n':'♞','p':'♟' }
+            };
+            ctx.font = '42px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            for(let r=0; r<8; r++) {
+                for(let c=0; c<8; c++) {
+                    const p = board[r][c];
+                    if(!p) continue;
+                    const color = p[0];
+                    const type = p[1];
+                    const sym = unicode[color]?.[type];
+                    if(sym) {
+                        ctx.fillStyle = (color === 'w') ? '#fff' : '#1a1a1a';
+                        ctx.shadowColor = 'rgba(0,0,0,0.3)';
+                        ctx.shadowBlur = 6;
+                        ctx.fillText(sym, c*50+25, r*50+25);
+                        ctx.shadowBlur = 0;
+                    }
+                }
+            }
 
-  if(!allSameNum && !isRun){
-    show('Geçersiz set! Aynı sayı veya peş peşe aynı renk olmalı');
-    return;
-  }
+            // Oyun bitti mesajı
+            if(gameOver) {
+                ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                ctx.fillRect(0, 150, 400, 100);
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 28px sans-serif';
+                ctx.fillText('🏁 OYUN BİTTİ', 200, 205);
+            }
+        }
 
-  // masaya ekle
-  boardSets.push(tiles);
-  // elden çıkar (ters sırada splice)
-  for(let i=idxs.length-1;i>=0;i--) hand.splice(idxs[i],1);
-  selected.clear();
-  calcScore();
-  render();
-  show('Set masaya kondu ✓');
-}
+        function updateUI() {
+            drawBoard();
+            const turnText = (turn === 'w') ? 'Beyaz' : 'Siyah';
+            statusDiv.textContent = gameOver ? 'Oyun bitti' : `${turnText}'ın hamlesi`;
+            turnDiv.innerHTML = (turn === 'w') ? '⚪ Beyaz oynuyor' : '⚫ Siyah oynuyor';
+        }
 
-function calcScore(){
-  // kalan taş sayısı * -1 + set bonus
-  const remaining=hand.length;
-  const setBonus=boardSets.length*15;
-  score=Math.max(0, 100 - remaining*5 + setBonus);
-  document.getElementById('score').textContent=score;
-}
+        // ---- RESET ----
+        function resetGame() {
+            initBoard();
+            turn = 'w';
+            selected = null;
+            moveHistory = [];
+            gameOver = false;
+            updateUI();
+        }
 
-init();
+        // ---- OLAY BAĞLAMALARI ----
+        canvas.addEventListener('click', handleClick);
+        canvas.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            handleClick(e);
+        }, {passive:false});
+
+        document.getElementById('resetBtn').addEventListener('click', resetGame);
+        document.getElementById('undoBtn').addEventListener('click', undoMove);
+
+        // BAŞLAT
+        initBoard();
+        updateUI();
+    })();
 </script>
 </body>
 </html>
