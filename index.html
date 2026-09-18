@@ -3,424 +3,815 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Satranç - Dikey Mobil</title>
+    <title>Kapadokya Balon Uçuş Durumu</title>
     <style>
+        :root {
+            --orange-50: #fff7ed;
+            --orange-100: #ffedd5;
+            --orange-200: #fed7aa;
+            --orange-300: #fdba74;
+            --orange-400: #fb923c;
+            --orange-500: #f97316;
+            --orange-600: #ea580c;
+            --orange-700: #c2410c;
+            --orange-800: #9a3412;
+            --orange-900: #7c2d12;
+            --glass-bg: rgba(255, 247, 237, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --shadow-sm: 0 2px 8px rgba(234, 88, 12, 0.08);
+            --shadow-md: 0 8px 32px rgba(234, 88, 12, 0.12);
+            --shadow-lg: 0 16px 48px rgba(234, 88, 12, 0.16);
+            --radius-sm: 12px;
+            --radius-md: 20px;
+            --radius-lg: 28px;
+            --radius-xl: 36px;
+            --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
+
         body {
-            background: #1e1e2a;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: var(--font);
+            background: linear-gradient(160deg, #fff7ed 0%, #ffedd5 30%, #fed7aa 70%, #fdba74 100%);
             min-height: 100vh;
-            font-family: 'Segoe UI', sans-serif;
-            padding: 10px;
+            min-height: 100dvh;
+            color: var(--orange-900);
+            padding: 0 0 40px 0;
+            -webkit-font-smoothing: antialiased;
         }
-        .container {
-            max-width: 400px;
-            width: 100%;
-            background: #2c2c3e;
-            border-radius: 24px;
-            padding: 16px;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+
+        /* === Header === */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 16px 20px 14px;
+            background: rgba(255, 247, 237, 0.72);
+            backdrop-filter: saturate(180%) blur(24px);
+            -webkit-backdrop-filter: saturate(180%) blur(24px);
+            border-bottom: 1px solid rgba(251, 146, 60, 0.15);
         }
-        h1 {
-            color: #f0e6d0;
-            text-align: center;
-            font-size: 22px;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-        #status {
-            color: #b8b0a0;
-            text-align: center;
-            font-size: 16px;
-            margin-bottom: 12px;
-            background: #3a3a4e;
-            padding: 8px;
-            border-radius: 30px;
-        }
-        .board-wrapper {
+
+        .header-content {
             display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--orange-400), var(--orange-600));
+            display: flex;
+            align-items: center;
             justify-content: center;
+            font-size: 20px;
+            box-shadow: var(--shadow-sm);
+            flex-shrink: 0;
         }
-        canvas {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            background: #d2b48c;
-            border-radius: 16px;
-            box-shadow: inset 0 0 0 2px #4a3f33;
-            touch-action: none;
-            cursor: pointer;
-            max-width: 400px;
+
+        .header-title {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            line-height: 1.2;
         }
-        .controls {
+
+        .header-subtitle {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--orange-600);
+            letter-spacing: 0.2px;
+            margin-top: 1px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            margin-left: auto;
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+            animation: pulse 2s infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+            70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
+        /* === Container === */
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px 16px 0;
+        }
+
+        /* === Status Banner === */
+        .status-banner {
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 16px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--orange-400), var(--orange-600));
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .banner-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--orange-600);
+            margin-bottom: 6px;
+        }
+
+        .banner-value {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+
+        .banner-value.cancelled {
+            color: #dc2626;
+        }
+
+        .banner-value.approved {
+            color: #16a34a;
+        }
+
+        .banner-value.pending {
+            color: var(--orange-600);
+        }
+
+        .banner-meta {
+            font-size: 12px;
+            color: var(--orange-700);
+            margin-top: 8px;
             display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* === Sector Cards === */
+        .sector-card {
+            border-radius: var(--radius-md);
+            padding: 18px;
+            margin-bottom: 12px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: slideUp 0.4s ease-out both;
+        }
+
+        .sector-card:active {
+            transform: scale(0.98);
+            box-shadow: var(--shadow-md);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .sector-card:nth-child(1) { animation-delay: 0.05s; }
+        .sector-card:nth-child(2) { animation-delay: 0.1s; }
+        .sector-card:nth-child(3) { animation-delay: 0.15s; }
+        .sector-card:nth-child(4) { animation-delay: 0.2s; }
+
+        .sector-header {
+            display: flex;
+            align-items: center;
             justify-content: space-between;
-            margin-top: 14px;
+            margin-bottom: 12px;
+        }
+
+        .sector-name {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+        }
+
+        .sector-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-cancelled {
+            background: rgba(220, 38, 38, 0.12);
+            color: #dc2626;
+        }
+
+        .badge-approved {
+            background: rgba(22, 163, 74, 0.12);
+            color: #16a34a;
+        }
+
+        .badge-pending {
+            background: rgba(234, 88, 12, 0.12);
+            color: var(--orange-600);
+        }
+
+        .sector-description {
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--orange-800);
+            margin-bottom: 14px;
+            padding: 10px 14px;
+            background: rgba(255, 237, 213, 0.5);
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--orange-300);
+        }
+
+        .sector-times {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
-        button {
-            flex: 1;
-            background: #4a4a62;
-            border: none;
-            color: white;
-            font-size: 18px;
-            padding: 12px 0;
-            border-radius: 40px;
-            font-weight: bold;
-            transition: 0.2s;
-            box-shadow: 0 4px 0 #2a2a3a;
+
+        .time-block {
+            padding: 10px 12px;
+            background: rgba(255, 247, 237, 0.6);
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(251, 146, 60, 0.1);
         }
-        button:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #2a2a3a;
+
+        .time-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--orange-500);
+            margin-bottom: 4px;
         }
-        #turn-indicator {
+
+        .time-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--orange-900);
+            letter-spacing: -0.2px;
+        }
+
+        /* === Legend === */
+        .legend {
+            margin-top: 8px;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 247, 237, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(251, 146, 60, 0.12);
+        }
+
+        .legend-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--orange-500);
+            margin-bottom: 10px;
+        }
+
+        .legend-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: var(--orange-800);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .legend-dot.red { background: #dc2626; }
+        .legend-dot.yellow { background: #eab308; }
+        .legend-dot.green { background: #16a34a; }
+
+        /* === Footer === */
+        .footer {
+            max-width: 480px;
+            margin: 20px auto 0;
+            padding: 0 20px;
             text-align: center;
-            margin-top: 10px;
-            font-size: 15px;
-            color: #c0b8a8;
+        }
+
+        .footer-text {
+            font-size: 10px;
+            color: var(--orange-500);
+            line-height: 1.6;
+        }
+
+        /* === Loading Skeleton === */
+        .skeleton {
+            border-radius: var(--radius-md);
+            padding: 18px;
+            margin-bottom: 12px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .skeleton::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 237, 213, 0.5), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            100% { left: 100%; }
+        }
+
+        .skeleton-line {
+            height: 14px;
+            border-radius: 7px;
+            background: rgba(251, 146, 60, 0.15);
+            margin-bottom: 10px;
+        }
+
+        .skeleton-line.short { width: 40%; }
+        .skeleton-line.medium { width: 70%; }
+        .skeleton-line.long { width: 100%; }
+
+        /* === Error === */
+        .error-card {
+            border-radius: var(--radius-md);
+            padding: 24px;
+            background: rgba(220, 38, 38, 0.06);
+            border: 1px solid rgba(220, 38, 38, 0.15);
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .error-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .error-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #dc2626;
+            margin-bottom: 6px;
+        }
+
+        .error-text {
+            font-size: 13px;
+            color: #991b1b;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .retry-btn {
+            font-family: var(--font);
+            font-size: 14px;
+            font-weight: 600;
+            padding: 12px 28px;
+            border-radius: 100px;
+            border: none;
+            background: linear-gradient(135deg, var(--orange-400), var(--orange-600));
+            color: #fff;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .retry-btn:active {
+            transform: scale(0.96);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* === Refresh Bar === */
+        .refresh-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px;
+            font-size: 12px;
+            color: var(--orange-500);
+            font-weight: 500;
+        }
+
+        .refresh-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(251, 146, 60, 0.3);
+            border-top-color: var(--orange-500);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .refresh-spinner.hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>♚ Satranç</h1>
-    <div id="status">Beyaz'ın hamlesi</div>
-    <div class="board-wrapper">
-        <canvas id="chessCanvas" width="400" height="400"></canvas>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-icon">🎈</div>
+            <div>
+                <div class="header-title">Kapadokya Balon Durumu</div>
+                <div class="header-subtitle">SHM Slot Hizmet Merkezi</div>
+            </div>
+            <div class="live-dot" id="liveDot"></div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container" id="app">
+        <!-- Skeleton loading state -->
+        <div class="skeleton" id="skeleton">
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line medium"></div>
+            <div class="skeleton-line long"></div>
+            <div class="skeleton-line medium"></div>
+        </div>
+        <div class="skeleton">
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line medium"></div>
+            <div class="skeleton-line long"></div>
+        </div>
+    </main>
+
+    <!-- Refresh Bar -->
+    <div class="refresh-bar" id="refreshBar" style="display:none;">
+        <div class="refresh-spinner hidden" id="refreshSpinner"></div>
+        <span id="refreshText">Son güncelleme: --:--</span>
     </div>
-    <div class="controls">
-        <button id="resetBtn">⟳ Yeni Oyun</button>
-        <button id="undoBtn">↩ Geri Al</button>
-    </div>
-    <div id="turn-indicator">⚪ Beyaz oynuyor</div>
-</div>
 
-<script>
-    (function() {
-        // ---- SATRANÇ MOTORU (BASİT) ----
-        const canvas = document.getElementById('chessCanvas');
-        const ctx = canvas.getContext('2d');
-        const statusDiv = document.getElementById('status');
-        const turnDiv = document.getElementById('turn-indicator');
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">
+            Bu bölümde yer alan bildirim meteorolojik veriler doğrultusunda
+            ilgili gün ve zaman aralığında planlanan uçuşlara dair bağlayıcı niteliktedir.
+            Kırmızı ve Sarı bayrak durumlarında kalkış uygunluğu verilmeyecektir.
+            Yeşil bayrak durumunda nihai uçma kararı pilot ve işletme sorumluluğundadır.
+        </p>
+    </footer>
 
-        let board = [];
-        let turn = 'w'; // 'w' veya 'b'
-        let selected = null; // {row, col}
-        let moveHistory = [];
-        let gameOver = false;
+    <script>
+        const API_URL = 'https://shmkapadokya.kapadokya.edu.tr';
+        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+        const REFRESH_INTERVAL = 100000; // 100 saniye (sayfa meta refresh ile uyumlu)
 
-        // Başlangıç dizilimi
-        function initBoard() {
-            const backRank = ['r','n','b','q','k','b','n','r'];
-            board = [];
-            board.push(backRank.map(p => 'b'+p));
-            board.push(Array(8).fill('bp'));
-            for(let r=2; r<6; r++) board.push(Array(8).fill(''));
-            board.push(Array(8).fill('wp'));
-            board.push(backRank.map(p => 'w'+p));
+        const appEl = document.getElementById('app');
+        const skeletonEl = document.getElementById('skeleton');
+        const refreshBar = document.getElementById('refreshBar');
+        const refreshSpinner = document.getElementById('refreshSpinner');
+        const refreshText = document.getElementById('refreshText');
+        const liveDot = document.getElementById('liveDot');
+
+        let lastUpdateTime = null;
+
+        // === Ana veri çekme fonksiyonu ===
+        async function fetchFlightStatus() {
+            showLoading();
+
+            try {
+                const response = await fetch(CORS_PROXY + encodeURIComponent(API_URL), {
+                    headers: { 'Accept': 'text/html' }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const html = await response.text();
+                const data = parseFlightData(html);
+
+                if (data.length === 0) {
+                    throw new Error('Veri ayrıştırılamadı');
+                }
+
+                renderCards(data);
+                updateRefreshBar();
+                liveDot.style.background = '#22c55e';
+
+            } catch (error) {
+                console.error('Veri çekme hatası:', error);
+                renderError(error.message);
+                liveDot.style.background = '#ef4444';
+            }
         }
 
-        // Kopya
-        function copyBoard(b) { return b.map(row => [...row]); }
+        // === HTML ayrıştırma ===
+        function parseFlightData(html) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const sectors = [];
 
-        // Hamle geçmişine ekle
-        function pushHistory(from, to, captured) {
-            moveHistory.push({ from, to, captured, boardState: copyBoard(board) });
-        }
+            // Sektör kartlarını bul
+            const sectorDivs = doc.querySelectorAll('.sector-div');
 
-        // Geri al
-        function undoMove() {
-            if(gameOver) {
-                gameOver = false;
-                turn = 'w';
-                selected = null;
-                moveHistory = [];
-                initBoard();
-                updateUI();
-                return;
-            }
-            if(moveHistory.length === 0) return;
-            const last = moveHistory.pop();
-            board = last.boardState;
-            turn = (turn === 'w' ? 'b' : 'w');
-            selected = null;
-            gameOver = false;
-            updateUI();
-        }
+            sectorDivs.forEach((div) => {
+                const sector = {};
 
-        // ---- HAREKET KURALLARI (basit, şah kontrolü yok) ----
-        function getLegalMoves(row, col) {
-            const piece = board[row][col];
-            if(!piece) return [];
-            const color = piece[0];
-            const type = piece[1];
-            const moves = [];
-            const enemy = (color === 'w' ? 'b' : 'w');
-
-            const addMove = (r, c) => {
-                if(r<0||r>7||c<0||c>7) return false;
-                const target = board[r][c];
-                if(target && target[0] === color) return false;
-                moves.push({row:r, col:c});
-                return !target; // boşsa devam et
-            };
-
-            switch(type) {
-                case 'p': {
-                    const dir = (color === 'w' ? -1 : 1);
-                    const startRow = (color === 'w' ? 6 : 1);
-                    // ileri
-                    if(board[row+dir] && board[row+dir][col] === '') {
-                        moves.push({row: row+dir, col});
-                        if(row === startRow && board[row+2*dir] && board[row+2*dir][col] === '') {
-                            moves.push({row: row+2*dir, col});
-                        }
-                    }
-                    // çapraz yeme
-                    for(let dc of [-1,1]) {
-                        const nc = col+dc;
-                        if(nc<0||nc>7) continue;
-                        const nr = row+dir;
-                        if(nr<0||nr>7) continue;
-                        const target = board[nr][nc];
-                        if(target && target[0] === enemy) moves.push({row:nr, col:nc});
-                    }
-                    break;
-                }
-                case 'n': {
-                    const offsets = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
-                    for(let [dr,dc] of offsets) {
-                        const nr = row+dr, nc = col+dc;
-                        if(nr<0||nr>7||nc<0||nc>7) continue;
-                        const target = board[nr][nc];
-                        if(!target || target[0] !== color) moves.push({row:nr, col:nc});
-                    }
-                    break;
-                }
-                case 'b': {
-                    for(let dr of [-1,1]) for(let dc of [-1,1]) {
-                        for(let i=1; i<8; i++) {
-                            if(!addMove(row+dr*i, col+dc*i)) break;
-                        }
-                    }
-                    break;
-                }
-                case 'r': {
-                    for(let dr of [-1,1]) {
-                        for(let i=1; i<8; i++) {
-                            if(!addMove(row+dr*i, col)) break;
-                        }
-                    }
-                    for(let dc of [-1,1]) {
-                        for(let i=1; i<8; i++) {
-                            if(!addMove(row, col+dc*i)) break;
-                        }
-                    }
-                    break;
-                }
-                case 'q': {
-                    for(let dr of [-1,0,1]) for(let dc of [-1,0,1]) {
-                        if(dr===0 && dc===0) continue;
-                        for(let i=1; i<8; i++) {
-                            if(!addMove(row+dr*i, col+dc*i)) break;
-                        }
-                    }
-                    break;
-                }
-                case 'k': {
-                    for(let dr of [-1,0,1]) for(let dc of [-1,0,1]) {
-                        if(dr===0 && dc===0) continue;
-                        addMove(row+dr, col+dc);
-                    }
-                    break;
-                }
-            }
-            return moves;
-        }
-
-        // ---- OYUN MANTIĞI ----
-        function makeMove(from, to) {
-            const piece = board[from.row][from.col];
-            const captured = board[to.row][to.col];
-            pushHistory(from, to, captured);
-            board[to.row][to.col] = piece;
-            board[from.row][from.col] = '';
-            // Piyon terfisi (basit: otomatik Vezir)
-            if(piece[1] === 'p' && (to.row === 0 || to.row === 7)) {
-                board[to.row][to.col] = piece[0] + 'q';
-            }
-            turn = (turn === 'w' ? 'b' : 'w');
-            selected = null;
-            checkGameOver();
-            updateUI();
-        }
-
-        function checkGameOver() {
-            // çok basit: hiç hamle yoksa oyun bitti
-            let hasMove = false;
-            for(let r=0; r<8; r++) {
-                for(let c=0; c<8; c++) {
-                    const p = board[r][c];
-                    if(p && p[0] === turn) {
-                        if(getLegalMoves(r,c).length > 0) hasMove = true;
-                    }
-                }
-            }
-            if(!hasMove) gameOver = true;
-        }
-
-        // ---- TIKLAMA / DOKUNMATİK ----
-        function handleClick(e) {
-            if(gameOver) return;
-            const rect = canvas.getBoundingClientRect();
-            const size = rect.width;
-            const x = (e.clientX || e.touches[0].clientX) - rect.left;
-            const y = (e.clientY || e.touches[0].clientY) - rect.top;
-            const col = Math.floor(x / size * 8);
-            const row = Math.floor(y / size * 8);
-            if(row<0||row>7||col<0||col>7) return;
-
-            const piece = board[row][col];
-            // Eğer seçili yoksa ve kendi taşıysa seç
-            if(!selected) {
-                if(piece && piece[0] === turn) {
-                    const moves = getLegalMoves(row, col);
-                    if(moves.length > 0) {
-                        selected = {row, col, moves};
-                        updateUI();
-                    }
-                }
-                return;
-            }
-
-            // Seçili varken
-            // Aynı kareye tekrar tıkla -> seçimi kaldır
-            if(selected.row === row && selected.col === col) {
-                selected = null;
-                updateUI();
-                return;
-            }
-
-            // Hamle mi?
-            const isLegal = selected.moves.some(m => m.row === row && m.col === col);
-            if(isLegal) {
-                makeMove({row:selected.row, col:selected.col}, {row, col});
-            } else {
-                // başka bir kendi taşına tıklandıysa değiştir
-                if(piece && piece[0] === turn) {
-                    const moves = getLegalMoves(row, col);
-                    if(moves.length > 0) {
-                        selected = {row, col, moves};
-                        updateUI();
+                // Sektör adı ve durumu
+                const sectorTitle = div.querySelector('.sector h3');
+                if (sectorTitle) {
+                    const text = sectorTitle.textContent.trim();
+                    // "SEKTÖR A UÇULMAZ" veya "SEKTÖR A UÇULUR" formatını ayrıştır
+                    const match = text.match(/SEKTÖR\s+([A-Z])\s+(UÇULMAZ|UÇULUR|BELİRSİZ)/i);
+                    if (match) {
+                        sector.name = `Sektör ${match[1]}`;
+                        sector.status = match[2].toUpperCase();
                     } else {
-                        selected = null;
-                        updateUI();
-                    }
-                } else {
-                    selected = null;
-                    updateUI();
-                }
-            }
-        }
-
-        // ---- ÇİZİM ----
-        function drawBoard() {
-            const size = 400;
-            ctx.clearRect(0,0,size,size);
-            const colors = ['#f0d9b5','#b58863'];
-            for(let r=0; r<8; r++) {
-                for(let c=0; c<8; c++) {
-                    ctx.fillStyle = colors[(r+c)%2];
-                    ctx.fillRect(c*50, r*50, 50, 50);
-                }
-            }
-
-            // Seçili kare
-            if(selected) {
-                ctx.fillStyle = 'rgba(255,255,100,0.4)';
-                ctx.fillRect(selected.col*50, selected.row*50, 50, 50);
-                // yasal hamleleri göster
-                for(let m of selected.moves) {
-                    ctx.beginPath();
-                    ctx.arc(m.col*50+25, m.row*50+25, 12, 0, 2*Math.PI);
-                    ctx.fillStyle = 'rgba(0,0,0,0.25)';
-                    ctx.fill();
-                }
-            }
-
-            // Taşlar
-            const unicode = {
-                'w': { 'k':'♔','q':'♕','r':'♖','b':'♗','n':'♘','p':'♙' },
-                'b': { 'k':'♚','q':'♛','r':'♜','b':'♝','n':'♞','p':'♟' }
-            };
-            ctx.font = '42px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            for(let r=0; r<8; r++) {
-                for(let c=0; c<8; c++) {
-                    const p = board[r][c];
-                    if(!p) continue;
-                    const color = p[0];
-                    const type = p[1];
-                    const sym = unicode[color]?.[type];
-                    if(sym) {
-                        ctx.fillStyle = (color === 'w') ? '#fff' : '#1a1a1a';
-                        ctx.shadowColor = 'rgba(0,0,0,0.3)';
-                        ctx.shadowBlur = 6;
-                        ctx.fillText(sym, c*50+25, r*50+25);
-                        ctx.shadowBlur = 0;
+                        sector.name = text.replace(/SEKTÖR\s+/i, 'Sektör ');
+                        sector.status = 'BELİRSİZ';
                     }
                 }
+
+                // Bayrak rengi (görselden)
+                const flagImg = div.querySelector('.icon img');
+                if (flagImg) {
+                    const src = flagImg.getAttribute('src') || '';
+                    if (src.includes('red')) sector.flag = 'red';
+                    else if (src.includes('yellow')) sector.flag = 'yellow';
+                    else if (src.includes('green')) sector.flag = 'green';
+                    else sector.flag = 'unknown';
+                }
+
+                // Açıklama metni (görünür olan)
+                const textEls = div.querySelectorAll('.sector-text');
+                for (const el of textEls) {
+                    if (el.style.display !== 'none') {
+                        sector.description = el.textContent.trim();
+                        break;
+                    }
+                }
+                if (!sector.description && textEls.length > 0) {
+                    sector.description = textEls[0].textContent.trim();
+                }
+
+                // Zaman bilgileri
+                const timeItems = div.querySelectorAll('.sector-bottom-list li h4');
+                const times = [];
+                timeItems.forEach((h4) => {
+                    const text = h4.textContent.trim();
+                    if (text.includes(':') || text.match(/\d{2}\.\d{2}\.\d{4}/)) {
+                        times.push(text);
+                    }
+                });
+
+                if (times.length >= 1) {
+                    // İlk zaman güncelleme, ikincisi geçerlilik olabilir
+                    // Etiketleri bul
+                    const labels = div.querySelectorAll('.sector-bottom-list li h4 span');
+                    // Daha güvenilir: etiketleri ve değerleri sırayla al
+                    const listItems = div.querySelectorAll('.sector-bottom-list li');
+                    let updateTime = '', validTime = '';
+                    listItems.forEach((li) => {
+                        const h4 = li.querySelector('h4');
+                        if (!h4) return;
+                        const t = h4.textContent.trim();
+                        if (t.includes('GÜNCELLEME')) {
+                            const nextLi = li.nextElementSibling;
+                            if (nextLi) {
+                                const nextH4 = nextLi.querySelector('h4');
+                                if (nextH4) updateTime = nextH4.textContent.trim();
+                            }
+                        }
+                        if (t.includes('GEÇERLİ')) {
+                            const nextLi = li.nextElementSibling;
+                            if (nextLi) {
+                                const nextH4 = nextLi.querySelector('h4');
+                                if (nextH4) validTime = nextH4.textContent.trim();
+                            }
+                        }
+                    });
+                    sector.updateTime = updateTime || times[0] || '';
+                    sector.validTime = validTime || times[1] || '';
+                }
+
+                if (sector.name) {
+                    sectors.push(sector);
+                }
+            });
+
+            // İkincil bölgeleri de al
+            const secondarySection = doc.body.textContent;
+            // 2. ve 3. bölge bilgilerini regex ile çek
+            const secondaryMatches = secondarySection.match(/(\d)\.BÖLGE[^#]*?(UÇULMAZ|UÇULUR|uygun olmadığı|uygun olduğu)[^#]*?GÜNCELLEME TARİHİ ve SAATİ\s*:?\s*(\d{2}\.\d{2}\.\d{4}\s*-\s*\d{2}:\d{2})[^#]*?GEÇERLİ TARİH ve SAATLER\s*:?\s*(\d{2}\.\d{2}\.\d{4}\s*-\s*\d{2}:\d{2}\s*-\s*\d{2}:\d{2})/gi);
+
+            if (secondaryMatches) {
+                let m;
+                while ((m = secondaryMatches.exec(secondarySection)) !== null) {
+                    const bolge = m[1];
+                    const durumText = m[2];
+                    const update = m[3];
+                    const valid = m[4];
+                    const uculmaz = durumText.toUpperCase().includes('UÇULMAZ') || durumText.includes('uygun olmadığı');
+                    sectors.push({
+                        name: `${bolge}. Bölge (İkincil)`,
+                        status: uculmaz ? 'UÇULMAZ' : 'UÇULUR',
+                        flag: uculmaz ? 'red' : 'green',
+                        description: uculmaz
+                            ? 'İkincil uçuşlar için bu bölgenin kalkışa uygun olmadığı değerlendirilmiştir.'
+                            : 'İkincil uçuşlar için bu bölge kalkışa uygundur.',
+                        updateTime: update.trim(),
+                        validTime: valid.trim()
+                    });
+                }
             }
 
-            // Oyun bitti mesajı
-            if(gameOver) {
-                ctx.fillStyle = 'rgba(0,0,0,0.6)';
-                ctx.fillRect(0, 150, 400, 100);
-                ctx.fillStyle = 'white';
-                ctx.font = 'bold 28px sans-serif';
-                ctx.fillText('🏁 OYUN BİTTİ', 200, 205);
+            return sectors;
+        }
+
+        // === Kartları render et ===
+        function renderCards(sectors) {
+            let html = '';
+
+            // Ana durum özeti
+            const allCancelled = sectors.filter(s => !s.name.includes('İkincil')).every(s => s.status === 'UÇULMAZ');
+            const anyApproved = sectors.some(s => s.status === 'UÇULUR');
+
+            let bannerClass = 'cancelled';
+            let bannerText = 'UÇUŞLAR İPTAL';
+            if (anyApproved && !allCancelled) {
+                bannerClass = 'approved';
+                bannerText = 'UÇUŞLAR ONAYLI';
+            } else if (!allCancelled && !anyApproved) {
+                bannerClass = 'pending';
+                bannerText = 'DEĞERLENDİRME BEKLENİYOR';
             }
+
+            html += `
+                <div class="status-banner">
+                    <div class="banner-label">Genel Durum</div>
+                    <div class="banner-value ${bannerClass}">${bannerText}</div>
+                    <div class="banner-meta">
+                        <span>📡</span>
+                        <span>Canlı veri akışı</span>
+                    </div>
+                </div>
+            `;
+
+            // Sektör kartları
+            sectors.forEach((sector, i) => {
+                const isCancelled = sector.status === 'UÇULMAZ';
+                const badgeClass = isCancelled ? 'badge-cancelled' : 'badge-approved';
+                const badgeText = isCancelled ? 'UÇULMAZ' : 'UÇULUR';
+
+                html += `
+                    <div class="sector-card" style="animation-delay: ${0.05 + i * 0.05}s">
+                        <div class="sector-header">
+                            <div class="sector-name">${sector.name || 'Bilinmeyen Sektör'}</div>
+                            <div class="sector-badge ${badgeClass}">${badgeText}</div>
+                        </div>
+                        ${sector.description ? `<div class="sector-description">${sector.description}</div>` : ''}
+                        <div class="sector-times">
+                            ${sector.updateTime ? `
+                                <div class="time-block">
+                                    <div class="time-label">Güncelleme</div>
+                                    <div class="time-value">${sector.updateTime}</div>
+                                </div>
+                            ` : ''}
+                            ${sector.validTime ? `
+                                <div class="time-block">
+                                    <div class="time-label">Geçerlilik</div>
+                                    <div class="time-value">${sector.validTime}</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Efsane (legend)
+            html += `
+                <div class="legend">
+                    <div class="legend-title">Bayrak Durumu</div>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-dot red"></div>
+                            <span>Kırmızı Bayrak — Uçuş yapılamaz</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot yellow"></div>
+                            <spanSarı Bayrak — Uçuş uygun değil</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot green"></div>
+                            <span>Yeşil Bayrak — Pilot kararı</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            appEl.innerHTML = html;
+            refreshBar.style.display = 'flex';
         }
 
-        function updateUI() {
-            drawBoard();
-            const turnText = (turn === 'w') ? 'Beyaz' : 'Siyah';
-            statusDiv.textContent = gameOver ? 'Oyun bitti' : `${turnText}'ın hamlesi`;
-            turnDiv.innerHTML = (turn === 'w') ? '⚪ Beyaz oynuyor' : '⚫ Siyah oynuyor';
+        // === Hata durumu ===
+        function renderError(message) {
+            appEl.innerHTML = `
+                <div class="error-card">
+                    <div class="error-icon">⚠️</div>
+                    <div class="error-title">Veri Alınamadı</div>
+                    <div class="error-text">${message || 'Sunucuya bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.'}</div>
+                    <button class="retry-btn" onclick="fetchFlightStatus()">Tekrar Dene</button>
+                </div>
+            `;
+            refreshBar.style.display = 'none';
         }
 
-        // ---- RESET ----
-        function resetGame() {
-            initBoard();
-            turn = 'w';
-            selected = null;
-            moveHistory = [];
-            gameOver = false;
-            updateUI();
+        // === Yükleme durumu ===
+        function showLoading() {
+            if (appEl.querySelector('.skeleton')) return;
+            appEl.innerHTML = `
+                <div class="skeleton">
+                    <div class="skeleton-line short"></div>
+                    <div class="skeleton-line medium"></div>
+                    <div class="skeleton-line long"></div>
+                    <div class="skeleton-line medium"></div>
+                </div>
+                <div class="skeleton">
+                    <div class="skeleton-line short"></div>
+                    <div class="skeleton-line medium"></div>
+                    <div class="skeleton-line long"></div>
+                </div>
+            `;
+            refreshSpinner.classList.remove('hidden');
         }
 
-        // ---- OLAY BAĞLAMALARI ----
-        canvas.addEventListener('click', handleClick);
-        canvas.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            handleClick(e);
-        }, {passive:false});
+        // === Yenileme çubuğunu güncelle ===
+        function updateRefreshBar() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+            refreshText.textContent = `Son güncelleme: ${timeStr}`;
+            refreshSpinner.classList.add('hidden');
+        }
 
-        document.getElementById('resetBtn').addEventListener('click', resetGame);
-        document.getElementById('undoBtn').addEventListener('click', undoMove);
+        // === Otomatik yenileme ===
+        setInterval(() => {
+            fetchFlightStatus();
+        }, REFRESH_INTERVAL);
 
-        // BAŞLAT
-        initBoard();
-        updateUI();
-    })();
-</script>
+        // === İlk yükleme ===
+        fetchFlightStatus();
+
+        // Sayfa görünür olduğunda yenile
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                fetchFlightStatus();
+            }
+        });
+    </script>
 </body>
 </html>
