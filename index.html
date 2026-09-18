@@ -24,444 +24,158 @@
             --radius-sm: 12px;
             --radius-md: 20px;
             --radius-lg: 28px;
-            --radius-xl: 36px;
             --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
             font-family: var(--font);
             background: linear-gradient(160deg, #fff7ed 0%, #ffedd5 30%, #fed7aa 70%, #fdba74 100%);
-            min-height: 100vh;
-            min-height: 100dvh;
+            min-height: 100vh; min-height: 100dvh;
             color: var(--orange-900);
             padding: 0 0 40px 0;
             -webkit-font-smoothing: antialiased;
         }
-
-        /* === Header === */
         .header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            position: sticky; top: 0; z-index: 100;
             padding: 16px 20px 14px;
             background: rgba(255, 247, 237, 0.72);
             backdrop-filter: saturate(180%) blur(24px);
             -webkit-backdrop-filter: saturate(180%) blur(24px);
             border-bottom: 1px solid rgba(251, 146, 60, 0.15);
         }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            max-width: 480px;
-            margin: 0 auto;
-        }
-
+        .header-content { display: flex; align-items: center; gap: 12px; max-width: 480px; margin: 0 auto; }
         .header-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
+            width: 40px; height: 40px; border-radius: 12px;
             background: linear-gradient(135deg, var(--orange-400), var(--orange-600));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: var(--shadow-sm);
-            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; box-shadow: var(--shadow-sm); flex-shrink: 0;
         }
-
-        .header-title {
-            font-size: 17px;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-            line-height: 1.2;
-        }
-
-        .header-subtitle {
-            font-size: 11px;
-            font-weight: 500;
-            color: var(--orange-600);
-            letter-spacing: 0.2px;
-            margin-top: 1px;
-        }
-
+        .header-title { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; line-height: 1.2; }
+        .header-subtitle { font-size: 11px; font-weight: 500; color: var(--orange-600); letter-spacing: 0.2px; margin-top: 1px; }
         .live-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #22c55e;
-            margin-left: auto;
-            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
-            animation: pulse 2s infinite;
-            flex-shrink: 0;
+            width: 8px; height: 8px; border-radius: 50%; background: #22c55e;
+            margin-left: auto; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+            animation: pulse 2s infinite; flex-shrink: 0;
         }
-
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
             70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
             100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
         }
-
-        /* === Container === */
-        .container {
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 20px 16px 0;
-        }
-
-        /* === Status Banner === */
+        .container { max-width: 480px; margin: 0 auto; padding: 20px 16px 0; }
         .status-banner {
-            border-radius: var(--radius-lg);
-            padding: 20px;
-            margin-bottom: 16px;
+            border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px;
             background: var(--glass-bg);
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
             border: 1px solid var(--glass-border);
-            box-shadow: var(--shadow-md);
-            position: relative;
-            overflow: hidden;
+            box-shadow: var(--shadow-md); position: relative; overflow: hidden;
         }
-
         .status-banner::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
             background: linear-gradient(90deg, var(--orange-400), var(--orange-600));
-            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
         }
-
-        .banner-label {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--orange-600);
-            margin-bottom: 6px;
-        }
-
-        .banner-value {
-            font-size: 28px;
-            font-weight: 800;
-            letter-spacing: -1px;
-            line-height: 1.1;
-        }
-
-        .banner-value.cancelled {
-            color: #dc2626;
-        }
-
-        .banner-value.approved {
-            color: #16a34a;
-        }
-
-        .banner-value.pending {
-            color: var(--orange-600);
-        }
-
-        .banner-meta {
-            font-size: 12px;
-            color: var(--orange-700);
-            margin-top: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* === Sector Cards === */
+        .banner-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--orange-600); margin-bottom: 6px; }
+        .banner-value { font-size: 28px; font-weight: 800; letter-spacing: -1px; line-height: 1.1; }
+        .banner-value.cancelled { color: #dc2626; }
+        .banner-value.approved { color: #16a34a; }
+        .banner-value.pending { color: var(--orange-600); }
+        .banner-meta { font-size: 12px; color: var(--orange-700); margin-top: 8px; display: flex; align-items: center; gap: 6px; }
         .sector-card {
-            border-radius: var(--radius-md);
-            padding: 18px;
-            margin-bottom: 12px;
+            border-radius: var(--radius-md); padding: 18px; margin-bottom: 12px;
             background: var(--glass-bg);
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
             border: 1px solid var(--glass-border);
-            box-shadow: var(--shadow-sm);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: var(--shadow-sm); transition: transform 0.2s ease, box-shadow 0.2s ease;
             animation: slideUp 0.4s ease-out both;
         }
-
-        .sector-card:active {
-            transform: scale(0.98);
-            box-shadow: var(--shadow-md);
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(16px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .sector-card:nth-child(1) { animation-delay: 0.05s; }
-        .sector-card:nth-child(2) { animation-delay: 0.1s; }
-        .sector-card:nth-child(3) { animation-delay: 0.15s; }
-        .sector-card:nth-child(4) { animation-delay: 0.2s; }
-
-        .sector-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .sector-name {
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: -0.4px;
-        }
-
-        .sector-badge {
-            font-size: 11px;
-            font-weight: 700;
-            padding: 5px 12px;
-            border-radius: 100px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-cancelled {
-            background: rgba(220, 38, 38, 0.12);
-            color: #dc2626;
-        }
-
-        .badge-approved {
-            background: rgba(22, 163, 74, 0.12);
-            color: #16a34a;
-        }
-
-        .badge-pending {
-            background: rgba(234, 88, 12, 0.12);
-            color: var(--orange-600);
-        }
-
+        .sector-card:active { transform: scale(0.98); box-shadow: var(--shadow-md); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .sector-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px; }
+        .sector-name { font-size: 17px; font-weight: 700; letter-spacing: -0.4px; }
+        .sector-badge { font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+        .badge-cancelled { background: rgba(220, 38, 38, 0.12); color: #dc2626; }
+        .badge-approved { background: rgba(22, 163, 74, 0.12); color: #16a34a; }
+        .badge-pending { background: rgba(234, 88, 12, 0.12); color: var(--orange-600); }
         .sector-description {
-            font-size: 13px;
-            line-height: 1.5;
-            color: var(--orange-800);
-            margin-bottom: 14px;
-            padding: 10px 14px;
+            font-size: 13px; line-height: 1.5; color: var(--orange-800);
+            margin-bottom: 14px; padding: 10px 14px;
             background: rgba(255, 237, 213, 0.5);
-            border-radius: var(--radius-sm);
-            border-left: 3px solid var(--orange-300);
+            border-radius: var(--radius-sm); border-left: 3px solid var(--orange-300);
         }
-
-        .sector-times {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .time-block {
-            padding: 10px 12px;
-            background: rgba(255, 247, 237, 0.6);
-            border-radius: var(--radius-sm);
-            border: 1px solid rgba(251, 146, 60, 0.1);
-        }
-
-        .time-label {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: var(--orange-500);
-            margin-bottom: 4px;
-        }
-
-        .time-value {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--orange-900);
-            letter-spacing: -0.2px;
-        }
-
-        /* === Legend === */
+        .sector-times { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .time-block { padding: 10px 12px; background: rgba(255, 247, 237, 0.6); border-radius: var(--radius-sm); border: 1px solid rgba(251, 146, 60, 0.1); }
+        .time-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--orange-500); margin-bottom: 4px; }
+        .time-value { font-size: 13px; font-weight: 600; color: var(--orange-900); letter-spacing: -0.2px; }
         .legend {
-            margin-top: 8px;
-            padding: 16px;
-            border-radius: var(--radius-md);
+            margin-top: 8px; padding: 16px; border-radius: var(--radius-md);
             background: rgba(255, 247, 237, 0.5);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(251, 146, 60, 0.12);
         }
-
-        .legend-title {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--orange-500);
-            margin-bottom: 10px;
-        }
-
-        .legend-items {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 12px;
-            color: var(--orange-800);
-        }
-
-        .legend-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
+        .legend-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--orange-500); margin-bottom: 10px; }
+        .legend-items { display: flex; flex-direction: column; gap: 8px; }
+        .legend-item { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--orange-800); }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
         .legend-dot.red { background: #dc2626; }
         .legend-dot.yellow { background: #eab308; }
         .legend-dot.green { background: #16a34a; }
-
-        /* === Footer === */
-        .footer {
-            max-width: 480px;
-            margin: 20px auto 0;
-            padding: 0 20px;
-            text-align: center;
-        }
-
-        .footer-text {
-            font-size: 10px;
-            color: var(--orange-500);
-            line-height: 1.6;
-        }
-
-        /* === Loading Skeleton === */
+        .footer { max-width: 480px; margin: 20px auto 0; padding: 0 20px; text-align: center; }
+        .footer-text { font-size: 10px; color: var(--orange-500); line-height: 1.6; }
         .skeleton {
-            border-radius: var(--radius-md);
-            padding: 18px;
-            margin-bottom: 12px;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            overflow: hidden;
-            position: relative;
+            border-radius: var(--radius-md); padding: 18px; margin-bottom: 12px;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            overflow: hidden; position: relative;
         }
-
         .skeleton::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 237, 213, 0.5), transparent);
             animation: shimmer 1.5s infinite;
         }
-
-        @keyframes shimmer {
-            100% { left: 100%; }
-        }
-
-        .skeleton-line {
-            height: 14px;
-            border-radius: 7px;
-            background: rgba(251, 146, 60, 0.15);
-            margin-bottom: 10px;
-        }
-
+        @keyframes shimmer { 100% { left: 100%; } }
+        .skeleton-line { height: 14px; border-radius: 7px; background: rgba(251, 146, 60, 0.15); margin-bottom: 10px; }
         .skeleton-line.short { width: 40%; }
         .skeleton-line.medium { width: 70%; }
         .skeleton-line.long { width: 100%; }
-
-        /* === Error === */
         .error-card {
-            border-radius: var(--radius-md);
-            padding: 24px;
+            border-radius: var(--radius-md); padding: 24px;
             background: rgba(220, 38, 38, 0.06);
             border: 1px solid rgba(220, 38, 38, 0.15);
-            text-align: center;
-            margin-bottom: 16px;
+            text-align: center; margin-bottom: 16px;
         }
-
-        .error-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
-
-        .error-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #dc2626;
-            margin-bottom: 6px;
-        }
-
-        .error-text {
-            font-size: 13px;
-            color: #991b1b;
-            line-height: 1.5;
-            margin-bottom: 16px;
-        }
-
+        .error-icon { font-size: 32px; margin-bottom: 8px; }
+        .error-title { font-size: 16px; font-weight: 700; color: #dc2626; margin-bottom: 6px; }
+        .error-text { font-size: 13px; color: #991b1b; line-height: 1.5; margin-bottom: 16px; }
         .retry-btn {
-            font-family: var(--font);
-            font-size: 14px;
-            font-weight: 600;
-            padding: 12px 28px;
-            border-radius: 100px;
-            border: none;
+            font-family: var(--font); font-size: 14px; font-weight: 600;
+            padding: 12px 28px; border-radius: 100px; border: none;
             background: linear-gradient(135deg, var(--orange-400), var(--orange-600));
-            color: #fff;
-            cursor: pointer;
-            box-shadow: var(--shadow-sm);
+            color: #fff; cursor: pointer; box-shadow: var(--shadow-sm);
             transition: transform 0.2s, box-shadow 0.2s;
         }
-
-        .retry-btn:active {
-            transform: scale(0.96);
-            box-shadow: var(--shadow-md);
-        }
-
-        /* === Refresh Bar === */
-        .refresh-bar {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 14px;
-            font-size: 12px;
-            color: var(--orange-500);
-            font-weight: 500;
-        }
-
+        .retry-btn:active { transform: scale(0.96); box-shadow: var(--shadow-md); }
+        .refresh-bar { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; font-size: 12px; color: var(--orange-500); font-weight: 500; }
         .refresh-spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(251, 146, 60, 0.3);
-            border-top-color: var(--orange-500);
-            border-radius: 50%;
+            width: 16px; height: 16px; border: 2px solid rgba(251, 146, 60, 0.3);
+            border-top-color: var(--orange-500); border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .refresh-spinner.hidden { display: none; }
+        .debug-info {
+            margin-top: 12px; padding: 12px; border-radius: var(--radius-sm);
+            background: rgba(0, 0, 0, 0.04); font-size: 11px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            color: var(--orange-700); word-break: break-all;
+            max-height: 200px; overflow-y: auto; text-align: left;
         }
-
-        .refresh-spinner.hidden {
-            display: none;
-        }
+        .debug-info summary { cursor: pointer; font-weight: 700; }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
     <header class="header">
         <div class="header-content">
             <div class="header-icon">🎈</div>
@@ -473,212 +187,176 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="container" id="app">
-        <!-- Skeleton loading state -->
-        <div class="skeleton" id="skeleton">
-            <div class="skeleton-line short"></div>
-            <div class="skeleton-line medium"></div>
-            <div class="skeleton-line long"></div>
-            <div class="skeleton-line medium"></div>
-        </div>
-        <div class="skeleton">
-            <div class="skeleton-line short"></div>
-            <div class="skeleton-line medium"></div>
-            <div class="skeleton-line long"></div>
-        </div>
-    </main>
+    <main class="container" id="app"></main>
 
-    <!-- Refresh Bar -->
     <div class="refresh-bar" id="refreshBar" style="display:none;">
         <div class="refresh-spinner hidden" id="refreshSpinner"></div>
         <span id="refreshText">Son güncelleme: --:--</span>
     </div>
 
-    <!-- Footer -->
     <footer class="footer">
         <p class="footer-text">
             Bu bölümde yer alan bildirim meteorolojik veriler doğrultusunda
             ilgili gün ve zaman aralığında planlanan uçuşlara dair bağlayıcı niteliktedir.
-            Kırmızı ve Sarı bayrak durumlarında kalkış uygunluğu verilmeyecektir.
-            Yeşil bayrak durumunda nihai uçma kararı pilot ve işletme sorumluluğundadır.
         </p>
     </footer>
 
     <script>
-        const API_URL = 'https://shmkapadokya.kapadokya.edu.tr';
-        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
-        const REFRESH_INTERVAL = 100000; // 100 saniye (sayfa meta refresh ile uyumlu)
+        const TARGET_URL = 'https://shmkapadokya.kapadokya.edu.tr';
+        const REFRESH_INTERVAL = 100000;
+
+        // Birden fazla CORS proxy — sırayla denenecek
+        const PROXIES = [
+            { name: 'allorigins',     build: (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}` },
+            { name: 'corsproxy.io',   build: (u) => `https://corsproxy.io/?${encodeURIComponent(u)}` },
+            { name: 'codetabs',       build: (u) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}` },
+            { name: 'thingproxy',     build: (u) => `https://thingproxy.freeboard.io/fetch/${u}` },
+            { name: 'whateverorigin', build: (u) => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}` }
+        ];
 
         const appEl = document.getElementById('app');
-        const skeletonEl = document.getElementById('skeleton');
         const refreshBar = document.getElementById('refreshBar');
         const refreshSpinner = document.getElementById('refreshSpinner');
         const refreshText = document.getElementById('refreshText');
         const liveDot = document.getElementById('liveDot');
 
-        let lastUpdateTime = null;
+        // === Proxy'leri sırayla dene ===
+        async function fetchWithFallback() {
+            const errors = [];
+            for (const proxy of PROXIES) {
+                const url = proxy.build(TARGET_URL);
+                try {
+                    console.log(`[Proxy deneniyor] ${proxy.name}`);
+                    const controller = new AbortController();
+                    const timeout = setTimeout(() => controller.abort(), 12000);
 
-        // === Ana veri çekme fonksiyonu ===
-        async function fetchFlightStatus() {
-            showLoading();
+                    const res = await fetch(url, { signal: controller.signal });
+                    clearTimeout(timeout);
 
-            try {
-                const response = await fetch(CORS_PROXY + encodeURIComponent(API_URL), {
-                    headers: { 'Accept': 'text/html' }
-                });
+                    if (!res.ok) {
+                        errors.push(`${proxy.name}: HTTP ${res.status}`);
+                        continue;
+                    }
 
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
+                    let text = await res.text();
+
+                    // allorigins /get formatı JSON döner
+                    if (proxy.name === 'whateverorigin') {
+                        try {
+                            const json = JSON.parse(text);
+                            text = json.contents || '';
+                        } catch (e) {
+                            errors.push(`${proxy.name}: JSON parse hatası`);
+                            continue;
+                        }
+                    }
+
+                    if (!text || text.length < 200) {
+                        errors.push(`${proxy.name}: içerik çok kısa (${text.length})`);
+                        continue;
+                    }
+
+                    console.log(`[Başarılı] ${proxy.name} — ${text.length} karakter`);
+                    return { html: text, proxy: proxy.name };
+                } catch (err) {
+                    const msg = err.name === 'AbortError' ? 'zaman aşımı' : err.message;
+                    errors.push(`${proxy.name}: ${msg}`);
+                    console.warn(`[Hata] ${proxy.name}:`, msg);
                 }
-
-                const html = await response.text();
-                const data = parseFlightData(html);
-
-                if (data.length === 0) {
-                    throw new Error('Veri ayrıştırılamadı');
-                }
-
-                renderCards(data);
-                updateRefreshBar();
-                liveDot.style.background = '#22c55e';
-
-            } catch (error) {
-                console.error('Veri çekme hatası:', error);
-                renderError(error.message);
-                liveDot.style.background = '#ef4444';
             }
+            throw new Error('Tüm proxy\'ler başarısız:\n' + errors.join('\n'));
         }
 
-        // === HTML ayrıştırma ===
+        // === Metin tabanlı esnek ayrıştırma ===
         function parseFlightData(html) {
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
+
+            // Tüm görünür metni al (script/style hariç)
+            doc.querySelectorAll('script, style, noscript').forEach(el => el.remove());
+            const bodyText = (doc.body?.innerText || doc.body?.textContent || '')
+                .replace(/\u00a0/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+
+            console.log('[Ham metin uzunluğu]', bodyText.length);
+            console.log('[Ham metin ilk 2000 karakter]', bodyText.substring(0, 2000));
+
             const sectors = [];
 
-            // Sektör kartlarını bul
-            const sectorDivs = doc.querySelectorAll('.sector-div');
-
-            sectorDivs.forEach((div) => {
-                const sector = {};
-
-                // Sektör adı ve durumu
-                const sectorTitle = div.querySelector('.sector h3');
-                if (sectorTitle) {
-                    const text = sectorTitle.textContent.trim();
-                    // "SEKTÖR A UÇULMAZ" veya "SEKTÖR A UÇULUR" formatını ayrıştır
-                    const match = text.match(/SEKTÖR\s+([A-Z])\s+(UÇULMAZ|UÇULUR|BELİRSİZ)/i);
-                    if (match) {
-                        sector.name = `Sektör ${match[1]}`;
-                        sector.status = match[2].toUpperCase();
-                    } else {
-                        sector.name = text.replace(/SEKTÖR\s+/i, 'Sektör ');
-                        sector.status = 'BELİRSİZ';
-                    }
-                }
-
-                // Bayrak rengi (görselden)
-                const flagImg = div.querySelector('.icon img');
-                if (flagImg) {
-                    const src = flagImg.getAttribute('src') || '';
-                    if (src.includes('red')) sector.flag = 'red';
-                    else if (src.includes('yellow')) sector.flag = 'yellow';
-                    else if (src.includes('green')) sector.flag = 'green';
-                    else sector.flag = 'unknown';
-                }
-
-                // Açıklama metni (görünür olan)
-                const textEls = div.querySelectorAll('.sector-text');
-                for (const el of textEls) {
-                    if (el.style.display !== 'none') {
-                        sector.description = el.textContent.trim();
-                        break;
-                    }
-                }
-                if (!sector.description && textEls.length > 0) {
-                    sector.description = textEls[0].textContent.trim();
-                }
-
-                // Zaman bilgileri
-                const timeItems = div.querySelectorAll('.sector-bottom-list li h4');
-                const times = [];
-                timeItems.forEach((h4) => {
-                    const text = h4.textContent.trim();
-                    if (text.includes(':') || text.match(/\d{2}\.\d{2}\.\d{4}/)) {
-                        times.push(text);
-                    }
-                });
-
-                if (times.length >= 1) {
-                    // İlk zaman güncelleme, ikincisi geçerlilik olabilir
-                    // Etiketleri bul
-                    const labels = div.querySelectorAll('.sector-bottom-list li h4 span');
-                    // Daha güvenilir: etiketleri ve değerleri sırayla al
-                    const listItems = div.querySelectorAll('.sector-bottom-list li');
-                    let updateTime = '', validTime = '';
-                    listItems.forEach((li) => {
-                        const h4 = li.querySelector('h4');
-                        if (!h4) return;
-                        const t = h4.textContent.trim();
-                        if (t.includes('GÜNCELLEME')) {
-                            const nextLi = li.nextElementSibling;
-                            if (nextLi) {
-                                const nextH4 = nextLi.querySelector('h4');
-                                if (nextH4) updateTime = nextH4.textContent.trim();
-                            }
-                        }
-                        if (t.includes('GEÇERLİ')) {
-                            const nextLi = li.nextElementSibling;
-                            if (nextLi) {
-                                const nextH4 = nextLi.querySelector('h4');
-                                if (nextH4) validTime = nextH4.textContent.trim();
-                            }
-                        }
-                    });
-                    sector.updateTime = updateTime || times[0] || '';
-                    sector.validTime = validTime || times[1] || '';
-                }
-
-                if (sector.name) {
-                    sectors.push(sector);
-                }
-            });
-
-            // İkincil bölgeleri de al
-            const secondarySection = doc.body.textContent;
-            // 2. ve 3. bölge bilgilerini regex ile çek
-            const secondaryMatches = secondarySection.match(/(\d)\.BÖLGE[^#]*?(UÇULMAZ|UÇULUR|uygun olmadığı|uygun olduğu)[^#]*?GÜNCELLEME TARİHİ ve SAATİ\s*:?\s*(\d{2}\.\d{2}\.\d{4}\s*-\s*\d{2}:\d{2})[^#]*?GEÇERLİ TARİH ve SAATLER\s*:?\s*(\d{2}\.\d{2}\.\d{4}\s*-\s*\d{2}:\d{2}\s*-\s*\d{2}:\d{2})/gi);
-
-            if (secondaryMatches) {
-                let m;
-                while ((m = secondaryMatches.exec(secondarySection)) !== null) {
-                    const bolge = m[1];
-                    const durumText = m[2];
-                    const update = m[3];
-                    const valid = m[4];
-                    const uculmaz = durumText.toUpperCase().includes('UÇULMAZ') || durumText.includes('uygun olmadığı');
-                    sectors.push({
-                        name: `${bolge}. Bölge (İkincil)`,
-                        status: uculmaz ? 'UÇULMAZ' : 'UÇULUR',
-                        flag: uculmaz ? 'red' : 'green',
-                        description: uculmaz
-                            ? 'İkincil uçuşlar için bu bölgenin kalkışa uygun olmadığı değerlendirilmiştir.'
-                            : 'İkincil uçuşlar için bu bölge kalkışa uygundur.',
-                        updateTime: update.trim(),
-                        validTime: valid.trim()
-                    });
-                }
+            // 1) Ana sektörleri bul: "SEKTÖR X" ile başlayan bloklar
+            // Hem "A UÇULMAZ" gibi başlık hem de ayrı yazım varyasyonlarını yakala
+            const sectorRegex = /SEKT(?:Ö|O)R\s+([A-Z])\s+(UÇULMAZ|UÇULUR|BELİRSİZ|UÇULAMAZ)/gi;
+            let match;
+            const matches = [];
+            while ((match = sectorRegex.exec(bodyText)) !== null) {
+                matches.push({ index: match.index, letter: match[1].toUpperCase(), status: match[2].toUpperCase() });
             }
 
-            return sectors;
+            matches.forEach((m, i) => {
+                // Bu sektörün metin aralığı: kendisinden sonraki sektöre kadar
+                const start = m.index;
+                const end = i + 1 < matches.length ? matches[i + 1].index : Math.min(start + 1200, bodyText.length);
+                const chunk = bodyText.substring(start, end);
+
+                const sector = {
+                    name: `Sektör ${m.letter}`,
+                    status: m.status,
+                    description: '',
+                    updateTime: '',
+                    validTime: ''
+                };
+
+                // Açıklama: "uçuşların ... uygun olmadığı/olduğu" cümlesi
+                const descMatch = chunk.match(/([^.]*?(?:uygun olmadığı|uygun olduğu|uygun değildir|yapılamaz|yapılabilir)[^.]*\.)/i);
+                if (descMatch) sector.description = descMatch[1].trim();
+
+                // Güncelleme tarihi
+                const updMatch = chunk.match(/G[ÜU]NCELLEME\s+TAR[İI]H[İI]\s*(?:ve\s*SAAT[İI])?\s*:?\s*([0-9]{2}\.[0-9]{2}\.[0-9]{4}\s*[-–]\s*[0-9]{2}:[0-9]{2})/i);
+                if (updMatch) sector.updateTime = updMatch[1].trim();
+
+                // Geçerlilik
+                const valMatch = chunk.match(/GE[ÇC]ERL[İI]\s+TAR[İI]H\s*(?:ve\s*SAATLER)?\s*:?\s*([0-9]{2}\.[0-9]{2}\.[0-9]{4}\s*[-–]\s*[0-9]{2}:[0-9]{2}(?:\s*[-–]\s*[0-9]{2}:[0-9]{2})?)/i);
+                if (valMatch) sector.validTime = valMatch[1].trim();
+
+                // İkincil kontrol: kırmızı/sarı/yeşil bayrak metni
+                if (/kırmızı|kirmizi|red/i.test(chunk)) sector.flag = 'red';
+                else if (/sarı|sari|yellow/i.test(chunk)) sector.flag = 'yellow';
+                else if (/yeşil|yesil|green/i.test(chunk)) sector.flag = 'green';
+
+                sectors.push(sector);
+            });
+
+            // 2) İkincil bölgeler (2. ve 3. bölge)
+            const secondaryRegex = /(\d)\.\s*B[ÖO]LGE[^.]{0,400}?(UÇULMAZ|UÇULUR|uygun olmadığı|uygun olduğu|uygun değildir)/gi;
+            let sm;
+            while ((sm = secondaryRegex.exec(bodyText)) !== null) {
+                const uculmaz = /UÇULMAZ|uygun olmadığı|uygun değildir/i.test(sm[2]);
+                sectors.push({
+                    name: `${sm[1]}. Bölge (İkincil)`,
+                    status: uculmaz ? 'UÇULMAZ' : 'UÇULUR',
+                    description: uculmaz
+                        ? 'İkincil uçuşlar için bu bölgenin kalkışa uygun olmadığı değerlendirilmiştir.'
+                        : 'İkincil uçuşlar için bu bölge kalkışa uygundur.',
+                    updateTime: '',
+                    validTime: ''
+                });
+            }
+
+            // 3) Hiç bulunamadıysa, ham metinden bir özet çıkar (debug)
+            if (sectors.length === 0) {
+                console.warn('[Ayrıştırma başarısız] Ham metin:', bodyText.substring(0, 3000));
+            }
+
+            return { sectors, rawText: bodyText };
         }
 
-        // === Kartları render et ===
-        function renderCards(sectors) {
+        // === Render ===
+        function renderCards(sectors, proxyName) {
             let html = '';
 
-            // Ana durum özeti
-            const allCancelled = sectors.filter(s => !s.name.includes('İkincil')).every(s => s.status === 'UÇULMAZ');
+            const mainSectors = sectors.filter(s => !s.name.includes('İkincil'));
+            const allCancelled = mainSectors.length > 0 && mainSectors.every(s => s.status === 'UÇULMAZ');
             const anyApproved = sectors.some(s => s.status === 'UÇULUR');
 
             let bannerClass = 'cancelled';
@@ -697,12 +375,11 @@
                     <div class="banner-value ${bannerClass}">${bannerText}</div>
                     <div class="banner-meta">
                         <span>📡</span>
-                        <span>Canlı veri akışı</span>
+                        <span>Kaynak: ${proxyName || 'shmkapadokya'}</span>
                     </div>
                 </div>
             `;
 
-            // Sektör kartları
             sectors.forEach((sector, i) => {
                 const isCancelled = sector.status === 'UÇULMAZ';
                 const badgeClass = isCancelled ? 'badge-cancelled' : 'badge-approved';
@@ -720,36 +397,24 @@
                                 <div class="time-block">
                                     <div class="time-label">Güncelleme</div>
                                     <div class="time-value">${sector.updateTime}</div>
-                                </div>
-                            ` : ''}
+                                </div>` : ''}
                             ${sector.validTime ? `
                                 <div class="time-block">
                                     <div class="time-label">Geçerlilik</div>
                                     <div class="time-value">${sector.validTime}</div>
-                                </div>
-                            ` : ''}
+                                </div>` : ''}
                         </div>
                     </div>
                 `;
             });
 
-            // Efsane (legend)
             html += `
                 <div class="legend">
                     <div class="legend-title">Bayrak Durumu</div>
                     <div class="legend-items">
-                        <div class="legend-item">
-                            <div class="legend-dot red"></div>
-                            <span>Kırmızı Bayrak — Uçuş yapılamaz</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-dot yellow"></div>
-                            <spanSarı Bayrak — Uçuş uygun değil</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-dot green"></div>
-                            <span>Yeşil Bayrak — Pilot kararı</span>
-                        </div>
+                        <div class="legend-item"><div class="legend-dot red"></div><span>Kırmızı Bayrak — Uçuş yapılamaz</span></div>
+                        <div class="legend-item"><div class="legend-dot yellow"></div><span>Sarı Bayrak — Uçuş uygun değil</span></div>
+                        <div class="legend-item"><div class="legend-dot green"></div><span>Yeşil Bayrak — Pilot kararı</span></div>
                     </div>
                 </div>
             `;
@@ -758,28 +423,31 @@
             refreshBar.style.display = 'flex';
         }
 
-        // === Hata durumu ===
-        function renderError(message) {
+        // === Hata ekranı (debug bilgisiyle) ===
+        function renderError(message, rawText) {
             appEl.innerHTML = `
                 <div class="error-card">
                     <div class="error-icon">⚠️</div>
                     <div class="error-title">Veri Alınamadı</div>
-                    <div class="error-text">${message || 'Sunucuya bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.'}</div>
+                    <div class="error-text">${String(message).replace(/\n/g, '<br>')}</div>
                     <button class="retry-btn" onclick="fetchFlightStatus()">Tekrar Dene</button>
+                    ${rawText ? `
+                        <details class="debug-info">
+                            <summary>Ham veri (ilk 1500 karakter)</summary>
+                            <div>${rawText.substring(0, 1500).replace(/</g, '&lt;')}</div>
+                        </details>
+                    ` : ''}
                 </div>
             `;
             refreshBar.style.display = 'none';
         }
 
-        // === Yükleme durumu ===
         function showLoading() {
-            if (appEl.querySelector('.skeleton')) return;
             appEl.innerHTML = `
                 <div class="skeleton">
                     <div class="skeleton-line short"></div>
                     <div class="skeleton-line medium"></div>
                     <div class="skeleton-line long"></div>
-                    <div class="skeleton-line medium"></div>
                 </div>
                 <div class="skeleton">
                     <div class="skeleton-line short"></div>
@@ -788,29 +456,47 @@
                 </div>
             `;
             refreshSpinner.classList.remove('hidden');
+            refreshBar.style.display = 'flex';
+            refreshText.textContent = 'Yükleniyor…';
         }
 
-        // === Yenileme çubuğunu güncelle ===
         function updateRefreshBar() {
             const now = new Date();
-            const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-            refreshText.textContent = `Son güncelleme: ${timeStr}`;
+            const t = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+            refreshText.textContent = `Son güncelleme: ${t}`;
             refreshSpinner.classList.add('hidden');
         }
 
-        // === Otomatik yenileme ===
-        setInterval(() => {
-            fetchFlightStatus();
-        }, REFRESH_INTERVAL);
+        // === Ana akış ===
+        async function fetchFlightStatus() {
+            showLoading();
+            try {
+                const { html, proxy } = await fetchWithFallback();
+                const { sectors, rawText } = parseFlightData(html);
 
-        // === İlk yükleme ===
+                if (sectors.length === 0) {
+                    // Ham metni konsola bas, kullanıcıya göster
+                    renderError('Sayfa yüklendi ancak sektör verisi ayrıştırılamadı. Sayfa yapısı değişmiş olabilir.', rawText);
+                    liveDot.style.background = '#f59e0b';
+                    return;
+                }
+
+                renderCards(sectors, proxy);
+                updateRefreshBar();
+                liveDot.style.background = '#22c55e';
+            } catch (err) {
+                console.error(err);
+                renderError(err.message || 'Bilinmeyen hata');
+                liveDot.style.background = '#ef4444';
+                refreshSpinner.classList.add('hidden');
+            }
+        }
+
+        setInterval(fetchFlightStatus, REFRESH_INTERVAL);
         fetchFlightStatus();
 
-        // Sayfa görünür olduğunda yenile
         document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                fetchFlightStatus();
-            }
+            if (!document.hidden) fetchFlightStatus();
         });
     </script>
 </body>
